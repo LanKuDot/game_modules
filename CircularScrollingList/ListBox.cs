@@ -23,6 +23,9 @@ public class ListBox : MonoBehaviour
 	private Vector3 currentInputWorldPos;
 	private Vector3 deltaInputWorldPos;
 
+	private bool keepSliding = false;
+	private int slidingFrames;
+
 	void Awake()
 	{
 		switch( Application.platform )
@@ -54,6 +57,19 @@ public class ListBox : MonoBehaviour
 
 	void Update()
 	{
+		if ( keepSliding )
+		{
+			--slidingFrames;
+			if ( slidingFrames == 0 )
+			{
+				keepSliding = false;
+				return;
+			}
+
+			updatePosition( deltaInputWorldPos );
+			deltaInputWorldPos.y = deltaInputWorldPos.y / 1.2f;
+		}
+
 		if ( !isTouchingDevice )
 		{
 			if ( Input.GetMouseButtonDown(0) )
@@ -65,6 +81,10 @@ public class ListBox : MonoBehaviour
 				currentInputWorldPos = Camera.main.ScreenToWorldPoint( Input.mousePosition );
 				deltaInputWorldPos = new Vector3( 0.0f, currentInputWorldPos.y - lastInputWordPos.y, 0.0f );
 				updatePosition( deltaInputWorldPos );
+
+				keepSliding = true;
+				slidingFrames = 20;
+
 				lastInputWordPos = currentInputWorldPos;
 			}
 		}
@@ -79,6 +99,10 @@ public class ListBox : MonoBehaviour
 				currentInputWorldPos = Camera.main.ScreenToWorldPoint( Input.GetTouch(0).position );
 				deltaInputWorldPos = new Vector3( 0.0f, currentInputWorldPos.y - lastInputWordPos.y, 0.0f );
 				updatePosition( deltaInputWorldPos );
+
+				keepSliding = true;
+				slidingFrames = 20;
+
 				lastInputWordPos = currentInputWorldPos;
 			}
 		}
