@@ -1,0 +1,142 @@
+﻿/* The basic component of scrolling list.
+ * Note that the camera is at (0,0).
+ */
+using UnityEngine;
+using UnityEngine.UI;
+using System.Collections;
+
+public class ListBox : MonoBehaviour
+{
+	public int listBoxID;	// Must be unique, and count from 0
+	public Text text;		// The content of the list box
+
+	private int numOfListBox;
+	private bool isTouchingDevice;
+
+	private Vector2 maxWorldPos;		// The maximum world position in the view of camera
+	private float unitWorldPosY;		// Equally split the screen into many units
+	private float lowerBoundWorldPosY;
+	private float upperBoundWorldPosY;
+	private float rangeBoundWorldPosY;
+
+	private Vector3 lastInputWordPos;
+	private Vector3 currentInputWorldPos;
+	private Vector3 deltaInputWorldPos;
+
+	void Awake()
+	{
+		switch( Application.platform )
+		{
+		case RuntimePlatform.WindowsEditor:
+			isTouchingDevice = false;
+			break;
+		case RuntimePlatform.Android:
+			isTouchingDevice = true;
+			break;
+		}
+	}
+
+	void Start()
+	{
+		numOfListBox = ListBank.Instance.numOfListBoxes;
+
+		maxWorldPos = ( Vector2 ) Camera.main.ScreenToWorldPoint(
+			new Vector2( Camera.main.pixelWidth, Camera.main.pixelHeight ) );
+
+		unitWorldPosY = maxWorldPos.y / 2.0f;
+
+		lowerBoundWorldPosY = unitWorldPosY * (float)( -1 * numOfListBox / 2 - 1 );
+		upperBoundWorldPosY = unitWorldPosY * (float)( numOfListBox / 2 + 1 );
+		rangeBoundWorldPosY = unitWorldPosY * (float)numOfListBox;
+
+		initialPosition( listBoxID );
+	}
+
+	void Update()
+	{
+		if ( !isTouchingDevice )
+		{
+			if ( Input.GetMouseButtonDown(0) )
+			{
+				lastInputWordPos = Camera.main.ScreenToWorldPoint( Input.mousePosition );
+			}
+			else if ( Input.GetMouseButton(0) )
+			{
+				currentInputWorldPos = Camera.main.ScreenToWorldPoint( Input.mousePosition );
+				deltaInputWorldPos = new Vector3( 0.0f, currentInputWorldPos.y - lastInputWordPos.y, 0.0f );
+				updatePosition( deltaInputWorldPos );
+				lastInputWordPos = currentInputWorldPos;
+			}
+		}
+		else if ( !isTouchingDevice && Input.touchCount > 0 )
+		{
+			if ( Input.GetTouch(0).phase == TouchPhase.Began )
+			{
+				lastInputWordPos = Camera.main.ScreenToWorldPoint( Input.GetTouch(0).position );
+			}
+			else if ( Input.GetTouch(0).phase == TouchPhase.Moved )
+			{
+				currentInputWorldPos = Camera.main.ScreenToWorldPoint( Input.GetTouch(0).position );
+				deltaInputWorldPos = new Vector3( 0.0f, currentInputWorldPos.y - lastInputWordPos.y, 0.0f );
+				updatePosition( deltaInputWorldPos );
+				lastInputWordPos = currentInputWorldPos;
+			}
+		}
+	}
+
+	/* Initialize the position of the list box accroding to its ID.
+	 */
+	void initialPosition( int listBoxID )
+	{
+		transform.position = new Vector3( 0.0f,
+		                                 unitWorldPosY * (float)( listBoxID * -1 + numOfListBox / 2 ),
+		                                 0.0f );
+		updateXPosition();
+	}
+
+	/* Update the position of ListBox accroding to the delta position at each frame.
+	 */
+	void updatePosition( Vector3 deltaPosition )
+	{
+		transform.position += deltaPosition;
+		updateXPosition();
+		checkBoundary();
+	}
+
+	/* Calculate the x position accroding to the y position.
+	 */
+	void updateXPosition()
+	{
+		transform.position = new Vector3(
+			maxWorldPos.x * 0.15f - maxWorldPos.x * 0.2f * Mathf.Cos( transform.position.y / upperBoundWorldPosY * Mathf.PI / 2.0f ),
+			transform.position.y,
+			transform.position.z );
+	}
+
+	/* Check if the ListBox is beyond the upper or lower bound or not.
+	 * If does, move the ListBox to the other side.
+	 */
+	void checkBoundary()
+	{
+		float beyondWorldPosY = 0.0f;
+
+		if ( transform.position.y < lowerBoundWorldPosY )
+		{
+			beyondWorldPosY = ( lowerBoundWorldPosY - transform.position.y ) % rangeBoundWorldPosY;
+			transform.position = new Vector3(
+				transform.position.x,
+				upperBoundWorldPosY - unitWorldPosY - beyondWorldPosY,
+				transform.position.z );
+		}
+		else if ( transform.position.y > upperBoundWorldPosY )
+		{
+			beyondWorldPosY = ( transform.position.y - upperBoundWorldPosY ) % rangeBoundWorldPosY;
+			transform.position = new Vector3(
+				transform.position.x,
+				lowerBoundWorldPosY + unitWorldPosY + beyondWorldPosY,
+				transform.position.z );
+		}
+
+		updateXPosition();
+	}
+}
