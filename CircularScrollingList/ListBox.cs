@@ -71,40 +71,50 @@ public class ListBox : MonoBehaviour
 		}
 
 		if ( !isTouchingDevice )
+			storeMousePosition();
+		else if ( isTouchingDevice && Input.touchCount > 0 )
+			storeFingerPosition();
+	}
+
+	/* Store the position of mouse when the player clicks the left mouse button.
+	 */
+	void storeMousePosition()
+	{
+		if ( Input.GetMouseButtonDown(0) )
 		{
-			if ( Input.GetMouseButtonDown(0) )
-			{
-				lastInputWordPos = Camera.main.ScreenToWorldPoint( Input.mousePosition );
-			}
-			else if ( Input.GetMouseButton(0) )
-			{
-				currentInputWorldPos = Camera.main.ScreenToWorldPoint( Input.mousePosition );
-				deltaInputWorldPos = new Vector3( 0.0f, currentInputWorldPos.y - lastInputWordPos.y, 0.0f );
-				updatePosition( deltaInputWorldPos );
-
-				keepSliding = true;
-				slidingFrames = 20;
-
-				lastInputWordPos = currentInputWorldPos;
-			}
+			lastInputWordPos = Camera.main.ScreenToWorldPoint( Input.mousePosition );
 		}
-		else if ( !isTouchingDevice && Input.touchCount > 0 )
+		else if ( Input.GetMouseButton(0) )
 		{
-			if ( Input.GetTouch(0).phase == TouchPhase.Began )
-			{
-				lastInputWordPos = Camera.main.ScreenToWorldPoint( Input.GetTouch(0).position );
-			}
-			else if ( Input.GetTouch(0).phase == TouchPhase.Moved )
-			{
-				currentInputWorldPos = Camera.main.ScreenToWorldPoint( Input.GetTouch(0).position );
-				deltaInputWorldPos = new Vector3( 0.0f, currentInputWorldPos.y - lastInputWordPos.y, 0.0f );
-				updatePosition( deltaInputWorldPos );
+			currentInputWorldPos = Camera.main.ScreenToWorldPoint( Input.mousePosition );
+			deltaInputWorldPos = new Vector3( 0.0f, currentInputWorldPos.y - lastInputWordPos.y, 0.0f );
+			updatePosition( deltaInputWorldPos );
+			
+			keepSliding = true;
+			slidingFrames = 20;
+			
+			lastInputWordPos = currentInputWorldPos;
+		}
+	}
 
-				keepSliding = true;
-				slidingFrames = 20;
-
-				lastInputWordPos = currentInputWorldPos;
-			}
+	/* Store the position of touching on the mobile.
+	 */
+	void storeFingerPosition()
+	{
+		if ( Input.GetTouch(0).phase == TouchPhase.Began )
+		{
+			lastInputWordPos = Camera.main.ScreenToWorldPoint( Input.GetTouch(0).position );
+		}
+		else if ( Input.GetTouch(0).phase == TouchPhase.Moved )
+		{
+			currentInputWorldPos = Camera.main.ScreenToWorldPoint( Input.GetTouch(0).position );
+			deltaInputWorldPos = new Vector3( 0.0f, currentInputWorldPos.y - lastInputWordPos.y, 0.0f );
+			updatePosition( deltaInputWorldPos );
+			
+			keepSliding = true;
+			slidingFrames = 20;
+			
+			lastInputWordPos = currentInputWorldPos;
 		}
 	}
 
