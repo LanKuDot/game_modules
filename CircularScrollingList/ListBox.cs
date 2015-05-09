@@ -53,6 +53,32 @@ public class ListBox : MonoBehaviour
 		rangeBoundWorldPosY = unitWorldPosY * (float)numOfListBox;
 
 		initialPosition( listBoxID );
+		initialContent();
+	}
+
+	/* Initialize the content of ListBox.
+	 */
+	void initialContent()
+	{
+		int contentID;
+
+		if ( listBoxID == numOfListBox / 2 )
+			contentID = 0;
+		else if ( listBoxID < numOfListBox / 2 )
+			contentID = ListBank.Instance.getListLength() - ( numOfListBox / 2 - listBoxID );
+		else
+			contentID = listBoxID - numOfListBox / 2;
+
+		while ( contentID < 0 )
+			contentID += ListBank.Instance.getListLength();
+		contentID = contentID % ListBank.Instance.getListLength();
+
+		updateContent( ListBank.Instance.getListContent( contentID ).ToString() );
+	}
+
+	void updateContent( string content )
+	{
+		text.text = content;
 	}
 
 	void Update()
