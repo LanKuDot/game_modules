@@ -10,7 +10,11 @@ public class ListBox : MonoBehaviour
 	public int listBoxID;	// Must be unique, and count from 0
 	public Text text;		// The content of the list box
 
+	public ListBox lastListBox;
+	public ListBox nextListBox;
+
 	private int numOfListBox;
+	private int contentID;
 	private bool isTouchingDevice;
 
 	private Vector2 maxWorldPos;		// The maximum world position in the view of camera
@@ -60,8 +64,6 @@ public class ListBox : MonoBehaviour
 	 */
 	void initialContent()
 	{
-		int contentID;
-
 		if ( listBoxID == numOfListBox / 2 )
 			contentID = 0;
 		else if ( listBoxID < numOfListBox / 2 )
@@ -187,6 +189,7 @@ public class ListBox : MonoBehaviour
 				transform.position.x,
 				upperBoundWorldPosY - unitWorldPosY - beyondWorldPosY,
 				transform.position.z );
+			updateToLastContent();
 		}
 		else if ( transform.position.y > upperBoundWorldPosY )
 		{
@@ -195,8 +198,30 @@ public class ListBox : MonoBehaviour
 				transform.position.x,
 				lowerBoundWorldPosY + unitWorldPosY + beyondWorldPosY,
 				transform.position.z );
+			updateToNextContent();
 		}
 
 		updateXPosition();
+	}
+
+	public int getCurrentContentID()
+	{
+		return contentID;
+	}
+
+	void updateToLastContent()
+	{
+		contentID = nextListBox.getCurrentContentID() - 1;
+		contentID = ( contentID < 0 ) ? ListBank.Instance.getListLength() - 1 : contentID;
+
+		updateContent( ListBank.Instance.getListContent( contentID ).ToString() );
+	}
+
+	void updateToNextContent()
+	{
+		contentID = lastListBox.getCurrentContentID() + 1;
+		contentID = ( contentID == ListBank.Instance.getListLength() ) ? 0 : contentID;
+
+		updateContent( ListBank.Instance.getListContent( contentID ).ToString() );
 	}
 }
