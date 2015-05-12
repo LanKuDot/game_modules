@@ -203,12 +203,15 @@ public class ListBox : MonoBehaviour
 
 		updateXPosition();
 	}
-
+	
 	public int getCurrentContentID()
 	{
 		return contentID;
 	}
 
+	/* Update to the last content of the next ListBox
+	 * when the ListBox appears at the top of camera.
+	 */
 	void updateToLastContent()
 	{
 		contentID = nextListBox.getCurrentContentID() - 1;
@@ -217,6 +220,9 @@ public class ListBox : MonoBehaviour
 		updateContent( ListBank.Instance.getListContent( contentID ).ToString() );
 	}
 
+	/* Update to the next content of the last ListBox
+	 * when the ListBox appears at the bottom of camera.
+	 */
 	void updateToNextContent()
 	{
 		contentID = lastListBox.getCurrentContentID() + 1;
