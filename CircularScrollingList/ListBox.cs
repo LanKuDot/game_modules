@@ -27,6 +27,8 @@ public class ListBox : MonoBehaviour
 	private Vector3 currentInputWorldPos;
 	private Vector3 deltaInputWorldPos;
 
+	private Vector3 originalLocalScale;
+
 	private bool keepSliding = false;
 	private int slidingFrames;
 
@@ -55,6 +57,8 @@ public class ListBox : MonoBehaviour
 		lowerBoundWorldPosY = unitWorldPosY * (float)( -1 * numOfListBox / 2 - 1 );
 		upperBoundWorldPosY = unitWorldPosY * (float)( numOfListBox / 2 + 1 );
 		rangeBoundWorldPosY = unitWorldPosY * (float)numOfListBox;
+
+		originalLocalScale = transform.localScale;
 
 		initialPosition( listBoxID );
 		initialContent();
@@ -173,6 +177,7 @@ public class ListBox : MonoBehaviour
 			maxWorldPos.x * 0.15f - maxWorldPos.x * 0.2f * Mathf.Cos( transform.position.y / upperBoundWorldPosY * Mathf.PI / 2.0f ),
 			transform.position.y,
 			transform.position.z );
+		updateSize();
 	}
 
 	/* Check if the ListBox is beyond the upper or lower bound or not.
@@ -202,6 +207,13 @@ public class ListBox : MonoBehaviour
 		}
 
 		updateXPosition();
+	}
+
+	/* Scale the size of listBox accroding to the Y position.
+	 */
+	void updateSize()
+	{
+		transform.localScale = originalLocalScale * ( 1.0f + 0.05f * ( upperBoundWorldPosY - Mathf.Abs( transform.position.y ) ) );
 	}
 	
 	public int getCurrentContentID()
