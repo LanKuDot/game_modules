@@ -101,6 +101,21 @@ public class ListBox : MonoBehaviour
 		deltaInputWorldPos = new Vector3( 0.0f, deltaPosY / 2.0f, 0.0f );
 	}
 
+	/* Move the listBox for world position unit.
+	 * Move up when "up" is true, or else, move down.
+	 */
+	public void unitMove( int unit, bool up )
+	{
+		float deltaPosY;
+
+		if ( up )
+			deltaPosY = unitWorldPosY * (float)unit;
+		else
+			deltaPosY = unitWorldPosY * (float)unit * -1;
+
+		setDeltaPosY( deltaPosY );
+	}
+
 	void Update()
 	{
 		if ( keepSliding )
@@ -109,7 +124,8 @@ public class ListBox : MonoBehaviour
 			if ( slidingFrames == 0 )
 			{
 				keepSliding = false;
-				if ( ListPositionCtrl.Instance.alignToCenter )
+				if ( ListPositionCtrl.Instance.alignToCenter ||
+				    ListPositionCtrl.Instance.controlByButton )
 					updatePosition( deltaWorldPosToSlide );
 				return;
 			}
@@ -119,10 +135,13 @@ public class ListBox : MonoBehaviour
 			deltaInputWorldPos.y /= 2.0f;
 		}
 
-		if ( !isTouchingDevice )
-			storeMousePosition();
-		else if ( isTouchingDevice && Input.touchCount > 0 )
-			storeFingerPosition();
+		if ( !ListPositionCtrl.Instance.controlByButton )
+		{
+			if ( !isTouchingDevice )
+				storeMousePosition();
+			else if ( isTouchingDevice && Input.touchCount > 0 )
+				storeFingerPosition();
+		}
 	}
 
 	/* Store the position of mouse when the player clicks the left mouse button.
