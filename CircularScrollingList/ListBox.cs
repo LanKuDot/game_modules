@@ -27,6 +27,9 @@ public class ListBox : MonoBehaviour
 	private Vector3 currentInputWorldPos;
 	private Vector3 deltaInputWorldPos;
 
+	// Calculate the delta y position left when the alignToCenter is enabled.
+	private Vector3 deltaWorldPosToSlide;
+
 	private Vector3 originalLocalScale;
 
 	private bool keepSliding = false;
@@ -87,6 +90,17 @@ public class ListBox : MonoBehaviour
 		text.text = content;
 	}
 
+	/* Make the list box slide for delta y position.
+	 */
+	public void setDeltaPosY( float deltaPosY )
+	{
+		keepSliding = true;
+		slidingFrames = 20;
+
+		deltaWorldPosToSlide = new Vector3( 0.0f, deltaPosY, 0.0f );
+		deltaInputWorldPos = new Vector3( 0.0f, deltaPosY / 2.0f, 0.0f );
+	}
+
 	void Update()
 	{
 		if ( keepSliding )
@@ -95,11 +109,14 @@ public class ListBox : MonoBehaviour
 			if ( slidingFrames == 0 )
 			{
 				keepSliding = false;
+				if ( ListPositionCtrl.Instance.alignToCenter )
+					updatePosition( deltaWorldPosToSlide );
 				return;
 			}
 
 			updatePosition( deltaInputWorldPos );
-			deltaInputWorldPos.y = deltaInputWorldPos.y / 1.2f;
+			deltaWorldPosToSlide -= deltaInputWorldPos;
+			deltaInputWorldPos.y /= 2.0f;
 		}
 
 		if ( !isTouchingDevice )
@@ -121,10 +138,13 @@ public class ListBox : MonoBehaviour
 			currentInputWorldPos = Camera.main.ScreenToWorldPoint( Input.mousePosition );
 			deltaInputWorldPos = new Vector3( 0.0f, currentInputWorldPos.y - lastInputWordPos.y, 0.0f );
 			updatePosition( deltaInputWorldPos );
-			
-			keepSliding = true;
-			slidingFrames = 20;
-			
+
+			if ( !ListPositionCtrl.Instance.alignToCenter )
+			{
+				keepSliding = true;
+				slidingFrames = 20;
+			}
+
 			lastInputWordPos = currentInputWorldPos;
 		}
 	}
@@ -142,10 +162,13 @@ public class ListBox : MonoBehaviour
 			currentInputWorldPos = Camera.main.ScreenToWorldPoint( Input.GetTouch(0).position );
 			deltaInputWorldPos = new Vector3( 0.0f, currentInputWorldPos.y - lastInputWordPos.y, 0.0f );
 			updatePosition( deltaInputWorldPos );
-			
-			keepSliding = true;
-			slidingFrames = 20;
-			
+
+			if ( !ListPositionCtrl.Instance.alignToCenter )
+			{
+				keepSliding = true;
+				slidingFrames = 20;
+			}
+
 			lastInputWordPos = currentInputWorldPos;
 		}
 	}
