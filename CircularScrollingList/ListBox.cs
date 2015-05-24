@@ -23,8 +23,6 @@ public class ListBox : MonoBehaviour
 	private float upperBoundWorldPosY;
 	private float rangeBoundWorldPosY;
 
-	private Vector3 lastInputWordPos;
-	private Vector3 currentInputWorldPos;
 	private Vector3 deltaInputWorldPos;
 
 	// Calculate the delta y position left when the alignToCenter is enabled.
@@ -34,19 +32,6 @@ public class ListBox : MonoBehaviour
 
 	private bool keepSliding = false;
 	private int slidingFrames;
-
-	void Awake()
-	{
-		switch( Application.platform )
-		{
-		case RuntimePlatform.WindowsEditor:
-			isTouchingDevice = false;
-			break;
-		case RuntimePlatform.Android:
-			isTouchingDevice = true;
-			break;
-		}
-	}
 
 	void Start()
 	{
@@ -134,62 +119,6 @@ public class ListBox : MonoBehaviour
 			deltaWorldPosToSlide -= deltaInputWorldPos;
 			deltaInputWorldPos.y /= 2.0f;
 		}
-
-		if ( !ListPositionCtrl.Instance.controlByButton )
-		{
-			if ( !isTouchingDevice )
-				storeMousePosition();
-			else if ( isTouchingDevice && Input.touchCount > 0 )
-				storeFingerPosition();
-		}
-	}
-
-	/* Store the position of mouse when the player clicks the left mouse button.
-	 */
-	void storeMousePosition()
-	{
-		if ( Input.GetMouseButtonDown(0) )
-		{
-			lastInputWordPos = Camera.main.ScreenToWorldPoint( Input.mousePosition );
-		}
-		else if ( Input.GetMouseButton(0) )
-		{
-			currentInputWorldPos = Camera.main.ScreenToWorldPoint( Input.mousePosition );
-			deltaInputWorldPos = new Vector3( 0.0f, currentInputWorldPos.y - lastInputWordPos.y, 0.0f );
-			updatePosition( deltaInputWorldPos );
-
-			if ( !ListPositionCtrl.Instance.alignToCenter )
-			{
-				keepSliding = true;
-				slidingFrames = 20;
-			}
-
-			lastInputWordPos = currentInputWorldPos;
-		}
-	}
-
-	/* Store the position of touching on the mobile.
-	 */
-	void storeFingerPosition()
-	{
-		if ( Input.GetTouch(0).phase == TouchPhase.Began )
-		{
-			lastInputWordPos = Camera.main.ScreenToWorldPoint( Input.GetTouch(0).position );
-		}
-		else if ( Input.GetTouch(0).phase == TouchPhase.Moved )
-		{
-			currentInputWorldPos = Camera.main.ScreenToWorldPoint( Input.GetTouch(0).position );
-			deltaInputWorldPos = new Vector3( 0.0f, currentInputWorldPos.y - lastInputWordPos.y, 0.0f );
-			updatePosition( deltaInputWorldPos );
-
-			if ( !ListPositionCtrl.Instance.alignToCenter )
-			{
-				keepSliding = true;
-				slidingFrames = 20;
-			}
-
-			lastInputWordPos = currentInputWorldPos;
-		}
 	}
 
 	/* Initialize the position of the list box accroding to its ID.
@@ -204,7 +133,7 @@ public class ListBox : MonoBehaviour
 
 	/* Update the position of ListBox accroding to the delta position at each frame.
 	 */
-	void updatePosition( Vector3 deltaPosition )
+	public void updatePosition( Vector3 deltaPosition )
 	{
 		transform.position += deltaPosition;
 		updateXPosition();

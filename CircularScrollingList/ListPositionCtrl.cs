@@ -15,9 +15,25 @@ public class ListPositionCtrl : MonoBehaviour
 
 	public Button[] buttons;
 
+	private bool isTouchingDevice;
+
+	private Vector3 lastInputWorldPos;
+	private Vector3 currentInputWorldPos;
+	private Vector3 deltaInputWorldPos;
+
 	void Awake()
 	{
 		Instance = this;
+
+		switch( Application.platform )
+		{
+		case RuntimePlatform.WindowsEditor:
+			isTouchingDevice = false;
+			break;
+		case RuntimePlatform.Android:
+			isTouchingDevice = true;
+			break;
+		}
 	}
 
 	void Start()
@@ -29,10 +45,66 @@ public class ListPositionCtrl : MonoBehaviour
 
 	void Update()
 	{
-		if ( alignToCenter && !controlByButton )
-			if ( Input.GetMouseButtonUp(0) ||
-		   	 ( Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended ) )
-				assignDeltaPositionY();
+		if ( !controlByButton )
+		{
+			if ( !isTouchingDevice )
+				storeMousePosition();
+			else
+				storeFingerPosition();
+		}
+	}
+
+	/* Store the position of mouse when the player clicks the left mouse button.
+	 */
+	void storeMousePosition()
+	{
+		if ( Input.GetMouseButtonDown(0) )
+		{
+			lastInputWorldPos = Camera.main.ScreenToWorldPoint( Input.mousePosition );
+		}
+		else if ( Input.GetMouseButton(0) )
+		{
+			currentInputWorldPos = Camera.main.ScreenToWorldPoint( Input.mousePosition );
+			deltaInputWorldPos = new Vector3( 0.0f, currentInputWorldPos.y - lastInputWorldPos.y, 0.0f );
+			foreach ( ListBox listbox in listBoxes )
+				listbox.updatePosition( deltaInputWorldPos );
+
+			lastInputWorldPos = currentInputWorldPos;
+		}
+		else if ( Input.GetMouseButtonUp(0) )
+			setSlidingEffect();
+	}
+
+	/* Store the position of touching on the mobile.
+	 */
+	void storeFingerPosition()
+	{
+		if ( Input.GetTouch(0).phase == TouchPhase.Began )
+		{
+			lastInputWorldPos = Camera.main.ScreenToWorldPoint( Input.GetTouch(0).position );
+		}
+		else if ( Input.GetTouch(0).phase == TouchPhase.Moved )
+		{
+			currentInputWorldPos = Camera.main.ScreenToWorldPoint( Input.GetTouch(0).position );
+			deltaInputWorldPos = new Vector3( 0.0f, currentInputWorldPos.y - lastInputWorldPos.y, 0.0f );
+			foreach ( ListBox listbox in listBoxes )
+				listbox.updatePosition( deltaInputWorldPos );
+
+			lastInputWorldPos = currentInputWorldPos;
+		}
+		else if ( Input.GetTouch(0).phase == TouchPhase.Ended )
+			setSlidingEffect();
+	}
+
+	void setSlidingEffect()
+	{
+		if ( !alignToCenter )
+		{
+			foreach( ListBox listbox in listBoxes )
+				listbox.setDeltaPosY( deltaInputWorldPos.y );
+		}
+		else
+			assignDeltaPositionY();
 	}
 
 	/* Find the listBox which is the closest to the center y position,
