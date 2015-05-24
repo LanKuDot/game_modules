@@ -96,29 +96,23 @@ public class ListPositionCtrl : MonoBehaviour
 			setSlidingEffect();
 	}
 
+	/* If the touch is ended, calculate the distance to slide and
+	 * assign to the listBoxes.
+	 */
 	void setSlidingEffect()
 	{
-		if ( !alignToCenter )
-		{
-			foreach( ListBox listbox in listBoxes )
-				listbox.setDeltaPosY( deltaInputWorldPos.y );
-		}
-		else
-			assignDeltaPositionY();
+		float deltaPos = deltaInputWorldPos.y;
+
+		if ( alignToCenter )
+			deltaPos = findDeltaPositionY();
+
+		foreach( ListBox listbox in listBoxes )
+			listbox.setDeltaPosY( deltaPos );
 	}
 
 	/* Find the listBox which is the closest to the center y position,
 	 * And calculate the delta y position between them.
-	 * Then assign the delta y position to all listBoxes.
 	 */
-	void assignDeltaPositionY()
-	{
-		float deltaPosY = findDeltaPositionY();
-
-		for ( int i = 0; i < listBoxes.Length; ++i )
-			listBoxes[i].setDeltaPosY( deltaPosY );
-	}
-
 	float findDeltaPositionY()
 	{
 		float minDeltaPosY = 99999.9f;
