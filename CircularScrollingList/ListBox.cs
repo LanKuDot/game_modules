@@ -23,10 +23,8 @@ public class ListBox : MonoBehaviour
 	private float upperBoundWorldPosY;
 	private float rangeBoundWorldPosY;
 
-	private Vector3 deltaInputWorldPos;
-
-	// Calculate the delta y position left when the alignToCenter is enabled.
-	private Vector3 deltaWorldPosToSlide;
+	private Vector3 slidingWorldPos;	// The sliding distance at each frame
+	private Vector3 slidingWorldPosLeft;
 
 	private Vector3 originalLocalScale;
 
@@ -77,13 +75,13 @@ public class ListBox : MonoBehaviour
 
 	/* Make the list box slide for delta y position.
 	 */
-	public void setDeltaPosY( float deltaPosY )
+	public void setSlidingDistance( float distance )
 	{
 		keepSliding = true;
 		slidingFrames = 20;
 
-		deltaWorldPosToSlide = new Vector3( 0.0f, deltaPosY, 0.0f );
-		deltaInputWorldPos = new Vector3( 0.0f, deltaPosY / 2.0f, 0.0f );
+		slidingWorldPosLeft = new Vector3( 0.0f, distance, 0.0f );
+		slidingWorldPos = new Vector3( 0.0f, distance / 2.0f, 0.0f );
 	}
 
 	/* Move the listBox for world position unit.
@@ -98,7 +96,7 @@ public class ListBox : MonoBehaviour
 		else
 			deltaPosY = unitWorldPosY * (float)unit * -1;
 
-		setDeltaPosY( deltaPosY );
+		setSlidingDistance( deltaPosY );
 	}
 
 	void Update()
@@ -111,13 +109,13 @@ public class ListBox : MonoBehaviour
 				keepSliding = false;
 				if ( ListPositionCtrl.Instance.alignToCenter ||
 				    ListPositionCtrl.Instance.controlByButton )
-					updatePosition( deltaWorldPosToSlide );
+					updatePosition( slidingWorldPosLeft );
 				return;
 			}
 
-			updatePosition( deltaInputWorldPos );
-			deltaWorldPosToSlide -= deltaInputWorldPos;
-			deltaInputWorldPos.y /= 2.0f;
+			updatePosition( slidingWorldPos );
+			slidingWorldPosLeft -= slidingWorldPos;
+			slidingWorldPos.y /= 2.0f;
 		}
 	}
 

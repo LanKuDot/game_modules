@@ -107,7 +107,7 @@ public class ListPositionCtrl : MonoBehaviour
 			deltaPos = findDeltaPositionY();
 
 		foreach( ListBox listbox in listBoxes )
-			listbox.setDeltaPosY( deltaPos );
+			listbox.setSlidingDistance( deltaPos );
 	}
 
 	/* Find the listBox which is the closest to the center y position,
