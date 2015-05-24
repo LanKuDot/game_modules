@@ -78,10 +78,11 @@ public class ListBox : MonoBehaviour
 	public void setSlidingDistance( float distance )
 	{
 		keepSliding = true;
-		slidingFrames = 20;
+		slidingFrames = ListPositionCtrl.Instance.slidingFrames;
 
 		slidingWorldPosLeft = new Vector3( 0.0f, distance, 0.0f );
-		slidingWorldPos = new Vector3( 0.0f, distance / 2.0f, 0.0f );
+		slidingWorldPos = Vector3.zero;
+		slidingWorldPos.y = Mathf.Lerp( 0.0f, distance, ListPositionCtrl.Instance.slidingFactor );
 	}
 
 	/* Move the listBox for world position unit.
@@ -117,7 +118,7 @@ public class ListBox : MonoBehaviour
 
 			updatePosition( slidingWorldPos );
 			slidingWorldPosLeft -= slidingWorldPos;
-			slidingWorldPos.y /= 2.0f;
+			slidingWorldPos.y = Mathf.Lerp( 0.0f, slidingWorldPosLeft.y, ListPositionCtrl.Instance.slidingFactor );
 		}
 	}
 
