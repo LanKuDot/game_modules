@@ -8,7 +8,7 @@ using System.Collections;
 public class ListBox : MonoBehaviour
 {
 	public int listBoxID;	// Must be unique, and count from 0
-	public Text text;		// The content of the list box
+	public Text content;		// The content of the list box
 
 	public ListBox lastListBox;
 	public ListBox nextListBox;
@@ -70,7 +70,7 @@ public class ListBox : MonoBehaviour
 
 	void updateContent( string content )
 	{
-		text.text = content;
+		this.content.text = content;
 	}
 
 	/* Make the list box slide for delta y position.
