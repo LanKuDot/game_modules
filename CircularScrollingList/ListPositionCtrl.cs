@@ -1,4 +1,12 @@
-﻿/* Calculate the final position of ListBoxes.
+﻿/* Calculate and assign the final position for each ListBoxes.
+ *
+ * There are three controling modes:
+ * 1. Free moving: Control the listBoxes with finger or mouse.
+ *    You don't know where the ListBox would stop at.
+ * 2. Align to center: It's the same as free moving
+ *    but there always has a listBox positioning at the center.
+ * 3. Control by button: Control the listBoxes by button on the screen.
+ *    There always has a listBox positioning at the center.
  */
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,6 +15,13 @@ using System.Collections;
 public class ListPositionCtrl : MonoBehaviour
 {
 	public static ListPositionCtrl Instance;
+	/* Initial settings.
+	 *   Mode            controlByButton  alignToCenter
+	 * --------------------------------------------------
+	 *   Free moving          false           false
+	 *   Align to center      false           true
+	 *   Control by btn       true          Don't care
+	 */
 	public bool controlByButton = false;
 	public bool alignToCenter = false;
 
@@ -101,7 +116,7 @@ public class ListPositionCtrl : MonoBehaviour
 			setSlidingEffect();
 	}
 
-	/* If the touch is ended, calculate the distance to slide and
+	/* If the touching is ended, calculate the distance to slide and
 	 * assign to the listBoxes.
 	 */
 	void setSlidingEffect()

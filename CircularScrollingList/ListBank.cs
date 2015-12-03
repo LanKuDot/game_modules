@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿/* Store the contents for ListBoxes to display.
+ */
+using UnityEngine;
 using System.Collections;
 
 public class ListBank : MonoBehaviour
