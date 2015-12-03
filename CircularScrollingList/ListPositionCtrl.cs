@@ -30,8 +30,11 @@ public class ListPositionCtrl : MonoBehaviour
 
 	public Button[] buttons;
 
-	public float divideFactor = 2.0f;	// Control the distance between each ListBox
+	// Set the distance between each ListBox. The larger, the closer.
+	public float divideFactor = 2.0f;
+	// Set the sliding duration. The larger, the longer.
 	public int slidingFrames = 35;
+	// Set the sliding speed. The larger, the quicker.
 	[Range( 0.0f, 1.0f )]
 	public float slidingFactor = 0.2f;
 
