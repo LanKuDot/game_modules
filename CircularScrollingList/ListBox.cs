@@ -186,7 +186,8 @@ public class ListBox : MonoBehaviour
 	 */
 	void updateSize()
 	{
-		transform.localScale = originalLocalScale * ( 1.0f + 0.05f * ( upperBoundWorldPosY - Mathf.Abs( transform.position.y ) ) );
+		transform.localScale = originalLocalScale *
+			( 1.0f + ListPositionCtrl.Instance.scaleFactor * ( upperBoundWorldPosY - Mathf.Abs( transform.position.y ) ) );
 	}
 	
 	public int getCurrentContentID()

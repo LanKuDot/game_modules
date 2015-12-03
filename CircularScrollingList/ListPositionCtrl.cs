@@ -45,6 +45,8 @@ public class ListPositionCtrl : MonoBehaviour
 	// Positive: Curve to left; Negative: Curve to right.
 	[Range( -1.0f, 1.0f )]
 	public float angularity = 0.2f;
+	// Set the scale amount of the center listBox.
+	public float scaleFactor = 0.05f;
 
 	private bool isTouchingDevice;
 
