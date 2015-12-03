@@ -146,7 +146,8 @@ public class ListBox : MonoBehaviour
 	void updateXPosition()
 	{
 		transform.position = new Vector3(
-			maxWorldPos.x * 0.15f - maxWorldPos.x * 0.2f * Mathf.Cos( transform.position.y / upperBoundWorldPosY * Mathf.PI / 2.0f ),
+			maxWorldPos.x * ListPositionCtrl.Instance.x_pivot -
+			maxWorldPos.x * ListPositionCtrl.Instance.angularity * Mathf.Cos( transform.position.y / upperBoundWorldPosY * Mathf.PI / 2.0f ),
 			transform.position.y,
 			transform.position.z );
 		updateSize();
