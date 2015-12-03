@@ -38,7 +38,7 @@ public class ListBox : MonoBehaviour
 		maxWorldPos = ( Vector2 ) Camera.main.ScreenToWorldPoint(
 			new Vector2( Camera.main.pixelWidth, Camera.main.pixelHeight ) );
 
-		unitWorldPosY = maxWorldPos.y / 2.0f;
+		unitWorldPosY = maxWorldPos.y / ListPositionCtrl.Instance.divideFactor;
 
 		lowerBoundWorldPosY = unitWorldPosY * (float)( -1 * numOfListBox / 2 - 1 );
 		upperBoundWorldPosY = unitWorldPosY * (float)( numOfListBox / 2 + 1 );
