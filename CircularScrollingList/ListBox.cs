@@ -33,7 +33,7 @@ public class ListBox : MonoBehaviour
 
 	void Start()
 	{
-		numOfListBox = ListBank.Instance.numOfListBoxes;
+		numOfListBox = ListPositionCtrl.Instance.listBoxes.Length;
 
 		maxWorldPos = ( Vector2 ) Camera.main.ScreenToWorldPoint(
 			new Vector2( Camera.main.pixelWidth, Camera.main.pixelHeight ) );
