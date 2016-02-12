@@ -65,7 +65,7 @@ public class ListBox : MonoBehaviour
 			contentID += ListBank.Instance.getListLength();
 		contentID = contentID % ListBank.Instance.getListLength();
 
-		updateContent( ListBank.Instance.getListContent( contentID ).ToString() );
+		updateContent( ListBank.Instance.getListContent( contentID ) );
 	}
 
 	void updateContent( string content )
@@ -203,7 +203,7 @@ public class ListBox : MonoBehaviour
 		contentID = nextListBox.getCurrentContentID() - 1;
 		contentID = ( contentID < 0 ) ? ListBank.Instance.getListLength() - 1 : contentID;
 
-		updateContent( ListBank.Instance.getListContent( contentID ).ToString() );
+		updateContent( ListBank.Instance.getListContent( contentID ) );
 	}
 
 	/* Update to the next content of the last ListBox
@@ -214,6 +214,6 @@ public class ListBox : MonoBehaviour
 		contentID = lastListBox.getCurrentContentID() + 1;
 		contentID = ( contentID == ListBank.Instance.getListLength() ) ? 0 : contentID;
 
-		updateContent( ListBank.Instance.getListContent( contentID ).ToString() );
+		updateContent( ListBank.Instance.getListContent( contentID ) );
 	}
 }
