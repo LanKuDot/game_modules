@@ -18,10 +18,10 @@ public class ListBox : MonoBehaviour
 	private bool isTouchingDevice;
 
 	private Vector2 maxWorldPos;		// The maximum world position in the view of camera
-	private float unitWorldPosY;		// Equally split the screen into many units
-	private float lowerBoundWorldPosY;
-	private float upperBoundWorldPosY;
-	private float rangeBoundWorldPosY;
+	private Vector2 unitWorldPos;
+	private Vector2 lowerBoundWorldPos;
+	private Vector2 upperBoundWorldPos;
+	private Vector2 rangeBoundWorldPos;
 
 	private Vector3 slidingWorldPos;	// The sliding distance at each frame
 	private Vector3 slidingWorldPosLeft;
@@ -38,11 +38,11 @@ public class ListBox : MonoBehaviour
 		maxWorldPos = ( Vector2 ) Camera.main.ScreenToWorldPoint(
 			new Vector2( Camera.main.pixelWidth, Camera.main.pixelHeight ) );
 
-		unitWorldPosY = maxWorldPos.y / ListPositionCtrl.Instance.divideFactor;
+		unitWorldPos = maxWorldPos / ListPositionCtrl.Instance.divideFactor;
 
-		lowerBoundWorldPosY = unitWorldPosY * (float)( -1 * numOfListBox / 2 - 1 );
-		upperBoundWorldPosY = unitWorldPosY * (float)( numOfListBox / 2 + 1 );
-		rangeBoundWorldPosY = unitWorldPosY * (float)numOfListBox;
+		lowerBoundWorldPos = unitWorldPos * (float)( -1 * numOfListBox / 2 - 1 );
+		upperBoundWorldPos = unitWorldPos * (float)( numOfListBox / 2 + 1 );
+		rangeBoundWorldPos = unitWorldPos * (float)numOfListBox;
 
 		originalLocalScale = transform.localScale;
 
@@ -93,9 +93,9 @@ public class ListBox : MonoBehaviour
 		float deltaPosY;
 
 		if ( up )
-			deltaPosY = unitWorldPosY * (float)unit;
+			deltaPosY = unitWorldPos.y * (float)unit;
 		else
-			deltaPosY = unitWorldPosY * (float)unit * -1;
+			deltaPosY = unitWorldPos.y * (float)unit * -1;
 
 		setSlidingDistance( deltaPosY );
 	}
@@ -127,7 +127,7 @@ public class ListBox : MonoBehaviour
 	void initialPosition( int listBoxID )
 	{
 		transform.position = new Vector3( 0.0f,
-		                                 unitWorldPosY * (float)( listBoxID * -1 + numOfListBox / 2 ),
+		                                 unitWorldPos.y * (float)( listBoxID * -1 + numOfListBox / 2 ),
 		                                 0.0f );
 		updateXPosition();
 	}
@@ -147,7 +147,7 @@ public class ListBox : MonoBehaviour
 	{
 		transform.position = new Vector3(
 			maxWorldPos.x * ListPositionCtrl.Instance.x_pivot -
-			maxWorldPos.x * ListPositionCtrl.Instance.angularity * Mathf.Cos( transform.position.y / upperBoundWorldPosY * Mathf.PI / 2.0f ),
+			maxWorldPos.x * ListPositionCtrl.Instance.angularity * Mathf.Cos( transform.position.y / upperBoundWorldPos.y * Mathf.PI / 2.0f ),
 			transform.position.y,
 			transform.position.z );
 		updateSize();
@@ -160,21 +160,21 @@ public class ListBox : MonoBehaviour
 	{
 		float beyondWorldPosY = 0.0f;
 
-		if ( transform.position.y < lowerBoundWorldPosY )
+		if ( transform.position.y < lowerBoundWorldPos.y )
 		{
-			beyondWorldPosY = ( lowerBoundWorldPosY - transform.position.y ) % rangeBoundWorldPosY;
+			beyondWorldPosY = ( lowerBoundWorldPos.y - transform.position.y ) % rangeBoundWorldPos.y;
 			transform.position = new Vector3(
 				transform.position.x,
-				upperBoundWorldPosY - unitWorldPosY - beyondWorldPosY,
+				upperBoundWorldPos.y - unitWorldPos.y - beyondWorldPosY,
 				transform.position.z );
 			updateToLastContent();
 		}
-		else if ( transform.position.y > upperBoundWorldPosY )
+		else if ( transform.position.y > upperBoundWorldPos.y )
 		{
-			beyondWorldPosY = ( transform.position.y - upperBoundWorldPosY ) % rangeBoundWorldPosY;
+			beyondWorldPosY = ( transform.position.y - upperBoundWorldPos.y ) % rangeBoundWorldPos.y;
 			transform.position = new Vector3(
 				transform.position.x,
-				lowerBoundWorldPosY + unitWorldPosY + beyondWorldPosY,
+				lowerBoundWorldPos.y + unitWorldPos.y + beyondWorldPosY,
 				transform.position.z );
 			updateToNextContent();
 		}
@@ -187,7 +187,7 @@ public class ListBox : MonoBehaviour
 	void updateSize()
 	{
 		transform.localScale = originalLocalScale *
-			( 1.0f + ListPositionCtrl.Instance.scaleFactor * ( upperBoundWorldPosY - Mathf.Abs( transform.position.y ) ) );
+			( 1.0f + ListPositionCtrl.Instance.scaleFactor * ( upperBoundWorldPos.y - Mathf.Abs( transform.position.y ) ) );
 	}
 	
 	public int getCurrentContentID()
