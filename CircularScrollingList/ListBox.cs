@@ -132,10 +132,19 @@ public class ListBox : MonoBehaviour
 	 */
 	void initialPosition( int listBoxID )
 	{
-		transform.position = new Vector3( 0.0f,
-		                                 unitWorldPos.y * (float)( listBoxID * -1 + numOfListBox / 2 ),
-		                                 0.0f );
-		updateXPosition();
+		switch( ListPositionCtrl.Instance.direction ) {
+		case ListPositionCtrl.Direction.VERTICAL:
+			transform.position = new Vector3( 0.0f,
+		    	                             unitWorldPos.y * (float)( listBoxID * -1 + numOfListBox / 2 ),
+		    	                             0.0f );
+			updateXPosition();
+			break;
+		case ListPositionCtrl.Direction.HORIZONTAL:
+			transform.position = new Vector3( unitWorldPos.x * (float)( listBoxID * -1 + numOfListBox / 2 ),
+			                                 0.0f, 0.0f );
+			updateYPosition();
+			break;
+		}
 	}
 
 	/* Update the position of ListBox accroding to the delta position at each frame.
