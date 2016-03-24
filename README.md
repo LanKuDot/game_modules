@@ -4,6 +4,7 @@
 - Use finite list boxes to display infinte number of list contents.
 - It's all about math!
 - **Features**
+	- Vertical and Horizontal scrolling
     - Circular scrolling
     - Three moving mode
         1. Free moving
