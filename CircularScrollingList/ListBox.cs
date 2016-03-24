@@ -160,7 +160,19 @@ public class ListBox : MonoBehaviour
 			maxWorldPos.x * ListPositionCtrl.Instance.angularity * Mathf.Cos( transform.position.y / upperBoundWorldPos.y * Mathf.PI / 2.0f ),
 			transform.position.y,
 			transform.position.z );
-		updateSize();
+		updateSize( upperBoundWorldPos.y, transform.position.y );
+	}
+
+	/* Calculate the y position accroding to the x position.
+	 */
+	void updateYPosition()
+	{
+		transform.position = new Vector3(
+			transform.position.x,
+			maxWorldPos.y * ListPositionCtrl.Instance.y_pivot -
+			maxWorldPos.y * ListPositionCtrl.Instance.angularity * Mathf.Cos( transform.position.x / upperBoundWorldPos.x * Mathf.PI / 2.0f ),
+			transform.position.z );
+		updateSize( upperBoundWorldPos.x, transform.position.x );
 	}
 
 	/* Check if the ListBox is beyond the upper or lower bound or not.
@@ -192,12 +204,12 @@ public class ListBox : MonoBehaviour
 		updateXPosition();
 	}
 
-	/* Scale the size of listBox accroding to the Y position.
+	/* Scale the size of listBox accroding to the position.
 	 */
-	void updateSize()
+	void updateSize( float smallest_at, float target_value )
 	{
 		transform.localScale = originalLocalScale *
-			( 1.0f + ListPositionCtrl.Instance.scaleFactor * ( upperBoundWorldPos.y - Mathf.Abs( transform.position.y ) ) );
+			( 1.0f + ListPositionCtrl.Instance.scaleFactor * ( smallest_at - Mathf.Abs( target_value )));
 	}
 	
 	public int getCurrentContentID()
