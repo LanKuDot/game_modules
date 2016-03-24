@@ -14,6 +14,11 @@ using System.Collections;
 
 public class ListPositionCtrl : MonoBehaviour
 {
+	public enum Direction {
+		VERTICAL,
+		HORIZONTAL
+	};
+
 	public static ListPositionCtrl Instance;
 	/* Initial settings.
 	 *   Mode            controlByButton  alignToCenter
@@ -30,6 +35,7 @@ public class ListPositionCtrl : MonoBehaviour
 
 	public Button[] buttons;
 
+	public Direction direction = Direction.VERTICAL;
 	// Set the distance between each ListBox. The larger, the closer.
 	public float divideFactor = 2.0f;
 	// Set the sliding duration. The larger, the longer.
