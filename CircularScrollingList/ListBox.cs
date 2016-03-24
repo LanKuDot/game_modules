@@ -136,9 +136,13 @@ public class ListBox : MonoBehaviour
 	 */
 	public void updatePosition( Vector3 deltaPosition )
 	{
-		transform.position += deltaPosition;
-		updateXPosition();
-		checkBoundary();
+		switch ( ListPositionCtrl.Instance.direction ) {
+		case ListPositionCtrl.Direction.VERTICAL:
+			transform.position.y += deltaPosition.y;
+			updateXPosition();
+			checkBoundary();
+			break;
+		}
 	}
 
 	/* Calculate the x position accroding to the y position.

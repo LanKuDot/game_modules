@@ -104,7 +104,7 @@ public class ListPositionCtrl : MonoBehaviour
 		else if ( Input.GetMouseButton(0) )
 		{
 			currentInputWorldPos = Camera.main.ScreenToWorldPoint( Input.mousePosition );
-			deltaInputWorldPos = new Vector3( 0.0f, currentInputWorldPos.y - lastInputWorldPos.y, 0.0f );
+			deltaInputWorldPos = currentInputWorldPos - lastInputWorldPos;
 			foreach ( ListBox listbox in listBoxes )
 				listbox.updatePosition( deltaInputWorldPos );
 
@@ -125,7 +125,7 @@ public class ListPositionCtrl : MonoBehaviour
 		else if ( Input.GetTouch(0).phase == TouchPhase.Moved )
 		{
 			currentInputWorldPos = Camera.main.ScreenToWorldPoint( Input.GetTouch(0).position );
-			deltaInputWorldPos = new Vector3( 0.0f, currentInputWorldPos.y - lastInputWorldPos.y, 0.0f );
+			deltaInputWorldPos = currentInputWorldPos - lastInputWorldPos;
 			foreach ( ListBox listbox in listBoxes )
 				listbox.updatePosition( deltaInputWorldPos );
 
