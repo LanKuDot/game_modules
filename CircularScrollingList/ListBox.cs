@@ -155,7 +155,12 @@ public class ListBox : MonoBehaviour
 		case ListPositionCtrl.Direction.VERTICAL:
 			transform.position += new Vector3( 0.0f, deltaPosition.y, 0.0f );
 			updateXPosition();
-			checkBoundary();
+			checkBoundaryY();
+			break;
+		case ListPositionCtrl.Direction.HORIZONTAL:
+			transform.position += new Vector3( deltaPosition.x, 0.0f, 0.0f );
+			updateYPosition();
+			checkBoundaryX();
 			break;
 		}
 	}
@@ -187,7 +192,7 @@ public class ListBox : MonoBehaviour
 	/* Check if the ListBox is beyond the upper or lower bound or not.
 	 * If does, move the ListBox to the other side.
 	 */
-	void checkBoundary()
+	void checkBoundaryY()
 	{
 		float beyondWorldPosY = 0.0f;
 
@@ -213,6 +218,32 @@ public class ListBox : MonoBehaviour
 		updateXPosition();
 	}
 
+	void checkBoundaryX()
+	{
+		float beyondWorldPosX = 0.0f;
+
+		if ( transform.position.x < lowerBoundWorldPos.x )
+		{
+			beyondWorldPosX = ( lowerBoundWorldPos.x - transform.position.x ) % rangeBoundWorldPos.x;
+			transform.position = new Vector3(
+				upperBoundWorldPos.x - unitWorldPos.x - beyondWorldPosX,
+				transform.position.y,
+				transform.position.z );
+			updateToNextContent();
+		}
+		else if ( transform.position.x > upperBoundWorldPos.x )
+		{
+			beyondWorldPosX = ( transform.position.x - upperBoundWorldPos.x ) % rangeBoundWorldPos.x;
+			transform.position = new Vector3(
+				lowerBoundWorldPos.x + unitWorldPos.x + beyondWorldPosX,
+				transform.position.y,
+				transform.position.z );
+			updateToLastContent();
+		}
+
+		updateYPosition();
+	}
+
 	/* Scale the size of listBox accroding to the position.
 	 */
 	void updateSize( float smallest_at, float target_value )
@@ -220,7 +251,7 @@ public class ListBox : MonoBehaviour
 		transform.localScale = originalLocalScale *
 			( 1.0f + ListPositionCtrl.Instance.scaleFactor * ( smallest_at - Mathf.Abs( target_value )));
 	}
-	
+
 	public int getCurrentContentID()
 	{
 		return contentID;
