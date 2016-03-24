@@ -73,16 +73,15 @@ public class ListBox : MonoBehaviour
 		this.content.text = content;
 	}
 
-	/* Make the list box slide for delta y position.
+	/* Make the list box slide for delta x or y position.
 	 */
-	public void setSlidingDistance( float distance )
+	public void setSlidingDistance( Vector3 distance )
 	{
 		keepSliding = true;
 		slidingFrames = ListPositionCtrl.Instance.slidingFrames;
 
-		slidingWorldPosLeft = new Vector3( 0.0f, distance, 0.0f );
-		slidingWorldPos = Vector3.zero;
-		slidingWorldPos.y = Mathf.Lerp( 0.0f, distance, ListPositionCtrl.Instance.slidingFactor );
+		slidingWorldPosLeft = distance;
+		slidingWorldPos = Vector3.Lerp( Vector3.zero, distance, ListPositionCtrl.Instance.slidingFactor );
 	}
 
 	/* Move the listBox for world position unit.
@@ -118,7 +117,7 @@ public class ListBox : MonoBehaviour
 
 			updatePosition( slidingWorldPos );
 			slidingWorldPosLeft -= slidingWorldPos;
-			slidingWorldPos.y = Mathf.Lerp( 0.0f, slidingWorldPosLeft.y, ListPositionCtrl.Instance.slidingFactor );
+			slidingWorldPos = Vector3.Lerp( Vector3.zero, slidingWorldPosLeft, ListPositionCtrl.Instance.slidingFactor );
 		}
 	}
 
@@ -138,7 +137,7 @@ public class ListBox : MonoBehaviour
 	{
 		switch ( ListPositionCtrl.Instance.direction ) {
 		case ListPositionCtrl.Direction.VERTICAL:
-			transform.position.y += deltaPosition.y;
+			transform.position += new Vector3( 0.0f, deltaPosition.y, 0.0f );
 			updateXPosition();
 			checkBoundary();
 			break;
