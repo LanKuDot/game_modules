@@ -140,7 +140,7 @@ public class ListBox : MonoBehaviour
 			updateXPosition();
 			break;
 		case ListPositionCtrl.Direction.HORIZONTAL:
-			transform.position = new Vector3( unitWorldPos.x * (float)( listBoxID * -1 + numOfListBox / 2 ),
+			transform.position = new Vector3( unitWorldPos.x * (float)( listBoxID - numOfListBox / 2 ),
 			                                 0.0f, 0.0f );
 			updateYPosition();
 			break;
