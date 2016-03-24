@@ -87,16 +87,23 @@ public class ListBox : MonoBehaviour
 	/* Move the listBox for world position unit.
 	 * Move up when "up" is true, or else, move down.
 	 */
-	public void unitMove( int unit, bool up )
+	public void unitMove( int unit, bool up_right )
 	{
-		float deltaPosY;
+		Vector2 deltaPos;
 
-		if ( up )
-			deltaPosY = unitWorldPos.y * (float)unit;
+		if ( up_right )
+			deltaPos = unitWorldPos * (float)unit;
 		else
-			deltaPosY = unitWorldPos.y * (float)unit * -1;
+			deltaPos = unitWorldPos * (float)unit * -1;
 
-		setSlidingDistance( deltaPosY );
+		switch ( ListPositionCtrl.Instance.direction ) {
+		case ListPositionCtrl.Direction.HORIZONTAL:
+			setSlidingDistance( new Vector3( 0.0f, deltaPos.y, 0.0f ) );
+			break;
+		case ListPositionCtrl.Direction.VERTICAL:
+			setSlidingDistance( new Vector3( deltaPos.x, 0.0f, 0.0f ) );
+			break;
+		}
 	}
 
 	void Update()
