@@ -140,7 +140,7 @@ public class ListPositionCtrl : MonoBehaviour
 	 */
 	void setSlidingEffect()
 	{
-		Vector2 deltaPos = (Vector2)deltaInputWorldPos;
+		Vector3 deltaPos = deltaInputWorldPos;
 
 		if ( alignToCenter )
 			deltaPos = findDeltaPositionToCenter();
@@ -152,7 +152,7 @@ public class ListPositionCtrl : MonoBehaviour
 	/* Find the listBox which is the closest to the center position,
 	 * And calculate the delta position of x or y between them.
 	 */
-	Vector2 findDeltaPositionToCenter()
+	Vector3 findDeltaPositionToCenter()
 	{
 		float minDeltaPos = 99999.9f;
 		float deltaPos;
@@ -165,7 +165,7 @@ public class ListPositionCtrl : MonoBehaviour
 					minDeltaPos = deltaPos;
 			}
 
-			return new Vector2( 0.0f, minDeltaPos );
+			return new Vector3( 0.0f, minDeltaPos, 0.0f );
 
 		case Direction.HORIZONTAL:
 			foreach( ListBox listBox in listBoxes ) {
@@ -174,10 +174,10 @@ public class ListPositionCtrl : MonoBehaviour
 					minDeltaPos = deltaPos;
 			}
 
-			return new Vector2( minDeltaPos, 0.0f );
+			return new Vector3( minDeltaPos, 0.0f, 0.0f );
 
 		default:
-			return Vector2.zero;
+			return Vector3.zero;
 		}
 	}
 
