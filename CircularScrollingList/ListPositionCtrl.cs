@@ -31,7 +31,7 @@ public class ListPositionCtrl : MonoBehaviour
 	public bool alignToCenter = false;
 
 	public ListBox[] listBoxes;
-	public float centerPosY;
+	public Vector2 centerPos;
 
 	public Button[] buttons;
 
@@ -140,32 +140,45 @@ public class ListPositionCtrl : MonoBehaviour
 	 */
 	void setSlidingEffect()
 	{
-		float deltaPos = deltaInputWorldPos.y;
+		Vector2 deltaPos = (Vector2)deltaInputWorldPos;
 
 		if ( alignToCenter )
-			deltaPos = findDeltaPositionY();
+			deltaPos = findDeltaPositionToCenter();
 
 		foreach( ListBox listbox in listBoxes )
 			listbox.setSlidingDistance( deltaPos );
 	}
 
-	/* Find the listBox which is the closest to the center y position,
-	 * And calculate the delta y position between them.
+	/* Find the listBox which is the closest to the center position,
+	 * And calculate the delta position of x or y between them.
 	 */
-	float findDeltaPositionY()
+	Vector2 findDeltaPositionToCenter()
 	{
-		float minDeltaPosY = 99999.9f;
-		float deltaPosY;
+		float minDeltaPos = 99999.9f;
+		float deltaPos;
 
-		foreach ( ListBox listBox in listBoxes )
-		{
-			deltaPosY = centerPosY - listBox.transform.position.y;
+		switch ( direction ) {
+		case Direction.VERTICAL:
+			foreach ( ListBox listBox in listBoxes ) {
+				deltaPos = centerPos.y - listBox.transform.position.y;
+				if ( Mathf.Abs( deltaPos ) < Mathf.Abs( minDeltaPos ) )
+					minDeltaPos = deltaPos;
+			}
 
-			if ( Mathf.Abs( deltaPosY ) < Mathf.Abs( minDeltaPosY ) )
-				minDeltaPosY = deltaPosY;
+			return new Vector2( 0.0f, minDeltaPos );
+
+		case Direction.HORIZONTAL:
+			foreach( ListBox listBox in listBoxes ) {
+				deltaPos = centerPos.x - listBox.transform.position.x;
+				if ( Mathf.Abs( deltaPos ) < Mathf.Abs( minDeltaPos ) )
+					minDeltaPos = deltaPos;
+			}
+
+			return new Vector2( minDeltaPos, 0.0f );
+
+		default:
+			return Vector2.zero;
 		}
-
-		return minDeltaPosY;
 	}
 
 	/* controlByButton is enabled!
