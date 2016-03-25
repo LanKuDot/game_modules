@@ -249,7 +249,7 @@ public class ListBox : MonoBehaviour
 	void updateSize( float smallest_at, float target_value )
 	{
 		transform.localScale = originalLocalScale *
-			( 1.0f + ListPositionCtrl.Instance.scaleFactor * ( smallest_at - Mathf.Abs( target_value )));
+			( 1.0f + ListPositionCtrl.Instance.scaleFactor * Mathf.InverseLerp( smallest_at, 0.0f, Mathf.Abs( target_value )));
 	}
 
 	public int getCurrentContentID()
