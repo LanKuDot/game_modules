@@ -97,10 +97,10 @@ public class ListBox : MonoBehaviour
 			deltaPos = unitWorldPos * (float)unit * -1;
 
 		switch ( ListPositionCtrl.Instance.direction ) {
-		case ListPositionCtrl.Direction.HORIZONTAL:
+		case ListPositionCtrl.Direction.VERTICAL:
 			setSlidingDistance( new Vector3( 0.0f, deltaPos.y, 0.0f ) );
 			break;
-		case ListPositionCtrl.Direction.VERTICAL:
+		case ListPositionCtrl.Direction.HORIZONTAL:
 			setSlidingDistance( new Vector3( deltaPos.x, 0.0f, 0.0f ) );
 			break;
 		}
