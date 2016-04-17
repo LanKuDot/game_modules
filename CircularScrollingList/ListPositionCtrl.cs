@@ -35,6 +35,8 @@ public class ListPositionCtrl : MonoBehaviour
 	public Button[] buttons;
 
 	public Direction direction = Direction.VERTICAL;
+	// For 3D camera, the distance between canvas plane and camera.
+	public float canvasDistance = 100.0f;
 	// Set the distance between each ListBox. The larger, the closer.
 	public float divideFactor = 2.0f;
 	// Set the sliding duration. The larger, the longer.
@@ -100,11 +102,13 @@ public class ListPositionCtrl : MonoBehaviour
 	{
 		if ( Input.GetMouseButtonDown(0) )
 		{
-			lastInputWorldPos = Camera.main.ScreenToWorldPoint( Input.mousePosition );
+			lastInputWorldPos = Camera.main.ScreenToWorldPoint(
+				new Vector3( Input.mousePosition.x, Input.mousePosition.y, canvasDistance ) );
 		}
 		else if ( Input.GetMouseButton(0) )
 		{
-			currentInputWorldPos = Camera.main.ScreenToWorldPoint( Input.mousePosition );
+			currentInputWorldPos = Camera.main.ScreenToWorldPoint(
+				new Vector3( Input.mousePosition.x, Input.mousePosition.y, canvasDistance ) );
 			deltaInputWorldPos = currentInputWorldPos - lastInputWorldPos;
 			foreach ( ListBox listbox in listBoxes )
 				listbox.updatePosition( deltaInputWorldPos );
@@ -121,11 +125,13 @@ public class ListPositionCtrl : MonoBehaviour
 	{
 		if ( Input.GetTouch(0).phase == TouchPhase.Began )
 		{
-			lastInputWorldPos = Camera.main.ScreenToWorldPoint( Input.GetTouch(0).position );
+			lastInputWorldPos = Camera.main.ScreenToWorldPoint(
+				new Vector3( Input.GetTouch(0).position.x, Input.GetTouch(0).position.y, canvasDistance ) );
 		}
 		else if ( Input.GetTouch(0).phase == TouchPhase.Moved )
 		{
-			currentInputWorldPos = Camera.main.ScreenToWorldPoint( Input.GetTouch(0).position );
+			currentInputWorldPos = Camera.main.ScreenToWorldPoint(
+				new Vector3( Input.GetTouch(0).position.x, Input.GetTouch(0).position.y, canvasDistance ) );
 			deltaInputWorldPos = currentInputWorldPos - lastInputWorldPos;
 			foreach ( ListBox listbox in listBoxes )
 				listbox.updatePosition( deltaInputWorldPos );

@@ -35,7 +35,7 @@ public class ListBox : MonoBehaviour
 		numOfListBox = ListPositionCtrl.Instance.listBoxes.Length;
 
 		maxWorldPos = ( Vector2 ) Camera.main.ScreenToWorldPoint(
-			new Vector2( Camera.main.pixelWidth, Camera.main.pixelHeight ) );
+			new Vector3( Camera.main.pixelWidth, Camera.main.pixelHeight, ListPositionCtrl.Instance.canvasDistance ) );
 
 		unitWorldPos = maxWorldPos / ListPositionCtrl.Instance.divideFactor;
 
