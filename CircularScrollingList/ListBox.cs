@@ -14,7 +14,6 @@ public class ListBox : MonoBehaviour
 
 	private int numOfListBox;
 	private int contentID;
-	private bool isTouchingDevice;
 
 	private Vector2 maxWorldPos;		// The maximum world position in the view of camera
 	private Vector2 unitWorldPos;
