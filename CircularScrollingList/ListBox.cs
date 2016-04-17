@@ -15,7 +15,8 @@ public class ListBox : MonoBehaviour
 	private int numOfListBox;
 	private int contentID;
 
-	private Vector2 maxWorldPos;		// The maximum world position in the view of camera
+	// The max coordinate of canvas plane in local space.
+	private Vector2 canvasMaxPos_L;
 	private Vector2 unitWorldPos;
 	private Vector2 lowerBoundWorldPos;
 	private Vector2 upperBoundWorldPos;
@@ -33,10 +34,16 @@ public class ListBox : MonoBehaviour
 	{
 		numOfListBox = ListPositionCtrl.Instance.listBoxes.Length;
 
-		maxWorldPos = ( Vector2 ) Camera.main.ScreenToWorldPoint(
-			new Vector3( Camera.main.pixelWidth, Camera.main.pixelHeight, ListPositionCtrl.Instance.canvasDistance ) );
+		/* The minimum position is at left-bottom corner of camera which coordinate is (0,0),
+		 * and the maximum position is at right-top corner of camera. For perspective view,
+		 * we have to take the distance between canvas plane and camera into account. */
+		canvasMaxPos_L = Camera.main.ScreenToWorldPoint(
+			new Vector3( Camera.main.pixelWidth, Camera.main.pixelHeight, ListPositionCtrl.Instance.canvasDistance ) ) -
+			Camera.main.ScreenToWorldPoint( new Vector3( 0.0f, 0.0f, ListPositionCtrl.Instance.canvasDistance ) );
+		// Assume that the origin of canvas plane is at the center of canvas plane.
+		canvasMaxPos_L /= 2.0f;
 
-		unitWorldPos = maxWorldPos / ListPositionCtrl.Instance.divideFactor;
+		unitWorldPos = canvasMaxPos_L / ListPositionCtrl.Instance.divideFactor;
 
 		lowerBoundWorldPos = unitWorldPos * (float)( -1 * numOfListBox / 2 - 1 );
 		upperBoundWorldPos = unitWorldPos * (float)( numOfListBox / 2 + 1 );
@@ -168,8 +175,8 @@ public class ListBox : MonoBehaviour
 	void updateXPosition()
 	{
 		transform.position = new Vector3(
-			maxWorldPos.x * ListPositionCtrl.Instance.x_pivot -
-			maxWorldPos.x * ListPositionCtrl.Instance.angularity * Mathf.Cos( transform.position.y / upperBoundWorldPos.y * Mathf.PI / 2.0f ),
+			canvasMaxPos_L.x * ListPositionCtrl.Instance.x_pivot -
+			canvasMaxPos_L.x * ListPositionCtrl.Instance.angularity * Mathf.Cos( transform.position.y / upperBoundWorldPos.y * Mathf.PI / 2.0f ),
 			transform.position.y,
 			transform.position.z );
 		updateSize( upperBoundWorldPos.y, transform.position.y );
@@ -181,8 +188,8 @@ public class ListBox : MonoBehaviour
 	{
 		transform.position = new Vector3(
 			transform.position.x,
-			maxWorldPos.y * ListPositionCtrl.Instance.y_pivot -
-			maxWorldPos.y * ListPositionCtrl.Instance.angularity * Mathf.Cos( transform.position.x / upperBoundWorldPos.x * Mathf.PI / 2.0f ),
+			canvasMaxPos_L.y * ListPositionCtrl.Instance.y_pivot -
+			canvasMaxPos_L.y * ListPositionCtrl.Instance.angularity * Mathf.Cos( transform.position.x / upperBoundWorldPos.x * Mathf.PI / 2.0f ),
 			transform.position.z );
 		updateSize( upperBoundWorldPos.x, transform.position.x );
 	}
