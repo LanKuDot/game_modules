@@ -40,8 +40,10 @@ public class ListBox : MonoBehaviour
 		canvasMaxPos_L = Camera.main.ScreenToWorldPoint(
 			new Vector3( Camera.main.pixelWidth, Camera.main.pixelHeight, ListPositionCtrl.Instance.canvasDistance ) ) -
 			Camera.main.ScreenToWorldPoint( new Vector3( 0.0f, 0.0f, ListPositionCtrl.Instance.canvasDistance ) );
-		// Assume that the origin of canvas plane is at the center of canvas plane.
-		canvasMaxPos_L /= 2.0f;
+		/* Assume that the origin of canvas plane is at the center of canvas plane.
+		 * Finally, divide the result with the localScale of canvas plane to get the
+		 * correct local position. */
+		canvasMaxPos_L /= ( 2.0f * ListPositionCtrl.Instance.transform.parent.localScale.x );
 
 		unitPos_L = canvasMaxPos_L / ListPositionCtrl.Instance.divideFactor;
 
