@@ -17,13 +17,13 @@ public class ListBox : MonoBehaviour
 
 	// The max coordinate of canvas plane in local space.
 	private Vector2 canvasMaxPos_L;
-	private Vector2 unitWorldPos;
-	private Vector2 lowerBoundWorldPos;
-	private Vector2 upperBoundWorldPos;
-	private Vector2 rangeBoundWorldPos;
+	private Vector2 unitPos_L;
+	private Vector2 lowerBoundPos_L;
+	private Vector2 upperBoundPos_L;
+	private Vector2 rangeBoundPos_L;
 
-	private Vector3 slidingWorldPos;	// The sliding distance at each frame
-	private Vector3 slidingWorldPosLeft;
+	private Vector3 slidingDistance_L;	// The sliding distance at each frame
+	private Vector3 slidingDistanceLeft_L;
 
 	private Vector3 originalLocalScale;
 
@@ -43,11 +43,11 @@ public class ListBox : MonoBehaviour
 		// Assume that the origin of canvas plane is at the center of canvas plane.
 		canvasMaxPos_L /= 2.0f;
 
-		unitWorldPos = canvasMaxPos_L / ListPositionCtrl.Instance.divideFactor;
+		unitPos_L = canvasMaxPos_L / ListPositionCtrl.Instance.divideFactor;
 
-		lowerBoundWorldPos = unitWorldPos * (float)( -1 * numOfListBox / 2 - 1 );
-		upperBoundWorldPos = unitWorldPos * (float)( numOfListBox / 2 + 1 );
-		rangeBoundWorldPos = unitWorldPos * (float)numOfListBox;
+		lowerBoundPos_L = unitPos_L * (float)( -1 * numOfListBox / 2 - 1 );
+		upperBoundPos_L = unitPos_L * (float)( numOfListBox / 2 + 1 );
+		rangeBoundPos_L = unitPos_L * (float)numOfListBox;
 
 		originalLocalScale = transform.localScale;
 
@@ -85,8 +85,8 @@ public class ListBox : MonoBehaviour
 		keepSliding = true;
 		slidingFrames = ListPositionCtrl.Instance.slidingFrames;
 
-		slidingWorldPosLeft = distance;
-		slidingWorldPos = Vector3.Lerp( Vector3.zero, distance, ListPositionCtrl.Instance.slidingFactor );
+		slidingDistanceLeft_L = distance;
+		slidingDistance_L = Vector3.Lerp( Vector3.zero, distance, ListPositionCtrl.Instance.slidingFactor );
 	}
 
 	/* Move the listBox for world position unit.
@@ -97,9 +97,9 @@ public class ListBox : MonoBehaviour
 		Vector2 deltaPos;
 
 		if ( up_right )
-			deltaPos = unitWorldPos * (float)unit;
+			deltaPos = unitPos_L * (float)unit;
 		else
-			deltaPos = unitWorldPos * (float)unit * -1;
+			deltaPos = unitPos_L * (float)unit * -1;
 
 		switch ( ListPositionCtrl.Instance.direction ) {
 		case ListPositionCtrl.Direction.VERTICAL:
@@ -123,13 +123,13 @@ public class ListBox : MonoBehaviour
 				// At free moving mode, this function is disabled.
 				if ( ListPositionCtrl.Instance.alignToCenter ||
 				    ListPositionCtrl.Instance.controlByButton )
-					updatePosition( slidingWorldPosLeft );
+					updatePosition( slidingDistanceLeft_L );
 				return;
 			}
 
-			updatePosition( slidingWorldPos );
-			slidingWorldPosLeft -= slidingWorldPos;
-			slidingWorldPos = Vector3.Lerp( Vector3.zero, slidingWorldPosLeft, ListPositionCtrl.Instance.slidingFactor );
+			updatePosition( slidingDistance_L );
+			slidingDistanceLeft_L -= slidingDistance_L;
+			slidingDistance_L = Vector3.Lerp( Vector3.zero, slidingDistanceLeft_L, ListPositionCtrl.Instance.slidingFactor );
 		}
 	}
 
@@ -140,12 +140,12 @@ public class ListBox : MonoBehaviour
 		switch( ListPositionCtrl.Instance.direction ) {
 		case ListPositionCtrl.Direction.VERTICAL:
 			transform.position = new Vector3( 0.0f,
-		    	                             unitWorldPos.y * (float)( listBoxID * -1 + numOfListBox / 2 ),
+		    	                             unitPos_L.y * (float)( listBoxID * -1 + numOfListBox / 2 ),
 		    	                             0.0f );
 			updateXPosition();
 			break;
 		case ListPositionCtrl.Direction.HORIZONTAL:
-			transform.position = new Vector3( unitWorldPos.x * (float)( listBoxID - numOfListBox / 2 ),
+			transform.position = new Vector3( unitPos_L.x * (float)( listBoxID - numOfListBox / 2 ),
 			                                 0.0f, 0.0f );
 			updateYPosition();
 			break;
@@ -176,10 +176,10 @@ public class ListBox : MonoBehaviour
 	{
 		transform.position = new Vector3(
 			canvasMaxPos_L.x * ListPositionCtrl.Instance.x_pivot -
-			canvasMaxPos_L.x * ListPositionCtrl.Instance.angularity * Mathf.Cos( transform.position.y / upperBoundWorldPos.y * Mathf.PI / 2.0f ),
+			canvasMaxPos_L.x * ListPositionCtrl.Instance.angularity * Mathf.Cos( transform.position.y / upperBoundPos_L.y * Mathf.PI / 2.0f ),
 			transform.position.y,
 			transform.position.z );
-		updateSize( upperBoundWorldPos.y, transform.position.y );
+		updateSize( upperBoundPos_L.y, transform.position.y );
 	}
 
 	/* Calculate the y position accroding to the x position.
@@ -189,9 +189,9 @@ public class ListBox : MonoBehaviour
 		transform.position = new Vector3(
 			transform.position.x,
 			canvasMaxPos_L.y * ListPositionCtrl.Instance.y_pivot -
-			canvasMaxPos_L.y * ListPositionCtrl.Instance.angularity * Mathf.Cos( transform.position.x / upperBoundWorldPos.x * Mathf.PI / 2.0f ),
+			canvasMaxPos_L.y * ListPositionCtrl.Instance.angularity * Mathf.Cos( transform.position.x / upperBoundPos_L.x * Mathf.PI / 2.0f ),
 			transform.position.z );
-		updateSize( upperBoundWorldPos.x, transform.position.x );
+		updateSize( upperBoundPos_L.x, transform.position.x );
 	}
 
 	/* Check if the ListBox is beyond the upper or lower bound or not.
@@ -201,21 +201,21 @@ public class ListBox : MonoBehaviour
 	{
 		float beyondWorldPosY = 0.0f;
 
-		if ( transform.position.y < lowerBoundWorldPos.y )
+		if ( transform.position.y < lowerBoundPos_L.y )
 		{
-			beyondWorldPosY = ( lowerBoundWorldPos.y - transform.position.y ) % rangeBoundWorldPos.y;
+			beyondWorldPosY = ( lowerBoundPos_L.y - transform.position.y ) % rangeBoundPos_L.y;
 			transform.position = new Vector3(
 				transform.position.x,
-				upperBoundWorldPos.y - unitWorldPos.y - beyondWorldPosY,
+				upperBoundPos_L.y - unitPos_L.y - beyondWorldPosY,
 				transform.position.z );
 			updateToLastContent();
 		}
-		else if ( transform.position.y > upperBoundWorldPos.y )
+		else if ( transform.position.y > upperBoundPos_L.y )
 		{
-			beyondWorldPosY = ( transform.position.y - upperBoundWorldPos.y ) % rangeBoundWorldPos.y;
+			beyondWorldPosY = ( transform.position.y - upperBoundPos_L.y ) % rangeBoundPos_L.y;
 			transform.position = new Vector3(
 				transform.position.x,
-				lowerBoundWorldPos.y + unitWorldPos.y + beyondWorldPosY,
+				lowerBoundPos_L.y + unitPos_L.y + beyondWorldPosY,
 				transform.position.z );
 			updateToNextContent();
 		}
@@ -227,20 +227,20 @@ public class ListBox : MonoBehaviour
 	{
 		float beyondWorldPosX = 0.0f;
 
-		if ( transform.position.x < lowerBoundWorldPos.x )
+		if ( transform.position.x < lowerBoundPos_L.x )
 		{
-			beyondWorldPosX = ( lowerBoundWorldPos.x - transform.position.x ) % rangeBoundWorldPos.x;
+			beyondWorldPosX = ( lowerBoundPos_L.x - transform.position.x ) % rangeBoundPos_L.x;
 			transform.position = new Vector3(
-				upperBoundWorldPos.x - unitWorldPos.x - beyondWorldPosX,
+				upperBoundPos_L.x - unitPos_L.x - beyondWorldPosX,
 				transform.position.y,
 				transform.position.z );
 			updateToNextContent();
 		}
-		else if ( transform.position.x > upperBoundWorldPos.x )
+		else if ( transform.position.x > upperBoundPos_L.x )
 		{
-			beyondWorldPosX = ( transform.position.x - upperBoundWorldPos.x ) % rangeBoundWorldPos.x;
+			beyondWorldPosX = ( transform.position.x - upperBoundPos_L.x ) % rangeBoundPos_L.x;
 			transform.position = new Vector3(
-				lowerBoundWorldPos.x + unitWorldPos.x + beyondWorldPosX,
+				lowerBoundPos_L.x + unitPos_L.x + beyondWorldPosX,
 				transform.position.y,
 				transform.position.z );
 			updateToLastContent();
