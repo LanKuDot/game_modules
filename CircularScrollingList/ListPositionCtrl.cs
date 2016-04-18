@@ -167,7 +167,7 @@ public class ListPositionCtrl : MonoBehaviour
 		switch ( direction ) {
 		case Direction.VERTICAL:
 			foreach ( ListBox listBox in listBoxes ) {
-				deltaPos = centerPos.y - listBox.transform.position.y;
+				deltaPos = centerPos.y - listBox.transform.localPosition.y;
 				if ( Mathf.Abs( deltaPos ) < Mathf.Abs( minDeltaPos ) )
 					minDeltaPos = deltaPos;
 			}
@@ -176,7 +176,7 @@ public class ListPositionCtrl : MonoBehaviour
 
 		case Direction.HORIZONTAL:
 			foreach( ListBox listBox in listBoxes ) {
-				deltaPos = centerPos.x - listBox.transform.position.x;
+				deltaPos = centerPos.x - listBox.transform.localPosition.x;
 				if ( Mathf.Abs( deltaPos ) < Mathf.Abs( minDeltaPos ) )
 					minDeltaPos = deltaPos;
 			}
