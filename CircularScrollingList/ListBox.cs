@@ -135,37 +135,37 @@ public class ListBox : MonoBehaviour
 		}
 	}
 
-	/* Initialize the position of the list box accroding to its ID.
+	/* Initialize the local position of the list box accroding to its ID.
 	 */
 	void initialPosition( int listBoxID )
 	{
 		switch( ListPositionCtrl.Instance.direction ) {
 		case ListPositionCtrl.Direction.VERTICAL:
-			transform.position = new Vector3( 0.0f,
+			transform.localPosition = new Vector3( 0.0f,
 		    	                             unitPos_L.y * (float)( listBoxID * -1 + numOfListBox / 2 ),
 		    	                             0.0f );
 			updateXPosition();
 			break;
 		case ListPositionCtrl.Direction.HORIZONTAL:
-			transform.position = new Vector3( unitPos_L.x * (float)( listBoxID - numOfListBox / 2 ),
+			transform.localPosition = new Vector3( unitPos_L.x * (float)( listBoxID - numOfListBox / 2 ),
 			                                 0.0f, 0.0f );
 			updateYPosition();
 			break;
 		}
 	}
 
-	/* Update the position of ListBox accroding to the delta position at each frame.
+	/* Update the local position of ListBox accroding to the delta position at each frame.
 	 */
 	public void updatePosition( Vector3 deltaPosition )
 	{
 		switch ( ListPositionCtrl.Instance.direction ) {
 		case ListPositionCtrl.Direction.VERTICAL:
-			transform.position += new Vector3( 0.0f, deltaPosition.y, 0.0f );
+			transform.localPosition += new Vector3( 0.0f, deltaPosition.y, 0.0f );
 			updateXPosition();
 			checkBoundaryY();
 			break;
 		case ListPositionCtrl.Direction.HORIZONTAL:
-			transform.position += new Vector3( deltaPosition.x, 0.0f, 0.0f );
+			transform.localPosition += new Vector3( deltaPosition.x, 0.0f, 0.0f );
 			updateYPosition();
 			checkBoundaryX();
 			break;
@@ -176,24 +176,24 @@ public class ListBox : MonoBehaviour
 	 */
 	void updateXPosition()
 	{
-		transform.position = new Vector3(
+		transform.localPosition = new Vector3(
 			canvasMaxPos_L.x * ListPositionCtrl.Instance.x_pivot -
-			canvasMaxPos_L.x * ListPositionCtrl.Instance.angularity * Mathf.Cos( transform.position.y / upperBoundPos_L.y * Mathf.PI / 2.0f ),
-			transform.position.y,
-			transform.position.z );
-		updateSize( upperBoundPos_L.y, transform.position.y );
+			canvasMaxPos_L.x * ListPositionCtrl.Instance.angularity * Mathf.Cos( transform.localPosition.y / upperBoundPos_L.y * Mathf.PI / 2.0f ),
+			transform.localPosition.y,
+			transform.localPosition.z );
+		updateSize( upperBoundPos_L.y, transform.localPosition.y );
 	}
 
 	/* Calculate the y position accroding to the x position.
 	 */
 	void updateYPosition()
 	{
-		transform.position = new Vector3(
-			transform.position.x,
+		transform.localPosition = new Vector3(
+			transform.localPosition.x,
 			canvasMaxPos_L.y * ListPositionCtrl.Instance.y_pivot -
-			canvasMaxPos_L.y * ListPositionCtrl.Instance.angularity * Mathf.Cos( transform.position.x / upperBoundPos_L.x * Mathf.PI / 2.0f ),
-			transform.position.z );
-		updateSize( upperBoundPos_L.x, transform.position.x );
+			canvasMaxPos_L.y * ListPositionCtrl.Instance.angularity * Mathf.Cos( transform.localPosition.x / upperBoundPos_L.x * Mathf.PI / 2.0f ),
+			transform.localPosition.z );
+		updateSize( upperBoundPos_L.x, transform.localPosition.x );
 	}
 
 	/* Check if the ListBox is beyond the upper or lower bound or not.
@@ -201,24 +201,24 @@ public class ListBox : MonoBehaviour
 	 */
 	void checkBoundaryY()
 	{
-		float beyondWorldPosY = 0.0f;
+		float beyondPosY_L = 0.0f;
 
-		if ( transform.position.y < lowerBoundPos_L.y )
+		if ( transform.localPosition.y < lowerBoundPos_L.y )
 		{
-			beyondWorldPosY = ( lowerBoundPos_L.y - transform.position.y ) % rangeBoundPos_L.y;
-			transform.position = new Vector3(
-				transform.position.x,
-				upperBoundPos_L.y - unitPos_L.y - beyondWorldPosY,
-				transform.position.z );
+			beyondPosY_L = ( lowerBoundPos_L.y - transform.localPosition.y ) % rangeBoundPos_L.y;
+			transform.localPosition = new Vector3(
+				transform.localPosition.x,
+				upperBoundPos_L.y - unitPos_L.y - beyondPosY_L,
+				transform.localPosition.z );
 			updateToLastContent();
 		}
-		else if ( transform.position.y > upperBoundPos_L.y )
+		else if ( transform.localPosition.y > upperBoundPos_L.y )
 		{
-			beyondWorldPosY = ( transform.position.y - upperBoundPos_L.y ) % rangeBoundPos_L.y;
-			transform.position = new Vector3(
-				transform.position.x,
-				lowerBoundPos_L.y + unitPos_L.y + beyondWorldPosY,
-				transform.position.z );
+			beyondPosY_L = ( transform.localPosition.y - upperBoundPos_L.y ) % rangeBoundPos_L.y;
+			transform.localPosition = new Vector3(
+				transform.localPosition.x,
+				lowerBoundPos_L.y + unitPos_L.y + beyondPosY_L,
+				transform.localPosition.z );
 			updateToNextContent();
 		}
 
@@ -227,24 +227,24 @@ public class ListBox : MonoBehaviour
 
 	void checkBoundaryX()
 	{
-		float beyondWorldPosX = 0.0f;
+		float beyondPosX_L = 0.0f;
 
-		if ( transform.position.x < lowerBoundPos_L.x )
+		if ( transform.localPosition.x < lowerBoundPos_L.x )
 		{
-			beyondWorldPosX = ( lowerBoundPos_L.x - transform.position.x ) % rangeBoundPos_L.x;
-			transform.position = new Vector3(
-				upperBoundPos_L.x - unitPos_L.x - beyondWorldPosX,
-				transform.position.y,
-				transform.position.z );
+			beyondPosX_L = ( lowerBoundPos_L.x - transform.localPosition.x ) % rangeBoundPos_L.x;
+			transform.localPosition = new Vector3(
+				upperBoundPos_L.x - unitPos_L.x - beyondPosX_L,
+				transform.localPosition.y,
+				transform.localPosition.z );
 			updateToNextContent();
 		}
-		else if ( transform.position.x > upperBoundPos_L.x )
+		else if ( transform.localPosition.x > upperBoundPos_L.x )
 		{
-			beyondWorldPosX = ( transform.position.x - upperBoundPos_L.x ) % rangeBoundPos_L.x;
-			transform.position = new Vector3(
-				lowerBoundPos_L.x + unitPos_L.x + beyondWorldPosX,
-				transform.position.y,
-				transform.position.z );
+			beyondPosX_L = ( transform.localPosition.x - upperBoundPos_L.x ) % rangeBoundPos_L.x;
+			transform.localPosition = new Vector3(
+				lowerBoundPos_L.x + unitPos_L.x + beyondPosX_L,
+				transform.localPosition.y,
+				transform.localPosition.z );
 			updateToLastContent();
 		}
 
