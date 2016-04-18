@@ -111,7 +111,7 @@ public class ListPositionCtrl : MonoBehaviour
 				new Vector3( Input.mousePosition.x, Input.mousePosition.y, canvasDistance ) );
 			deltaInputWorldPos = currentInputWorldPos - lastInputWorldPos;
 			foreach ( ListBox listbox in listBoxes )
-				listbox.updatePosition( deltaInputWorldPos );
+				listbox.updatePosition( deltaInputWorldPos / transform.parent.localScale.x );
 
 			lastInputWorldPos = currentInputWorldPos;
 		}
@@ -134,7 +134,7 @@ public class ListPositionCtrl : MonoBehaviour
 				new Vector3( Input.GetTouch(0).position.x, Input.GetTouch(0).position.y, canvasDistance ) );
 			deltaInputWorldPos = currentInputWorldPos - lastInputWorldPos;
 			foreach ( ListBox listbox in listBoxes )
-				listbox.updatePosition( deltaInputWorldPos );
+				listbox.updatePosition( deltaInputWorldPos / transform.parent.localScale.x );
 
 			lastInputWorldPos = currentInputWorldPos;
 		}
@@ -147,7 +147,7 @@ public class ListPositionCtrl : MonoBehaviour
 	 */
 	void setSlidingEffect()
 	{
-		Vector3 deltaPos = deltaInputWorldPos;
+		Vector3 deltaPos = deltaInputWorldPos / transform.parent.localScale.x;
 
 		if ( alignToCenter )
 			deltaPos = findDeltaPositionToCenter();

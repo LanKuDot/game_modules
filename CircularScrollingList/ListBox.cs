@@ -155,17 +155,18 @@ public class ListBox : MonoBehaviour
 	}
 
 	/* Update the local position of ListBox accroding to the delta position at each frame.
+	 * Note that the deltaPosition must be in local space.
 	 */
-	public void updatePosition( Vector3 deltaPosition )
+	public void updatePosition( Vector3 deltaPosition_L )
 	{
 		switch ( ListPositionCtrl.Instance.direction ) {
 		case ListPositionCtrl.Direction.VERTICAL:
-			transform.localPosition += new Vector3( 0.0f, deltaPosition.y, 0.0f );
+			transform.localPosition += new Vector3( 0.0f, deltaPosition_L.y, 0.0f );
 			updateXPosition();
 			checkBoundaryY();
 			break;
 		case ListPositionCtrl.Direction.HORIZONTAL:
-			transform.localPosition += new Vector3( deltaPosition.x, 0.0f, 0.0f );
+			transform.localPosition += new Vector3( deltaPosition_L.x, 0.0f, 0.0f );
 			updateYPosition();
 			checkBoundaryX();
 			break;
