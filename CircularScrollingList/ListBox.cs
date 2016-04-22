@@ -1,5 +1,11 @@
 ﻿/* The basic component of scrolling list.
- * Note that the camera is at (0,0).
+ * Control the position of the list element.
+ *
+ * Author: LanKuDot <airlanser@gmail.com>
+ *
+ * As long as you retain this notice you can do whatever you want with this stuff.
+ * If we meet some day, and you think this stuff is worth it,
+ * you can buy me a coffee in return. LanKuDot
  */
 using UnityEngine;
 using UnityEngine.UI;

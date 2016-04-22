@@ -7,6 +7,12 @@
  *    but there always has a listBox positioning at the center.
  * 3. Control by button: Control the listBoxes by button on the screen.
  *    There always has a listBox positioning at the center.
+ *
+ * Author: LanKuDot <airlanser@gmail.com>
+ *
+ * As long as you retain this notice you can do whatever you want with this stuff.
+ * If we meet some day, and you think this stuff is worth it,
+ * you can buy me a coffee in return. LanKuDot
  */
 using UnityEngine;
 using UnityEngine.UI;
