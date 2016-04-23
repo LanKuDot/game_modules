@@ -184,7 +184,7 @@ public class ListBox : MonoBehaviour
 	void updateXPosition()
 	{
 		transform.localPosition = new Vector3(
-			-1 * canvasMaxPos_L.x * ListPositionCtrl.Instance.angularity * Mathf.Cos( transform.localPosition.y / upperBoundPos_L.y * Mathf.PI / 2.0f ),
+			canvasMaxPos_L.x * ListPositionCtrl.Instance.angularity * Mathf.Cos( transform.localPosition.y / upperBoundPos_L.y * Mathf.PI / 2.0f ),
 			transform.localPosition.y,
 			transform.localPosition.z );
 		updateSize( upperBoundPos_L.y, transform.localPosition.y );
@@ -196,7 +196,7 @@ public class ListBox : MonoBehaviour
 	{
 		transform.localPosition = new Vector3(
 			transform.localPosition.x,
-			-1 * canvasMaxPos_L.y * ListPositionCtrl.Instance.angularity * Mathf.Cos( transform.localPosition.x / upperBoundPos_L.x * Mathf.PI / 2.0f ),
+			canvasMaxPos_L.y * ListPositionCtrl.Instance.angularity * Mathf.Cos( transform.localPosition.x / upperBoundPos_L.x * Mathf.PI / 2.0f ),
 			transform.localPosition.z );
 		updateSize( upperBoundPos_L.x, transform.localPosition.x );
 	}

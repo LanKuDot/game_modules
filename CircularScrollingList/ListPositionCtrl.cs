@@ -50,8 +50,8 @@ public class ListPositionCtrl : MonoBehaviour
 	// Set the sliding speed. The larger, the quicker.
 	[Range( 0.0f, 1.0f )]
 	public float slidingFactor = 0.2f;
-	// Set the scrolling list curving to left or right.
-	// Positive: Curve to left; Negative: Curve to right.
+	// Set the scrolling list curving to left/right, or up/down in HORIZONTAL mode.
+	// Positive: Curve to right (up); Negative: Curve to left (down).
 	[Range( -1.0f, 1.0f )]
 	public float angularity = 0.2f;
 	// Set the scale amount of the center listBox.
