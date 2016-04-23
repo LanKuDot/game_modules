@@ -180,6 +180,9 @@ public class ListBox : MonoBehaviour
 	}
 
 	/* Calculate the x position accroding to the y position.
+	 * Formula: x = max_x * angularity * cos( radian controlled by y )
+	 * radian = (y / upper_y) * pi / 2, so the range of radian is from pi/2 to 0 to -pi/2,
+	 * and corresponding cosine value is from 0 to 1 to 0.
 	 */
 	void updateXPosition()
 	{
