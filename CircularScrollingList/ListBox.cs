@@ -27,6 +27,7 @@ public class ListBox : MonoBehaviour
 	private Vector2 lowerBoundPos_L;
 	private Vector2 upperBoundPos_L;
 	private Vector2 rangeBoundPos_L;
+	private Vector2 shiftBoundPos_L;
 
 	private Vector3 slidingDistance_L;	// The sliding distance at each frame
 	private Vector3 slidingDistanceLeft_L;
@@ -56,6 +57,7 @@ public class ListBox : MonoBehaviour
 		lowerBoundPos_L = unitPos_L * (float)( -1 * numOfListBox / 2 - 1 );
 		upperBoundPos_L = unitPos_L * (float)( numOfListBox / 2 + 1 );
 		rangeBoundPos_L = unitPos_L * (float)numOfListBox;
+		shiftBoundPos_L = unitPos_L * 0.3f;
 
 		originalLocalScale = transform.localScale;
 
@@ -205,27 +207,28 @@ public class ListBox : MonoBehaviour
 	}
 
 	/* Check if the ListBox is beyond the upper or lower bound or not.
-	 * If does, move the ListBox to the other side.
+	 * If does, move the ListBox to the other side and update the content.
 	 */
 	void checkBoundaryY()
 	{
 		float beyondPosY_L = 0.0f;
 
-		if ( transform.localPosition.y < lowerBoundPos_L.y )
+		// Narrow the checking boundary in order to avoid the list swaying to one side
+		if ( transform.localPosition.y < lowerBoundPos_L.y + shiftBoundPos_L.y )
 		{
-			beyondPosY_L = ( lowerBoundPos_L.y - transform.localPosition.y ) % rangeBoundPos_L.y;
+			beyondPosY_L = ( lowerBoundPos_L.y + shiftBoundPos_L.y - transform.localPosition.y ) % rangeBoundPos_L.y;
 			transform.localPosition = new Vector3(
 				transform.localPosition.x,
-				upperBoundPos_L.y - unitPos_L.y - beyondPosY_L,
+				upperBoundPos_L.y + shiftBoundPos_L.y - unitPos_L.y - beyondPosY_L,
 				transform.localPosition.z );
 			updateToLastContent();
 		}
-		else if ( transform.localPosition.y > upperBoundPos_L.y )
+		else if ( transform.localPosition.y > upperBoundPos_L.y - shiftBoundPos_L.y )
 		{
-			beyondPosY_L = ( transform.localPosition.y - upperBoundPos_L.y ) % rangeBoundPos_L.y;
+			beyondPosY_L = ( transform.localPosition.y - upperBoundPos_L.y + shiftBoundPos_L.y ) % rangeBoundPos_L.y;
 			transform.localPosition = new Vector3(
 				transform.localPosition.x,
-				lowerBoundPos_L.y + unitPos_L.y + beyondPosY_L,
+				lowerBoundPos_L.y - shiftBoundPos_L.y + unitPos_L.y + beyondPosY_L,
 				transform.localPosition.z );
 			updateToNextContent();
 		}
@@ -237,20 +240,21 @@ public class ListBox : MonoBehaviour
 	{
 		float beyondPosX_L = 0.0f;
 
-		if ( transform.localPosition.x < lowerBoundPos_L.x )
+		// Narrow the checking boundary in order to avoid the list swaying to one side
+		if ( transform.localPosition.x < lowerBoundPos_L.x + shiftBoundPos_L.x )
 		{
-			beyondPosX_L = ( lowerBoundPos_L.x - transform.localPosition.x ) % rangeBoundPos_L.x;
+			beyondPosX_L = ( lowerBoundPos_L.x + shiftBoundPos_L.x - transform.localPosition.x ) % rangeBoundPos_L.x;
 			transform.localPosition = new Vector3(
-				upperBoundPos_L.x - unitPos_L.x - beyondPosX_L,
+				upperBoundPos_L.x + shiftBoundPos_L.x - unitPos_L.x - beyondPosX_L,
 				transform.localPosition.y,
 				transform.localPosition.z );
 			updateToNextContent();
 		}
-		else if ( transform.localPosition.x > upperBoundPos_L.x )
+		else if ( transform.localPosition.x > upperBoundPos_L.x - shiftBoundPos_L.x )
 		{
-			beyondPosX_L = ( transform.localPosition.x - upperBoundPos_L.x ) % rangeBoundPos_L.x;
+			beyondPosX_L = ( transform.localPosition.x - upperBoundPos_L.x + shiftBoundPos_L.x ) % rangeBoundPos_L.x;
 			transform.localPosition = new Vector3(
-				lowerBoundPos_L.x + unitPos_L.x + beyondPosX_L,
+				lowerBoundPos_L.x - shiftBoundPos_L.x + unitPos_L.x + beyondPosX_L,
 				transform.localPosition.y,
 				transform.localPosition.z );
 			updateToLastContent();
