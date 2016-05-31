@@ -167,7 +167,7 @@ public class ListPositionCtrl : MonoBehaviour
 		case Direction.VERTICAL:
 			foreach ( ListBox listBox in listBoxes ) {
 				deltaPos = -listBox.transform.localPosition.y;
-				if ( deltaPos < Mathf.Abs( minDeltaPos ) )
+				if ( Mathf.Abs( deltaPos ) < Mathf.Abs( minDeltaPos ) )
 					minDeltaPos = deltaPos;
 			}
 
