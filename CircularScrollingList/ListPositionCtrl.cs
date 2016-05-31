@@ -52,9 +52,9 @@ public class ListPositionCtrl : MonoBehaviour
 	// Set the scrolling list curving to left/right, or up/down in HORIZONTAL mode.
 	// Positive: Curve to right (up); Negative: Curve to left (down).
 	[Range( -1.0f, 1.0f )]
-	public float angularity = 0.2f;
+	public float angularity = 0.3f;
 	// Set the scale amount of the center listBox.
-	public float scaleFactor = 0.05f;
+	public float scaleFactor = 0.32f;
 
 	private bool isTouchingDevice;
 
