@@ -69,14 +69,14 @@ public class ListBox : MonoBehaviour
 	 */
 	void initialContent()
 	{
-		if ( listBoxID == numOfListBox / 2 )
+		if (listBoxID == numOfListBox / 2)
 			contentID = 0;
-		else if ( listBoxID < numOfListBox / 2 )
-			contentID = ListBank.Instance.getListLength() - ( numOfListBox / 2 - listBoxID );
+		else if (listBoxID < numOfListBox / 2)
+			contentID = ListBank.Instance.getListLength() - (numOfListBox / 2 - listBoxID);
 		else
 			contentID = listBoxID - numOfListBox / 2;
 
-		while ( contentID < 0 )
+		while (contentID < 0)
 			contentID += ListBank.Instance.getListLength();
 		contentID = contentID % ListBank.Instance.getListLength();
 
@@ -106,12 +106,12 @@ public class ListBox : MonoBehaviour
 	{
 		Vector2 deltaPos;
 
-		if ( up_right )
+		if (up_right)
 			deltaPos = unitPos_L * (float)unit;
 		else
 			deltaPos = unitPos_L * (float)unit * -1;
 
-		switch ( ListPositionCtrl.Instance.direction ) {
+		switch (ListPositionCtrl.Instance.direction) {
 		case ListPositionCtrl.Direction.VERTICAL:
 			setSlidingDistance( new Vector3( 0.0f, deltaPos.y, 0.0f ) );
 			break;
@@ -123,11 +123,9 @@ public class ListBox : MonoBehaviour
 
 	void Update()
 	{
-		if ( keepSliding )
-		{
+		if (keepSliding) {
 			--slidingFrames;
-			if ( slidingFrames == 0 )
-			{
+			if (slidingFrames == 0) {
 				keepSliding = false;
 				// At the last sliding frame, move to that position.
 				// At free moving mode, this function is disabled.
@@ -147,7 +145,7 @@ public class ListBox : MonoBehaviour
 	 */
 	void initialPosition( int listBoxID )
 	{
-		switch( ListPositionCtrl.Instance.direction ) {
+		switch (ListPositionCtrl.Instance.direction) {
 		case ListPositionCtrl.Direction.VERTICAL:
 			transform.localPosition = new Vector3( 0.0f,
 		    	                             unitPos_L.y * (float)( listBoxID * -1 + numOfListBox / 2 ),
@@ -167,7 +165,7 @@ public class ListBox : MonoBehaviour
 	 */
 	public void updatePosition( Vector3 deltaPosition_L )
 	{
-		switch ( ListPositionCtrl.Instance.direction ) {
+		switch (ListPositionCtrl.Instance.direction) {
 		case ListPositionCtrl.Direction.VERTICAL:
 			transform.localPosition += new Vector3( 0.0f, deltaPosition_L.y, 0.0f );
 			updateXPosition();
@@ -214,17 +212,14 @@ public class ListBox : MonoBehaviour
 		float beyondPosY_L = 0.0f;
 
 		// Narrow the checking boundary in order to avoid the list swaying to one side
-		if ( transform.localPosition.y < lowerBoundPos_L.y + shiftBoundPos_L.y )
-		{
+		if (transform.localPosition.y < lowerBoundPos_L.y + shiftBoundPos_L.y) {
 			beyondPosY_L = ( lowerBoundPos_L.y + shiftBoundPos_L.y - transform.localPosition.y ) % rangeBoundPos_L.y;
 			transform.localPosition = new Vector3(
 				transform.localPosition.x,
 				upperBoundPos_L.y + shiftBoundPos_L.y - unitPos_L.y - beyondPosY_L,
 				transform.localPosition.z );
 			updateToLastContent();
-		}
-		else if ( transform.localPosition.y > upperBoundPos_L.y - shiftBoundPos_L.y )
-		{
+		} else if (transform.localPosition.y > upperBoundPos_L.y - shiftBoundPos_L.y) {
 			beyondPosY_L = ( transform.localPosition.y - upperBoundPos_L.y + shiftBoundPos_L.y ) % rangeBoundPos_L.y;
 			transform.localPosition = new Vector3(
 				transform.localPosition.x,
@@ -241,18 +236,15 @@ public class ListBox : MonoBehaviour
 		float beyondPosX_L = 0.0f;
 
 		// Narrow the checking boundary in order to avoid the list swaying to one side
-		if ( transform.localPosition.x < lowerBoundPos_L.x + shiftBoundPos_L.x )
-		{
-			beyondPosX_L = ( lowerBoundPos_L.x + shiftBoundPos_L.x - transform.localPosition.x ) % rangeBoundPos_L.x;
+		if (transform.localPosition.x < lowerBoundPos_L.x + shiftBoundPos_L.x) {
+			beyondPosX_L = (lowerBoundPos_L.x + shiftBoundPos_L.x - transform.localPosition.x) % rangeBoundPos_L.x;
 			transform.localPosition = new Vector3(
 				upperBoundPos_L.x + shiftBoundPos_L.x - unitPos_L.x - beyondPosX_L,
 				transform.localPosition.y,
 				transform.localPosition.z );
 			updateToNextContent();
-		}
-		else if ( transform.localPosition.x > upperBoundPos_L.x - shiftBoundPos_L.x )
-		{
-			beyondPosX_L = ( transform.localPosition.x - upperBoundPos_L.x + shiftBoundPos_L.x ) % rangeBoundPos_L.x;
+		} else if (transform.localPosition.x > upperBoundPos_L.x - shiftBoundPos_L.x) {
+			beyondPosX_L = (transform.localPosition.x - upperBoundPos_L.x + shiftBoundPos_L.x) % rangeBoundPos_L.x;
 			transform.localPosition = new Vector3(
 				lowerBoundPos_L.x - shiftBoundPos_L.x + unitPos_L.x + beyondPosX_L,
 				transform.localPosition.y,

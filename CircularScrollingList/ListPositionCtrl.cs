@@ -66,8 +66,7 @@ public class ListPositionCtrl : MonoBehaviour
 	{
 		Instance = this;
 
-		switch( Application.platform )
-		{
+		switch (Application.platform) {
 		case RuntimePlatform.WindowsEditor:
 			isTouchingDevice = false;
 			break;
@@ -79,16 +78,15 @@ public class ListPositionCtrl : MonoBehaviour
 
 	void Start()
 	{
-		if ( !controlByButton )
-			foreach ( Button button in buttons )
+		if (!controlByButton)
+			foreach (Button button in buttons)
 				button.gameObject.SetActive( false );
 	}
 
 	void Update()
 	{
-		if ( !controlByButton )
-		{
-			if ( !isTouchingDevice )
+		if (!controlByButton) {
+			if (!isTouchingDevice)
 				storeMousePosition();
 			else
 				storeFingerPosition();
@@ -99,22 +97,18 @@ public class ListPositionCtrl : MonoBehaviour
 	 */
 	void storeMousePosition()
 	{
-		if ( Input.GetMouseButtonDown(0) )
-		{
+		if (Input.GetMouseButtonDown( 0 )) {
 			lastInputWorldPos = Camera.main.ScreenToWorldPoint(
 				new Vector3( Input.mousePosition.x, Input.mousePosition.y, canvasDistance ) );
-		}
-		else if ( Input.GetMouseButton(0) )
-		{
+		} else if (Input.GetMouseButton( 0 )) {
 			currentInputWorldPos = Camera.main.ScreenToWorldPoint(
 				new Vector3( Input.mousePosition.x, Input.mousePosition.y, canvasDistance ) );
 			deltaInputWorldPos = currentInputWorldPos - lastInputWorldPos;
-			foreach ( ListBox listbox in listBoxes )
+			foreach (ListBox listbox in listBoxes)
 				listbox.updatePosition( deltaInputWorldPos / transform.parent.localScale.x );
 
 			lastInputWorldPos = currentInputWorldPos;
-		}
-		else if ( Input.GetMouseButtonUp(0) )
+		} else if (Input.GetMouseButtonUp( 0 ))
 			setSlidingEffect();
 	}
 
@@ -122,22 +116,18 @@ public class ListPositionCtrl : MonoBehaviour
 	 */
 	void storeFingerPosition()
 	{
-		if ( Input.GetTouch(0).phase == TouchPhase.Began )
-		{
+		if (Input.GetTouch( 0 ).phase == TouchPhase.Began) {
 			lastInputWorldPos = Camera.main.ScreenToWorldPoint(
-				new Vector3( Input.GetTouch(0).position.x, Input.GetTouch(0).position.y, canvasDistance ) );
-		}
-		else if ( Input.GetTouch(0).phase == TouchPhase.Moved )
-		{
+				new Vector3( Input.GetTouch( 0 ).position.x, Input.GetTouch( 0 ).position.y, canvasDistance ) );
+		} else if (Input.GetTouch( 0 ).phase == TouchPhase.Moved) {
 			currentInputWorldPos = Camera.main.ScreenToWorldPoint(
-				new Vector3( Input.GetTouch(0).position.x, Input.GetTouch(0).position.y, canvasDistance ) );
+				new Vector3( Input.GetTouch( 0 ).position.x, Input.GetTouch( 0 ).position.y, canvasDistance ) );
 			deltaInputWorldPos = currentInputWorldPos - lastInputWorldPos;
-			foreach ( ListBox listbox in listBoxes )
+			foreach (ListBox listbox in listBoxes)
 				listbox.updatePosition( deltaInputWorldPos / transform.parent.localScale.x );
 
 			lastInputWorldPos = currentInputWorldPos;
-		}
-		else if ( Input.GetTouch(0).phase == TouchPhase.Ended )
+		} else if (Input.GetTouch( 0 ).phase == TouchPhase.Ended)
 			setSlidingEffect();
 	}
 
@@ -148,10 +138,10 @@ public class ListPositionCtrl : MonoBehaviour
 	{
 		Vector3 deltaPos = deltaInputWorldPos / transform.parent.localScale.x;
 
-		if ( alignToCenter )
+		if (alignToCenter)
 			deltaPos = findDeltaPositionToCenter();
 
-		foreach( ListBox listbox in listBoxes )
+		foreach (ListBox listbox in listBoxes)
 			listbox.setSlidingDistance( deltaPos );
 	}
 
@@ -163,20 +153,20 @@ public class ListPositionCtrl : MonoBehaviour
 		float minDeltaPos = Mathf.Infinity;
 		float deltaPos;
 
-		switch ( direction ) {
+		switch (direction) {
 		case Direction.VERTICAL:
-			foreach ( ListBox listBox in listBoxes ) {
+			foreach (ListBox listBox in listBoxes) {
 				deltaPos = -listBox.transform.localPosition.y;
-				if ( Mathf.Abs( deltaPos ) < Mathf.Abs( minDeltaPos ) )
+				if (Mathf.Abs( deltaPos ) < Mathf.Abs( minDeltaPos ))
 					minDeltaPos = deltaPos;
 			}
 
 			return new Vector3( 0.0f, minDeltaPos, 0.0f );
 
 		case Direction.HORIZONTAL:
-			foreach( ListBox listBox in listBoxes ) {
+			foreach (ListBox listBox in listBoxes) {
 				deltaPos = -listBox.transform.localPosition.x;
-				if ( Mathf.Abs( deltaPos ) < Mathf.Abs( minDeltaPos ) )
+				if (Mathf.Abs( deltaPos ) < Mathf.Abs( minDeltaPos ))
 					minDeltaPos = deltaPos;
 			}
 
@@ -193,7 +183,7 @@ public class ListPositionCtrl : MonoBehaviour
 	 */
 	public void nextContent()
 	{
-		foreach( ListBox listbox in listBoxes )
+		foreach (ListBox listbox in listBoxes)
 			listbox.unitMove( 1, true );
 	}
 
@@ -203,7 +193,7 @@ public class ListPositionCtrl : MonoBehaviour
 	 */
 	public void lastContent()
 	{
-		foreach( ListBox listbox in listBoxes )
+		foreach (ListBox listbox in listBoxes)
 			listbox.unitMove( 1, false );
 	}
 }
