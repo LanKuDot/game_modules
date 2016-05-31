@@ -36,7 +36,6 @@ public class ListPositionCtrl : MonoBehaviour
 	public bool alignToCenter = false;
 
 	public ListBox[] listBoxes;
-	public Vector2 centerPos;
 
 	public Button[] buttons;
 
@@ -161,14 +160,14 @@ public class ListPositionCtrl : MonoBehaviour
 	 */
 	Vector3 findDeltaPositionToCenter()
 	{
-		float minDeltaPos = 99999.9f;
+		float minDeltaPos = Mathf.Infinity;
 		float deltaPos;
 
 		switch ( direction ) {
 		case Direction.VERTICAL:
 			foreach ( ListBox listBox in listBoxes ) {
-				deltaPos = centerPos.y - listBox.transform.localPosition.y;
-				if ( Mathf.Abs( deltaPos ) < Mathf.Abs( minDeltaPos ) )
+				deltaPos = -listBox.transform.localPosition.y;
+				if ( deltaPos < Mathf.Abs( minDeltaPos ) )
 					minDeltaPos = deltaPos;
 			}
 
@@ -176,7 +175,7 @@ public class ListPositionCtrl : MonoBehaviour
 
 		case Direction.HORIZONTAL:
 			foreach( ListBox listBox in listBoxes ) {
-				deltaPos = centerPos.x - listBox.transform.localPosition.x;
+				deltaPos = -listBox.transform.localPosition.x;
 				if ( Mathf.Abs( deltaPos ) < Mathf.Abs( minDeltaPos ) )
 					minDeltaPos = deltaPos;
 			}
