@@ -2,10 +2,6 @@
  * Control the position of the list element.
  *
  * Author: LanKuDot <airlanser@gmail.com>
- *
- * As long as you retain this notice you can do whatever you want with this stuff.
- * If we meet some day, and you think this stuff is worth it,
- * you can buy me a coffee in return. LanKuDot
  */
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,16 +14,14 @@ public class ListBox : MonoBehaviour
 	public ListBox lastListBox;
 	public ListBox nextListBox;
 
-	private int numOfListBox;
 	private int contentID;
 
-	// The max coordinate of canvas plane in local space.
-	private Vector2 canvasMaxPos_L;
-	private Vector2 unitPos_L;
-	private Vector2 lowerBoundPos_L;
-	private Vector2 upperBoundPos_L;
-	private Vector2 rangeBoundPos_L;
-	private Vector2 shiftBoundPos_L;
+	private Vector2 _canvasMaxPos;
+	private Vector2 _unitPos;
+	private Vector2 _lowerBoundPos;
+	private Vector2 _upperBoundPos;
+	private Vector2 _rangeBoundPos;
+	private Vector2 _shiftBoundPos;
 
 	private Vector3 slidingDistance_L;	// The sliding distance at each frame
 	private Vector3 slidingDistanceLeft_L;
@@ -39,25 +33,12 @@ public class ListBox : MonoBehaviour
 
 	void Start()
 	{
-		numOfListBox = ListPositionCtrl.Instance.listBoxes.Length;
-
-		/* The minimum position is at left-bottom corner of camera which coordinate is (0,0),
-		 * and the maximum position is at right-top corner of camera. For perspective view,
-		 * we have to take the distance between canvas plane and camera into account. */
-		canvasMaxPos_L = Camera.main.ScreenToWorldPoint(
-			new Vector3( Camera.main.pixelWidth, Camera.main.pixelHeight, ListPositionCtrl.Instance.canvasDistance ) ) -
-			Camera.main.ScreenToWorldPoint( new Vector3( 0.0f, 0.0f, ListPositionCtrl.Instance.canvasDistance ) );
-		/* Assume that the origin of canvas plane is at the center of canvas plane.
-		 * Finally, divide the result with the localScale of canvas plane to get the
-		 * correct local position. */
-		canvasMaxPos_L /= ( 2.0f * ListPositionCtrl.Instance.transform.parent.localScale.x );
-
-		unitPos_L = canvasMaxPos_L / ListPositionCtrl.Instance.divideFactor;
-
-		lowerBoundPos_L = unitPos_L * (float)( -1 * numOfListBox / 2 - 1 );
-		upperBoundPos_L = unitPos_L * (float)( numOfListBox / 2 + 1 );
-		rangeBoundPos_L = unitPos_L * (float)numOfListBox;
-		shiftBoundPos_L = unitPos_L * 0.3f;
+		_canvasMaxPos = ListPositionCtrl.Instance.canvasMaxPos_L;
+		_unitPos = ListPositionCtrl.Instance.unitPos_L;
+		_lowerBoundPos = ListPositionCtrl.Instance.lowerBoundPos_L;
+		_upperBoundPos = ListPositionCtrl.Instance.upperBoundPos_L;
+		_rangeBoundPos = ListPositionCtrl.Instance.rangeBoundPos_L;
+		_shiftBoundPos = ListPositionCtrl.Instance.shiftBoundPos_L;
 
 		originalLocalScale = transform.localScale;
 
@@ -69,12 +50,12 @@ public class ListBox : MonoBehaviour
 	 */
 	void initialContent()
 	{
-		if (listBoxID == numOfListBox / 2)
+		if (listBoxID == ListPositionCtrl.Instance.listBoxes.Length / 2)
 			contentID = 0;
-		else if (listBoxID < numOfListBox / 2)
-			contentID = ListBank.Instance.getListLength() - (numOfListBox / 2 - listBoxID);
+		else if (listBoxID < ListPositionCtrl.Instance.listBoxes.Length / 2)
+			contentID = ListBank.Instance.getListLength() - (ListPositionCtrl.Instance.listBoxes.Length / 2 - listBoxID);
 		else
-			contentID = listBoxID - numOfListBox / 2;
+			contentID = listBoxID - ListPositionCtrl.Instance.listBoxes.Length / 2;
 
 		while (contentID < 0)
 			contentID += ListBank.Instance.getListLength();
@@ -107,9 +88,9 @@ public class ListBox : MonoBehaviour
 		Vector2 deltaPos;
 
 		if (up_right)
-			deltaPos = unitPos_L * (float)unit;
+			deltaPos = _unitPos * (float)unit;
 		else
-			deltaPos = unitPos_L * (float)unit * -1;
+			deltaPos = _unitPos * (float)unit * -1;
 
 		switch (ListPositionCtrl.Instance.direction) {
 		case ListPositionCtrl.Direction.VERTICAL:
@@ -148,13 +129,13 @@ public class ListBox : MonoBehaviour
 		switch (ListPositionCtrl.Instance.direction) {
 		case ListPositionCtrl.Direction.VERTICAL:
 			transform.localPosition = new Vector3( 0.0f,
-		    	                             unitPos_L.y * (float)( listBoxID * -1 + numOfListBox / 2 ),
-		    	                             0.0f );
+				_unitPos.y * (float)( listBoxID * -1 + ListPositionCtrl.Instance.listBoxes.Length / 2 ),
+				0.0f );
 			updateXPosition();
 			break;
 		case ListPositionCtrl.Direction.HORIZONTAL:
-			transform.localPosition = new Vector3( unitPos_L.x * (float)( listBoxID - numOfListBox / 2 ),
-			                                 0.0f, 0.0f );
+			transform.localPosition = new Vector3( _unitPos.x* (float)( listBoxID - ListPositionCtrl.Instance.listBoxes.Length / 2 ),
+				0.0f, 0.0f );
 			updateYPosition();
 			break;
 		}
@@ -187,10 +168,10 @@ public class ListBox : MonoBehaviour
 	void updateXPosition()
 	{
 		transform.localPosition = new Vector3(
-			canvasMaxPos_L.x * ListPositionCtrl.Instance.angularity * Mathf.Cos( transform.localPosition.y / upperBoundPos_L.y * Mathf.PI / 2.0f ),
-			transform.localPosition.y,
-			transform.localPosition.z );
-		updateSize( upperBoundPos_L.y, transform.localPosition.y );
+			_canvasMaxPos.x * ListPositionCtrl.Instance.angularity
+			* Mathf.Cos( transform.localPosition.y / _upperBoundPos.y * Mathf.PI / 2.0f ),
+			transform.localPosition.y, transform.localPosition.z );
+		updateSize( _upperBoundPos.y, transform.localPosition.y );
 	}
 
 	/* Calculate the y position accroding to the x position.
@@ -199,9 +180,10 @@ public class ListBox : MonoBehaviour
 	{
 		transform.localPosition = new Vector3(
 			transform.localPosition.x,
-			canvasMaxPos_L.y * ListPositionCtrl.Instance.angularity * Mathf.Cos( transform.localPosition.x / upperBoundPos_L.x * Mathf.PI / 2.0f ),
+			_canvasMaxPos.y * ListPositionCtrl.Instance.angularity
+			* Mathf.Cos( transform.localPosition.x / _upperBoundPos.x * Mathf.PI / 2.0f ),
 			transform.localPosition.z );
-		updateSize( upperBoundPos_L.x, transform.localPosition.x );
+		updateSize( _upperBoundPos.x, transform.localPosition.x );
 	}
 
 	/* Check if the ListBox is beyond the upper or lower bound or not.
@@ -212,18 +194,18 @@ public class ListBox : MonoBehaviour
 		float beyondPosY_L = 0.0f;
 
 		// Narrow the checking boundary in order to avoid the list swaying to one side
-		if (transform.localPosition.y < lowerBoundPos_L.y + shiftBoundPos_L.y) {
-			beyondPosY_L = ( lowerBoundPos_L.y + shiftBoundPos_L.y - transform.localPosition.y ) % rangeBoundPos_L.y;
+		if (transform.localPosition.y < _lowerBoundPos.y + _shiftBoundPos.y) {
+			beyondPosY_L = ( _lowerBoundPos.y + _shiftBoundPos.y - transform.localPosition.y ) % _rangeBoundPos.y;
 			transform.localPosition = new Vector3(
 				transform.localPosition.x,
-				upperBoundPos_L.y + shiftBoundPos_L.y - unitPos_L.y - beyondPosY_L,
+				_upperBoundPos.y + _shiftBoundPos.y - _unitPos.y - beyondPosY_L,
 				transform.localPosition.z );
 			updateToLastContent();
-		} else if (transform.localPosition.y > upperBoundPos_L.y - shiftBoundPos_L.y) {
-			beyondPosY_L = ( transform.localPosition.y - upperBoundPos_L.y + shiftBoundPos_L.y ) % rangeBoundPos_L.y;
+		} else if (transform.localPosition.y > _upperBoundPos.y - _shiftBoundPos.y) {
+			beyondPosY_L = ( transform.localPosition.y - _upperBoundPos.y + _shiftBoundPos.y ) % _rangeBoundPos.y;
 			transform.localPosition = new Vector3(
 				transform.localPosition.x,
-				lowerBoundPos_L.y - shiftBoundPos_L.y + unitPos_L.y + beyondPosY_L,
+				_lowerBoundPos.y - _shiftBoundPos.y + _unitPos.y + beyondPosY_L,
 				transform.localPosition.z );
 			updateToNextContent();
 		}
@@ -236,17 +218,17 @@ public class ListBox : MonoBehaviour
 		float beyondPosX_L = 0.0f;
 
 		// Narrow the checking boundary in order to avoid the list swaying to one side
-		if (transform.localPosition.x < lowerBoundPos_L.x + shiftBoundPos_L.x) {
-			beyondPosX_L = (lowerBoundPos_L.x + shiftBoundPos_L.x - transform.localPosition.x) % rangeBoundPos_L.x;
+		if (transform.localPosition.x < _lowerBoundPos.x + _shiftBoundPos.x) {
+			beyondPosX_L = (_lowerBoundPos.x + _shiftBoundPos.x - transform.localPosition.x) % _rangeBoundPos.x;
 			transform.localPosition = new Vector3(
-				upperBoundPos_L.x + shiftBoundPos_L.x - unitPos_L.x - beyondPosX_L,
+				_upperBoundPos.x + _shiftBoundPos.x - _unitPos.x - beyondPosX_L,
 				transform.localPosition.y,
 				transform.localPosition.z );
 			updateToNextContent();
-		} else if (transform.localPosition.x > upperBoundPos_L.x - shiftBoundPos_L.x) {
-			beyondPosX_L = (transform.localPosition.x - upperBoundPos_L.x + shiftBoundPos_L.x) % rangeBoundPos_L.x;
+		} else if (transform.localPosition.x > _upperBoundPos.x - _shiftBoundPos.x) {
+			beyondPosX_L = (transform.localPosition.x - _upperBoundPos.x + _shiftBoundPos.x) % _rangeBoundPos.x;
 			transform.localPosition = new Vector3(
-				lowerBoundPos_L.x - shiftBoundPos_L.x + unitPos_L.x + beyondPosX_L,
+				_lowerBoundPos.x - _shiftBoundPos.x + _unitPos.x + beyondPosX_L,
 				transform.localPosition.y,
 				transform.localPosition.z );
 			updateToLastContent();

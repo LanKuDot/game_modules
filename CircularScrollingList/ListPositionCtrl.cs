@@ -9,10 +9,6 @@
  *    There always has a listBox positioning at the center.
  *
  * Author: LanKuDot <airlanser@gmail.com>
- *
- * As long as you retain this notice you can do whatever you want with this stuff.
- * If we meet some day, and you think this stuff is worth it,
- * you can buy me a coffee in return. LanKuDot
  */
 using UnityEngine;
 using UnityEngine.UI;
@@ -58,6 +54,22 @@ public class ListPositionCtrl : MonoBehaviour
 
 	private bool _isTouchingDevice;
 
+	// The constrains of position in the local space of the list.
+	private Vector2 _canvasMaxPos_L;
+	private Vector2 _unitPos_L;
+	private Vector2 _lowerBoundPos_L;
+	private Vector2 _upperBoundPos_L;
+	private Vector2 _rangeBoundPos_L;
+	private Vector2 _shiftBoundPos_L;
+	// The gets of above variables
+	public Vector2 canvasMaxPos_L {	get { return _canvasMaxPos_L; }	}
+	public Vector2 unitPos_L { get { return _unitPos_L; } }
+	public Vector2 lowerBoundPos_L { get { return _lowerBoundPos_L; } }
+	public Vector2 upperBoundPos_L { get { return _upperBoundPos_L; } }
+	public Vector2 rangeBoundPos_L { get { return _rangeBoundPos_L; } }
+	public Vector2 shiftBoundPos_L { get { return _shiftBoundPos_L; } }
+
+	// Input mouse/finger position in the world space.
 	private Vector3 _lastInputWorldPos;
 	private Vector3 _currentInputWorldPos;
 	private Vector3 _deltaInputWorldPos;
@@ -76,8 +88,31 @@ public class ListPositionCtrl : MonoBehaviour
 		}
 	}
 
+	/* Notice: ListBox will initialize its variables from here, so ListPositionCtrl
+	 * must be executed before ListBox. You have to set the execution order in the inspector.
+	 */
 	void Start()
 	{
+		/* The minimum position is at left-bottom corner of camera which coordinate is (0,0),
+		 * and the maximum position is at right-top corner of camera. For perspective view,
+		 * we have to take the distance between canvas plane and camera into account. */
+		_canvasMaxPos_L = Camera.main.ScreenToWorldPoint(
+			new Vector3( Camera.main.pixelWidth, Camera.main.pixelHeight, canvasDistance ) ) -
+			Camera.main.ScreenToWorldPoint( new Vector3( 0.0f, 0.0f, canvasDistance ) );
+		/* The result above is the distance of boundary of the canvas plane in the world space,
+		 * so we need to convert it to the local space of the list. The lossyScale will return
+		 * the scale vector of which the value is scaling amount from its local space to the world
+		 * space. Finally, by dividing the result by two we get the max position coordinate
+		 * of the canvas plane in the local space of the list (Assuming the pivot of the
+		 * ListPositionCtrl object is at the center).*/
+		_canvasMaxPos_L /= (2.0f * transform.lossyScale.x);
+
+		_unitPos_L = _canvasMaxPos_L / divideFactor;
+		_lowerBoundPos_L = _unitPos_L * (-1 * listBoxes.Length / 2 - 1);
+		_upperBoundPos_L = _unitPos_L * (listBoxes.Length / 2 + 1);
+		_rangeBoundPos_L = _unitPos_L * listBoxes.Length;
+		_shiftBoundPos_L = _unitPos_L * 0.3f;
+
 		if (!controlByButton)
 			foreach (Button button in buttons)
 				button.gameObject.SetActive( false );
