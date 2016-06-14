@@ -56,11 +56,11 @@ public class ListPositionCtrl : MonoBehaviour
 	// Set the scale amount of the center listBox.
 	public float scaleFactor = 0.32f;
 
-	private bool isTouchingDevice;
+	private bool _isTouchingDevice;
 
-	private Vector3 lastInputWorldPos;
-	private Vector3 currentInputWorldPos;
-	private Vector3 deltaInputWorldPos;
+	private Vector3 _lastInputWorldPos;
+	private Vector3 _currentInputWorldPos;
+	private Vector3 _deltaInputWorldPos;
 
 	void Awake()
 	{
@@ -68,10 +68,10 @@ public class ListPositionCtrl : MonoBehaviour
 
 		switch (Application.platform) {
 		case RuntimePlatform.WindowsEditor:
-			isTouchingDevice = false;
+			_isTouchingDevice = false;
 			break;
 		case RuntimePlatform.Android:
-			isTouchingDevice = true;
+			_isTouchingDevice = true;
 			break;
 		}
 	}
@@ -86,7 +86,7 @@ public class ListPositionCtrl : MonoBehaviour
 	void Update()
 	{
 		if (!controlByButton) {
-			if (!isTouchingDevice)
+			if (!_isTouchingDevice)
 				storeMousePosition();
 			else
 				storeFingerPosition();
@@ -98,16 +98,16 @@ public class ListPositionCtrl : MonoBehaviour
 	void storeMousePosition()
 	{
 		if (Input.GetMouseButtonDown( 0 )) {
-			lastInputWorldPos = Camera.main.ScreenToWorldPoint(
+			_lastInputWorldPos = Camera.main.ScreenToWorldPoint(
 				new Vector3( Input.mousePosition.x, Input.mousePosition.y, canvasDistance ) );
 		} else if (Input.GetMouseButton( 0 )) {
-			currentInputWorldPos = Camera.main.ScreenToWorldPoint(
+			_currentInputWorldPos = Camera.main.ScreenToWorldPoint(
 				new Vector3( Input.mousePosition.x, Input.mousePosition.y, canvasDistance ) );
-			deltaInputWorldPos = currentInputWorldPos - lastInputWorldPos;
+			_deltaInputWorldPos = _currentInputWorldPos - _lastInputWorldPos;
 			foreach (ListBox listbox in listBoxes)
-				listbox.updatePosition( deltaInputWorldPos / transform.parent.localScale.x );
+				listbox.updatePosition( _deltaInputWorldPos / transform.parent.localScale.x );
 
-			lastInputWorldPos = currentInputWorldPos;
+			_lastInputWorldPos = _currentInputWorldPos;
 		} else if (Input.GetMouseButtonUp( 0 ))
 			setSlidingEffect();
 	}
@@ -117,16 +117,16 @@ public class ListPositionCtrl : MonoBehaviour
 	void storeFingerPosition()
 	{
 		if (Input.GetTouch( 0 ).phase == TouchPhase.Began) {
-			lastInputWorldPos = Camera.main.ScreenToWorldPoint(
+			_lastInputWorldPos = Camera.main.ScreenToWorldPoint(
 				new Vector3( Input.GetTouch( 0 ).position.x, Input.GetTouch( 0 ).position.y, canvasDistance ) );
 		} else if (Input.GetTouch( 0 ).phase == TouchPhase.Moved) {
-			currentInputWorldPos = Camera.main.ScreenToWorldPoint(
+			_currentInputWorldPos = Camera.main.ScreenToWorldPoint(
 				new Vector3( Input.GetTouch( 0 ).position.x, Input.GetTouch( 0 ).position.y, canvasDistance ) );
-			deltaInputWorldPos = currentInputWorldPos - lastInputWorldPos;
+			_deltaInputWorldPos = _currentInputWorldPos - _lastInputWorldPos;
 			foreach (ListBox listbox in listBoxes)
-				listbox.updatePosition( deltaInputWorldPos / transform.parent.localScale.x );
+				listbox.updatePosition( _deltaInputWorldPos / transform.parent.localScale.x );
 
-			lastInputWorldPos = currentInputWorldPos;
+			_lastInputWorldPos = _currentInputWorldPos;
 		} else if (Input.GetTouch( 0 ).phase == TouchPhase.Ended)
 			setSlidingEffect();
 	}
@@ -136,7 +136,7 @@ public class ListPositionCtrl : MonoBehaviour
 	 */
 	void setSlidingEffect()
 	{
-		Vector3 deltaPos = deltaInputWorldPos / transform.parent.localScale.x;
+		Vector3 deltaPos = _deltaInputWorldPos / transform.parent.localScale.x;
 
 		if (alignToCenter)
 			deltaPos = findDeltaPositionToCenter();
