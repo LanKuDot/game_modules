@@ -14,8 +14,9 @@ public class ListBox : MonoBehaviour
 	public ListBox lastListBox;
 	public ListBox nextListBox;
 
-	private int contentID;
+	private int _contentID;
 
+	// All position calculations here are in the local space of the list
 	private Vector2 _canvasMaxPos;
 	private Vector2 _unitPos;
 	private Vector2 _lowerBoundPos;
@@ -23,13 +24,13 @@ public class ListBox : MonoBehaviour
 	private Vector2 _rangeBoundPos;
 	private Vector2 _shiftBoundPos;
 
-	private Vector3 slidingDistance_L;	// The sliding distance at each frame
-	private Vector3 slidingDistanceLeft_L;
+	private Vector3 _slidingDistance;	// The sliding distance at each frame
+	private Vector3 _slidingDistanceLeft;
 
-	private Vector3 originalLocalScale;
+	private Vector3 _originalLocalScale;
 
-	private bool keepSliding = false;
-	private int slidingFrames;
+	private bool _keepSliding = false;
+	private int _slidingFramesLeft;
 
 	void Start()
 	{
@@ -40,7 +41,7 @@ public class ListBox : MonoBehaviour
 		_rangeBoundPos = ListPositionCtrl.Instance.rangeBoundPos_L;
 		_shiftBoundPos = ListPositionCtrl.Instance.shiftBoundPos_L;
 
-		originalLocalScale = transform.localScale;
+		_originalLocalScale = transform.localScale;
 
 		initialPosition( listBoxID );
 		initialContent();
@@ -51,17 +52,17 @@ public class ListBox : MonoBehaviour
 	void initialContent()
 	{
 		if (listBoxID == ListPositionCtrl.Instance.listBoxes.Length / 2)
-			contentID = 0;
+			_contentID = 0;
 		else if (listBoxID < ListPositionCtrl.Instance.listBoxes.Length / 2)
-			contentID = ListBank.Instance.getListLength() - (ListPositionCtrl.Instance.listBoxes.Length / 2 - listBoxID);
+			_contentID = ListBank.Instance.getListLength() - (ListPositionCtrl.Instance.listBoxes.Length / 2 - listBoxID);
 		else
-			contentID = listBoxID - ListPositionCtrl.Instance.listBoxes.Length / 2;
+			_contentID = listBoxID - ListPositionCtrl.Instance.listBoxes.Length / 2;
 
-		while (contentID < 0)
-			contentID += ListBank.Instance.getListLength();
-		contentID = contentID % ListBank.Instance.getListLength();
+		while (_contentID < 0)
+			_contentID += ListBank.Instance.getListLength();
+		_contentID = _contentID % ListBank.Instance.getListLength();
 
-		updateContent( ListBank.Instance.getListContent( contentID ) );
+		updateContent( ListBank.Instance.getListContent( _contentID ) );
 	}
 
 	void updateContent( string content )
@@ -73,11 +74,11 @@ public class ListBox : MonoBehaviour
 	 */
 	public void setSlidingDistance( Vector3 distance )
 	{
-		keepSliding = true;
-		slidingFrames = ListPositionCtrl.Instance.slidingFrames;
+		_keepSliding = true;
+		_slidingFramesLeft = ListPositionCtrl.Instance.slidingFrames;
 
-		slidingDistanceLeft_L = distance;
-		slidingDistance_L = Vector3.Lerp( Vector3.zero, distance, ListPositionCtrl.Instance.slidingFactor );
+		_slidingDistanceLeft = distance;
+		_slidingDistance = Vector3.Lerp( Vector3.zero, distance, ListPositionCtrl.Instance.slidingFactor );
 	}
 
 	/* Move the listBox for world position unit.
@@ -104,21 +105,21 @@ public class ListBox : MonoBehaviour
 
 	void Update()
 	{
-		if (keepSliding) {
-			--slidingFrames;
-			if (slidingFrames == 0) {
-				keepSliding = false;
+		if (_keepSliding) {
+			--_slidingFramesLeft;
+			if (_slidingFramesLeft == 0) {
+				_keepSliding = false;
 				// At the last sliding frame, move to that position.
 				// At free moving mode, this function is disabled.
 				if ( ListPositionCtrl.Instance.alignToCenter ||
 				    ListPositionCtrl.Instance.controlByButton )
-					updatePosition( slidingDistanceLeft_L );
+					updatePosition( _slidingDistanceLeft );
 				return;
 			}
 
-			updatePosition( slidingDistance_L );
-			slidingDistanceLeft_L -= slidingDistance_L;
-			slidingDistance_L = Vector3.Lerp( Vector3.zero, slidingDistanceLeft_L, ListPositionCtrl.Instance.slidingFactor );
+			updatePosition( _slidingDistance );
+			_slidingDistanceLeft -= _slidingDistance;
+			_slidingDistance = Vector3.Lerp( Vector3.zero, _slidingDistanceLeft, ListPositionCtrl.Instance.slidingFactor );
 		}
 	}
 
@@ -241,13 +242,13 @@ public class ListBox : MonoBehaviour
 	 */
 	void updateSize( float smallest_at, float target_value )
 	{
-		transform.localScale = originalLocalScale *
+		transform.localScale = _originalLocalScale *
 			( 1.0f + ListPositionCtrl.Instance.scaleFactor * Mathf.InverseLerp( smallest_at, 0.0f, Mathf.Abs( target_value )));
 	}
 
 	public int getCurrentContentID()
 	{
-		return contentID;
+		return _contentID;
 	}
 
 	/* Update to the last content of the next ListBox
@@ -255,10 +256,10 @@ public class ListBox : MonoBehaviour
 	 */
 	void updateToLastContent()
 	{
-		contentID = nextListBox.getCurrentContentID() - 1;
-		contentID = ( contentID < 0 ) ? ListBank.Instance.getListLength() - 1 : contentID;
+		_contentID = nextListBox.getCurrentContentID() - 1;
+		_contentID = ( _contentID < 0 ) ? ListBank.Instance.getListLength() - 1 : _contentID;
 
-		updateContent( ListBank.Instance.getListContent( contentID ) );
+		updateContent( ListBank.Instance.getListContent( _contentID ) );
 	}
 
 	/* Update to the next content of the last ListBox
@@ -266,9 +267,9 @@ public class ListBox : MonoBehaviour
 	 */
 	void updateToNextContent()
 	{
-		contentID = lastListBox.getCurrentContentID() + 1;
-		contentID = ( contentID == ListBank.Instance.getListLength() ) ? 0 : contentID;
+		_contentID = lastListBox.getCurrentContentID() + 1;
+		_contentID = ( _contentID == ListBank.Instance.getListLength() ) ? 0 : _contentID;
 
-		updateContent( ListBank.Instance.getListContent( contentID ) );
+		updateContent( ListBank.Instance.getListContent( _contentID ) );
 	}
 }
