@@ -214,6 +214,13 @@ public class ListPositionCtrl : MonoBehaviour
 		}
 	}
 
+	/* Divide each component of vector a by vector b.
+	 */
+	Vector3 divideComponent( Vector3 a, Vector3 b )
+	{
+		return new Vector3( a.x / b.x, a.y / b.y, a.z / b.z );
+	}
+
 	/* controlByButton is enabled!
 	 * When the next content button is pressed,
 	 * move all listBoxes 1 unit up.
