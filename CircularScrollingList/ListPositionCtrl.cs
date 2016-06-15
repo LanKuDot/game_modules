@@ -103,9 +103,11 @@ public class ListPositionCtrl : MonoBehaviour
 		 * so we need to convert it to the local space of the list. The lossyScale will return
 		 * the scale vector of which the value is scaling amount from its local space to the world
 		 * space. Finally, by dividing the result by two we get the max position coordinate
-		 * of the canvas plane in the local space of the list (Assuming the pivot of the
+		 * of the canvas plane in the local space of it (Assuming the pivot of the
 		 * ListPositionCtrl object is at the center).*/
-		_canvasMaxPos_L /= (2.0f * transform.lossyScale.x);
+		_canvasMaxPos_L /= (2.0f * transform.parent.lossyScale.x);
+		// Use the lossy scale of the canvas plane here, so we can scale the whole list
+		// by scaling the gameObject ListPositionCtrl attached.
 
 		_unitPos_L = _canvasMaxPos_L / divideFactor;
 		_lowerBoundPos_L = _unitPos_L * (-1 * listBoxes.Length / 2 - 1);
