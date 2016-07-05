@@ -143,7 +143,7 @@ public class ListPositionCtrl : MonoBehaviour
 				new Vector3( Input.mousePosition.x, Input.mousePosition.y, canvasDistance ) );
 			_lastInputPos_L = divideComponent( _lastInputPos_L, transform.lossyScale );
 			_startInputPos_L = _lastInputPos_L;
-			slidingFrames = 0;
+			_numofSlideFrames = 0;
 		} else if (Input.GetMouseButton( 0 )) {
 			_currentInputPos_L = Camera.main.ScreenToWorldPoint(
 				new Vector3( Input.mousePosition.x, Input.mousePosition.y, canvasDistance ) );
@@ -153,7 +153,7 @@ public class ListPositionCtrl : MonoBehaviour
 				listbox.updatePosition( _deltaInputPos_L );
 
 			_lastInputPos_L = _currentInputPos_L;
-			++slidingFrames;
+			++_numofSlideFrames;
 		} else if (Input.GetMouseButtonUp( 0 ))
 			setSlidingEffect();
 	}
@@ -167,7 +167,7 @@ public class ListPositionCtrl : MonoBehaviour
 				new Vector3( Input.GetTouch( 0 ).position.x, Input.GetTouch( 0 ).position.y, canvasDistance ) );
 			_lastInputPos_L = divideComponent( _lastInputPos_L, transform.lossyScale );
 			_startInputPos_L = _lastInputPos_L;
-			slidingFrames = 0;
+			_numofSlideFrames = 0;
 		} else if (Input.GetTouch( 0 ).phase == TouchPhase.Moved) {
 			_currentInputPos_L = Camera.main.ScreenToWorldPoint(
 				new Vector3( Input.GetTouch( 0 ).position.x, Input.GetTouch( 0 ).position.y, canvasDistance ) );
@@ -177,7 +177,7 @@ public class ListPositionCtrl : MonoBehaviour
 				listbox.updatePosition( _deltaInputPos_L );
 
 			_lastInputPos_L = _currentInputPos_L;
-			++slidingFrames;
+			++_numofSlideFrames;
 		} else if (Input.GetTouch( 0 ).phase == TouchPhase.Ended)
 			setSlidingEffect();
 	}
