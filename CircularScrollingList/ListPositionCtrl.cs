@@ -107,7 +107,9 @@ public class ListPositionCtrl : MonoBehaviour
 		 * space. Finally, by dividing the result by two we get the max position coordinate
 		 * of the canvas plane in the local space of it (Assuming the pivot of the
 		 * ListPositionCtrl object is at the center).*/
-		_canvasMaxPos_L /= (2.0f * transform.parent.lossyScale.x);
+		_canvasMaxPos_L = new Vector2(
+			_canvasMaxPos_L.x / (2.0f * transform.parent.lossyScale.x),
+			_canvasMaxPos_L.y / (2.0f * transform.parent.lossyScale.y) );
 		// Use the lossy scale of the canvas plane here, so we can scale the whole list
 		// by scaling the gameObject ListPositionCtrl attached.
 
