@@ -76,10 +76,10 @@ public class ListBox : MonoBehaviour
 
 	/* Make the list box slide for delta x or y position.
 	 */
-	public void setSlidingDistance( Vector3 distance )
+	public void setSlidingDistance( Vector3 distance, int slidingFrames )
 	{
 		_keepSliding = true;
-		_slidingFramesLeft = ListPositionCtrl.Instance.slidingFrames;
+		_slidingFramesLeft = slidingFrames;
 
 		_slidingDistanceLeft = distance;
 		_slidingDistance = Vector3.Lerp( Vector3.zero, distance, ListPositionCtrl.Instance.slidingFactor );
@@ -99,10 +99,10 @@ public class ListBox : MonoBehaviour
 
 		switch (ListPositionCtrl.Instance.direction) {
 		case ListPositionCtrl.Direction.VERTICAL:
-			setSlidingDistance( new Vector3( 0.0f, deltaPos.y, 0.0f ) );
+			setSlidingDistance( new Vector3( 0.0f, deltaPos.y, 0.0f ), ListPositionCtrl.Instance.slidingFrames );
 			break;
 		case ListPositionCtrl.Direction.HORIZONTAL:
-			setSlidingDistance( new Vector3( deltaPos.x, 0.0f, 0.0f ) );
+			setSlidingDistance( new Vector3( deltaPos.x, 0.0f, 0.0f ), ListPositionCtrl.Instance.slidingFrames );
 			break;
 		}
 	}
