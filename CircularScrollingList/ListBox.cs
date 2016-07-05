@@ -32,6 +32,10 @@ public class ListBox : MonoBehaviour
 	private bool _keepSliding = false;
 	private int _slidingFramesLeft;
 
+	/* Notice: ListBox will initialize its variables from ListPositionCtrl.
+	 * Make sure that the execution order of script ListPositionCtrl is prior to
+	 * ListBox.
+	 */
 	void Start()
 	{
 		_canvasMaxPos = ListPositionCtrl.Instance.canvasMaxPos_L;
