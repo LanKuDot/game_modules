@@ -30,6 +30,8 @@ public class ListPositionCtrl : MonoBehaviour
 	 */
 	public bool controlByButton = false;
 	public bool alignToCenter = false;
+	[HideInInspector]
+	public bool needToAlignToCenter = false;
 
 	public ListBox[] listBoxes;
 
@@ -189,11 +191,29 @@ public class ListPositionCtrl : MonoBehaviour
 	{
 		Vector3 deltaPos = _deltaInputPos_L;
 
-		if (alignToCenter)
-			deltaPos = findDeltaPositionToCenter();
+		if (alignToCenter) {
+			foreach (ListBox listbox in listBoxes)
+				listbox.setSlidingDistance( deltaPos, slidingFrames / 2 );
+			needToAlignToCenter = true;
+		} else {
+			foreach (ListBox listbox in listBoxes)
+				listbox.setSlidingDistance( deltaPos, slidingFrames );
+		}
+	}
+
+	/* Move all ListBoxes for a distance which equals to the smallest distance
+	 * between ListBox and the center.
+	 * This method will be called from ListBox0 when needToAlignToCenter flag is set, and
+	 * the flag will be cleared in here.
+	 */
+	public void alignToCenterSlide()
+	{
+		Vector3 deltaPos = findDeltaPositionToCenter();
 
 		foreach (ListBox listbox in listBoxes)
-			listbox.setSlidingDistance( deltaPos, slidingFrames );
+			listbox.setSlidingDistance( deltaPos, slidingFrames / 2 );
+
+		needToAlignToCenter = false;
 	}
 
 	/* Find the listBox which is the closest to the center position,

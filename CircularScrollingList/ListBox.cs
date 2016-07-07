@@ -118,6 +118,9 @@ public class ListBox : MonoBehaviour
 				if ( ListPositionCtrl.Instance.alignToCenter ||
 				    ListPositionCtrl.Instance.controlByButton )
 					updatePosition( _slidingDistanceLeft );
+				if ( listBoxID == 0 &&
+					 ListPositionCtrl.Instance.needToAlignToCenter )
+					ListPositionCtrl.Instance.alignToCenterSlide();
 				return;
 			}
 
