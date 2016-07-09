@@ -190,6 +190,7 @@ public class ListPositionCtrl : MonoBehaviour
 	void setSlidingEffect()
 	{
 		Vector3 deltaPos = _deltaInputPos_L;
+		Vector3 slideDistance = _lastInputPos_L - _startInputPos_L;
 
 		if (alignToCenter) {
 			foreach (ListBox listbox in listBoxes)
@@ -199,6 +200,29 @@ public class ListPositionCtrl : MonoBehaviour
 			foreach (ListBox listbox in listBoxes)
 				listbox.setSlidingDistance( deltaPos, slidingFrames );
 		}
+	}
+
+	/* Judge if this cursor or finger slide is the fast sliding.
+	 * If the duration of a slide is within 15 frames and the distance is
+	 * longer than the half of the distance of the list, the slide is the fast sliding.
+	 */
+	bool isFastSliding( int frames, Vector3 distance )
+	{
+		if (frames < 15) {
+			switch(direction) {
+			case Direction.HORIZONTAL:
+				if (Mathf.Abs(distance.x) > _canvasMaxPos_L.x)
+					return true;
+				else
+					return false;
+			case Direction.VERTICAL:
+				if (Mathf.Abs(distance.y) > _canvasMaxPos_L.y)
+					return true;
+				else
+					return false;
+			}
+		}
+		return false;
 	}
 
 	/* Move all ListBoxes for a distance which equals to the smallest distance
