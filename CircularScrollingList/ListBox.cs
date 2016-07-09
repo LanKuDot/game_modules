@@ -115,11 +115,16 @@ public class ListBox : MonoBehaviour
 				_keepSliding = false;
 				// At the last sliding frame, move to that position.
 				// At free moving mode, this function is disabled.
-				if ( ListPositionCtrl.Instance.alignToCenter ||
-				    ListPositionCtrl.Instance.controlByButton )
+				if (ListPositionCtrl.Instance.alignToCenter ||
+					ListPositionCtrl.Instance.controlByButton) {
 					updatePosition( _slidingDistanceLeft );
-				if ( listBoxID == 0 &&
-					 ListPositionCtrl.Instance.needToAlignToCenter )
+				}
+				// FIXME: Due to compiler optimization?
+				// When using condition listBoxID == 0, there have some boxes don't execute
+				// the above code. (For other condition, like 1, 3, or 4, also has the same
+				// problem. Only using 2 will work normally.)
+				if (listBoxID == 2 &&
+					ListPositionCtrl.Instance.needToAlignToCenter)
 					ListPositionCtrl.Instance.alignToCenterSlide();
 				return;
 			}
