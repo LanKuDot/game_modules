@@ -191,14 +191,18 @@ public class ListPositionCtrl : MonoBehaviour
 	{
 		Vector3 deltaPos = _deltaInputPos_L;
 		Vector3 slideDistance = _lastInputPos_L - _startInputPos_L;
+		bool fastSliding = isFastSliding( _numofSlideFrames, slideDistance );
+
+		if (fastSliding)
+			deltaPos *= 5.0f;	// Slide more longer!
 
 		if (alignToCenter) {
 			foreach (ListBox listbox in listBoxes)
-				listbox.setSlidingDistance( deltaPos, slidingFrames / 2 );
+				listbox.setSlidingDistance( deltaPos, fastSliding ? slidingFrames : slidingFrames / 2 );
 			needToAlignToCenter = true;
 		} else {
 			foreach (ListBox listbox in listBoxes)
-				listbox.setSlidingDistance( deltaPos, slidingFrames );
+				listbox.setSlidingDistance( deltaPos, fastSliding ? slidingFrames * 2 : slidingFrames );
 		}
 	}
 
