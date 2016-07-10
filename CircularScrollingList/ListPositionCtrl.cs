@@ -146,6 +146,9 @@ public class ListPositionCtrl : MonoBehaviour
 			_lastInputPos_L = divideComponent( _lastInputPos_L, transform.lossyScale );
 			_startInputPos_L = _lastInputPos_L;
 			_numofSlideFrames = 0;
+			// When the user starts to drag the list, all listBoxes stop free sliding.
+			foreach (ListBox listBox in listBoxes)
+				listBox.keepSliding = false;
 		} else if (Input.GetMouseButton( 0 )) {
 			_currentInputPos_L = Camera.main.ScreenToWorldPoint(
 				new Vector3( Input.mousePosition.x, Input.mousePosition.y, canvasDistance ) );
@@ -170,6 +173,9 @@ public class ListPositionCtrl : MonoBehaviour
 			_lastInputPos_L = divideComponent( _lastInputPos_L, transform.lossyScale );
 			_startInputPos_L = _lastInputPos_L;
 			_numofSlideFrames = 0;
+			// When the user starts to drag the list, all listBoxes stop free sliding.
+			foreach (ListBox listBox in listBoxes)
+				listBox.keepSliding = false;
 		} else if (Input.GetTouch( 0 ).phase == TouchPhase.Moved) {
 			_currentInputPos_L = Camera.main.ScreenToWorldPoint(
 				new Vector3( Input.GetTouch( 0 ).position.x, Input.GetTouch( 0 ).position.y, canvasDistance ) );

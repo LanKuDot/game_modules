@@ -32,6 +32,8 @@ public class ListBox : MonoBehaviour
 	private bool _keepSliding = false;
 	private int _slidingFramesLeft;
 
+	public bool keepSliding { set { _keepSliding = value; } }
+
 	/* Notice: ListBox will initialize its variables from ListPositionCtrl.
 	 * Make sure that the execution order of script ListPositionCtrl is prior to
 	 * ListBox.
