@@ -1,4 +1,4 @@
-﻿/* Calculate and assign the final position for each ListBoxes.
+﻿/* Get inputs and assgin the delta distance to all ListBoxes.
  *
  * There are three controling modes:
  * 1. Free moving: Control the listBoxes with finger or mouse.

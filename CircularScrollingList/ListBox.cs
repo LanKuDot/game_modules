@@ -1,5 +1,5 @@
 ﻿/* The basic component of scrolling list.
- * Control the position of the list element.
+ * Control the position and the contents of the list element.
  *
  * Author: LanKuDot <airlanser@gmail.com>
  */
