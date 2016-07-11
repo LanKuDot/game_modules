@@ -214,19 +214,19 @@ public class ListPositionCtrl : MonoBehaviour
 
 	/* Judge if this cursor or finger slide is the fast sliding.
 	 * If the duration of a slide is within 15 frames and the distance is
-	 * longer than the half of the distance of the list, the slide is the fast sliding.
+	 * longer than the 1/3 of the distance of the list, the slide is the fast sliding.
 	 */
 	bool isFastSliding( int frames, Vector3 distance )
 	{
 		if (frames < 15) {
 			switch(direction) {
 			case Direction.HORIZONTAL:
-				if (Mathf.Abs(distance.x) > _canvasMaxPos_L.x)
+				if (Mathf.Abs(distance.x) > _canvasMaxPos_L.x * 2.0f / 3.0f)
 					return true;
 				else
 					return false;
 			case Direction.VERTICAL:
-				if (Mathf.Abs(distance.y) > _canvasMaxPos_L.y)
+				if (Mathf.Abs(distance.y) > _canvasMaxPos_L.y * 2.0f / 3.0f)
 					return true;
 				else
 					return false;
