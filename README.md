@@ -1,5 +1,7 @@
 # The game modules for Unity3D
 
+- For developing modules, please visit branch [develop](https://github.com/LanKuDot/game_modules/tree/develop)
+
 ## Circular Scrolling List
 - Use finite list boxes to display infinte number of list contents.
 - It's all about math!
