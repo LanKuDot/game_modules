@@ -211,14 +211,14 @@ public class ListBox : MonoBehaviour
 			beyondPosY_L = ( _lowerBoundPos.y + _shiftBoundPos.y - transform.localPosition.y );
 			transform.localPosition = new Vector3(
 				transform.localPosition.x,
-				_upperBoundPos.y + _shiftBoundPos.y - _unitPos.y - beyondPosY_L,
+				_upperBoundPos.y - _unitPos.y + _shiftBoundPos.y - beyondPosY_L,
 				transform.localPosition.z );
 			updateToLastContent();
 		} else if (transform.localPosition.y > _upperBoundPos.y - _shiftBoundPos.y) {
 			beyondPosY_L = ( transform.localPosition.y - _upperBoundPos.y + _shiftBoundPos.y );
 			transform.localPosition = new Vector3(
 				transform.localPosition.x,
-				_lowerBoundPos.y - _shiftBoundPos.y + _unitPos.y + beyondPosY_L,
+				_lowerBoundPos.y + _unitPos.y - _shiftBoundPos.y + beyondPosY_L,
 				transform.localPosition.z );
 			updateToNextContent();
 		}
@@ -234,14 +234,14 @@ public class ListBox : MonoBehaviour
 		if (transform.localPosition.x < _lowerBoundPos.x + _shiftBoundPos.x) {
 			beyondPosX_L = (_lowerBoundPos.x + _shiftBoundPos.x - transform.localPosition.x);
 			transform.localPosition = new Vector3(
-				_upperBoundPos.x + _shiftBoundPos.x - _unitPos.x - beyondPosX_L,
+				_upperBoundPos.x - _unitPos.x + _shiftBoundPos.x - beyondPosX_L,
 				transform.localPosition.y,
 				transform.localPosition.z );
 			updateToNextContent();
 		} else if (transform.localPosition.x > _upperBoundPos.x - _shiftBoundPos.x) {
 			beyondPosX_L = (transform.localPosition.x - _upperBoundPos.x + _shiftBoundPos.x);
 			transform.localPosition = new Vector3(
-				_lowerBoundPos.x - _shiftBoundPos.x + _unitPos.x + beyondPosX_L,
+				_lowerBoundPos.x + _unitPos.x - _shiftBoundPos.x + beyondPosX_L,
 				transform.localPosition.y,
 				transform.localPosition.z );
 			updateToLastContent();
