@@ -137,20 +137,37 @@ public class ListBox : MonoBehaviour
 
 	/* Initialize the local position of the list box accroding to its ID.
 	 */
-	void initialPosition( int listBoxID )
+	void initialPosition(int listBoxID)
 	{
-		switch (ListPositionCtrl.Instance.direction) {
-		case ListPositionCtrl.Direction.VERTICAL:
-			transform.localPosition = new Vector3( 0.0f,
-				_unitPos.y * (float)( listBoxID * -1 + ListPositionCtrl.Instance.listBoxes.Length / 2 ),
-				0.0f );
-			updateXPosition();
-			break;
-		case ListPositionCtrl.Direction.HORIZONTAL:
-			transform.localPosition = new Vector3( _unitPos.x* (float)( listBoxID - ListPositionCtrl.Instance.listBoxes.Length / 2 ),
+		// If there are even number of ListBoxes, adjust the initial position by an half unitPos.
+		if ((ListPositionCtrl.Instance.listBoxes.Length & 0x1) == 0) {
+			switch (ListPositionCtrl.Instance.direction) {
+			case ListPositionCtrl.Direction.VERTICAL:
+				transform.localPosition = new Vector3( 0.0f,
+					_unitPos.y * (listBoxID * -1 + ListPositionCtrl.Instance.listBoxes.Length / 2) - _unitPos.y / 2,
+					0.0f );
+				updateXPosition();
+				break;
+			case ListPositionCtrl.Direction.HORIZONTAL:
+				transform.localPosition = new Vector3( _unitPos.x * (listBoxID - ListPositionCtrl.Instance.listBoxes.Length / 2) - _unitPos.x / 2,
 				0.0f, 0.0f );
-			updateYPosition();
-			break;
+				updateYPosition();
+				break;
+			}
+		} else {
+			switch (ListPositionCtrl.Instance.direction) {
+			case ListPositionCtrl.Direction.VERTICAL:
+				transform.localPosition = new Vector3( 0.0f,
+					_unitPos.y * (listBoxID * -1 + ListPositionCtrl.Instance.listBoxes.Length / 2),
+					0.0f );
+				updateXPosition();
+				break;
+			case ListPositionCtrl.Direction.HORIZONTAL:
+				transform.localPosition = new Vector3( _unitPos.x * (listBoxID - ListPositionCtrl.Instance.listBoxes.Length / 2),
+					0.0f, 0.0f );
+				updateYPosition();
+				break;
+			}
 		}
 	}
 

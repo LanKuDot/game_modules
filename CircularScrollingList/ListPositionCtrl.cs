@@ -120,6 +120,12 @@ public class ListPositionCtrl : MonoBehaviour
 		_upperBoundPos_L = _unitPos_L * (listBoxes.Length / 2 + 1);
 		_shiftBoundPos_L = _unitPos_L * 0.3f;
 
+		// If there are even number of ListBoxes, narrow the boundary for 1 unitPos.
+		if ((listBoxes.Length & 0x1) == 0) {
+			_lowerBoundPos_L += _unitPos_L / 2;
+			_upperBoundPos_L -= _unitPos_L / 2;
+		}
+
 		if (!controlByButton)
 			foreach (Button button in buttons)
 				button.gameObject.SetActive( false );
