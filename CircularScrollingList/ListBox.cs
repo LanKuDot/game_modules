@@ -122,7 +122,7 @@ public class ListBox : MonoBehaviour
 					updatePosition( _slidingDistanceLeft );
 				}
 				// FIXME: Due to compiler optimization?
-				// When using condition listBoxID == 0, there have some boxes don't execute
+				// When using condition listBoxID == 0, some boxes don't execute
 				// the above code. (For other condition, like 1, 3, or 4, also has the same
 				// problem. Only using 2 will work normally.)
 				if (listBoxID == 2 &&

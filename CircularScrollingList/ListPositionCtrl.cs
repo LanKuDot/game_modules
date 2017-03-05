@@ -1,12 +1,12 @@
 ﻿/* Get inputs and assgin the delta distance to all ListBoxes.
  *
  * There are three controling modes:
- * 1. Free moving: Control the listBoxes with finger or mouse.
- *    You don't know where the ListBox would stop at.
- * 2. Align to center: It's the same as free moving
- *    but there always has a listBox positioning at the center.
- * 3. Control by button: Control the listBoxes by button on the screen.
- *    There always has a listBox positioning at the center.
+ * 1. Free moving: Move ListBoxes by finger or mouse.
+ *    You don't know where the ListBox will stop at.
+ * 2. Align to center: It's the same as free moving.
+ *    However, there is always a ListBox positioning at the center.
+ * 3. Control by button: Control ListBoxes by UI buttons.
+ *    There is always a ListBox positioning at the center.
  *
  * Author: LanKuDot <airlanser@gmail.com>
  */
@@ -63,7 +63,7 @@ public class ListPositionCtrl : MonoBehaviour
 	private Vector2 _upperBoundPos_L;
 	private Vector2 _rangeBoundPos_L;
 	private Vector2 _shiftBoundPos_L;
-	// The gets of above variables
+	// The gets of the above variables
 	public Vector2 canvasMaxPos_L {	get { return _canvasMaxPos_L; }	}
 	public Vector2 unitPos_L { get { return _unitPos_L; } }
 	public Vector2 lowerBoundPos_L { get { return _lowerBoundPos_L; } }
@@ -97,23 +97,25 @@ public class ListPositionCtrl : MonoBehaviour
 	 */
 	void Start()
 	{
-		/* The minimum position is at left-bottom corner of camera which coordinate is (0,0),
-		 * and the maximum position is at right-top corner of camera. For perspective view,
+		/* Convert the coordination space from the screen space to the world space.
+		 * Then, substract the coorination at the left-bottom corner of the screen
+		 * from the one at the right-top corner to get the size of the screen in world space.
+		 * For perspective view,
 		 * we have to take the distance between canvas plane and camera into account. */
 		_canvasMaxPos_L = Camera.main.ScreenToWorldPoint(
 			new Vector3( Camera.main.pixelWidth, Camera.main.pixelHeight, canvasDistance ) ) -
 			Camera.main.ScreenToWorldPoint( new Vector3( 0.0f, 0.0f, canvasDistance ) );
-		/* The result above is the distance of boundary of the canvas plane in the world space,
+		/* The result above is the length of sides of boundary of the canvas plane in the world space,
 		 * so we need to convert it to the local space of the list. The lossyScale will return
-		 * the scale vector of which the value is scaling amount from its local space to the world
-		 * space. Finally, by dividing the result by two we get the max position coordinate
-		 * of the canvas plane in the local space of it (Assuming the pivot of the
-		 * ListPositionCtrl object is at the center).*/
+		 * the scale vector which is the scaling amount from its local space to the world
+		 * space. Finally, by dividing the result by two we get the max coordination
+		 * of the canvas plane in the canvas plane space (Assuming the origin of the
+		 * canvas plane is at the center of the canvas plane).*/
 		_canvasMaxPos_L = new Vector2(
 			_canvasMaxPos_L.x / (2.0f * transform.parent.lossyScale.x),
 			_canvasMaxPos_L.y / (2.0f * transform.parent.lossyScale.y) );
 		// Use the lossy scale of the canvas plane here, so we can scale the whole list
-		// by scaling the gameObject ListPositionCtrl attached.
+		// by scaling the gameObject ListPositionCtrl.
 
 		_unitPos_L = _canvasMaxPos_L / divideFactor;
 		_lowerBoundPos_L = _unitPos_L * (-1 * listBoxes.Length / 2 - 1);
