@@ -21,7 +21,6 @@ public class ListBox : MonoBehaviour
 	private Vector2 _unitPos;
 	private Vector2 _lowerBoundPos;
 	private Vector2 _upperBoundPos;
-	private Vector2 _rangeBoundPos;
 	private Vector2 _shiftBoundPos;
 
 	private Vector3 _slidingDistance;	// The sliding distance at each frame
@@ -44,7 +43,6 @@ public class ListBox : MonoBehaviour
 		_unitPos = ListPositionCtrl.Instance.unitPos_L;
 		_lowerBoundPos = ListPositionCtrl.Instance.lowerBoundPos_L;
 		_upperBoundPos = ListPositionCtrl.Instance.upperBoundPos_L;
-		_rangeBoundPos = ListPositionCtrl.Instance.rangeBoundPos_L;
 		_shiftBoundPos = ListPositionCtrl.Instance.shiftBoundPos_L;
 
 		_originalLocalScale = transform.localScale;
@@ -210,14 +208,14 @@ public class ListBox : MonoBehaviour
 
 		// Narrow the checking boundary in order to avoid the list swaying to one side
 		if (transform.localPosition.y < _lowerBoundPos.y + _shiftBoundPos.y) {
-			beyondPosY_L = ( _lowerBoundPos.y + _shiftBoundPos.y - transform.localPosition.y ) % _rangeBoundPos.y;
+			beyondPosY_L = ( _lowerBoundPos.y + _shiftBoundPos.y - transform.localPosition.y );
 			transform.localPosition = new Vector3(
 				transform.localPosition.x,
 				_upperBoundPos.y + _shiftBoundPos.y - _unitPos.y - beyondPosY_L,
 				transform.localPosition.z );
 			updateToLastContent();
 		} else if (transform.localPosition.y > _upperBoundPos.y - _shiftBoundPos.y) {
-			beyondPosY_L = ( transform.localPosition.y - _upperBoundPos.y + _shiftBoundPos.y ) % _rangeBoundPos.y;
+			beyondPosY_L = ( transform.localPosition.y - _upperBoundPos.y + _shiftBoundPos.y );
 			transform.localPosition = new Vector3(
 				transform.localPosition.x,
 				_lowerBoundPos.y - _shiftBoundPos.y + _unitPos.y + beyondPosY_L,
@@ -234,14 +232,14 @@ public class ListBox : MonoBehaviour
 
 		// Narrow the checking boundary in order to avoid the list swaying to one side
 		if (transform.localPosition.x < _lowerBoundPos.x + _shiftBoundPos.x) {
-			beyondPosX_L = (_lowerBoundPos.x + _shiftBoundPos.x - transform.localPosition.x) % _rangeBoundPos.x;
+			beyondPosX_L = (_lowerBoundPos.x + _shiftBoundPos.x - transform.localPosition.x);
 			transform.localPosition = new Vector3(
 				_upperBoundPos.x + _shiftBoundPos.x - _unitPos.x - beyondPosX_L,
 				transform.localPosition.y,
 				transform.localPosition.z );
 			updateToNextContent();
 		} else if (transform.localPosition.x > _upperBoundPos.x - _shiftBoundPos.x) {
-			beyondPosX_L = (transform.localPosition.x - _upperBoundPos.x + _shiftBoundPos.x) % _rangeBoundPos.x;
+			beyondPosX_L = (transform.localPosition.x - _upperBoundPos.x + _shiftBoundPos.x);
 			transform.localPosition = new Vector3(
 				_lowerBoundPos.x - _shiftBoundPos.x + _unitPos.x + beyondPosX_L,
 				transform.localPosition.y,

@@ -61,14 +61,12 @@ public class ListPositionCtrl : MonoBehaviour
 	private Vector2 _unitPos_L;
 	private Vector2 _lowerBoundPos_L;
 	private Vector2 _upperBoundPos_L;
-	private Vector2 _rangeBoundPos_L;
 	private Vector2 _shiftBoundPos_L;
 	// The gets of the above variables
 	public Vector2 canvasMaxPos_L {	get { return _canvasMaxPos_L; }	}
 	public Vector2 unitPos_L { get { return _unitPos_L; } }
 	public Vector2 lowerBoundPos_L { get { return _lowerBoundPos_L; } }
 	public Vector2 upperBoundPos_L { get { return _upperBoundPos_L; } }
-	public Vector2 rangeBoundPos_L { get { return _rangeBoundPos_L; } }
 	public Vector2 shiftBoundPos_L { get { return _shiftBoundPos_L; } }
 
 	// Input mouse/finger position in the local space of the list.
@@ -120,7 +118,6 @@ public class ListPositionCtrl : MonoBehaviour
 		_unitPos_L = _canvasMaxPos_L / divideFactor;
 		_lowerBoundPos_L = _unitPos_L * (-1 * listBoxes.Length / 2 - 1);
 		_upperBoundPos_L = _unitPos_L * (listBoxes.Length / 2 + 1);
-		_rangeBoundPos_L = _unitPos_L * listBoxes.Length;
 		_shiftBoundPos_L = _unitPos_L * 0.3f;
 
 		if (!controlByButton)
