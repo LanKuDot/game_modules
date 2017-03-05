@@ -15,9 +15,9 @@ public class ListBank : MonoBehaviour
 		Instance = this;
 	}
 
-	public string getListContent( int index )
+	public string getListContent(int index)
 	{
-		return contents[ index ].ToString();
+		return contents[index].ToString();
 	}
 
 	public int getListLength()

@@ -8,8 +8,8 @@ using UnityEngine.UI;
 
 public class ListBox : MonoBehaviour
 {
-	public int listBoxID;	// Must be unique, and count from 0
-	public Text content;		// The content of the list box
+	public int listBoxID;   // Must be unique, and count from 0
+	public Text content;        // The content of the list box
 
 	public ListBox lastListBox;
 	public ListBox nextListBox;
@@ -23,7 +23,7 @@ public class ListBox : MonoBehaviour
 	private Vector2 _upperBoundPos;
 	private Vector2 _shiftBoundPos;
 
-	private Vector3 _slidingDistance;	// The sliding distance at each frame
+	private Vector3 _slidingDistance;   // The sliding distance at each frame
 	private Vector3 _slidingDistanceLeft;
 
 	private Vector3 _originalLocalScale;
@@ -47,7 +47,7 @@ public class ListBox : MonoBehaviour
 
 		_originalLocalScale = transform.localScale;
 
-		initialPosition( listBoxID );
+		initialPosition(listBoxID);
 		initialContent();
 	}
 
@@ -66,29 +66,29 @@ public class ListBox : MonoBehaviour
 			_contentID += ListBank.Instance.getListLength();
 		_contentID = _contentID % ListBank.Instance.getListLength();
 
-		updateContent( ListBank.Instance.getListContent( _contentID ) );
+		updateContent(ListBank.Instance.getListContent(_contentID));
 	}
 
-	void updateContent( string content )
+	void updateContent(string content)
 	{
 		this.content.text = content;
 	}
 
 	/* Make the list box slide for delta x or y position.
 	 */
-	public void setSlidingDistance( Vector3 distance, int slidingFrames )
+	public void setSlidingDistance(Vector3 distance, int slidingFrames)
 	{
 		_keepSliding = true;
 		_slidingFramesLeft = slidingFrames;
 
 		_slidingDistanceLeft = distance;
-		_slidingDistance = Vector3.Lerp( Vector3.zero, distance, ListPositionCtrl.Instance.slidingFactor );
+		_slidingDistance = Vector3.Lerp(Vector3.zero, distance, ListPositionCtrl.Instance.slidingFactor);
 	}
 
 	/* Move the listBox for world position unit.
 	 * Move up when "up" is true, or else, move down.
 	 */
-	public void unitMove( int unit, bool up_right )
+	public void unitMove(int unit, bool up_right)
 	{
 		Vector2 deltaPos;
 
@@ -99,10 +99,10 @@ public class ListBox : MonoBehaviour
 
 		switch (ListPositionCtrl.Instance.direction) {
 		case ListPositionCtrl.Direction.VERTICAL:
-			setSlidingDistance( new Vector3( 0.0f, deltaPos.y, 0.0f ), ListPositionCtrl.Instance.slidingFrames );
+			setSlidingDistance(new Vector3(0.0f, deltaPos.y, 0.0f), ListPositionCtrl.Instance.slidingFrames);
 			break;
 		case ListPositionCtrl.Direction.HORIZONTAL:
-			setSlidingDistance( new Vector3( deltaPos.x, 0.0f, 0.0f ), ListPositionCtrl.Instance.slidingFrames );
+			setSlidingDistance(new Vector3(deltaPos.x, 0.0f, 0.0f), ListPositionCtrl.Instance.slidingFrames);
 			break;
 		}
 	}
@@ -117,7 +117,7 @@ public class ListBox : MonoBehaviour
 				// At free moving mode, this function is disabled.
 				if (ListPositionCtrl.Instance.alignToCenter ||
 					ListPositionCtrl.Instance.controlByButton) {
-					updatePosition( _slidingDistanceLeft );
+					updatePosition(_slidingDistanceLeft);
 				}
 				// FIXME: Due to compiler optimization?
 				// When using condition listBoxID == 0, some boxes don't execute
@@ -129,9 +129,9 @@ public class ListBox : MonoBehaviour
 				return;
 			}
 
-			updatePosition( _slidingDistance );
+			updatePosition(_slidingDistance);
 			_slidingDistanceLeft -= _slidingDistance;
-			_slidingDistance = Vector3.Lerp( Vector3.zero, _slidingDistanceLeft, ListPositionCtrl.Instance.slidingFactor );
+			_slidingDistance = Vector3.Lerp(Vector3.zero, _slidingDistanceLeft, ListPositionCtrl.Instance.slidingFactor);
 		}
 	}
 
@@ -143,28 +143,28 @@ public class ListBox : MonoBehaviour
 		if ((ListPositionCtrl.Instance.listBoxes.Length & 0x1) == 0) {
 			switch (ListPositionCtrl.Instance.direction) {
 			case ListPositionCtrl.Direction.VERTICAL:
-				transform.localPosition = new Vector3( 0.0f,
+				transform.localPosition = new Vector3(0.0f,
 					_unitPos.y * (listBoxID * -1 + ListPositionCtrl.Instance.listBoxes.Length / 2) - _unitPos.y / 2,
-					0.0f );
+					0.0f);
 				updateXPosition();
 				break;
 			case ListPositionCtrl.Direction.HORIZONTAL:
-				transform.localPosition = new Vector3( _unitPos.x * (listBoxID - ListPositionCtrl.Instance.listBoxes.Length / 2) - _unitPos.x / 2,
-				0.0f, 0.0f );
+				transform.localPosition = new Vector3(_unitPos.x * (listBoxID - ListPositionCtrl.Instance.listBoxes.Length / 2) - _unitPos.x / 2,
+				0.0f, 0.0f);
 				updateYPosition();
 				break;
 			}
 		} else {
 			switch (ListPositionCtrl.Instance.direction) {
 			case ListPositionCtrl.Direction.VERTICAL:
-				transform.localPosition = new Vector3( 0.0f,
+				transform.localPosition = new Vector3(0.0f,
 					_unitPos.y * (listBoxID * -1 + ListPositionCtrl.Instance.listBoxes.Length / 2),
-					0.0f );
+					0.0f);
 				updateXPosition();
 				break;
 			case ListPositionCtrl.Direction.HORIZONTAL:
-				transform.localPosition = new Vector3( _unitPos.x * (listBoxID - ListPositionCtrl.Instance.listBoxes.Length / 2),
-					0.0f, 0.0f );
+				transform.localPosition = new Vector3(_unitPos.x * (listBoxID - ListPositionCtrl.Instance.listBoxes.Length / 2),
+					0.0f, 0.0f);
 				updateYPosition();
 				break;
 			}
@@ -174,16 +174,16 @@ public class ListBox : MonoBehaviour
 	/* Update the local position of ListBox accroding to the delta position at each frame.
 	 * Note that the deltaPosition must be in local space.
 	 */
-	public void updatePosition( Vector3 deltaPosition_L )
+	public void updatePosition(Vector3 deltaPosition_L)
 	{
 		switch (ListPositionCtrl.Instance.direction) {
 		case ListPositionCtrl.Direction.VERTICAL:
-			transform.localPosition += new Vector3( 0.0f, deltaPosition_L.y, 0.0f );
+			transform.localPosition += new Vector3(0.0f, deltaPosition_L.y, 0.0f);
 			updateXPosition();
 			checkBoundaryY();
 			break;
 		case ListPositionCtrl.Direction.HORIZONTAL:
-			transform.localPosition += new Vector3( deltaPosition_L.x, 0.0f, 0.0f );
+			transform.localPosition += new Vector3(deltaPosition_L.x, 0.0f, 0.0f);
 			updateYPosition();
 			checkBoundaryX();
 			break;
@@ -199,9 +199,9 @@ public class ListBox : MonoBehaviour
 	{
 		transform.localPosition = new Vector3(
 			_canvasMaxPos.x * ListPositionCtrl.Instance.angularity
-			* Mathf.Cos( transform.localPosition.y / _upperBoundPos.y * Mathf.PI / 2.0f ),
-			transform.localPosition.y, transform.localPosition.z );
-		updateSize( _upperBoundPos.y, transform.localPosition.y );
+			* Mathf.Cos(transform.localPosition.y / _upperBoundPos.y * Mathf.PI / 2.0f),
+			transform.localPosition.y, transform.localPosition.z);
+		updateSize(_upperBoundPos.y, transform.localPosition.y);
 	}
 
 	/* Calculate the y position accroding to the x position.
@@ -211,9 +211,9 @@ public class ListBox : MonoBehaviour
 		transform.localPosition = new Vector3(
 			transform.localPosition.x,
 			_canvasMaxPos.y * ListPositionCtrl.Instance.angularity
-			* Mathf.Cos( transform.localPosition.x / _upperBoundPos.x * Mathf.PI / 2.0f ),
-			transform.localPosition.z );
-		updateSize( _upperBoundPos.x, transform.localPosition.x );
+			* Mathf.Cos(transform.localPosition.x / _upperBoundPos.x * Mathf.PI / 2.0f),
+			transform.localPosition.z);
+		updateSize(_upperBoundPos.x, transform.localPosition.x);
 	}
 
 	/* Check if the ListBox is beyond the upper or lower bound or not.
@@ -225,18 +225,18 @@ public class ListBox : MonoBehaviour
 
 		// Narrow the checking boundary in order to avoid the list swaying to one side
 		if (transform.localPosition.y < _lowerBoundPos.y + _shiftBoundPos.y) {
-			beyondPosY_L = ( _lowerBoundPos.y + _shiftBoundPos.y - transform.localPosition.y );
+			beyondPosY_L = (_lowerBoundPos.y + _shiftBoundPos.y - transform.localPosition.y);
 			transform.localPosition = new Vector3(
 				transform.localPosition.x,
 				_upperBoundPos.y - _unitPos.y + _shiftBoundPos.y - beyondPosY_L,
-				transform.localPosition.z );
+				transform.localPosition.z);
 			updateToLastContent();
 		} else if (transform.localPosition.y > _upperBoundPos.y - _shiftBoundPos.y) {
-			beyondPosY_L = ( transform.localPosition.y - _upperBoundPos.y + _shiftBoundPos.y );
+			beyondPosY_L = (transform.localPosition.y - _upperBoundPos.y + _shiftBoundPos.y);
 			transform.localPosition = new Vector3(
 				transform.localPosition.x,
 				_lowerBoundPos.y + _unitPos.y - _shiftBoundPos.y + beyondPosY_L,
-				transform.localPosition.z );
+				transform.localPosition.z);
 			updateToNextContent();
 		}
 
@@ -253,14 +253,14 @@ public class ListBox : MonoBehaviour
 			transform.localPosition = new Vector3(
 				_upperBoundPos.x - _unitPos.x + _shiftBoundPos.x - beyondPosX_L,
 				transform.localPosition.y,
-				transform.localPosition.z );
+				transform.localPosition.z);
 			updateToNextContent();
 		} else if (transform.localPosition.x > _upperBoundPos.x - _shiftBoundPos.x) {
 			beyondPosX_L = (transform.localPosition.x - _upperBoundPos.x + _shiftBoundPos.x);
 			transform.localPosition = new Vector3(
 				_lowerBoundPos.x + _unitPos.x - _shiftBoundPos.x + beyondPosX_L,
 				transform.localPosition.y,
-				transform.localPosition.z );
+				transform.localPosition.z);
 			updateToLastContent();
 		}
 
@@ -269,10 +269,10 @@ public class ListBox : MonoBehaviour
 
 	/* Scale the size of listBox accroding to the position.
 	 */
-	void updateSize( float smallest_at, float target_value )
+	void updateSize(float smallest_at, float target_value)
 	{
 		transform.localScale = _originalLocalScale *
-			( 1.0f + ListPositionCtrl.Instance.scaleFactor * Mathf.InverseLerp( smallest_at, 0.0f, Mathf.Abs( target_value )));
+			(1.0f + ListPositionCtrl.Instance.scaleFactor * Mathf.InverseLerp(smallest_at, 0.0f, Mathf.Abs(target_value)));
 	}
 
 	public int getCurrentContentID()
@@ -286,9 +286,9 @@ public class ListBox : MonoBehaviour
 	void updateToLastContent()
 	{
 		_contentID = nextListBox.getCurrentContentID() - 1;
-		_contentID = ( _contentID < 0 ) ? ListBank.Instance.getListLength() - 1 : _contentID;
+		_contentID = (_contentID < 0) ? ListBank.Instance.getListLength() - 1 : _contentID;
 
-		updateContent( ListBank.Instance.getListContent( _contentID ) );
+		updateContent(ListBank.Instance.getListContent(_contentID));
 	}
 
 	/* Update to the next content of the last ListBox
@@ -297,8 +297,8 @@ public class ListBox : MonoBehaviour
 	void updateToNextContent()
 	{
 		_contentID = lastListBox.getCurrentContentID() + 1;
-		_contentID = ( _contentID == ListBank.Instance.getListLength() ) ? 0 : _contentID;
+		_contentID = (_contentID == ListBank.Instance.getListLength()) ? 0 : _contentID;
 
-		updateContent( ListBank.Instance.getListContent( _contentID ) );
+		updateContent(ListBank.Instance.getListContent(_contentID));
 	}
 }
