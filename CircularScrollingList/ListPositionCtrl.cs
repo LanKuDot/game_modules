@@ -22,6 +22,8 @@ public class ListPositionCtrl : MonoBehaviour
 	};
 
 	public static ListPositionCtrl Instance;
+
+	/*========== Settings ==========*/
 	/* Initial settings.
 	 *   Mode            controlByButton  alignToCenter
 	 * --------------------------------------------------
@@ -31,13 +33,12 @@ public class ListPositionCtrl : MonoBehaviour
 	 */
 	public bool controlByButton = false;
 	public bool alignToCenter = false;
-	[HideInInspector]
-	public bool needToAlignToCenter = false;
 
+	/* Containers */
 	public ListBox[] listBoxes;
-
 	public Button[] buttons;
 
+	/* Parameters */
 	public Direction direction = Direction.VERTICAL;
 	// For 3D camera, the distance between canvas plane and camera.
 	public float canvasDistance = 100.0f;
@@ -54,6 +55,10 @@ public class ListPositionCtrl : MonoBehaviour
 	public float angularity = 0.3f;
 	// Set the scale amount of the center listBox.
 	public float scaleFactor = 0.32f;
+	/*===============================*/
+
+	[HideInInspector]
+	public bool needToAlignToCenter = false;
 
 	private bool _isTouchingDevice;
 
