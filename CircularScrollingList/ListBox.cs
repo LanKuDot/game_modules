@@ -30,8 +30,10 @@ public class ListBox : MonoBehaviour
 
 	private bool _keepSliding = false;
 	private int _slidingFramesLeft;
+	private bool _needToAlignToCenter = false;
 
 	public bool keepSliding { set { _keepSliding = value; } }
+	public bool needToAlignToCenter { set { _needToAlignToCenter = value; } }
 
 	/* Notice: ListBox will initialize its variables from ListPositionCtrl.
 	 * Make sure that the execution order of script ListPositionCtrl is prior to
@@ -113,19 +115,21 @@ public class ListBox : MonoBehaviour
 			--_slidingFramesLeft;
 			if (_slidingFramesLeft == 0) {
 				_keepSliding = false;
+
+				// Set the distance to the center after free sliding.
+				if (_needToAlignToCenter) {
+					setSlidingDistance(ListPositionCtrl.Instance.findDeltaPositionToCenter(),
+						ListPositionCtrl.Instance.slidingFrames);
+					_needToAlignToCenter = false;
+					return;
+				}
+
 				// At the last sliding frame, move to that position.
 				// At free moving mode, this function is disabled.
 				if (ListPositionCtrl.Instance.alignToCenter ||
 					ListPositionCtrl.Instance.controlByButton) {
 					updatePosition(_slidingDistanceLeft);
 				}
-				// FIXME: Due to compiler optimization?
-				// When using condition listBoxID == 0, some boxes don't execute
-				// the above code. (For other condition, like 1, 3, or 4, also has the same
-				// problem. Only using 2 will work normally.)
-				if (listBoxID == 2 &&
-					ListPositionCtrl.Instance.needToAlignToCenter)
-					ListPositionCtrl.Instance.alignToCenterSlide();
 				return;
 			}
 

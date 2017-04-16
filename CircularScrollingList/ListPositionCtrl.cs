@@ -57,9 +57,6 @@ public class ListPositionCtrl : MonoBehaviour
 	public float scaleFactor = 0.32f;
 	/*===============================*/
 
-	[HideInInspector]
-	public bool needToAlignToCenter = false;
-
 	private bool _isTouchingDevice;
 
 	// The constrains of position in the local space of the canvas plane.
@@ -81,6 +78,10 @@ public class ListPositionCtrl : MonoBehaviour
 	private Vector3 _currentInputPos_L;
 	private Vector3 _deltaInputPos_L;
 	private int _numofSlideFrames;
+
+	// Store the calculation result of the sliding distance for aligning to the center.
+	// If its value is NaN, the distance haven't been calcuated yet.
+	private Vector3 _alignToCenterDistance;
 
 	void Awake()
 	{
@@ -214,9 +215,12 @@ public class ListPositionCtrl : MonoBehaviour
 			deltaPos *= 5.0f;   // Slide more longer!
 
 		if (alignToCenter) {
-			foreach (ListBox listbox in listBoxes)
-				listbox.setSlidingDistance(deltaPos, fastSliding ? slidingFrames : slidingFrames / 2);
-			needToAlignToCenter = true;
+			foreach (ListBox listbox in listBoxes) {
+				listbox.setSlidingDistance(deltaPos, fastSliding ? slidingFrames >> 1 : slidingFrames >> 2);
+				listbox.needToAlignToCenter = true;
+			}
+			// Make the distance uncalculated.
+			_alignToCenterDistance = new Vector3(float.NaN, float.NaN, 0.0f);
 		} else {
 			foreach (ListBox listbox in listBoxes)
 				listbox.setSlidingDistance(deltaPos, fastSliding ? slidingFrames * 2 : slidingFrames);
@@ -246,28 +250,19 @@ public class ListPositionCtrl : MonoBehaviour
 		return false;
 	}
 
-	/* Move all ListBoxes for a distance which equals to the smallest distance
-	 * between ListBox and the center.
-	 * This method will be called from ListBox0 when needToAlignToCenter flag is set, and
-	 * the flag will be cleared in here.
-	 */
-	public void alignToCenterSlide()
-	{
-		Vector3 deltaPos = findDeltaPositionToCenter();
-
-		foreach (ListBox listbox in listBoxes)
-			listbox.setSlidingDistance(deltaPos, slidingFrames / 2);
-
-		needToAlignToCenter = false;
-	}
-
 	/* Find the listBox which is the closest to the center position,
 	 * And calculate the delta position of x or y between them.
 	 */
-	Vector3 findDeltaPositionToCenter()
+	public Vector3 findDeltaPositionToCenter()
 	{
 		float minDeltaPos = Mathf.Infinity;
 		float deltaPos;
+
+		// If the distance for aligning to the center was calculated,
+		// return the result immediately.
+		if (!float.IsNaN(_alignToCenterDistance.x) &&
+			!float.IsNaN(_alignToCenterDistance.y))
+			return _alignToCenterDistance;
 
 		switch (direction) {
 		case Direction.VERTICAL:
@@ -277,7 +272,8 @@ public class ListPositionCtrl : MonoBehaviour
 					minDeltaPos = deltaPos;
 			}
 
-			return new Vector3(0.0f, minDeltaPos, 0.0f);
+			_alignToCenterDistance = new Vector3(0.0f, minDeltaPos, 0.0f);
+			break;
 
 		case Direction.HORIZONTAL:
 			foreach (ListBox listBox in listBoxes) {
@@ -286,11 +282,15 @@ public class ListPositionCtrl : MonoBehaviour
 					minDeltaPos = deltaPos;
 			}
 
-			return new Vector3(minDeltaPos, 0.0f, 0.0f);
+			_alignToCenterDistance = new Vector3(minDeltaPos, 0.0f, 0.0f);
+			break;
 
 		default:
-			return Vector3.zero;
+			_alignToCenterDistance = Vector3.zero;
+			break;
 		}
+
+		return _alignToCenterDistance;
 	}
 
 	/* Divide each component of vector a by vector b.
