@@ -38,8 +38,6 @@ public class ListPositionCtrl : MonoBehaviour
 	public Button[] buttons;
 
 	public Direction direction = Direction.VERTICAL;
-	// For 3D camera, the distance between canvas plane and camera.
-	public float canvasDistance = 100.0f;
 	// Set the distance between each ListBox. The larger, the closer.
 	public float divideFactor = 2.0f;
 	// Set the sliding duration. The larger, the longer.
@@ -137,18 +135,16 @@ public class ListPositionCtrl : MonoBehaviour
 	void storeMousePosition()
 	{
 		if (Input.GetMouseButtonDown( 0 )) {
-			_lastInputPos_L = Camera.main.ScreenToWorldPoint(
-				new Vector3( Input.mousePosition.x, Input.mousePosition.y, canvasDistance ) );
-			_lastInputPos_L = divideComponent( _lastInputPos_L, transform.lossyScale );
+			_lastInputPos_L = new Vector3(Input.mousePosition.x, Input.mousePosition.y);
+			_lastInputPos_L /= _parentCanvas.scaleFactor;
 			_startInputPos_L = _lastInputPos_L;
 			_numofSlideFrames = 0;
 			// When the user starts to drag the list, all listBoxes stop free sliding.
 			foreach (ListBox listBox in listBoxes)
 				listBox.keepSliding = false;
 		} else if (Input.GetMouseButton( 0 )) {
-			_currentInputPos_L = Camera.main.ScreenToWorldPoint(
-				new Vector3( Input.mousePosition.x, Input.mousePosition.y, canvasDistance ) );
-			_currentInputPos_L = divideComponent( _currentInputPos_L, transform.lossyScale );
+			_currentInputPos_L = new Vector3(Input.mousePosition.x, Input.mousePosition.y);
+			_currentInputPos_L /= _parentCanvas.scaleFactor;
 			_deltaInputPos_L = _currentInputPos_L - _lastInputPos_L;
 			foreach (ListBox listbox in listBoxes)
 				listbox.updatePosition( _deltaInputPos_L );
@@ -164,18 +160,16 @@ public class ListPositionCtrl : MonoBehaviour
 	void storeFingerPosition()
 	{
 		if (Input.GetTouch( 0 ).phase == TouchPhase.Began) {
-			_lastInputPos_L = Camera.main.ScreenToWorldPoint(
-				new Vector3( Input.GetTouch( 0 ).position.x, Input.GetTouch( 0 ).position.y, canvasDistance ) );
-			_lastInputPos_L = divideComponent( _lastInputPos_L, transform.lossyScale );
+			_lastInputPos_L = new Vector3(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y);
+			_lastInputPos_L /= _parentCanvas.scaleFactor;
 			_startInputPos_L = _lastInputPos_L;
 			_numofSlideFrames = 0;
 			// When the user starts to drag the list, all listBoxes stop free sliding.
 			foreach (ListBox listBox in listBoxes)
 				listBox.keepSliding = false;
 		} else if (Input.GetTouch( 0 ).phase == TouchPhase.Moved) {
-			_currentInputPos_L = Camera.main.ScreenToWorldPoint(
-				new Vector3( Input.GetTouch( 0 ).position.x, Input.GetTouch( 0 ).position.y, canvasDistance ) );
-			_currentInputPos_L = divideComponent( _currentInputPos_L, transform.lossyScale );
+			_currentInputPos_L = new Vector3(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y);
+			_currentInputPos_L /= _parentCanvas.scaleFactor;
 			_deltaInputPos_L = _currentInputPos_L - _lastInputPos_L;
 			foreach (ListBox listbox in listBoxes)
 				listbox.updatePosition( _deltaInputPos_L );
