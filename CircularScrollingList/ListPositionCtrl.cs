@@ -56,6 +56,9 @@ public class ListPositionCtrl : MonoBehaviour
 
 	private bool _isTouchingDevice;
 
+	// The canvas plane which the scrolling list is at.
+	private Canvas _parentCanvas;
+
 	// The constrains of position in the local space of the canvas plane.
 	private Vector2 _canvasMaxPos_L;
 	private Vector2 _unitPos_L;
@@ -95,25 +98,13 @@ public class ListPositionCtrl : MonoBehaviour
 	 */
 	void Start()
 	{
-		/* Convert the coordination space from the screen space to the world space.
-		 * Then, substract the coorination at the left-bottom corner of the screen
-		 * from the one at the right-top corner to get the size of the screen in world space.
-		 * For perspective view,
-		 * we have to take the distance between canvas plane and camera into account. */
-		_canvasMaxPos_L = Camera.main.ScreenToWorldPoint(
-			new Vector3( Camera.main.pixelWidth, Camera.main.pixelHeight, canvasDistance ) ) -
-			Camera.main.ScreenToWorldPoint( new Vector3( 0.0f, 0.0f, canvasDistance ) );
-		/* The result above is the length of sides of boundary of the canvas plane in the world space,
-		 * so we need to convert it to the local space of the list. The lossyScale will return
-		 * the scale vector which is the scaling amount from its local space to the world
-		 * space. Finally, by dividing the result by two we get the max coordination
-		 * of the canvas plane in the canvas plane space (Assuming the origin of the
-		 * canvas plane is at the center of the canvas plane).*/
-		_canvasMaxPos_L = new Vector2(
-			_canvasMaxPos_L.x / (2.0f * transform.parent.lossyScale.x),
-			_canvasMaxPos_L.y / (2.0f * transform.parent.lossyScale.y) );
-		// Use the lossy scale of the canvas plane here, so we can scale the whole list
-		// by scaling the gameObject ListPositionCtrl.
+		/* The the reference of canvas plane */
+		_parentCanvas = GetComponentInParent<Canvas>();
+
+		/* Get the max position of canvas plane in the canvas space.
+		 * Assume that the origin of the canvas space is at the center of canvas plane. */
+		RectTransform rectTransform = _parentCanvas.GetComponent<RectTransform>();
+		_canvasMaxPos_L = new Vector2(rectTransform.rect.width / 2, rectTransform.rect.height / 2);
 
 		_unitPos_L = _canvasMaxPos_L / divideFactor;
 		_lowerBoundPos_L = _unitPos_L * (-1 * listBoxes.Length / 2 - 1);
