@@ -40,8 +40,6 @@ public class ListPositionCtrl : MonoBehaviour
 
 	/* Parameters */
 	public Direction direction = Direction.VERTICAL;
-	// For 3D camera, the distance between canvas plane and camera.
-	public float canvasDistance = 100.0f;
 	// Set the distance between each ListBox. The larger, the closer.
 	public float divideFactor = 2.0f;
 	// Set the sliding duration. The larger, the longer.
@@ -58,6 +56,9 @@ public class ListPositionCtrl : MonoBehaviour
 	/*===============================*/
 
 	private bool _isTouchingDevice;
+
+	// The canvas plane which the scrolling list is at.
+	private Canvas _parentCanvas;
 
 	// The constrains of position in the local space of the canvas plane.
 	private Vector2 _canvasMaxPos_L;
@@ -102,25 +103,13 @@ public class ListPositionCtrl : MonoBehaviour
 	 */
 	void Start()
 	{
-		/* Convert the coordination space from the screen space to the world space.
-		 * Then, substract the coorination at the left-bottom corner of the screen
-		 * from the one at the right-top corner to get the size of the screen in world space.
-		 * For perspective view,
-		 * we have to take the distance between canvas plane and camera into account. */
-		_canvasMaxPos_L = Camera.main.ScreenToWorldPoint(
-			new Vector3(Camera.main.pixelWidth, Camera.main.pixelHeight, canvasDistance)) -
-			Camera.main.ScreenToWorldPoint(new Vector3(0.0f, 0.0f, canvasDistance));
-		/* The result above is the length of sides of boundary of the canvas plane in the world space,
-		 * so we need to convert it to the local space of the list. The lossyScale will return
-		 * the scale vector which is the scaling amount from its local space to the world
-		 * space. Finally, by dividing the result by two we get the max coordination
-		 * of the canvas plane in the canvas plane space (Assuming the origin of the
-		 * canvas plane is at the center of the canvas plane).*/
-		_canvasMaxPos_L = new Vector2(
-			_canvasMaxPos_L.x / (2.0f * transform.parent.lossyScale.x),
-			_canvasMaxPos_L.y / (2.0f * transform.parent.lossyScale.y));
-		// Use the lossy scale of the canvas plane here, so we can scale the whole list
-		// by scaling the gameObject ListPositionCtrl.
+		/* The the reference of canvas plane */
+		_parentCanvas = GetComponentInParent<Canvas>();
+
+		/* Get the max position of canvas plane in the canvas space.
+		 * Assume that the origin of the canvas space is at the center of canvas plane. */
+		RectTransform rectTransform = _parentCanvas.GetComponent<RectTransform>();
+		_canvasMaxPos_L = new Vector2(rectTransform.rect.width / 2, rectTransform.rect.height / 2);
 
 		_unitPos_L = _canvasMaxPos_L / divideFactor;
 		_lowerBoundPos_L = _unitPos_L * (-1 * listBoxes.Length / 2 - 1);
@@ -153,18 +142,16 @@ public class ListPositionCtrl : MonoBehaviour
 	void storeMousePosition()
 	{
 		if (Input.GetMouseButtonDown(0)) {
-			_lastInputPos_L = Camera.main.ScreenToWorldPoint(
-				new Vector3(Input.mousePosition.x, Input.mousePosition.y, canvasDistance));
-			_lastInputPos_L = divideComponent(_lastInputPos_L, transform.lossyScale);
+			_lastInputPos_L = new Vector3(Input.mousePosition.x, Input.mousePosition.y);
+			_lastInputPos_L /= _parentCanvas.scaleFactor;
 			_startInputPos_L = _lastInputPos_L;
 			_numofSlideFrames = 0;
 			// When the user starts to drag the list, all listBoxes stop free sliding.
 			foreach (ListBox listBox in listBoxes)
 				listBox.keepSliding = false;
 		} else if (Input.GetMouseButton(0)) {
-			_currentInputPos_L = Camera.main.ScreenToWorldPoint(
-				new Vector3(Input.mousePosition.x, Input.mousePosition.y, canvasDistance));
-			_currentInputPos_L = divideComponent(_currentInputPos_L, transform.lossyScale);
+			_currentInputPos_L = new Vector3(Input.mousePosition.x, Input.mousePosition.y);
+			_currentInputPos_L /= _parentCanvas.scaleFactor;
 			_deltaInputPos_L = _currentInputPos_L - _lastInputPos_L;
 			foreach (ListBox listbox in listBoxes)
 				listbox.updatePosition(_deltaInputPos_L);
@@ -180,18 +167,16 @@ public class ListPositionCtrl : MonoBehaviour
 	void storeFingerPosition()
 	{
 		if (Input.GetTouch(0).phase == TouchPhase.Began) {
-			_lastInputPos_L = Camera.main.ScreenToWorldPoint(
-				new Vector3(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y, canvasDistance));
-			_lastInputPos_L = divideComponent(_lastInputPos_L, transform.lossyScale);
+			_lastInputPos_L = new Vector3(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y);
+			_lastInputPos_L /= _parentCanvas.scaleFactor;
 			_startInputPos_L = _lastInputPos_L;
 			_numofSlideFrames = 0;
 			// When the user starts to drag the list, all listBoxes stop free sliding.
 			foreach (ListBox listBox in listBoxes)
 				listBox.keepSliding = false;
 		} else if (Input.GetTouch(0).phase == TouchPhase.Moved) {
-			_currentInputPos_L = Camera.main.ScreenToWorldPoint(
-				new Vector3(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y, canvasDistance));
-			_currentInputPos_L = divideComponent(_currentInputPos_L, transform.lossyScale);
+			_currentInputPos_L = new Vector3(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y);
+			_currentInputPos_L /= _parentCanvas.scaleFactor;
 			_deltaInputPos_L = _currentInputPos_L - _lastInputPos_L;
 			foreach (ListBox listbox in listBoxes)
 				listbox.updatePosition(_deltaInputPos_L);
