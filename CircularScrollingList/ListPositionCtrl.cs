@@ -74,6 +74,8 @@ public class ListPositionCtrl : MonoBehaviour
 	public Vector2 shiftBoundPos_L { get { return _shiftBoundPos_L; } }
 
 	// Input mouse/finger position in the local space of the list.
+	private delegate void StoreInputPosition();
+	private StoreInputPosition _storeInputPosition;
 	private Vector3 _startInputPos_L;
 	private Vector3 _lastInputPos_L;
 	private Vector3 _currentInputPos_L;
@@ -122,19 +124,23 @@ public class ListPositionCtrl : MonoBehaviour
 			_upperBoundPos_L -= _unitPos_L / 2;
 		}
 
-		if (!controlByButton)
+		/* Initialize the delegate function. */
+		if (!controlByButton) {
 			foreach (Button button in buttons)
 				button.gameObject.SetActive(false);
+
+			if (_isTouchingDevice)
+				_storeInputPosition = storeFingerPosition;
+			else
+				_storeInputPosition = storeMousePosition;
+		} else {
+			_storeInputPosition = delegate() { };	// Empty delegate function
+		}
 	}
 
 	void Update()
 	{
-		if (!controlByButton) {
-			if (!_isTouchingDevice)
-				storeMousePosition();
-			else
-				storeFingerPosition();
-		}
+		_storeInputPosition();
 	}
 
 	/* Store the position of mouse when the player clicks the left mouse button.
