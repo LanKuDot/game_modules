@@ -17,11 +17,12 @@ public class ListBox : MonoBehaviour
 	private int _contentID;
 
 	// All position calculations here are in the local space of the list
-	private Vector2 _canvasMaxPos;
+	private Vector2 _boxMaxPos;
 	private Vector2 _unitPos;
 	private Vector2 _lowerBoundPos;
 	private Vector2 _upperBoundPos;
 	private Vector2 _shiftBoundPos;
+	private float _positionAdjust;
 
 	private Vector3 _slidingDistance;   // The sliding distance at each frame
 	private Vector3 _slidingDistanceLeft;
@@ -41,11 +42,12 @@ public class ListBox : MonoBehaviour
 	 */
 	void Start()
 	{
-		_canvasMaxPos = ListPositionCtrl.Instance.canvasMaxPos_L;
+		_boxMaxPos = ListPositionCtrl.Instance.canvasMaxPos_L * ListPositionCtrl.Instance.angularity;
 		_unitPos = ListPositionCtrl.Instance.unitPos_L;
 		_lowerBoundPos = ListPositionCtrl.Instance.lowerBoundPos_L;
 		_upperBoundPos = ListPositionCtrl.Instance.upperBoundPos_L;
 		_shiftBoundPos = ListPositionCtrl.Instance.shiftBoundPos_L;
+		_positionAdjust = ListPositionCtrl.Instance.positionAdjust;
 
 		_originalLocalScale = transform.localScale;
 
@@ -195,15 +197,15 @@ public class ListBox : MonoBehaviour
 	}
 
 	/* Calculate the x position accroding to the y position.
-	 * Formula: x = max_x * angularity * cos( radian controlled by y )
+	 * Formula: x = boxMax_x * (cos( radian controlled by y ) - positionAdjust)
 	 * radian = (y / upper_y) * pi / 2, so the range of radian is from pi/2 to 0 to -pi/2,
 	 * and corresponding cosine value is from 0 to 1 to 0.
 	 */
 	void updateXPosition()
 	{
 		transform.localPosition = new Vector3(
-			_canvasMaxPos.x * ListPositionCtrl.Instance.angularity
-			* Mathf.Cos(transform.localPosition.y / _upperBoundPos.y * Mathf.PI / 2.0f),
+			_boxMaxPos.x * (_positionAdjust +
+			Mathf.Cos(transform.localPosition.y / _upperBoundPos.y * Mathf.PI / 2.0f)),
 			transform.localPosition.y, transform.localPosition.z);
 		updateSize(_upperBoundPos.y, transform.localPosition.y);
 	}
@@ -214,8 +216,8 @@ public class ListBox : MonoBehaviour
 	{
 		transform.localPosition = new Vector3(
 			transform.localPosition.x,
-			_canvasMaxPos.y * ListPositionCtrl.Instance.angularity
-			* Mathf.Cos(transform.localPosition.x / _upperBoundPos.x * Mathf.PI / 2.0f),
+			_boxMaxPos.y * (_positionAdjust +
+			Mathf.Cos(transform.localPosition.x / _upperBoundPos.x * Mathf.PI / 2.0f)),
 			transform.localPosition.z);
 		updateSize(_upperBoundPos.x, transform.localPosition.x);
 	}

@@ -51,6 +51,11 @@ public class ListPositionCtrl : MonoBehaviour
 	// Positive: Curve to right (up); Negative: Curve to left (down).
 	[Range(-1.0f, 1.0f)]
 	public float angularity = 0.3f;
+	// Adjust the horizontal position in the VERTICAL mode or
+	// the vertical position in the HORIZONTAL mode.
+	// This value will be used in ListBox.update[X/Y]Position().
+	[Range(-1.0f, 1.0f)]
+	public float positionAdjust = -0.7f;
 	// Set the scale amount of the center listBox.
 	public float scaleFactor = 0.32f;
 	/*===============================*/
