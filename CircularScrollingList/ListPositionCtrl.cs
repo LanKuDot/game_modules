@@ -289,6 +289,41 @@ public class ListPositionCtrl : MonoBehaviour
 		return _alignToCenterDistance;
 	}
 
+	/*
+     * Get the object of the centered ListBox.
+     * The centered ListBox is found by comparing which one is the closest
+     * to the center.
+     */
+	public ListBox getCenteredBox()
+	{
+		float minPosition = Mathf.Infinity;
+		float position;
+		ListBox candicateBox = null;
+
+		switch (direction) {
+		case Direction.VERTICAL:
+			foreach (ListBox listBox in listBoxes) {
+				position = Mathf.Abs(listBox.transform.localPosition.y);
+				if (position < minPosition) {
+					minPosition = position;
+					candicateBox = listBox;
+				}
+			}
+			break;
+		case Direction.HORIZONTAL:
+			foreach (ListBox listBox in listBoxes) {
+				position = Mathf.Abs(listBox.transform.localPosition.x);
+				if (position < minPosition) {
+					minPosition = position;
+					candicateBox = listBox;
+				}
+			}
+			break;
+		}
+
+		return candicateBox;
+	}
+
 	/* Divide each component of vector a by vector b.
 	 */
 	Vector3 divideComponent(Vector3 a, Vector3 b)
