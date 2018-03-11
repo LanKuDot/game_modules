@@ -52,19 +52,22 @@ public class ListBox : MonoBehaviour
 		_originalLocalScale = transform.localScale;
 
 		initialPosition(listBoxID);
-		initialContent();
+		// CUSTOM: Put in the centered ID you want to show
+		initialContent(0);
 	}
 
 	/* Initialize the content of ListBox.
+	 * centeredContentID is used for setting the content of the centered ListBox.
 	 */
-	void initialContent()
+	void initialContent(int centeredContentID)
 	{
-		if (listBoxID == ListPositionCtrl.Instance.listBoxes.Length / 2)
-			_contentID = 0;
-		else if (listBoxID < ListPositionCtrl.Instance.listBoxes.Length / 2)
-			_contentID = ListBank.Instance.getListLength() - (ListPositionCtrl.Instance.listBoxes.Length / 2 - listBoxID);
+		_contentID = centeredContentID;
+
+		// Adjust the contentID accroding to its initial order.
+		if (listBoxID < ListPositionCtrl.Instance.listBoxes.Length / 2)
+			_contentID += ListBank.Instance.getListLength() - (ListPositionCtrl.Instance.listBoxes.Length / 2 - listBoxID);
 		else
-			_contentID = listBoxID - ListPositionCtrl.Instance.listBoxes.Length / 2;
+			_contentID += listBoxID - ListPositionCtrl.Instance.listBoxes.Length / 2;
 
 		while (_contentID < 0)
 			_contentID += ListBank.Instance.getListLength();
@@ -73,8 +76,7 @@ public class ListBox : MonoBehaviour
 		updateListContent();
 	}
 
-	/*
-	 * Update the dispalying content on the ListBox.
+	/* Update the dispalying content on the ListBox.
 	 */
 	void updateListContent()
 	{
