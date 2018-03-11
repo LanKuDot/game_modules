@@ -70,12 +70,16 @@ public class ListBox : MonoBehaviour
 			_contentID += ListBank.Instance.getListLength();
 		_contentID = _contentID % ListBank.Instance.getListLength();
 
-		updateContent(ListBank.Instance.getListContent(_contentID));
+		updateListContent();
 	}
 
-	void updateContent(string content)
+	/*
+	 * Update the dispalying content on the ListBox.
+	 */
+	void updateListContent()
 	{
-		this.content.text = content;
+		// Update the content accroding to its contentID.
+		content.text = ListBank.Instance.getListContent(_contentID);
 	}
 
 	/* Make the list box slide for delta x or y position.
@@ -294,7 +298,7 @@ public class ListBox : MonoBehaviour
 		_contentID = nextListBox.getCurrentContentID() - 1;
 		_contentID = (_contentID < 0) ? ListBank.Instance.getListLength() - 1 : _contentID;
 
-		updateContent(ListBank.Instance.getListContent(_contentID));
+		updateListContent();
 	}
 
 	/* Update to the next content of the last ListBox
@@ -305,6 +309,6 @@ public class ListBox : MonoBehaviour
 		_contentID = lastListBox.getCurrentContentID() + 1;
 		_contentID = (_contentID == ListBank.Instance.getListLength()) ? 0 : _contentID;
 
-		updateContent(ListBank.Instance.getListContent(_contentID));
+		updateListContent();
 	}
 }
