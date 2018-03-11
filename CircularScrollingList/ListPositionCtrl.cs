@@ -290,10 +290,10 @@ public class ListPositionCtrl : MonoBehaviour
 	}
 
 	/*
-     * Get the object of the centered ListBox.
-     * The centered ListBox is found by comparing which one is the closest
-     * to the center.
-     */
+	 * Get the object of the centered ListBox.
+	 * The centered ListBox is found by comparing which one is the closest
+	 * to the center.
+	 */
 	public ListBox getCenteredBox()
 	{
 		float minPosition = Mathf.Infinity;
