@@ -107,6 +107,9 @@ public class ListBox : MonoBehaviour
 		else
 			deltaPos = _unitPos * (float)unit * -1;
 
+		if (_keepSliding)
+			deltaPos += (Vector2)_slidingDistanceLeft;
+
 		switch (ListPositionCtrl.Instance.direction) {
 		case ListPositionCtrl.Direction.VERTICAL:
 			setSlidingDistance(new Vector3(0.0f, deltaPos.y, 0.0f), ListPositionCtrl.Instance.slidingFrames);
