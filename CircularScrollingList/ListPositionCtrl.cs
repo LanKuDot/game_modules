@@ -15,6 +15,13 @@ using UnityEngine.UI;
 
 public class ListPositionCtrl : MonoBehaviour
 {
+	public enum ControlMode
+	{
+		Drag,
+		Button,
+		MouseWheel
+	};
+
 	public enum Direction
 	{
 		VERTICAL,
@@ -31,7 +38,7 @@ public class ListPositionCtrl : MonoBehaviour
 	 *   Align to center      false           true
 	 *   Control by btn       true          Don't care
 	 */
-	public bool controlByButton = false;
+	public ControlMode controlMode = ControlMode.Drag;
 	public bool alignToCenter = false;
 
 	/* Containers */
@@ -130,16 +137,28 @@ public class ListPositionCtrl : MonoBehaviour
 		}
 
 		/* Initialize the delegate function. */
-		if (!controlByButton) {
-			foreach (Button button in buttons)
-				button.gameObject.SetActive(false);
+		switch (controlMode) {
+			case ControlMode.Drag:
+				foreach (Button button in buttons)
+					button.gameObject.SetActive(false);
 
-			if (_isTouchingDevice)
-				_storeInputPosition = storeFingerPosition;
-			else
-				_storeInputPosition = storeMousePosition;
-		} else {
-			_storeInputPosition = delegate() { };	// Empty delegate function
+				if (_isTouchingDevice)
+					_storeInputPosition = storeFingerPosition;
+				else
+					_storeInputPosition = storeMousePosition;
+
+				break;
+
+			case ControlMode.Button:
+				_storeInputPosition = delegate () { };	// Empty delegate function
+				break;
+
+			case ControlMode.MouseWheel:
+				foreach (Button button in buttons)
+					button.gameObject.SetActive(false);
+
+				_storeInputPosition = storeMouseWheelDelta;
+				break;
 		}
 	}
 
@@ -196,6 +215,18 @@ public class ListPositionCtrl : MonoBehaviour
 			++_numofSlideFrames;
 		} else if (Input.GetTouch(0).phase == TouchPhase.Ended)
 			setSlidingEffect();
+	}
+
+	/* Store the delta position of the mouse wheel.
+	 * Thanks for https://github.com/aledg.
+	 */
+	void storeMouseWheelDelta()
+	{
+		Vector2 mouseScrollDelta = Input.mouseScrollDelta;
+		if (mouseScrollDelta.y > 0)
+			nextContent();
+		else if (mouseScrollDelta.y < 0)
+			lastContent();
 	}
 
 	/* If the touching is ended, calculate the distance to slide and

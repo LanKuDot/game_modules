@@ -138,7 +138,8 @@ public class ListBox : MonoBehaviour
 				// At the last sliding frame, move to that position.
 				// At free moving mode, this function is disabled.
 				if (ListPositionCtrl.Instance.alignToCenter ||
-					ListPositionCtrl.Instance.controlByButton) {
+					ListPositionCtrl.Instance.controlMode == ListPositionCtrl.ControlMode.Button ||
+					ListPositionCtrl.Instance.controlMode == ListPositionCtrl.ControlMode.MouseWheel) {
 					updatePosition(_slidingDistanceLeft);
 				}
 				return;
