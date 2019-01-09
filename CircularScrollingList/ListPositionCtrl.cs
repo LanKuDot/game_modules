@@ -28,8 +28,6 @@ public class ListPositionCtrl : MonoBehaviour
 		HORIZONTAL
 	};
 
-	public static ListPositionCtrl Instance;
-
 	/*========== Settings ==========*/
 	/* Initial settings.
 	 *   Mode            controlByButton  alignToCenter
@@ -100,8 +98,6 @@ public class ListPositionCtrl : MonoBehaviour
 
 	void Awake()
 	{
-		Instance = this;
-
 		switch (Application.platform) {
 		case RuntimePlatform.WindowsEditor:
 			_isTouchingDevice = false;
