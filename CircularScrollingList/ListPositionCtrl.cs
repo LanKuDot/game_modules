@@ -152,21 +152,24 @@ public class ListPositionCtrl : MonoBehaviour
 		_storeInputPosition();
 	}
 
+	Vector3 ScreenToCanvasSpace(Vector3 position)
+	{
+		return position / _parentCanvas.scaleFactor;
+	}
+
 	/* Store the position of mouse when the player clicks the left mouse button.
 	 */
 	void StoreMousePosition()
 	{
 		if (Input.GetMouseButtonDown(0)) {
-			_lastFrameInputPos_L = new Vector3(Input.mousePosition.x, Input.mousePosition.y);
-			_lastFrameInputPos_L /= _parentCanvas.scaleFactor;
+			_lastFrameInputPos_L = ScreenToCanvasSpace(Input.mousePosition);
 			_startInputPos_L = _lastFrameInputPos_L;
 			_numOfInputFrames = 0;
 			// When the user starts to drag the list, all listBoxes stop free sliding.
 			foreach (ListBox listBox in listBoxes)
 				listBox.keepSliding = false;
 		} else if (Input.GetMouseButton(0)) {
-			_curFrameInputPos_L = new Vector3(Input.mousePosition.x, Input.mousePosition.y);
-			_curFrameInputPos_L /= _parentCanvas.scaleFactor;
+			_curFrameInputPos_L = ScreenToCanvasSpace(Input.mousePosition);
 			_deltaInputPos_L = _curFrameInputPos_L - _lastFrameInputPos_L;
 			foreach (ListBox listbox in listBoxes)
 				listbox.UpdatePosition(_deltaInputPos_L);
@@ -181,25 +184,34 @@ public class ListPositionCtrl : MonoBehaviour
 	 */
 	void StoreFingerPosition()
 	{
-		if (Input.GetTouch(0).phase == TouchPhase.Began) {
-			_lastFrameInputPos_L = new Vector3(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y);
-			_lastFrameInputPos_L /= _parentCanvas.scaleFactor;
-			_startInputPos_L = _lastFrameInputPos_L;
-			_numOfInputFrames = 0;
-			// When the user starts to drag the list, all listBoxes stop free sliding.
-			foreach (ListBox listBox in listBoxes)
-				listBox.keepSliding = false;
-		} else if (Input.GetTouch(0).phase == TouchPhase.Moved) {
-			_curFrameInputPos_L = new Vector3(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y);
-			_curFrameInputPos_L /= _parentCanvas.scaleFactor;
-			_deltaInputPos_L = _curFrameInputPos_L - _lastFrameInputPos_L;
-			foreach (ListBox listbox in listBoxes)
-				listbox.UpdatePosition(_deltaInputPos_L);
+		if (Input.touchCount == 0)
+			return;
 
-			_lastFrameInputPos_L = _curFrameInputPos_L;
-			++_numOfInputFrames;
-		} else if (Input.GetTouch(0).phase == TouchPhase.Ended)
-			SetSlidingEffect();
+		switch (Input.GetTouch(0).phase) {
+			case TouchPhase.Began:
+				_lastFrameInputPos_L = ScreenToCanvasSpace(Input.GetTouch(0).position);
+				_startInputPos_L = _lastFrameInputPos_L;
+				_numOfInputFrames = 0;
+				// When the user starts to drag the list, all listBoxes stop free sliding.
+				foreach (ListBox listBox in listBoxes)
+					listBox.keepSliding = false;
+
+				break;
+
+			case TouchPhase.Moved:
+				_curFrameInputPos_L = ScreenToCanvasSpace(Input.GetTouch(0).position);
+				_deltaInputPos_L = _curFrameInputPos_L - _lastFrameInputPos_L;
+				foreach (ListBox listbox in listBoxes)
+					listbox.UpdatePosition(_deltaInputPos_L);
+
+				_lastFrameInputPos_L = _curFrameInputPos_L;
+				++_numOfInputFrames;
+				break;
+
+			case TouchPhase.Ended:
+				SetSlidingEffect();
+				break;
+		}
 	}
 
 	/* Store the delta position of the mouse wheel.
