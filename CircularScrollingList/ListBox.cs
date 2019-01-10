@@ -47,7 +47,7 @@ public class ListBox : MonoBehaviour
 		_positionCtrl = transform.GetComponentInParent<ListPositionCtrl>();
 		_listBank = transform.GetComponentInParent<ListBank>();
 
-		_boxMaxPos = _positionCtrl.canvasMaxPos_L * _positionCtrl.angularity;
+		_boxMaxPos = _positionCtrl.canvasMaxPos_L * _positionCtrl.listCurvature;
 		_unitPos = _positionCtrl.unitPos_L;
 		_lowerBoundPos = _positionCtrl.lowerBoundPos_L;
 		_upperBoundPos = _positionCtrl.upperBoundPos_L;
@@ -56,15 +56,15 @@ public class ListBox : MonoBehaviour
 
 		_originalLocalScale = transform.localScale;
 
-		initialPosition(listBoxID);
+		InitialPosition(listBoxID);
 		// CUSTOM: Put in the centered ID you want to show
-		initialContent(0);
+		InitialContent(0);
 	}
 
 	/* Initialize the content of ListBox.
 	 * centeredContentID is used for setting the content of the centered ListBox.
 	 */
-	void initialContent(int centeredContentID)
+	void InitialContent(int centeredContentID)
 	{
 		_contentID = centeredContentID;
 
@@ -78,12 +78,12 @@ public class ListBox : MonoBehaviour
 			_contentID += _listBank.getListLength();
 		_contentID = _contentID % _listBank.getListLength();
 
-		updateListContent();
+		UpdateListContent();
 	}
 
 	/* Update the dispalying content on the ListBox.
 	 */
-	void updateListContent()
+	void UpdateListContent()
 	{
 		// Update the content accroding to its contentID.
 		content.text = _listBank.getListContent(_contentID);
@@ -91,19 +91,19 @@ public class ListBox : MonoBehaviour
 
 	/* Make the list box slide for delta x or y position.
 	 */
-	public void setSlidingDistance(Vector3 distance, int slidingFrames)
+	public void SetSlidingDistance(Vector3 distance, int slidingFrames)
 	{
 		_keepSliding = true;
 		_slidingFramesLeft = slidingFrames;
 
 		_slidingDistanceLeft = distance;
-		_slidingDistance = Vector3.Lerp(Vector3.zero, distance, _positionCtrl.slidingFactor);
+		_slidingDistance = Vector3.Lerp(Vector3.zero, distance, _positionCtrl.boxSlidingSpeedFactor);
 	}
 
 	/* Move the listBox for world position unit.
 	 * Move up when "up" is true, or else, move down.
 	 */
-	public void unitMove(int unit, bool up_right)
+	public void UnitMove(int unit, bool up_right)
 	{
 		Vector2 deltaPos;
 
@@ -116,11 +116,11 @@ public class ListBox : MonoBehaviour
 			deltaPos += (Vector2)_slidingDistanceLeft;
 
 		switch (_positionCtrl.direction) {
-		case ListPositionCtrl.Direction.VERTICAL:
-			setSlidingDistance(new Vector3(0.0f, deltaPos.y, 0.0f), _positionCtrl.slidingFrames);
+		case ListPositionCtrl.Direction.Vertical:
+			SetSlidingDistance(new Vector3(0.0f, deltaPos.y, 0.0f), _positionCtrl.boxSlidingFrames);
 			break;
-		case ListPositionCtrl.Direction.HORIZONTAL:
-			setSlidingDistance(new Vector3(deltaPos.x, 0.0f, 0.0f), _positionCtrl.slidingFrames);
+		case ListPositionCtrl.Direction.Horizontal:
+			SetSlidingDistance(new Vector3(deltaPos.x, 0.0f, 0.0f), _positionCtrl.boxSlidingFrames);
 			break;
 		}
 	}
@@ -134,8 +134,8 @@ public class ListBox : MonoBehaviour
 
 				// Set the distance to the center after free sliding.
 				if (_needToAlignToCenter) {
-					setSlidingDistance(_positionCtrl.findDeltaPositionToCenter(),
-						_positionCtrl.slidingFrames);
+					SetSlidingDistance(_positionCtrl.FindDeltaPositionToCenter(),
+						_positionCtrl.boxSlidingFrames);
 					_needToAlignToCenter = false;
 					return;
 				}
@@ -145,48 +145,48 @@ public class ListBox : MonoBehaviour
 				if (_positionCtrl.alignToCenter ||
 					_positionCtrl.controlMode == ListPositionCtrl.ControlMode.Button ||
 					_positionCtrl.controlMode == ListPositionCtrl.ControlMode.MouseWheel) {
-					updatePosition(_slidingDistanceLeft);
+					UpdatePosition(_slidingDistanceLeft);
 				}
 				return;
 			}
 
-			updatePosition(_slidingDistance);
+			UpdatePosition(_slidingDistance);
 			_slidingDistanceLeft -= _slidingDistance;
-			_slidingDistance = Vector3.Lerp(Vector3.zero, _slidingDistanceLeft, _positionCtrl.slidingFactor);
+			_slidingDistance = Vector3.Lerp(Vector3.zero, _slidingDistanceLeft, _positionCtrl.boxSlidingSpeedFactor);
 		}
 	}
 
 	/* Initialize the local position of the list box accroding to its ID.
 	 */
-	void initialPosition(int listBoxID)
+	void InitialPosition(int listBoxID)
 	{
 		// If there are even number of ListBoxes, adjust the initial position by an half unitPos.
 		if ((_positionCtrl.listBoxes.Length & 0x1) == 0) {
 			switch (_positionCtrl.direction) {
-			case ListPositionCtrl.Direction.VERTICAL:
+			case ListPositionCtrl.Direction.Vertical:
 				transform.localPosition = new Vector3(0.0f,
 					_unitPos.y * (listBoxID * -1 + _positionCtrl.listBoxes.Length / 2) - _unitPos.y / 2,
 					0.0f);
-				updateXPosition();
+				UpdateXPosition();
 				break;
-			case ListPositionCtrl.Direction.HORIZONTAL:
+			case ListPositionCtrl.Direction.Horizontal:
 				transform.localPosition = new Vector3(_unitPos.x * (listBoxID - _positionCtrl.listBoxes.Length / 2) - _unitPos.x / 2,
 				0.0f, 0.0f);
-				updateYPosition();
+				UpdateYPosition();
 				break;
 			}
 		} else {
 			switch (_positionCtrl.direction) {
-			case ListPositionCtrl.Direction.VERTICAL:
+			case ListPositionCtrl.Direction.Vertical:
 				transform.localPosition = new Vector3(0.0f,
 					_unitPos.y * (listBoxID * -1 + _positionCtrl.listBoxes.Length / 2),
 					0.0f);
-				updateXPosition();
+				UpdateXPosition();
 				break;
-			case ListPositionCtrl.Direction.HORIZONTAL:
+			case ListPositionCtrl.Direction.Horizontal:
 				transform.localPosition = new Vector3(_unitPos.x * (listBoxID - _positionCtrl.listBoxes.Length / 2),
 					0.0f, 0.0f);
-				updateYPosition();
+				UpdateYPosition();
 				break;
 			}
 		}
@@ -195,18 +195,18 @@ public class ListBox : MonoBehaviour
 	/* Update the local position of ListBox accroding to the delta position at each frame.
 	 * Note that the deltaPosition must be in local space.
 	 */
-	public void updatePosition(Vector3 deltaPosition_L)
+	public void UpdatePosition(Vector3 deltaPosition_L)
 	{
 		switch (_positionCtrl.direction) {
-		case ListPositionCtrl.Direction.VERTICAL:
+		case ListPositionCtrl.Direction.Vertical:
 			transform.localPosition += new Vector3(0.0f, deltaPosition_L.y, 0.0f);
-			updateXPosition();
-			checkBoundaryY();
+			UpdateXPosition();
+			CheckBoundaryY();
 			break;
-		case ListPositionCtrl.Direction.HORIZONTAL:
+		case ListPositionCtrl.Direction.Horizontal:
 			transform.localPosition += new Vector3(deltaPosition_L.x, 0.0f, 0.0f);
-			updateYPosition();
-			checkBoundaryX();
+			UpdateYPosition();
+			CheckBoundaryX();
 			break;
 		}
 	}
@@ -216,31 +216,31 @@ public class ListBox : MonoBehaviour
 	 * radian = (y / upper_y) * pi / 2, so the range of radian is from pi/2 to 0 to -pi/2,
 	 * and corresponding cosine value is from 0 to 1 to 0.
 	 */
-	void updateXPosition()
+	void UpdateXPosition()
 	{
 		transform.localPosition = new Vector3(
 			_boxMaxPos.x * (_positionAdjust +
 			Mathf.Cos(transform.localPosition.y / _upperBoundPos.y * Mathf.PI / 2.0f)),
 			transform.localPosition.y, transform.localPosition.z);
-		updateSize(_upperBoundPos.y, transform.localPosition.y);
+		UpdateSize(_upperBoundPos.y, transform.localPosition.y);
 	}
 
 	/* Calculate the y position accroding to the x position.
 	 */
-	void updateYPosition()
+	void UpdateYPosition()
 	{
 		transform.localPosition = new Vector3(
 			transform.localPosition.x,
 			_boxMaxPos.y * (_positionAdjust +
 			Mathf.Cos(transform.localPosition.x / _upperBoundPos.x * Mathf.PI / 2.0f)),
 			transform.localPosition.z);
-		updateSize(_upperBoundPos.x, transform.localPosition.x);
+		UpdateSize(_upperBoundPos.x, transform.localPosition.x);
 	}
 
 	/* Check if the ListBox is beyond the upper or lower bound or not.
 	 * If does, move the ListBox to the other side and update the content.
 	 */
-	void checkBoundaryY()
+	void CheckBoundaryY()
 	{
 		float beyondPosY_L = 0.0f;
 
@@ -251,20 +251,20 @@ public class ListBox : MonoBehaviour
 				transform.localPosition.x,
 				_upperBoundPos.y - _unitPos.y + _shiftBoundPos.y - beyondPosY_L,
 				transform.localPosition.z);
-			updateToLastContent();
+			UpdateToLastContent();
 		} else if (transform.localPosition.y > _upperBoundPos.y - _shiftBoundPos.y) {
 			beyondPosY_L = (transform.localPosition.y - _upperBoundPos.y + _shiftBoundPos.y);
 			transform.localPosition = new Vector3(
 				transform.localPosition.x,
 				_lowerBoundPos.y + _unitPos.y - _shiftBoundPos.y + beyondPosY_L,
 				transform.localPosition.z);
-			updateToNextContent();
+			UpdateToNextContent();
 		}
 
-		updateXPosition();
+		UpdateXPosition();
 	}
 
-	void checkBoundaryX()
+	void CheckBoundaryX()
 	{
 		float beyondPosX_L = 0.0f;
 
@@ -275,28 +275,28 @@ public class ListBox : MonoBehaviour
 				_upperBoundPos.x - _unitPos.x + _shiftBoundPos.x - beyondPosX_L,
 				transform.localPosition.y,
 				transform.localPosition.z);
-			updateToNextContent();
+			UpdateToNextContent();
 		} else if (transform.localPosition.x > _upperBoundPos.x - _shiftBoundPos.x) {
 			beyondPosX_L = (transform.localPosition.x - _upperBoundPos.x + _shiftBoundPos.x);
 			transform.localPosition = new Vector3(
 				_lowerBoundPos.x + _unitPos.x - _shiftBoundPos.x + beyondPosX_L,
 				transform.localPosition.y,
 				transform.localPosition.z);
-			updateToLastContent();
+			UpdateToLastContent();
 		}
 
-		updateYPosition();
+		UpdateYPosition();
 	}
 
 	/* Scale the size of listBox accroding to the position.
 	 */
-	void updateSize(float smallest_at, float target_value)
+	void UpdateSize(float smallest_at, float target_value)
 	{
 		transform.localScale = _originalLocalScale *
-			(1.0f + _positionCtrl.scaleFactor * Mathf.InverseLerp(smallest_at, 0.0f, Mathf.Abs(target_value)));
+			(1.0f + _positionCtrl.centerBoxScaleRatio * Mathf.InverseLerp(smallest_at, 0.0f, Mathf.Abs(target_value)));
 	}
 
-	public int getCurrentContentID()
+	public int GetCurrentContentID()
 	{
 		return _contentID;
 	}
@@ -304,22 +304,22 @@ public class ListBox : MonoBehaviour
 	/* Update to the last content of the next ListBox
 	 * when the ListBox appears at the top of camera.
 	 */
-	void updateToLastContent()
+	void UpdateToLastContent()
 	{
-		_contentID = nextListBox.getCurrentContentID() - 1;
+		_contentID = nextListBox.GetCurrentContentID() - 1;
 		_contentID = (_contentID < 0) ? _listBank.getListLength() - 1 : _contentID;
 
-		updateListContent();
+		UpdateListContent();
 	}
 
 	/* Update to the next content of the last ListBox
 	 * when the ListBox appears at the bottom of camera.
 	 */
-	void updateToNextContent()
+	void UpdateToNextContent()
 	{
-		_contentID = lastListBox.getCurrentContentID() + 1;
+		_contentID = lastListBox.GetCurrentContentID() + 1;
 		_contentID = (_contentID == _listBank.getListLength()) ? 0 : _contentID;
 
-		updateListContent();
+		UpdateListContent();
 	}
 }
