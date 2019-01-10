@@ -94,6 +94,12 @@ public class ListPositionCtrl : MonoBehaviour
 	 */
 	void Start()
 	{
+		InitializePositionVars();
+		InitializeInputFunction();
+	}
+
+	void InitializePositionVars()
+	{
 		/* The the reference of canvas plane */
 		_parentCanvas = GetComponentInParent<Canvas>();
 
@@ -112,8 +118,10 @@ public class ListPositionCtrl : MonoBehaviour
 			lowerBoundPos_L += unitPos_L / 2;
 			upperBoundPos_L -= unitPos_L / 2;
 		}
+	}
 
-		/* Initialize the delegate function. */
+	void InitializeInputFunction()
+	{
 		switch (controlMode) {
 			case ControlMode.Drag:
 				foreach (Button button in controlButtons)
@@ -127,7 +135,7 @@ public class ListPositionCtrl : MonoBehaviour
 				break;
 
 			case ControlMode.Button:
-				_storeInputPosition = delegate () { };	// Empty delegate function
+				_storeInputPosition = delegate () { };  // Empty delegate function
 				break;
 
 			case ControlMode.MouseWheel:
