@@ -4,8 +4,13 @@
  */
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class ListPositionCtrl : MonoBehaviour
+public interface IControlEventHandler:
+	IBeginDragHandler, IDragHandler, IEndDragHandler, IScrollHandler
+{}
+
+public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 {
 	public enum ControlMode
 	{
@@ -52,8 +57,6 @@ public class ListPositionCtrl : MonoBehaviour
 	public float centerBoxScaleRatio = 0.32f;
 	/*===============================*/
 
-	private bool _isTouchingDevice;
-
 	// The canvas plane which the scrolling list is at.
 	private Canvas _parentCanvas;
 
@@ -64,11 +67,16 @@ public class ListPositionCtrl : MonoBehaviour
 	public Vector2 upperBoundPos_L { get; private set; }
 	public Vector2 shiftBoundPos_L { get; private set; }
 
+	// Delegate functions
+	private delegate void InputPositionHandlerDelegate(
+		PointerEventData pointer, TouchPhase state);
+	private InputPositionHandlerDelegate _inputPositionHandler;
+	private delegate void ScrollHandlerDelegate(Vector2 scrollDelta);
+	private ScrollHandlerDelegate _scrollHandler;
+
 	// Input mouse/finger position in the local space of the list.
-	private delegate void StoreInputPosition();
-	private StoreInputPosition _storeInputPosition;
 	private Vector3 _startInputPos_L;
-	private Vector3 _lastFrameInputPos_L;
+	private Vector3 _endInputPos_L;
 	private Vector3 _curFrameInputPos_L;
 	private Vector3 _deltaInputPos_L;
 	private int _numOfInputFrames;
@@ -76,18 +84,6 @@ public class ListPositionCtrl : MonoBehaviour
 	// Store the calculation result of the sliding distance for aligning to the center.
 	// If its value is NaN, the distance haven't been calcuated yet.
 	private Vector3 _alignToCenterDistance;
-
-	void Awake()
-	{
-		switch (Application.platform) {
-		case RuntimePlatform.WindowsEditor:
-			_isTouchingDevice = false;
-			break;
-		case RuntimePlatform.Android:
-			_isTouchingDevice = true;
-			break;
-		}
-	}
 
 	/* Notice: ListBox will initialize its variables from here, so ListPositionCtrl
 	 * must be executed before ListBox. You have to set the execution order in the inspector.
@@ -120,119 +116,111 @@ public class ListPositionCtrl : MonoBehaviour
 		}
 	}
 
+	/* Initialize the corresponding handlers for the selected controlling mode
+	 *
+	 * The unused handler will be assigned a dummy function to
+	 * prevent the handling of the event.
+	 */
 	void InitializeInputFunction()
 	{
 		switch (controlMode) {
 			case ControlMode.Drag:
+				_inputPositionHandler = DragPositionHandler;
+
+				_scrollHandler = delegate (Vector2 v) { };
 				foreach (Button button in controlButtons)
 					button.gameObject.SetActive(false);
-
-				if (_isTouchingDevice)
-					_storeInputPosition = StoreFingerPosition;
-				else
-					_storeInputPosition = StoreMousePosition;
-
 				break;
 
 			case ControlMode.Button:
-				_storeInputPosition = delegate () { };  // Empty delegate function
+				_inputPositionHandler =
+					delegate (PointerEventData pointer, TouchPhase phase) { };
+				_scrollHandler = delegate (Vector2 v) { };
 				break;
 
 			case ControlMode.MouseWheel:
+				_scrollHandler = ScrollDeltaHandler;
+
+				_inputPositionHandler =
+					delegate (PointerEventData pointer, TouchPhase phase) { };
 				foreach (Button button in controlButtons)
 					button.gameObject.SetActive(false);
-
-				_storeInputPosition = StoreMouseWheelDelta;
 				break;
 		}
 	}
 
-	void Update()
+	/* ====== Callback functions for the unity event system ====== */
+	public void OnBeginDrag(PointerEventData pointer)
 	{
-		_storeInputPosition();
+		_inputPositionHandler(pointer, TouchPhase.Began);
 	}
 
-	Vector3 ScreenToCanvasSpace(Vector3 position)
+	public void OnDrag(PointerEventData pointer)
 	{
-		return position / _parentCanvas.scaleFactor;
+		_inputPositionHandler(pointer, TouchPhase.Moved);
 	}
 
-	/* Store the position of mouse when the player clicks the left mouse button.
+	public void OnEndDrag(PointerEventData pointer)
+	{
+		_inputPositionHandler(pointer, TouchPhase.Ended);
+	}
+
+	public void OnScroll(PointerEventData pointer)
+	{
+		_scrollHandler(pointer.scrollDelta);
+	}
+
+
+	/* Move the list accroding to the dragging position and the dragging state
 	 */
-	void StoreMousePosition()
+	void DragPositionHandler(PointerEventData pointer, TouchPhase state)
 	{
-		if (Input.GetMouseButtonDown(0)) {
-			_lastFrameInputPos_L = ScreenToCanvasSpace(Input.mousePosition);
-			_startInputPos_L = _lastFrameInputPos_L;
-			_numOfInputFrames = 0;
-			// When the user starts to drag the list, all listBoxes stop free sliding.
-			foreach (ListBox listBox in listBoxes)
-				listBox.keepSliding = false;
-		} else if (Input.GetMouseButton(0)) {
-			_curFrameInputPos_L = ScreenToCanvasSpace(Input.mousePosition);
-			_deltaInputPos_L = _curFrameInputPos_L - _lastFrameInputPos_L;
-			foreach (ListBox listbox in listBoxes)
-				listbox.UpdatePosition(_deltaInputPos_L);
-
-			_lastFrameInputPos_L = _curFrameInputPos_L;
-			++_numOfInputFrames;
-		} else if (Input.GetMouseButtonUp(0))
-			SetSlidingEffect();
-	}
-
-	/* Store the position of touching on the mobile.
-	 */
-	void StoreFingerPosition()
-	{
-		if (Input.touchCount == 0)
-			return;
-
-		switch (Input.GetTouch(0).phase) {
+		switch (state)
+		{
 			case TouchPhase.Began:
-				_lastFrameInputPos_L = ScreenToCanvasSpace(Input.GetTouch(0).position);
-				_startInputPos_L = _lastFrameInputPos_L;
 				_numOfInputFrames = 0;
-				// When the user starts to drag the list, all listBoxes stop free sliding.
+				_startInputPos_L = ScreenToCanvasSpace(pointer.position);
 				foreach (ListBox listBox in listBoxes)
 					listBox.keepSliding = false;
-
 				break;
 
 			case TouchPhase.Moved:
-				_curFrameInputPos_L = ScreenToCanvasSpace(Input.GetTouch(0).position);
-				_deltaInputPos_L = _curFrameInputPos_L - _lastFrameInputPos_L;
-				foreach (ListBox listbox in listBoxes)
-					listbox.UpdatePosition(_deltaInputPos_L);
-
-				_lastFrameInputPos_L = _curFrameInputPos_L;
 				++_numOfInputFrames;
+				_deltaInputPos_L = ScreenToCanvasSpace(pointer.delta);
+				foreach (ListBox listBox in listBoxes)
+					listBox.UpdatePosition(_deltaInputPos_L);
 				break;
 
 			case TouchPhase.Ended:
+				_endInputPos_L = ScreenToCanvasSpace(pointer.position);
 				SetSlidingEffect();
 				break;
 		}
 	}
 
-	/* Store the delta position of the mouse wheel.
-	 * Thanks for https://github.com/aledg.
+	/* Transform the coordinate from the screen space to the canvas space
 	 */
-	void StoreMouseWheelDelta()
+	Vector3 ScreenToCanvasSpace(Vector3 position)
 	{
-		Vector2 mouseScrollDelta = Input.mouseScrollDelta;
+		return position / _parentCanvas.scaleFactor;
+	}
+
+	/* Scroll the list accroding to the scrollDelta of the mouse.
+	 */
+	void ScrollDeltaHandler(Vector2 mouseScrollDelta)
+	{
 		if (mouseScrollDelta.y > 0)
 			NextContent();
 		else if (mouseScrollDelta.y < 0)
 			LastContent();
 	}
 
-	/* If the touching is ended, calculate the distance to slide and
-	 * assign to the listBoxes.
+	/* Calculate the sliding distance and assign it to the listBoxes
 	 */
 	void SetSlidingEffect()
 	{
 		Vector3 deltaPos = _deltaInputPos_L;
-		Vector3 slideDistance = _lastFrameInputPos_L - _startInputPos_L;
+		Vector3 slideDistance = _endInputPos_L - _startInputPos_L;
 		bool fastSliding = IsFastSliding(_numOfInputFrames, slideDistance);
 
 		if (fastSliding)
