@@ -89,6 +89,15 @@ public class ListBox : MonoBehaviour
 		content.text = _listBank.getListContent(_contentID);
 	}
 
+	/* Get the content of this ListBox
+	 */
+	public void GetContent()
+	{
+		Debug.Log("Box ID: " + listBoxID.ToString() +
+			", Content ID: " + _contentID.ToString() +
+			", Content: " + _listBank.getListContent(_contentID));
+	}
+
 	/* Make the list box slide for delta x or y position.
 	 */
 	public void SetSlidingDistance(Vector3 distance, int slidingFrames)
