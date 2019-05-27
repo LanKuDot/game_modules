@@ -1,15 +1,14 @@
-﻿/* The basic component of scrolling list.
- * Control the position and the contents of the list element.
- *
- * Author: LanKuDot <airlanser@gmail.com>
+﻿/* The basic component of the scrolling list.
+ * Control the position and update the content of the list element.
  */
+
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ListBox : MonoBehaviour
 {
 	public int listBoxID;   // Must be unique, and count from 0
-	public Text content;        // The content of the list box
+	public Text content;    // The display text for the content of the list box
 
 	public ListBox lastListBox;
 	public ListBox nextListBox;
@@ -18,18 +17,22 @@ public class ListBox : MonoBehaviour
 	private ListBank _listBank;
 	private int _contentID;
 
-	// All position calculations here are in the local space of the list
-	private Vector2 _boxMaxPos;
-	private Vector2 _unitPos;
-	private Vector2 _lowerBoundPos;
-	private Vector2 _upperBoundPos;
-	private Vector2 _shiftBoundPos;
-	private float _positionAdjust;
+	/* ====== Position variables ====== */
+	// Position caculated here is in the local space of the list
+	private Vector2 _maxCurvePos;     // The maximum outer position
+	private Vector2 _unitPos;         // The distance between boxes
+	private Vector2 _lowerBoundPos;   // The left/down-most position of the box
+	private Vector2 _upperBoundPos;   // The right/up-most position of the box
+	// _changeSide(Lower/Upper)BoundPos is the boundary for checking that
+	// whether to move the box to the other end or not
+	private Vector2 _changeSideLowerBoundPos;
+	private Vector2 _changeSideUpperBoundPos;
+	private float _cosValueAdjust;
 
-	private Vector3 _slidingDistance;   // The sliding distance at each frame
+	private Vector3 _slidingDistance;   // The sliding distance for each frame
 	private Vector3 _slidingDistanceLeft;
 
-	private Vector3 _originalLocalScale;
+	private Vector3 _initialLocalScale;
 
 	private bool _keepSliding = false;
 	private int _slidingFramesLeft;
@@ -47,16 +50,17 @@ public class ListBox : MonoBehaviour
 		_positionCtrl = transform.GetComponentInParent<ListPositionCtrl>();
 		_listBank = transform.GetComponentInParent<ListBank>();
 
-		_boxMaxPos = _positionCtrl.canvasMaxPos_L * _positionCtrl.listCurvature;
+		_maxCurvePos = _positionCtrl.canvasMaxPos_L * _positionCtrl.listCurvature;
 		_unitPos = _positionCtrl.unitPos_L;
 		_lowerBoundPos = _positionCtrl.lowerBoundPos_L;
 		_upperBoundPos = _positionCtrl.upperBoundPos_L;
-		_shiftBoundPos = _positionCtrl.shiftBoundPos_L;
-		_positionAdjust = _positionCtrl.positionAdjust;
+		_changeSideLowerBoundPos = _lowerBoundPos + _unitPos * 0.3f;
+		_changeSideUpperBoundPos = _upperBoundPos - _unitPos * 0.3f;
+		_cosValueAdjust = _positionCtrl.positionAdjust;
 
-		_originalLocalScale = transform.localScale;
+		_initialLocalScale = transform.localScale;
 
-		InitialPosition(listBoxID);
+		InitialPosition();
 		// CUSTOM: Put in the centered ID you want to show
 		InitialContent(0);
 	}
@@ -112,14 +116,9 @@ public class ListBox : MonoBehaviour
 	/* Move the listBox for world position unit.
 	 * Move up when "up" is true, or else, move down.
 	 */
-	public void UnitMove(int unit, bool up_right)
+	public void UnitMove(int unit)
 	{
-		Vector2 deltaPos;
-
-		if (up_right)
-			deltaPos = _unitPos * (float)unit;
-		else
-			deltaPos = _unitPos * (float)unit * -1;
+		Vector2 deltaPos = _unitPos * unit;
 
 		if (_keepSliding)
 			deltaPos += (Vector2)_slidingDistanceLeft;
@@ -165,9 +164,9 @@ public class ListBox : MonoBehaviour
 		}
 	}
 
-	/* Initialize the local position of the list box accroding to its ID.
+	/* Initialize the local position of the list box accroding to its ID
 	 */
-	void InitialPosition(int listBoxID)
+	void InitialPosition()
 	{
 		// If there are even number of ListBoxes, adjust the initial position by an half unitPos.
 		if ((_positionCtrl.listBoxes.Length & 0x1) == 0) {
@@ -221,14 +220,14 @@ public class ListBox : MonoBehaviour
 	}
 
 	/* Calculate the x position accroding to the y position.
-	 * Formula: x = boxMax_x * (cos( radian controlled by y ) - positionAdjust)
-	 * radian = (y / upper_y) * pi / 2, so the range of radian is from pi/2 to 0 to -pi/2,
-	 * and corresponding cosine value is from 0 to 1 to 0.
 	 */
 	void UpdateXPosition()
 	{
+		// Formula: x = maxCurvePos_x * (cos(r) + cosValueAdjust),
+		// where r = (y / upper_y) * pi / 2, then r is in range [- pi / 2, pi / 2],
+		// and corresponding cosine value is from 0 to 1 to 0.
 		transform.localPosition = new Vector3(
-			_boxMaxPos.x * (_positionAdjust +
+			_maxCurvePos.x * (_cosValueAdjust +
 			Mathf.Cos(transform.localPosition.y / _upperBoundPos.y * Mathf.PI / 2.0f)),
 			transform.localPosition.y, transform.localPosition.z);
 		UpdateSize(_upperBoundPos.y, transform.localPosition.y);
@@ -240,32 +239,32 @@ public class ListBox : MonoBehaviour
 	{
 		transform.localPosition = new Vector3(
 			transform.localPosition.x,
-			_boxMaxPos.y * (_positionAdjust +
+			_maxCurvePos.y * (_cosValueAdjust +
 			Mathf.Cos(transform.localPosition.x / _upperBoundPos.x * Mathf.PI / 2.0f)),
 			transform.localPosition.z);
 		UpdateSize(_upperBoundPos.x, transform.localPosition.x);
 	}
 
-	/* Check if the ListBox is beyond the upper or lower bound or not.
-	 * If does, move the ListBox to the other side and update the content.
+	/* Check if the ListBox is beyond the checking boundary or not
+	 * If it does, move the ListBox to the other end of the list
+	 * and update the content.
 	 */
 	void CheckBoundaryY()
 	{
 		float beyondPosY_L = 0.0f;
 
-		// Narrow the checking boundary in order to avoid the list swaying to one side
-		if (transform.localPosition.y < _lowerBoundPos.y + _shiftBoundPos.y) {
-			beyondPosY_L = (_lowerBoundPos.y + _shiftBoundPos.y - transform.localPosition.y);
+		if (transform.localPosition.y < _changeSideLowerBoundPos.y) {
+			beyondPosY_L = transform.localPosition.y - _lowerBoundPos.y;
 			transform.localPosition = new Vector3(
 				transform.localPosition.x,
-				_upperBoundPos.y - _unitPos.y + _shiftBoundPos.y - beyondPosY_L,
+				_upperBoundPos.y - _unitPos.y + beyondPosY_L,
 				transform.localPosition.z);
 			UpdateToLastContent();
-		} else if (transform.localPosition.y > _upperBoundPos.y - _shiftBoundPos.y) {
-			beyondPosY_L = (transform.localPosition.y - _upperBoundPos.y + _shiftBoundPos.y);
+		} else if (transform.localPosition.y > _changeSideUpperBoundPos.y) {
+			beyondPosY_L = transform.localPosition.y - _upperBoundPos.y;
 			transform.localPosition = new Vector3(
 				transform.localPosition.x,
-				_lowerBoundPos.y + _unitPos.y - _shiftBoundPos.y + beyondPosY_L,
+				_lowerBoundPos.y + _unitPos.y + beyondPosY_L,
 				transform.localPosition.z);
 			UpdateToNextContent();
 		}
@@ -277,18 +276,17 @@ public class ListBox : MonoBehaviour
 	{
 		float beyondPosX_L = 0.0f;
 
-		// Narrow the checking boundary in order to avoid the list swaying to one side
-		if (transform.localPosition.x < _lowerBoundPos.x + _shiftBoundPos.x) {
-			beyondPosX_L = (_lowerBoundPos.x + _shiftBoundPos.x - transform.localPosition.x);
+		if (transform.localPosition.x < _changeSideLowerBoundPos.x) {
+			beyondPosX_L = transform.localPosition.x - _lowerBoundPos.x;
 			transform.localPosition = new Vector3(
-				_upperBoundPos.x - _unitPos.x + _shiftBoundPos.x - beyondPosX_L,
+				_upperBoundPos.x - _unitPos.x + beyondPosX_L,
 				transform.localPosition.y,
 				transform.localPosition.z);
 			UpdateToNextContent();
-		} else if (transform.localPosition.x > _upperBoundPos.x - _shiftBoundPos.x) {
-			beyondPosX_L = (transform.localPosition.x - _upperBoundPos.x + _shiftBoundPos.x);
+		} else if (transform.localPosition.x > _changeSideUpperBoundPos.x) {
+			beyondPosX_L = transform.localPosition.x - _upperBoundPos.x;
 			transform.localPosition = new Vector3(
-				_lowerBoundPos.x + _unitPos.x - _shiftBoundPos.x + beyondPosX_L,
+				_lowerBoundPos.x + _unitPos.x + beyondPosX_L,
 				transform.localPosition.y,
 				transform.localPosition.z);
 			UpdateToLastContent();
@@ -297,11 +295,16 @@ public class ListBox : MonoBehaviour
 		UpdateYPosition();
 	}
 
-	/* Scale the size of listBox accroding to the position.
+	/* Scale the listBox accroding to its position
+	 *
+	 * @param smallest_at The position at where the smallest listBox will be
+	 * @param target_value The position of the target listBox
 	 */
 	void UpdateSize(float smallest_at, float target_value)
 	{
-		transform.localScale = _originalLocalScale *
+		// The scale of the box at the either end is initialLocalScale.
+		// The scale of the box at the center is initialLocalScale * (1 + centerBoxScaleRatio).
+		transform.localScale = _initialLocalScale *
 			(1.0f + _positionCtrl.centerBoxScaleRatio * Mathf.InverseLerp(smallest_at, 0.0f, Mathf.Abs(target_value)));
 	}
 
@@ -310,8 +313,7 @@ public class ListBox : MonoBehaviour
 		return _contentID;
 	}
 
-	/* Update to the last content of the next ListBox
-	 * when the ListBox appears at the top of camera.
+	/* Update the content to the last content of the next ListBox
 	 */
 	void UpdateToLastContent()
 	{
@@ -321,8 +323,7 @@ public class ListBox : MonoBehaviour
 		UpdateDisplayContent();
 	}
 
-	/* Update to the next content of the last ListBox
-	 * when the ListBox appears at the bottom of camera.
+	/* Update the content to the next content of the last ListBox
 	 */
 	void UpdateToNextContent()
 	{

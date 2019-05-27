@@ -1,6 +1,4 @@
-﻿/* Get user inputs and control the movement of listBoxes it has.
- *
- * Author: LanKuDot <airlanser@gmail.com>
+﻿/* Handle the controlling event and send the moving information to the boxes it has
  */
 using UnityEngine;
 using UnityEngine.UI;
@@ -65,7 +63,6 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	public Vector2 unitPos_L { get; private set; }
 	public Vector2 lowerBoundPos_L { get; private set; }
 	public Vector2 upperBoundPos_L { get; private set; }
-	public Vector2 shiftBoundPos_L { get; private set; }
 
 	// Delegate functions
 	private delegate void InputPositionHandlerDelegate(
@@ -107,7 +104,6 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		unitPos_L = canvasMaxPos_L / boxGapFactor;
 		lowerBoundPos_L = unitPos_L * (-1 * listBoxes.Length / 2 - 1);
 		upperBoundPos_L = unitPos_L * (listBoxes.Length / 2 + 1);
-		shiftBoundPos_L = unitPos_L * 0.3f;
 
 		// If there are even number of ListBoxes, narrow the boundary for 1 unitPos.
 		if ((listBoxes.Length & 0x1) == 0) {
@@ -205,14 +201,14 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		return position / _parentCanvas.scaleFactor;
 	}
 
-	/* Scroll the list accroding to the scrollDelta of the mouse.
+	/* Scroll the list accroding to the delta of the mouse scrolling
 	 */
 	void ScrollDeltaHandler(Vector2 mouseScrollDelta)
 	{
 		if (mouseScrollDelta.y > 0)
-			NextContent();
+			MoveOneUnitUp();
 		else if (mouseScrollDelta.y < 0)
-			LastContent();
+			MoveOneUnitDown();
 	}
 
 	/* Calculate the sliding distance and assign it to the listBoxes
@@ -239,7 +235,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		}
 	}
 
-	/* Judge if this cursor or finger slide is the fast sliding.
+	/* Determine if the finger or mouse sliding is the fast sliding.
 	 * If the duration of a slide is within 15 frames and the distance is
 	 * longer than the 1/3 of the distance of the list, the slide is the fast sliding.
 	 */
@@ -263,7 +259,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	}
 
 	/* Find the listBox which is the closest to the center position,
-	 * And calculate the delta position of x or y between them.
+	 * and calculate the delta x or y position between it and the center position.
 	 */
 	public Vector3 FindDeltaPositionToCenter()
 	{
@@ -305,8 +301,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		return _alignToCenterDistance;
 	}
 
-	/*
-	 * Get the object of the centered ListBox.
+	/* Get the object of the centered ListBox.
 	 * The centered ListBox is found by comparing which one is the closest
 	 * to the center.
 	 */
@@ -347,23 +342,19 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		return new Vector3(a.x / b.x, a.y / b.y, a.z / b.z);
 	}
 
-	/* controlByButton is enabled!
-	 * When the next content button is pressed,
-	 * move all listBoxes 1 unit up.
+	/* Move all listBoxes 1 unit up.
 	 */
-	public void NextContent()
+	public void MoveOneUnitUp()
 	{
 		foreach (ListBox listbox in listBoxes)
-			listbox.UnitMove(1, true);
+			listbox.UnitMove(1);
 	}
 
-	/* controlByButton is enabled!
-	 * When the last content button is pressed,
-	 * move all listBoxes 1 unit down.
+	/* Move all listBoxes 1 unit down.
 	 */
-	public void LastContent()
+	public void MoveOneUnitDown()
 	{
 		foreach (ListBox listbox in listBoxes)
-			listbox.UnitMove(1, false);
+			listbox.UnitMove(-1);
 	}
 }
