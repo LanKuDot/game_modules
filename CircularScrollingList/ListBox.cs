@@ -78,12 +78,12 @@ public class ListBox : MonoBehaviour
 			_contentID += _listBank.getListLength();
 		_contentID = _contentID % _listBank.getListLength();
 
-		UpdateListContent();
+		UpdateDisplayContent();
 	}
 
 	/* Update the dispalying content on the ListBox.
 	 */
-	void UpdateListContent()
+	void UpdateDisplayContent()
 	{
 		// Update the content accroding to its contentID.
 		content.text = _listBank.getListContent(_contentID);
@@ -318,7 +318,7 @@ public class ListBox : MonoBehaviour
 		_contentID = nextListBox.GetCurrentContentID() - 1;
 		_contentID = (_contentID < 0) ? _listBank.getListLength() - 1 : _contentID;
 
-		UpdateListContent();
+		UpdateDisplayContent();
 	}
 
 	/* Update to the next content of the last ListBox
@@ -329,6 +329,6 @@ public class ListBox : MonoBehaviour
 		_contentID = lastListBox.GetCurrentContentID() + 1;
 		_contentID = (_contentID == _listBank.getListLength()) ? 0 : _contentID;
 
-		UpdateListContent();
+		UpdateDisplayContent();
 	}
 }
