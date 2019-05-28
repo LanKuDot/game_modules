@@ -102,31 +102,33 @@ public class ListBox : MonoBehaviour
 		// If there are even number of ListBoxes, adjust the initial position by an half unitPos.
 		if ((_positionCtrl.listBoxes.Length & 0x1) == 0) {
 			switch (_positionCtrl.direction) {
-			case ListPositionCtrl.Direction.Vertical:
-				transform.localPosition = new Vector3(0.0f,
-					_unitPos.y * (listBoxID * -1 + _positionCtrl.listBoxes.Length / 2) - _unitPos.y / 2,
-					0.0f);
-				UpdateXPosition();
-				break;
-			case ListPositionCtrl.Direction.Horizontal:
-				transform.localPosition = new Vector3(_unitPos.x * (listBoxID - _positionCtrl.listBoxes.Length / 2) - _unitPos.x / 2,
-				0.0f, 0.0f);
-				UpdateYPosition();
-				break;
+				case ListPositionCtrl.Direction.Vertical:
+					transform.localPosition = new Vector3(0.0f,
+						_unitPos.y * (listBoxID * -1 + _positionCtrl.listBoxes.Length / 2) - _unitPos.y / 2,
+						0.0f);
+					UpdateXPosition();
+					break;
+				case ListPositionCtrl.Direction.Horizontal:
+					transform.localPosition = new Vector3(
+						_unitPos.x * (listBoxID - _positionCtrl.listBoxes.Length / 2) - _unitPos.x / 2,
+						0.0f, 0.0f);
+					UpdateYPosition();
+					break;
 			}
 		} else {
 			switch (_positionCtrl.direction) {
-			case ListPositionCtrl.Direction.Vertical:
-				transform.localPosition = new Vector3(0.0f,
-					_unitPos.y * (listBoxID * -1 + _positionCtrl.listBoxes.Length / 2),
-					0.0f);
-				UpdateXPosition();
-				break;
-			case ListPositionCtrl.Direction.Horizontal:
-				transform.localPosition = new Vector3(_unitPos.x * (listBoxID - _positionCtrl.listBoxes.Length / 2),
-					0.0f, 0.0f);
-				UpdateYPosition();
-				break;
+				case ListPositionCtrl.Direction.Vertical:
+					transform.localPosition = new Vector3(0.0f,
+						_unitPos.y * (listBoxID * -1 + _positionCtrl.listBoxes.Length / 2),
+						0.0f);
+					UpdateXPosition();
+					break;
+				case ListPositionCtrl.Direction.Horizontal:
+					transform.localPosition = new Vector3(
+						_unitPos.x * (listBoxID - _positionCtrl.listBoxes.Length / 2),
+						0.0f, 0.0f);
+					UpdateYPosition();
+					break;
 			}
 		}
 	}
@@ -137,16 +139,16 @@ public class ListBox : MonoBehaviour
 	public void UpdatePosition(Vector3 deltaPosition_L)
 	{
 		switch (_positionCtrl.direction) {
-		case ListPositionCtrl.Direction.Vertical:
-			transform.localPosition += new Vector3(0.0f, deltaPosition_L.y, 0.0f);
-			UpdateXPosition();
-			CheckBoundaryY();
-			break;
-		case ListPositionCtrl.Direction.Horizontal:
-			transform.localPosition += new Vector3(deltaPosition_L.x, 0.0f, 0.0f);
-			UpdateYPosition();
-			CheckBoundaryX();
-			break;
+			case ListPositionCtrl.Direction.Vertical:
+				transform.localPosition += new Vector3(0.0f, deltaPosition_L.y, 0.0f);
+				UpdateXPosition();
+				CheckBoundaryY();
+				break;
+			case ListPositionCtrl.Direction.Horizontal:
+				transform.localPosition += new Vector3(deltaPosition_L.x, 0.0f, 0.0f);
+				UpdateYPosition();
+				CheckBoundaryX();
+				break;
 		}
 	}
 
@@ -236,7 +238,8 @@ public class ListBox : MonoBehaviour
 		// The scale of the box at the either end is initialLocalScale.
 		// The scale of the box at the center is initialLocalScale * (1 + centerBoxScaleRatio).
 		transform.localScale = _initialLocalScale *
-			(1.0f + _positionCtrl.centerBoxScaleRatio * Mathf.InverseLerp(smallest_at, 0.0f, Mathf.Abs(target_value)));
+			(1.0f + _positionCtrl.centerBoxScaleRatio *
+			 Mathf.InverseLerp(smallest_at, 0.0f, Mathf.Abs(target_value)));
 	}
 
 	public int GetCurrentContentID()

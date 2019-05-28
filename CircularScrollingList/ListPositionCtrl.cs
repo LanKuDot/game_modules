@@ -180,8 +180,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	 */
 	void DragPositionHandler(PointerEventData pointer, TouchPhase state)
 	{
-		switch (state)
-		{
+		switch (state) {
 			case TouchPhase.Began:
 				_numOfInputFrames = 0;
 				_startInputPos_L = ScreenToCanvasSpace(pointer.position);
@@ -237,7 +236,8 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 					_slidingDistance = _slidingDistanceLeft;
 				}
 			} else
-				_slidingDistance = Vector3.Lerp(Vector3.zero, _slidingDistanceLeft, boxSlidingSpeedFactor);
+				_slidingDistance = Vector3.Lerp(Vector3.zero, _slidingDistanceLeft,
+					boxSlidingSpeedFactor);
 
 			foreach (ListBox listBox in listBoxes)
 				listBox.UpdatePosition(_slidingDistance);
@@ -275,16 +275,16 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	{
 		if (frames < 15) {
 			switch (direction) {
-			case Direction.Horizontal:
-				if (Mathf.Abs(distance.x) > canvasMaxPos_L.x * 2.0f / 3.0f)
-					return true;
-				else
-					return false;
-			case Direction.Vertical:
-				if (Mathf.Abs(distance.y) > canvasMaxPos_L.y * 2.0f / 3.0f)
-					return true;
-				else
-					return false;
+				case Direction.Horizontal:
+					if (Mathf.Abs(distance.x) > canvasMaxPos_L.x * 2.0f / 3.0f)
+						return true;
+					else
+						return false;
+				case Direction.Vertical:
+					if (Mathf.Abs(distance.y) > canvasMaxPos_L.y * 2.0f / 3.0f)
+						return true;
+					else
+						return false;
 			}
 		}
 		return false;
@@ -308,29 +308,29 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		Vector3 alignToCenterDistance;
 
 		switch (direction) {
-		case Direction.Vertical:
-			foreach (ListBox listBox in listBoxes) {
-				deltaPos = -listBox.transform.localPosition.y;
-				if (Mathf.Abs(deltaPos) < Mathf.Abs(minDeltaPos))
-					minDeltaPos = deltaPos;
-			}
+			case Direction.Vertical:
+				foreach (ListBox listBox in listBoxes) {
+					deltaPos = -listBox.transform.localPosition.y;
+					if (Mathf.Abs(deltaPos) < Mathf.Abs(minDeltaPos))
+						minDeltaPos = deltaPos;
+				}
 
-			alignToCenterDistance = new Vector3(0.0f, minDeltaPos, 0.0f);
-			break;
+				alignToCenterDistance = new Vector3(0.0f, minDeltaPos, 0.0f);
+				break;
 
-		case Direction.Horizontal:
-			foreach (ListBox listBox in listBoxes) {
-				deltaPos = -listBox.transform.localPosition.x;
-				if (Mathf.Abs(deltaPos) < Mathf.Abs(minDeltaPos))
-					minDeltaPos = deltaPos;
-			}
+			case Direction.Horizontal:
+				foreach (ListBox listBox in listBoxes) {
+					deltaPos = -listBox.transform.localPosition.x;
+					if (Mathf.Abs(deltaPos) < Mathf.Abs(minDeltaPos))
+						minDeltaPos = deltaPos;
+				}
 
-			alignToCenterDistance = new Vector3(minDeltaPos, 0.0f, 0.0f);
-			break;
+				alignToCenterDistance = new Vector3(minDeltaPos, 0.0f, 0.0f);
+				break;
 
-		default:
-			alignToCenterDistance = Vector3.zero;
-			break;
+			default:
+				alignToCenterDistance = Vector3.zero;
+				break;
 		}
 
 		return alignToCenterDistance;
@@ -375,24 +375,24 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		ListBox candicateBox = null;
 
 		switch (direction) {
-		case Direction.Vertical:
-			foreach (ListBox listBox in listBoxes) {
-				position = Mathf.Abs(listBox.transform.localPosition.y);
-				if (position < minPosition) {
-					minPosition = position;
-					candicateBox = listBox;
+			case Direction.Vertical:
+				foreach (ListBox listBox in listBoxes) {
+					position = Mathf.Abs(listBox.transform.localPosition.y);
+					if (position < minPosition) {
+						minPosition = position;
+						candicateBox = listBox;
+					}
 				}
-			}
-			break;
-		case Direction.Horizontal:
-			foreach (ListBox listBox in listBoxes) {
-				position = Mathf.Abs(listBox.transform.localPosition.x);
-				if (position < minPosition) {
-					minPosition = position;
-					candicateBox = listBox;
+				break;
+			case Direction.Horizontal:
+				foreach (ListBox listBox in listBoxes) {
+					position = Mathf.Abs(listBox.transform.localPosition.x);
+					if (position < minPosition) {
+						minPosition = position;
+						candicateBox = listBox;
+					}
 				}
-			}
-			break;
+				break;
 		}
 
 		return candicateBox;
