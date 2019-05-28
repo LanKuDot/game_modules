@@ -34,12 +34,14 @@ public class ListBox : MonoBehaviour
 
 	private Vector3 _initialLocalScale;
 
-	private bool _keepSliding = false;
-	private int _slidingFramesLeft;
-	private bool _needToAlignToCenter = false;
-
-	public bool keepSliding { set { _keepSliding = value; } }
-	public bool needToAlignToCenter { set { _needToAlignToCenter = value; } }
+	/* Get the content of this ListBox
+	 */
+	public void GetContent()
+	{
+		Debug.Log("Box ID: " + listBoxID.ToString() +
+			", Content ID: " + _contentID.ToString() +
+			", Content: " + _listBank.getListContent(_contentID));
+	}
 
 	/* Notice: ListBox will initialize its variables from ListPositionCtrl.
 	 * Make sure that the execution order of script ListPositionCtrl is prior to
@@ -91,77 +93,6 @@ public class ListBox : MonoBehaviour
 	{
 		// Update the content accroding to its contentID.
 		content.text = _listBank.getListContent(_contentID);
-	}
-
-	/* Get the content of this ListBox
-	 */
-	public void GetContent()
-	{
-		Debug.Log("Box ID: " + listBoxID.ToString() +
-			", Content ID: " + _contentID.ToString() +
-			", Content: " + _listBank.getListContent(_contentID));
-	}
-
-	/* Make the list box slide for delta x or y position.
-	 */
-	public void SetSlidingDistance(Vector3 distance, int slidingFrames)
-	{
-		_keepSliding = true;
-		_slidingFramesLeft = slidingFrames;
-
-		_slidingDistanceLeft = distance;
-		_slidingDistance = Vector3.Lerp(Vector3.zero, distance, _positionCtrl.boxSlidingSpeedFactor);
-	}
-
-	/* Move the listBox for world position unit.
-	 * Move up when "up" is true, or else, move down.
-	 */
-	public void UnitMove(int unit)
-	{
-		Vector2 deltaPos = _unitPos * unit;
-
-		if (_keepSliding)
-			deltaPos += (Vector2)_slidingDistanceLeft;
-
-		switch (_positionCtrl.direction) {
-		case ListPositionCtrl.Direction.Vertical:
-			SetSlidingDistance(new Vector3(0.0f, deltaPos.y, 0.0f), _positionCtrl.boxSlidingFrames);
-			break;
-		case ListPositionCtrl.Direction.Horizontal:
-			SetSlidingDistance(new Vector3(deltaPos.x, 0.0f, 0.0f), _positionCtrl.boxSlidingFrames);
-			break;
-		}
-	}
-
-	void Update()
-	{
-		if (_keepSliding) {
-			--_slidingFramesLeft;
-			if (_slidingFramesLeft == 0) {
-				_keepSliding = false;
-
-				// Set the distance to the center after free sliding.
-				if (_needToAlignToCenter) {
-					SetSlidingDistance(_positionCtrl.FindDeltaPositionToCenter(),
-						_positionCtrl.boxSlidingFrames);
-					_needToAlignToCenter = false;
-					return;
-				}
-
-				// At the last sliding frame, move to that position.
-				// At free moving mode, this function is disabled.
-				if (_positionCtrl.alignToCenter ||
-					_positionCtrl.controlMode == ListPositionCtrl.ControlMode.Button ||
-					_positionCtrl.controlMode == ListPositionCtrl.ControlMode.MouseWheel) {
-					UpdatePosition(_slidingDistanceLeft);
-				}
-				return;
-			}
-
-			UpdatePosition(_slidingDistance);
-			_slidingDistanceLeft -= _slidingDistance;
-			_slidingDistance = Vector3.Lerp(Vector3.zero, _slidingDistanceLeft, _positionCtrl.boxSlidingSpeedFactor);
-		}
 	}
 
 	/* Initialize the local position of the list box accroding to its ID

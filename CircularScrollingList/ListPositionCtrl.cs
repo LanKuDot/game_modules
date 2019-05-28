@@ -78,9 +78,13 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	private Vector3 _deltaInputPos_L;
 	private int _numOfInputFrames;
 
-	// Store the calculation result of the sliding distance for aligning to the center.
-	// If its value is NaN, the distance haven't been calcuated yet.
-	private Vector3 _alignToCenterDistance;
+	// Variables for moving listBoxes
+	private int _slidingFramesLeft;
+	private Vector3 _slidingDistance;     // The sliding distance for each frame
+	private Vector3 _slidingDistanceLeft;
+	private bool _moveExactDistance = false;
+	// The flag indicating that one of the boxes need to be centered after the sliding
+	private bool _needToAlignToCenter = false;
 
 	/* Notice: ListBox will initialize its variables from here, so ListPositionCtrl
 	 * must be executed before ListBox. You have to set the execution order in the inspector.
@@ -121,6 +125,8 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	{
 		switch (controlMode) {
 			case ControlMode.Drag:
+				if (alignToCenter)
+					_moveExactDistance = true;
 				_inputPositionHandler = DragPositionHandler;
 
 				_scrollHandler = delegate (Vector2 v) { };
@@ -129,12 +135,15 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 				break;
 
 			case ControlMode.Button:
+				_moveExactDistance = true;
+
 				_inputPositionHandler =
 					delegate (PointerEventData pointer, TouchPhase phase) { };
 				_scrollHandler = delegate (Vector2 v) { };
 				break;
 
 			case ControlMode.MouseWheel:
+				_moveExactDistance = true;
 				_scrollHandler = ScrollDeltaHandler;
 
 				_inputPositionHandler =
@@ -176,8 +185,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 			case TouchPhase.Began:
 				_numOfInputFrames = 0;
 				_startInputPos_L = ScreenToCanvasSpace(pointer.position);
-				foreach (ListBox listBox in listBoxes)
-					listBox.keepSliding = false;
+				_slidingFramesLeft = 0; // Make the list stop sliding
 				break;
 
 			case TouchPhase.Moved:
@@ -194,13 +202,6 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		}
 	}
 
-	/* Transform the coordinate from the screen space to the canvas space
-	 */
-	Vector3 ScreenToCanvasSpace(Vector3 position)
-	{
-		return position / _parentCanvas.scaleFactor;
-	}
-
 	/* Scroll the list accroding to the delta of the mouse scrolling
 	 */
 	void ScrollDeltaHandler(Vector2 mouseScrollDelta)
@@ -211,7 +212,41 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 			MoveOneUnitDown();
 	}
 
-	/* Calculate the sliding distance and assign it to the listBoxes
+	/* Transform the coordinate from the screen space to the canvas space
+	 */
+	Vector3 ScreenToCanvasSpace(Vector3 position)
+	{
+		return position / _parentCanvas.scaleFactor;
+	}
+
+
+	/* ====== Movement functions ====== */
+	/* Control the movement of listBoxes
+	 */
+	void Update()
+	{
+		if (_slidingFramesLeft > 0) {
+			--_slidingFramesLeft;
+
+			// Set sliding distance for this frame
+			if (_slidingFramesLeft == 0) {
+				if (_needToAlignToCenter) {
+					_needToAlignToCenter = false;
+					SetSlidingToCenter();
+				} else if (_moveExactDistance) {
+					_slidingDistance = _slidingDistanceLeft;
+				}
+			} else
+				_slidingDistance = Vector3.Lerp(Vector3.zero, _slidingDistanceLeft, boxSlidingSpeedFactor);
+
+			foreach (ListBox listBox in listBoxes)
+				listBox.UpdatePosition(_slidingDistance);
+
+			_slidingDistanceLeft -= _slidingDistance;
+		}
+	}
+
+	/* Calculate the sliding distance and sliding frames
 	 */
 	void SetSlidingEffect()
 	{
@@ -222,16 +257,13 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		if (fastSliding)
 			deltaPos *= 5.0f;   // Slide more longer!
 
+		_slidingDistanceLeft = deltaPos;
+
 		if (alignToCenter) {
-			foreach (ListBox listbox in listBoxes) {
-				listbox.SetSlidingDistance(deltaPos, fastSliding ? boxSlidingFrames >> 1 : boxSlidingFrames >> 2);
-				listbox.needToAlignToCenter = true;
-			}
-			// Make the distance uncalculated.
-			_alignToCenterDistance = new Vector3(float.NaN, float.NaN, 0.0f);
+			_slidingFramesLeft = fastSliding ? boxSlidingFrames >> 1 : boxSlidingFrames >> 2;
+			_needToAlignToCenter = true;
 		} else {
-			foreach (ListBox listbox in listBoxes)
-				listbox.SetSlidingDistance(deltaPos, fastSliding ? boxSlidingFrames * 2 : boxSlidingFrames);
+			_slidingFramesLeft = fastSliding ? boxSlidingFrames * 2 : boxSlidingFrames;
 		}
 	}
 
@@ -258,19 +290,22 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		return false;
 	}
 
+	/* Set the sliding effect to make one of boxes align to center
+	 */
+	void SetSlidingToCenter()
+	{
+		_slidingDistanceLeft = FindDeltaPositionToCenter();
+		_slidingFramesLeft = boxSlidingFrames;
+	}
+
 	/* Find the listBox which is the closest to the center position,
 	 * and calculate the delta x or y position between it and the center position.
 	 */
-	public Vector3 FindDeltaPositionToCenter()
+	Vector3 FindDeltaPositionToCenter()
 	{
 		float minDeltaPos = Mathf.Infinity;
 		float deltaPos;
-
-		// If the distance for aligning to the center was calculated,
-		// return the result immediately.
-		if (!float.IsNaN(_alignToCenterDistance.x) &&
-			!float.IsNaN(_alignToCenterDistance.y))
-			return _alignToCenterDistance;
+		Vector3 alignToCenterDistance;
 
 		switch (direction) {
 		case Direction.Vertical:
@@ -280,7 +315,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 					minDeltaPos = deltaPos;
 			}
 
-			_alignToCenterDistance = new Vector3(0.0f, minDeltaPos, 0.0f);
+			alignToCenterDistance = new Vector3(0.0f, minDeltaPos, 0.0f);
 			break;
 
 		case Direction.Horizontal:
@@ -290,16 +325,44 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 					minDeltaPos = deltaPos;
 			}
 
-			_alignToCenterDistance = new Vector3(minDeltaPos, 0.0f, 0.0f);
+			alignToCenterDistance = new Vector3(minDeltaPos, 0.0f, 0.0f);
 			break;
 
 		default:
-			_alignToCenterDistance = Vector3.zero;
+			alignToCenterDistance = Vector3.zero;
 			break;
 		}
 
-		return _alignToCenterDistance;
+		return alignToCenterDistance;
 	}
+
+	/* Move the list for the distance of times of unit position
+	 */
+	void SetUnitMove(int unit)
+	{
+		Vector2 deltaPos = unitPos_L * unit;
+
+		if (_slidingFramesLeft != 0)
+			deltaPos += (Vector2)_slidingDistanceLeft;
+
+		_slidingDistanceLeft = deltaPos;
+		_slidingFramesLeft = boxSlidingFrames;
+	}
+
+	/* Move all listBoxes 1 unit up.
+	 */
+	public void MoveOneUnitUp()
+	{
+		SetUnitMove(1);
+	}
+
+	/* Move all listBoxes 1 unit down.
+	 */
+	public void MoveOneUnitDown()
+	{
+		SetUnitMove(-1);
+	}
+
 
 	/* Get the object of the centered ListBox.
 	 * The centered ListBox is found by comparing which one is the closest
@@ -340,21 +403,5 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	Vector3 DivideComponent(Vector3 a, Vector3 b)
 	{
 		return new Vector3(a.x / b.x, a.y / b.y, a.z / b.z);
-	}
-
-	/* Move all listBoxes 1 unit up.
-	 */
-	public void MoveOneUnitUp()
-	{
-		foreach (ListBox listbox in listBoxes)
-			listbox.UnitMove(1);
-	}
-
-	/* Move all listBoxes 1 unit down.
-	 */
-	public void MoveOneUnitDown()
-	{
-		foreach (ListBox listbox in listBoxes)
-			listbox.UnitMove(-1);
 	}
 }
