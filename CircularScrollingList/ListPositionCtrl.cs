@@ -82,7 +82,6 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	private int _slidingFramesLeft;
 	private Vector3 _slidingDistance;     // The sliding distance for each frame
 	private Vector3 _slidingDistanceLeft;
-	private bool _moveExactDistance = false;
 	// The flag indicating that one of the boxes need to be centered after the sliding
 	private bool _needToAlignToCenter = false;
 
@@ -125,8 +124,6 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	{
 		switch (controlMode) {
 			case ControlMode.Drag:
-				if (alignToCenter)
-					_moveExactDistance = true;
 				_inputPositionHandler = DragPositionHandler;
 
 				_scrollHandler = delegate (Vector2 v) { };
@@ -135,15 +132,12 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 				break;
 
 			case ControlMode.Button:
-				_moveExactDistance = true;
-
 				_inputPositionHandler =
 					delegate (PointerEventData pointer, TouchPhase phase) { };
 				_scrollHandler = delegate (Vector2 v) { };
 				break;
 
 			case ControlMode.MouseWheel:
-				_moveExactDistance = true;
 				_scrollHandler = ScrollDeltaHandler;
 
 				_inputPositionHandler =
@@ -190,8 +184,9 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 			case TouchPhase.Moved:
 				++_numOfInputFrames;
 				_deltaInputPos_L = ScreenToCanvasSpace(pointer.delta);
-				foreach (ListBox listBox in listBoxes)
-					listBox.UpdatePosition(_deltaInputPos_L);
+				// Slide the list as long as the moving distance of the pointer
+				_slidingDistanceLeft = _deltaInputPos_L;
+				_slidingFramesLeft = 1;
 				break;
 
 			case TouchPhase.Ended:
@@ -232,7 +227,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 				if (_needToAlignToCenter) {
 					_needToAlignToCenter = false;
 					SetSlidingToCenter();
-				} else if (_moveExactDistance) {
+				} else {
 					_slidingDistance = _slidingDistanceLeft;
 				}
 			} else
