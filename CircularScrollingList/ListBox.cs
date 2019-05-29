@@ -141,13 +141,13 @@ public class ListBox : MonoBehaviour
 		switch (_positionCtrl.direction) {
 			case ListPositionCtrl.Direction.Vertical:
 				transform.localPosition += new Vector3(0.0f, deltaPosition_L.y, 0.0f);
-				UpdateXPosition();
 				CheckBoundaryY();
+				UpdateXPosition();
 				break;
 			case ListPositionCtrl.Direction.Horizontal:
 				transform.localPosition += new Vector3(deltaPosition_L.x, 0.0f, 0.0f);
-				UpdateYPosition();
 				CheckBoundaryX();
+				UpdateYPosition();
 				break;
 		}
 	}
@@ -201,8 +201,6 @@ public class ListBox : MonoBehaviour
 				transform.localPosition.z);
 			UpdateToNextContent();
 		}
-
-		UpdateXPosition();
 	}
 
 	void CheckBoundaryX()
@@ -224,8 +222,6 @@ public class ListBox : MonoBehaviour
 				transform.localPosition.z);
 			UpdateToLastContent();
 		}
-
-		UpdateYPosition();
 	}
 
 	/* Scale the listBox accroding to its position
