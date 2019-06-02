@@ -14,7 +14,7 @@ public class ListBox : MonoBehaviour
 	public ListBox nextListBox;
 
 	private ListPositionCtrl _positionCtrl;
-	private ListBank _listBank;
+	private IBaseListBank _listBank;
 	private int _contentID;
 
 	/* ====== Position variables ====== */
@@ -40,7 +40,7 @@ public class ListBox : MonoBehaviour
 	{
 		Debug.Log("Box ID: " + listBoxID.ToString() +
 			", Content ID: " + _contentID.ToString() +
-			", Content: " + _listBank.getListContent(_contentID));
+			", Content: " + _listBank.GetListContent(_contentID));
 	}
 
 	/* Notice: ListBox will initialize its variables from ListPositionCtrl.
@@ -50,7 +50,7 @@ public class ListBox : MonoBehaviour
 	void Start()
 	{
 		_positionCtrl = transform.GetComponentInParent<ListPositionCtrl>();
-		_listBank = transform.GetComponentInParent<ListBank>();
+		_listBank = transform.GetComponentInParent<IBaseListBank>();
 
 		_maxCurvePos = _positionCtrl.canvasMaxPos_L * _positionCtrl.listCurvature;
 		_unitPos = _positionCtrl.unitPos_L;
@@ -87,7 +87,7 @@ public class ListBox : MonoBehaviour
 			}
 			// Disable the box at the lower half of the list
 			// which will hold the repeated item.
-			else if (_contentID >= _listBank.getListLength()) {
+			else if (_contentID >= _listBank.GetListLength()) {
 				_positionCtrl.numOfLowerDisabledBoxes += 1;
 				gameObject.SetActive(false);
 			}
@@ -95,8 +95,8 @@ public class ListBox : MonoBehaviour
 
 		// Round the content id
 		while (_contentID < 0)
-			_contentID += _listBank.getListLength();
-		_contentID = _contentID % _listBank.getListLength();
+			_contentID += _listBank.GetListLength();
+		_contentID = _contentID % _listBank.GetListLength();
 
 		UpdateDisplayContent();
 	}
@@ -106,7 +106,7 @@ public class ListBox : MonoBehaviour
 	void UpdateDisplayContent()
 	{
 		// Update the content accroding to its contentID.
-		content.text = _listBank.getListContent(_contentID);
+		content.text = _listBank.GetListContent(_contentID);
 	}
 
 	/* Initialize the local position of the list box accroding to its ID
@@ -262,10 +262,10 @@ public class ListBox : MonoBehaviour
 	void UpdateToLastContent()
 	{
 		_contentID = nextListBox.GetCurrentContentID() - 1;
-		_contentID = (_contentID < 0) ? _listBank.getListLength() - 1 : _contentID;
+		_contentID = (_contentID < 0) ? _listBank.GetListLength() - 1 : _contentID;
 
 		if (_positionCtrl.listType == ListPositionCtrl.ListType.Linear) {
-			if (_contentID == _listBank.getListLength() - 1 ||
+			if (_contentID == _listBank.GetListLength() - 1 ||
 				!nextListBox.isActiveAndEnabled) {
 				// If the box has been disabled at the other side,
 				// decrease the counter of the other side.
@@ -291,7 +291,7 @@ public class ListBox : MonoBehaviour
 	void UpdateToNextContent()
 	{
 		_contentID = lastListBox.GetCurrentContentID() + 1;
-		_contentID = (_contentID == _listBank.getListLength()) ? 0 : _contentID;
+		_contentID = (_contentID == _listBank.GetListLength()) ? 0 : _contentID;
 
 		if (_positionCtrl.listType == ListPositionCtrl.ListType.Linear) {
 			if (_contentID == 0 || !lastListBox.isActiveAndEnabled) {
