@@ -75,11 +75,25 @@ public class ListBox : MonoBehaviour
 		_contentID = centeredContentID;
 
 		// Adjust the contentID accroding to its initial order.
-		if (listBoxID < _positionCtrl.listBoxes.Length / 2)
-			_contentID += _listBank.getListLength() - (_positionCtrl.listBoxes.Length / 2 - listBoxID);
-		else
-			_contentID += listBoxID - _positionCtrl.listBoxes.Length / 2;
+		_contentID += listBoxID - _positionCtrl.listBoxes.Length / 2;
 
+		// In the linear mode, disable the box if needed
+		if (_positionCtrl.listType == ListPositionCtrl.ListType.Linear) {
+			// Disable the boxes at the upper half of the list
+			// which will hold the item at the tail of the contents.
+			if (_contentID < 0) {
+				_positionCtrl.numOfUpperDisabledBoxes += 1;
+				gameObject.SetActive(false);
+			}
+			// Disable the box at the lower half of the list
+			// which will hold the repeated item.
+			else if (_contentID >= _listBank.getListLength()) {
+				_positionCtrl.numOfLowerDisabledBoxes += 1;
+				gameObject.SetActive(false);
+			}
+		}
+
+		// Round the content id
 		while (_contentID < 0)
 			_contentID += _listBank.getListLength();
 		_contentID = _contentID % _listBank.getListLength();
