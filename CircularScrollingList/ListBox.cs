@@ -267,11 +267,17 @@ public class ListBox : MonoBehaviour
 		if (_positionCtrl.listType == ListPositionCtrl.ListType.Linear) {
 			if (_contentID == _listBank.getListLength() - 1 ||
 				!nextListBox.isActiveAndEnabled) {
+				// If the box has been disabled at the other side,
+				// decrease the counter of the other side.
+				if (!isActiveAndEnabled)
+					--_positionCtrl.numOfLowerDisabledBoxes;
+
 				// In linear mode, don't display the content of the other end
 				gameObject.SetActive(false);
 				++_positionCtrl.numOfUpperDisabledBoxes;
 			} else if (!isActiveAndEnabled) {
-				// The boxes disabled at the other end will be enabled again.
+				// The disabled boxes from the other end will be enabled again,
+				// if the next box is enabled.
 				gameObject.SetActive(true);
 				--_positionCtrl.numOfLowerDisabledBoxes;
 			}
@@ -289,6 +295,9 @@ public class ListBox : MonoBehaviour
 
 		if (_positionCtrl.listType == ListPositionCtrl.ListType.Linear) {
 			if (_contentID == 0 || !lastListBox.isActiveAndEnabled) {
+				if (!isActiveAndEnabled)
+					--_positionCtrl.numOfUpperDisabledBoxes;
+
 				// In linear mode, don't display the content of the other end
 				gameObject.SetActive(false);
 				++_positionCtrl.numOfLowerDisabledBoxes;
