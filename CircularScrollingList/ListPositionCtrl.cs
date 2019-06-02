@@ -10,6 +10,12 @@ public interface IControlEventHandler:
 
 public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 {
+	public enum ListType
+	{
+		Circular,
+		Linear
+	};
+
 	public enum ControlMode
 	{
 		Drag,       // By the mouse pointer or finger
@@ -24,7 +30,8 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	};
 
 	/*========== Settings ==========*/
-	/* Control mode */
+	/* List mode */
+	public ListType listType = ListType.Circular;
 	public ControlMode controlMode = ControlMode.Drag;
 	public bool alignToCenter = false;
 	public Direction direction = Direction.Vertical;
@@ -85,6 +92,13 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	// The flag indicating that one of the boxes need to be centered after the sliding
 	private bool _needToAlignToCenter = false;
 
+	// Variables for linear mode
+	[HideInInspector]
+	public int numOfUpperDisabledBoxes = 0;
+	[HideInInspector]
+	public int numOfLowerDisabledBoxes = 0;
+	private int _maxNumOfDisabledBoxes = 0;
+
 	/* Notice: ListBox will initialize its variables from here, so ListPositionCtrl
 	 * must be executed before ListBox. You have to set the execution order in the inspector.
 	 */
@@ -92,6 +106,8 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	{
 		InitializePositionVars();
 		InitializeInputFunction();
+
+		_maxNumOfDisabledBoxes = listBoxes.Length / 2;
 	}
 
 	void InitializePositionVars()
@@ -220,6 +236,10 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	void Update()
 	{
 		if (_slidingFramesLeft > 0) {
+			if (listType == ListType.Linear) {
+				StopListWhenReachEnd();
+			}
+
 			--_slidingFramesLeft;
 
 			// Set sliding distance for this frame
@@ -305,6 +325,10 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		switch (direction) {
 			case Direction.Vertical:
 				foreach (ListBox listBox in listBoxes) {
+					// Skip the disabled box in linear mode
+					if (!listBox.isActiveAndEnabled)
+						continue;
+
 					deltaPos = -listBox.transform.localPosition.y;
 					if (Mathf.Abs(deltaPos) < Mathf.Abs(minDeltaPos))
 						minDeltaPos = deltaPos;
@@ -315,6 +339,10 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 
 			case Direction.Horizontal:
 				foreach (ListBox listBox in listBoxes) {
+					// Skip the disabled box in linear mode
+					if (!listBox.isActiveAndEnabled)
+						continue;
+
 					deltaPos = -listBox.transform.localPosition.x;
 					if (Mathf.Abs(deltaPos) < Mathf.Abs(minDeltaPos))
 						minDeltaPos = deltaPos;
@@ -356,6 +384,42 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	public void MoveOneUnitDown()
 	{
 		SetUnitMove(-1);
+	}
+
+	/* Make list can't go further, when the it reaches the end.
+	 *
+	 * This method is used for the linear mode.
+	 */
+	void StopListWhenReachEnd()
+	{
+		switch (direction) {
+			case Direction.Vertical:
+				// If the list reaches the head and it keeps going down, or
+				// the list reaches the tail and it keeps going up,
+				// make the list end be stopped at the center.
+				if ((numOfUpperDisabledBoxes >= _maxNumOfDisabledBoxes && _slidingDistanceLeft.y < 0) ||
+					(numOfLowerDisabledBoxes >= _maxNumOfDisabledBoxes && _slidingDistanceLeft.y > 0)) {
+					Vector3 remainDistance = FindDeltaPositionToCenter();
+					_slidingDistanceLeft.y = remainDistance.y;
+
+					if (_slidingFramesLeft == 1)
+						_slidingFramesLeft = boxSlidingFrames;
+				}
+
+				break;
+
+			case Direction.Horizontal:
+				// If the list reaches the head and it keeps going left, or
+				// the list reaches the tail and it keeps going right,
+				// make the list end be stopped at the center.
+				if ((numOfUpperDisabledBoxes >= _maxNumOfDisabledBoxes && _slidingDistanceLeft.x < 0) ||
+				    (numOfLowerDisabledBoxes >= _maxNumOfDisabledBoxes && _slidingDistanceLeft.x > 0)) {
+					Vector3 remainDitance = FindDeltaPositionToCenter();
+					_slidingDistanceLeft.x = remainDitance.x;
+				}
+
+				break;
+		}
 	}
 
 
