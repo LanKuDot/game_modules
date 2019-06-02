@@ -38,6 +38,8 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 
 	/* Containers */
 	public ListBox[] listBoxes;
+	// Specify the centered content ID
+	public int centeredContentID = 0;
 	public Button[] controlButtons;
 
 	/* Parameters */

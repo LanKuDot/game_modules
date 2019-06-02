@@ -63,16 +63,15 @@ public class ListBox : MonoBehaviour
 		_initialLocalScale = transform.localScale;
 
 		InitialPosition();
-		// CUSTOM: Put in the centered ID you want to show
-		InitialContent(0);
+		InitialContent();
 	}
 
 	/* Initialize the content of ListBox.
-	 * centeredContentID is used for setting the content of the centered ListBox.
 	 */
-	void InitialContent(int centeredContentID)
+	void InitialContent()
 	{
-		_contentID = centeredContentID;
+		// Get the content ID of the centered box
+		_contentID = _positionCtrl.centeredContentID;
 
 		// Adjust the contentID accroding to its initial order.
 		_contentID += listBoxID - _positionCtrl.listBoxes.Length / 2;
