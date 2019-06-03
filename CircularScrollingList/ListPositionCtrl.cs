@@ -218,10 +218,21 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	 */
 	void ScrollDeltaHandler(Vector2 mouseScrollDelta)
 	{
-		if (mouseScrollDelta.y > 0)
-			MoveOneUnitUp();
-		else if (mouseScrollDelta.y < 0)
-			MoveOneUnitDown();
+		switch (direction) {
+			case Direction.Vertical:
+				if (mouseScrollDelta.y > 0)
+					MoveOneUnitUp();
+				else if (mouseScrollDelta.y < 0)
+					MoveOneUnitDown();
+				break;
+
+			case Direction.Horizontal:
+				if (mouseScrollDelta.y > 0)
+					MoveOneUnitDown();
+				else if (mouseScrollDelta.y < 0)
+					MoveOneUnitUp();
+				break;
+		}
 	}
 
 	/* Transform the coordinate from the screen space to the canvas space
