@@ -7,10 +7,15 @@ using UnityEngine.UI;
 
 public class ListBox : MonoBehaviour
 {
-	public int listBoxID;   // Must be unique, and count from 0
 	public Text content;    // The display text for the content of the list box
 
+	// These public variables will be initialized
+	// in ListPositionCtrl.InitializeBoxDependency().
+	[HideInInspector]
+	public int listBoxID;   // The same as the order in the `listBoxes`
+	[HideInInspector]
 	public ListBox lastListBox;
+	[HideInInspector]
 	public ListBox nextListBox;
 
 	private ListPositionCtrl _positionCtrl;

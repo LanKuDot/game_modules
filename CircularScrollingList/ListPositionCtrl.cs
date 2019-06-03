@@ -108,7 +108,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	{
 		InitializePositionVars();
 		InitializeInputFunction();
-
+		InitializeBoxDependency();
 		_maxNumOfDisabledBoxes = listBoxes.Length / 2;
 	}
 
@@ -130,6 +130,19 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		if ((listBoxes.Length & 0x1) == 0) {
 			lowerBoundPos_L += unitPos_L / 2;
 			upperBoundPos_L -= unitPos_L / 2;
+		}
+	}
+
+	void InitializeBoxDependency()
+	{
+		// Set the box ID according to the order in the container `listBoxes`
+		for (int i = 0; i < listBoxes.Length; ++i)
+			listBoxes[i].listBoxID = i;
+
+		// Set the neighbor boxes
+		for (int i = 0; i < listBoxes.Length; ++i) {
+			listBoxes[i].lastListBox = listBoxes[(i - 1 >= 0) ? i - 1 : listBoxes.Length - 1];
+			listBoxes[i].nextListBox = listBoxes[(i + 1 < listBoxes.Length) ? i + 1 : 0];
 		}
 	}
 
