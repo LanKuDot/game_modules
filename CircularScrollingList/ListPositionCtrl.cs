@@ -2,10 +2,15 @@
  */
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
 public interface IControlEventHandler:
 	IBeginDragHandler, IDragHandler, IEndDragHandler, IScrollHandler
+{}
+
+[System.Serializable]
+public class ListBoxClickEvent : UnityEvent<int>
 {}
 
 public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
@@ -40,6 +45,10 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	public ListBox[] listBoxes;
 	// Specify the centered content ID
 	public int centeredContentID = 0;
+	// The event handler for the onClick event of the list box (containing Button component)
+	// The handler function must have 1 int parameter for passing the content ID
+	// of the clicked box.
+	public ListBoxClickEvent onBoxClick;
 	public Button[] controlButtons;
 
 	/* Parameters */
