@@ -33,7 +33,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	/* List mode */
 	public ListType listType = ListType.Circular;
 	public ControlMode controlMode = ControlMode.Drag;
-	public bool alignToCenter = false;
+	public bool alignMiddle = false;
 	public Direction direction = Direction.Vertical;
 
 	/* Containers */
@@ -300,7 +300,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 
 		_slidingDistanceLeft = deltaPos;
 
-		if (alignToCenter) {
+		if (alignMiddle) {
 			_slidingFramesLeft = fastSliding ? boxSlidingFrames >> 1 : boxSlidingFrames >> 2;
 			_needToAlignToCenter = true;
 		} else {
