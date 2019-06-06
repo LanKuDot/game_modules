@@ -39,9 +39,9 @@ public class ListBox : MonoBehaviour
 
 	private Vector3 _initialLocalScale;
 
-	/* Get the content of this ListBox
+	/* Output the information of the box to the Debug.Log
 	 */
-	public void GetContent()
+	public void ShowBoxInfo()
 	{
 		Debug.Log("Box ID: " + listBoxID.ToString() +
 			", Content ID: " + _contentID.ToString() +
