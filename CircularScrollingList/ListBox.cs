@@ -62,7 +62,7 @@ public class ListBox : MonoBehaviour
 	void Start()
 	{
 		_positionCtrl = transform.GetComponentInParent<ListPositionCtrl>();
-		_listBank = transform.GetComponentInParent<IBaseListBank>();
+		_listBank = _positionCtrl.listBank;
 
 		_maxCurvePos = _positionCtrl.canvasMaxPos_L * _positionCtrl.listCurvature;
 		_unitPos = _positionCtrl.unitPos_L;

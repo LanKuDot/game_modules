@@ -42,9 +42,10 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	public Direction direction = Direction.Vertical;
 
 	/* Containers */
-	public ListBox[] listBoxes;
+	public BaseListBank listBank;
 	// Specify the centered content ID
 	public int centeredContentID = 0;
+	public ListBox[] listBoxes;
 	// The event handler for the onClick event of the list box (containing Button component)
 	// The handler function must have 1 int parameter for passing the content ID
 	// of the clicked box.
