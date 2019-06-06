@@ -19,7 +19,7 @@ public class ListBox : MonoBehaviour
 	public ListBox nextListBox;
 
 	private ListPositionCtrl _positionCtrl;
-	private IBaseListBank _listBank;
+	private BaseListBank _listBank;
 	private int _contentID;
 
 	/* ====== Position variables ====== */
