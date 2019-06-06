@@ -492,6 +492,13 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		return candicateBox;
 	}
 
+	/* Get the content ID of the centered box
+	 */
+	public int GetCenteredContentID()
+	{
+		return GetCenteredBox().GetContentID();
+	}
+
 	/* Divide each component of vector a by vector b.
 	 */
 	Vector3 DivideComponent(Vector3 a, Vector3 b)

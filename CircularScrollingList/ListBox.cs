@@ -48,6 +48,13 @@ public class ListBox : MonoBehaviour
 			", Content: " + _listBank.GetListContent(_contentID));
 	}
 
+	/* Get the content ID of the box
+	 */
+	public int GetContentID()
+	{
+		return _contentID;
+	}
+
 	/* Notice: ListBox will initialize its variables from ListPositionCtrl.
 	 * Make sure that the execution order of script ListPositionCtrl is prior to
 	 * ListBox.
