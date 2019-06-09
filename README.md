@@ -1,6 +1,6 @@
 # The game modules for Unity3D
 
-## Circular Scrolling List
+## Circular Scrolling List v3
 - Use finite list boxes to display infinte number of list contents.
 - It's all about math!
 - Support Unity 5+ (Tested in Unity 5.6.7f1)
