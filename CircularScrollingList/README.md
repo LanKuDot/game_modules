@@ -68,6 +68,8 @@ public class MyListBank: BaseListBank
 6. "Play" the scene and the list works properly.\
 	![Imgur](https://i.imgur.com/KHrZZ3o.gif)
 
+Additional settings for the control mode of Button, please see the section "Control Mode: Button".
+
 ### Get the ID of the Selected Content
 
 There are two ways to get ID of the selected content.
@@ -118,6 +120,18 @@ public class MyApplication: MonoBehaviour
 
 It will be like:\
 ![Imgur](https://i.imgur.com/ODVSR2t.gif)
+
+### Control Mode: Button
+
+In this mode, you have to create two additional Button gameobjects for controlling the list.
+
+1. Create two Buttons as the child of the gameobject `CircularList`, and rename them to `Button_NextContent` and `Button_LastContent`.
+2. Place the gameobject `Button_NextContent` to the top of the list, and the other to the bottom of the list.\
+	![Imgur](https://i.imgur.com/MwasBgp.png)
+3. Assign the function `ListPositionCtrl.MoveOneUnitUp()` to the `onClick` event of the gameobject `Button_NextContent`, and assign the function `ListPositionCtrl.MoveOneUnitDown()` to same event of the other gameobject.\
+	![Imgur](https://i.imgur.com/jWQLDpj.png)
+4. Done!\
+	![Imgur](https://i.imgur.com/hbQL73Q.gif)
 
 ### Layout Settings
 
