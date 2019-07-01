@@ -14,7 +14,7 @@
 * Control mode: Drag, Button, or Mouse wheel
 * Direction: Vertical or Horizontal
 
-(Demo video here)
+[Demo video](https://youtu.be/k63eqwfj-1c)
 
 ## How to Use
 
