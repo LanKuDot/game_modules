@@ -448,8 +448,8 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 				// If the list reaches the head and it keeps going left, or
 				// the list reaches the tail and it keeps going right,
 				// make the list end be stopped at the center.
-				if ((numOfUpperDisabledBoxes >= _maxNumOfDisabledBoxes && _slidingDistanceLeft.x < 0) ||
-				    (numOfLowerDisabledBoxes >= _maxNumOfDisabledBoxes && _slidingDistanceLeft.x > 0)) {
+				if ((numOfUpperDisabledBoxes >= _maxNumOfDisabledBoxes && _slidingDistanceLeft.x > 0) ||
+				    (numOfLowerDisabledBoxes >= _maxNumOfDisabledBoxes && _slidingDistanceLeft.x < 0)) {
 					Vector3 remainDitance = FindDeltaPositionToCenter();
 					_slidingDistanceLeft.x = remainDitance.x;
 				}
