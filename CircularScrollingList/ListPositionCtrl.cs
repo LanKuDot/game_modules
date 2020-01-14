@@ -9,6 +9,9 @@ public interface IControlEventHandler:
 	IBeginDragHandler, IDragHandler, IEndDragHandler, IScrollHandler
 {}
 
+/* The callback for passing the onClick event sent from the clicked ListBox.
+ * The int parameter will be the ID of the content which the clicked ListBox holds.
+ */
 [System.Serializable]
 public class ListBoxClickEvent : UnityEvent<int>
 {}
@@ -46,10 +49,11 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	// Specify the centered content ID
 	public int centeredContentID = 0;
 	public ListBox[] listBoxes;
-	// The event handler for the onClick event of the list box (containing Button component)
-	// The handler function must have 1 int parameter for passing the content ID
-	// of the clicked box.
+	// The callback for the event of clicking on list boxes
+	// It will be added to the listener of the onClick event by the ListBox,
+	// if the box contains Button component.
 	public ListBoxClickEvent onBoxClick;
+
 	public Button[] controlButtons;
 
 	/* Parameters */
