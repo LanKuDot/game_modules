@@ -13,6 +13,7 @@ public interface IControlEventHandler:
 public class ListBoxClickEvent : UnityEvent<int>
 {}
 
+[DefaultExecutionOrder(-1)]
 public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 {
 	public enum ListType
