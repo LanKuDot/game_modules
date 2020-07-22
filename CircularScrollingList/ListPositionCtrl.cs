@@ -58,7 +58,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 
 	/* Parameters */
 	// Set the distance between each ListBox. The larger, the closer.
-	public float boxGapFactor = 2.0f;
+	public float boxDensity = 2.0f;
 	// Set the sliding duration in frames. The larger, the longer.
 	public int boxSlidingFrames = 35;
 	// Set the sliding speed. The larger, the quicker.
@@ -136,7 +136,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		RectTransform rectTransform = _parentCanvas.GetComponent<RectTransform>();
 		canvasMaxPos_L = new Vector2(rectTransform.rect.width / 2, rectTransform.rect.height / 2);
 
-		unitPos_L = canvasMaxPos_L / boxGapFactor;
+		unitPos_L = canvasMaxPos_L / boxDensity;
 		lowerBoundPos_L = unitPos_L * (-1 * listBoxes.Length / 2 - 1);
 		upperBoundPos_L = unitPos_L * (listBoxes.Length / 2 + 1);
 
