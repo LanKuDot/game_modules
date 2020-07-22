@@ -118,7 +118,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	/* Notice: ListBox will initialize its variables from here, so ListPositionCtrl
 	 * must be executed before ListBox. You have to set the execution order in the inspector.
 	 */
-	void Start()
+	private void Start()
 	{
 		InitializePositionVars();
 		InitializeInputFunction();
@@ -126,7 +126,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		_maxNumOfDisabledBoxes = listBoxes.Length / 2;
 	}
 
-	void InitializePositionVars()
+	private void InitializePositionVars()
 	{
 		/* The the reference of canvas plane */
 		_parentCanvas = GetComponentInParent<Canvas>();
@@ -147,7 +147,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		}
 	}
 
-	void InitializeBoxDependency()
+	private void InitializeBoxDependency()
 	{
 		// Set the box ID according to the order in the container `listBoxes`
 		for (int i = 0; i < listBoxes.Length; ++i)
@@ -165,7 +165,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	 * The unused handler will be assigned a dummy function to
 	 * prevent the handling of the event.
 	 */
-	void InitializeInputFunction()
+	private void InitializeInputFunction()
 	{
 		switch (controlMode) {
 			case ControlMode.Drag:
@@ -217,7 +217,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 
 	/* Move the list accroding to the dragging position and the dragging state
 	 */
-	void DragPositionHandler(PointerEventData pointer, TouchPhase state)
+	private void DragPositionHandler(PointerEventData pointer, TouchPhase state)
 	{
 		switch (state) {
 			case TouchPhase.Began:
@@ -243,7 +243,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 
 	/* Scroll the list accroding to the delta of the mouse scrolling
 	 */
-	void ScrollDeltaHandler(Vector2 mouseScrollDelta)
+	private void ScrollDeltaHandler(Vector2 mouseScrollDelta)
 	{
 		switch (direction) {
 			case Direction.Vertical:
@@ -264,7 +264,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 
 	/* Transform the coordinate from the screen space to the canvas space
 	 */
-	Vector3 ScreenToCanvasSpace(Vector3 position)
+	private Vector3 ScreenToCanvasSpace(Vector3 position)
 	{
 		return position / _parentCanvas.scaleFactor;
 	}
@@ -273,7 +273,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	/* ====== Movement functions ====== */
 	/* Control the movement of listBoxes
 	 */
-	void Update()
+	private void Update()
 	{
 		if (_slidingFramesLeft > 0) {
 			if (listType == ListType.Linear) {
@@ -301,9 +301,10 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		}
 	}
 
+
 	/* Calculate the sliding distance and sliding frames
 	 */
-	void SetSlidingEffect()
+	private void SetSlidingEffect()
 	{
 		Vector3 deltaPos = _deltaInputPos_L;
 		Vector3 slideDistance = _endInputPos_L - _startInputPos_L;
@@ -326,7 +327,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	 * If the duration of a slide is within 15 frames and the distance is
 	 * longer than the 1/3 of the distance of the list, the slide is the fast sliding.
 	 */
-	bool IsFastSliding(int frames, Vector3 distance)
+	private bool IsFastSliding(int frames, Vector3 distance)
 	{
 		if (frames < 15) {
 			switch (direction) {
@@ -347,7 +348,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 
 	/* Set the sliding effect to make one of boxes align to center
 	 */
-	void SetSlidingToCenter()
+	private void SetSlidingToCenter()
 	{
 		_slidingDistanceLeft = FindDeltaPositionToCenter();
 		_slidingFramesLeft = boxSlidingFrames;
@@ -356,7 +357,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	/* Find the listBox which is the closest to the center position,
 	 * and calculate the delta x or y position between it and the center position.
 	 */
-	Vector3 FindDeltaPositionToCenter()
+	private Vector3 FindDeltaPositionToCenter()
 	{
 		float minDeltaPos = Mathf.Infinity;
 		float deltaPos;
@@ -401,7 +402,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 
 	/* Move the list for the distance of times of unit position
 	 */
-	void SetUnitMove(int unit)
+	private void SetUnitMove(int unit)
 	{
 		Vector2 deltaPos = unitPos_L * unit;
 
@@ -430,7 +431,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	 *
 	 * This method is used for the linear mode.
 	 */
-	void StopListWhenReachEnd()
+	private void StopListWhenReachEnd()
 	{
 		switch (direction) {
 			case Direction.Vertical:
@@ -506,7 +507,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 
 	/* Divide each component of vector a by vector b.
 	 */
-	Vector3 DivideComponent(Vector3 a, Vector3 b)
+	private Vector3 DivideComponent(Vector3 a, Vector3 b)
 	{
 		return new Vector3(a.x / b.x, a.y / b.y, a.z / b.z);
 	}

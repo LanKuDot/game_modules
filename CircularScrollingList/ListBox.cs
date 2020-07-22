@@ -59,7 +59,7 @@ public class ListBox : MonoBehaviour
 	 * Make sure that the execution order of script ListPositionCtrl is prior to
 	 * ListBox.
 	 */
-	void Start()
+	private void Start()
 	{
 		_positionCtrl = transform.GetComponentInParent<ListPositionCtrl>();
 		_listBank = _positionCtrl.listBank;
@@ -82,7 +82,7 @@ public class ListBox : MonoBehaviour
 	/* Add an additional listener to Button.onClick event for passing the content ID
 	 * of the clicked box to the event handlers registered at ListPositionCtrl.onBoxClick
 	 */
-	void AddClickEvent()
+	private void AddClickEvent()
 	{
 		Button button = transform.GetComponent<Button>();
 		if (button != null)
@@ -91,7 +91,7 @@ public class ListBox : MonoBehaviour
 
 	/* Initialize the content of ListBox.
 	 */
-	void InitialContent()
+	private void InitialContent()
 	{
 		// Get the content ID of the centered box
 		_contentID = _positionCtrl.centeredContentID;
@@ -125,7 +125,7 @@ public class ListBox : MonoBehaviour
 
 	/* Update the dispalying content on the ListBox.
 	 */
-	void UpdateDisplayContent()
+	private void UpdateDisplayContent()
 	{
 		// Update the content accroding to its contentID.
 		content.text = _listBank.GetListContent(_contentID);
@@ -133,7 +133,7 @@ public class ListBox : MonoBehaviour
 
 	/* Initialize the local position of the list box accroding to its ID
 	 */
-	void InitialPosition()
+	private void InitialPosition()
 	{
 		// If there are even number of ListBoxes, adjust the initial position by an half unitPos.
 		if ((_positionCtrl.listBoxes.Length & 0x1) == 0) {
@@ -190,7 +190,7 @@ public class ListBox : MonoBehaviour
 
 	/* Calculate the x position accroding to the y position.
 	 */
-	void UpdateXPosition()
+	private void UpdateXPosition()
 	{
 		// Formula: x = maxCurvePos_x * (cos(r) + cosValueAdjust),
 		// where r = (y / upper_y) * pi / 2, then r is in range [- pi / 2, pi / 2],
@@ -204,7 +204,7 @@ public class ListBox : MonoBehaviour
 
 	/* Calculate the y position accroding to the x position.
 	 */
-	void UpdateYPosition()
+	private void UpdateYPosition()
 	{
 		transform.localPosition = new Vector3(
 			transform.localPosition.x,
@@ -218,7 +218,7 @@ public class ListBox : MonoBehaviour
 	 * If it does, move the ListBox to the other end of the list
 	 * and update the content.
 	 */
-	void CheckBoundaryY()
+	private void CheckBoundaryY()
 	{
 		float beyondPosY_L = 0.0f;
 
@@ -239,7 +239,7 @@ public class ListBox : MonoBehaviour
 		}
 	}
 
-	void CheckBoundaryX()
+	private void CheckBoundaryX()
 	{
 		float beyondPosX_L = 0.0f;
 
@@ -265,7 +265,7 @@ public class ListBox : MonoBehaviour
 	 * @param smallest_at The position at where the smallest listBox will be
 	 * @param target_value The position of the target listBox
 	 */
-	void UpdateSize(float smallest_at, float target_value)
+	private void UpdateSize(float smallest_at, float target_value)
 	{
 		// The scale of the box at the either end is initialLocalScale.
 		// The scale of the box at the center is initialLocalScale * (1 + centerBoxScaleRatio).
@@ -281,7 +281,7 @@ public class ListBox : MonoBehaviour
 
 	/* Update the content to the last content of the next ListBox
 	 */
-	void UpdateToLastContent()
+	private void UpdateToLastContent()
 	{
 		_contentID = nextListBox.GetCurrentContentID() - 1;
 		_contentID = (_contentID < 0) ? _listBank.GetListLength() - 1 : _contentID;
@@ -310,7 +310,7 @@ public class ListBox : MonoBehaviour
 
 	/* Update the content to the next content of the last ListBox
 	 */
-	void UpdateToNextContent()
+	private void UpdateToNextContent()
 	{
 		_contentID = lastListBox.GetCurrentContentID() + 1;
 		_contentID = (_contentID == _listBank.GetListLength()) ? 0 : _contentID;
