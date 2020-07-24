@@ -55,11 +55,7 @@ public class ListBox : MonoBehaviour
 		return _contentID;
 	}
 
-	/* Notice: ListBox will initialize its variables from ListPositionCtrl.
-	 * Make sure that the execution order of script ListPositionCtrl is prior to
-	 * ListBox.
-	 */
-	private void Start()
+	public void Initialize()
 	{
 		_positionCtrl = transform.GetComponentInParent<ListPositionCtrl>();
 		_listBank = _positionCtrl.listBank;

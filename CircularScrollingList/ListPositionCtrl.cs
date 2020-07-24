@@ -124,6 +124,8 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		InitializeInputFunction();
 		InitializeBoxDependency();
 		_maxNumOfDisabledBoxes = listBoxes.Length / 2;
+		foreach (ListBox listBox in listBoxes)
+			listBox.Initialize();
 	}
 
 	private void InitializePositionVars()
