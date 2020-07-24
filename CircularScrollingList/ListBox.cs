@@ -274,16 +274,11 @@ public class ListBox : MonoBehaviour
 			 Mathf.InverseLerp(smallest_at, 0.0f, Mathf.Abs(target_value)));
 	}
 
-	public int GetCurrentContentID()
-	{
-		return _contentID;
-	}
-
 	/* Update the content to the last content of the next ListBox
 	 */
 	private void UpdateToLastContent()
 	{
-		_contentID = nextListBox.GetCurrentContentID() - 1;
+		_contentID = nextListBox.GetContentID() - 1;
 		_contentID = (_contentID < 0) ? _listBank.GetListLength() - 1 : _contentID;
 
 		if (_positionCtrl.listType == ListPositionCtrl.ListType.Linear) {
@@ -312,7 +307,7 @@ public class ListBox : MonoBehaviour
 	 */
 	private void UpdateToNextContent()
 	{
-		_contentID = lastListBox.GetCurrentContentID() + 1;
+		_contentID = lastListBox.GetContentID() + 1;
 		_contentID = (_contentID == _listBank.GetListLength()) ? 0 : _contentID;
 
 		if (_positionCtrl.listType == ListPositionCtrl.ListType.Linear) {
