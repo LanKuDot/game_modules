@@ -39,33 +39,41 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 
 	/*========== Settings ==========*/
 	/* List mode */
+	[Tooltip("The type of the list.")]
 	public ListType listType = ListType.Circular;
+	[Tooltip("The contolling mode of the list.")]
 	public ControlMode controlMode = ControlMode.Drag;
+	[Tooltip("Should a box align in the middle of the list after sliding?")]
 	public bool alignMiddle = false;
+	[Tooltip("The major moving direction of the list.")]
 	public Direction direction = Direction.Vertical;
 
 	/* Containers */
+	[Tooltip("The game object which holds the content bank for the list. " +
+		"It will be the derived class of the BaseListBank.")]
 	public BaseListBank listBank;
-	// Specify the centered content ID
+	[Tooltip("Specify the initial content ID for the centered box.")]
 	public int centeredContentID = 0;
+	[Tooltip("The boxes which belong to this list.")]
 	public ListBox[] listBoxes;
-	// The callback for the event of clicking on list boxes
-	// It will be added to the listener of the onClick event by the ListBox,
-	// if the box contains Button component.
+	[Tooltip("The callbacks for the event of the clicking on boxes." +
+		"The registered callbacks will be added to the 'onClick' event of boxes, " +
+		"therefore, boxes should be 'Button's.")]
 	public ListBoxClickEvent onBoxClick;
 	// The callback will be invoked when the list is moving.
 	public ListEvent onListMove;
+	[Tooltip("The Buttons used by the Button mode.")]
 	public Button[] controlButtons;
 
 	/* Parameters */
-	// Set the distance between each ListBox. The larger, the closer.
+	[Tooltip("The distance between each box. The larger, the closer.")]
 	public float boxDensity = 2.0f;
-	// Set the friction for the free sliding of ListBox. The larger, the rougher.
+	[Tooltip("The friction for the free sliding of ListBox. The larger, the rougher.")]
 	public float boxSlidingFriction = 2.0f;
 	[Tooltip("The curve of the box position. " +
 		"The valid range of the x axis is [0, 1]. " +
 		"The y axis specifies the shape of the list. " +
-		"Point (0.5, 0) is the center of the list.")]
+		"Point (0.5, 0) is the center of the list layout.")]
 	public AnimationCurve boxPositionCurve = AnimationCurve.Constant(0.0f, 1.0f, 0.0f);
 	[Tooltip("The curve of the box scale. " +
 		"The valid range of the x axis is [0, 1]. " +
