@@ -34,9 +34,6 @@ public class ListBox : MonoBehaviour
 	private Vector2 _changeSideUpperBoundPos;
 	private float _cosValueAdjust;
 
-	private Vector3 _slidingDistance;   // The sliding distance for each frame
-	private Vector3 _slidingDistanceLeft;
-
 	private Vector3 _initialLocalScale;
 
 	/* Output the information of the box to the Debug.Log
