@@ -125,7 +125,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		InitializeBoxDependency();
 		_maxNumOfDisabledBoxes = listBoxes.Length / 2;
 		foreach (ListBox listBox in listBoxes)
-			listBox.Initialize();
+			listBox.Initialize(this);
 	}
 
 	private void InitializePositionVars()
@@ -296,8 +296,18 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 				_slidingDistance = Vector3.Lerp(Vector3.zero, _slidingDistanceLeft,
 					boxSlidingSpeedFactor);
 
-			foreach (ListBox listBox in listBoxes)
-				listBox.UpdatePosition(_slidingDistance);
+			switch (direction) {
+				case Direction.Vertical:
+					foreach (ListBox listBox in listBoxes)
+						listBox.UpdatePosition(slidingDistance.y);
+					break;
+				case Direction.Horizontal:
+					foreach (ListBox listBox in listBoxes)
+						listBox.UpdatePosition(slidingDistance.x);
+					break;
+			}
+
+			_slidingDistanceLeft -= slidingDistance;
 
 			_slidingDistanceLeft -= _slidingDistance;
 		}

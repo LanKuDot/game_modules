@@ -22,16 +22,19 @@ public class ListBox : MonoBehaviour
 	private BaseListBank _listBank;
 	private int _contentID;
 
+	public delegate void UpdatePositionDelegate(float delta);
+	public UpdatePositionDelegate UpdatePosition;
+
 	/* ====== Position variables ====== */
 	// Position caculated here is in the local space of the list
-	private Vector2 _maxCurvePos;     // The maximum outer position
-	private Vector2 _unitPos;         // The distance between boxes
-	private Vector2 _lowerBoundPos;   // The left/down-most position of the box
-	private Vector2 _upperBoundPos;   // The right/up-most position of the box
+	private float _maxCurvePos;     // The maximum outer position
+	private float _unitPos;         // The distance between boxes
+	private float _lowerBoundPos;   // The left/down-most position of the box
+	private float _upperBoundPos;   // The right/up-most position of the box
 	// _changeSide(Lower/Upper)BoundPos is the boundary for checking that
 	// whether to move the box to the other end or not
-	private Vector2 _changeSideLowerBoundPos;
-	private Vector2 _changeSideUpperBoundPos;
+	private float _changeSideLowerBoundPos;
+	private float _changeSideUpperBoundPos;
 	private float _cosValueAdjust;
 
 	private Vector3 _initialLocalScale;
@@ -52,15 +55,28 @@ public class ListBox : MonoBehaviour
 		return _contentID;
 	}
 
-	public void Initialize()
+	public void Initialize(ListPositionCtrl listPositionCtrl)
 	{
-		_positionCtrl = transform.GetComponentInParent<ListPositionCtrl>();
+		_positionCtrl = listPositionCtrl;
 		_listBank = _positionCtrl.listBank;
 
-		_maxCurvePos = _positionCtrl.canvasMaxPos_L * _positionCtrl.listCurvature;
-		_unitPos = _positionCtrl.unitPos_L;
-		_lowerBoundPos = _positionCtrl.lowerBoundPos_L;
-		_upperBoundPos = _positionCtrl.upperBoundPos_L;
+		switch (_positionCtrl.direction) {
+			case ListPositionCtrl.Direction.Vertical:
+				_maxCurvePos = _positionCtrl.canvasMaxPos_L.x * _positionCtrl.listCurvature;
+				_unitPos = _positionCtrl.unitPos_L.y;
+				_lowerBoundPos = _positionCtrl.lowerBoundPos_L.y;
+				_upperBoundPos = _positionCtrl.upperBoundPos_L.y;
+				UpdatePosition = MoveVertically;
+				break;
+			case ListPositionCtrl.Direction.Horizontal:
+				_maxCurvePos = _positionCtrl.canvasMaxPos_L.y * _positionCtrl.listCurvature;
+				_unitPos = _positionCtrl.unitPos_L.x;
+				_lowerBoundPos = _positionCtrl.lowerBoundPos_L.x;
+				_upperBoundPos = _positionCtrl.upperBoundPos_L.x;
+				UpdatePosition = MoveHorizontally;
+				break;
+		}
+
 		_changeSideLowerBoundPos = _lowerBoundPos + _unitPos * 0.3f;
 		_changeSideUpperBoundPos = _upperBoundPos - _unitPos * 0.3f;
 		_cosValueAdjust = _positionCtrl.positionAdjust;
@@ -133,78 +149,75 @@ public class ListBox : MonoBehaviour
 			switch (_positionCtrl.direction) {
 				case ListPositionCtrl.Direction.Vertical:
 					transform.localPosition = new Vector3(0.0f,
-						_unitPos.y * (listBoxID * -1 + _positionCtrl.listBoxes.Length / 2) - _unitPos.y / 2,
+						_unitPos * (listBoxID * -1 + _positionCtrl.listBoxes.Length / 2) - _unitPos / 2,
 						0.0f);
-					UpdateXPosition();
+					AdjustXPosition();
 					break;
 				case ListPositionCtrl.Direction.Horizontal:
 					transform.localPosition = new Vector3(
-						_unitPos.x * (listBoxID - _positionCtrl.listBoxes.Length / 2) - _unitPos.x / 2,
+						_unitPos * (listBoxID - _positionCtrl.listBoxes.Length / 2) - _unitPos / 2,
 						0.0f, 0.0f);
-					UpdateYPosition();
+					AdjustYPosition();
 					break;
 			}
 		} else {
 			switch (_positionCtrl.direction) {
 				case ListPositionCtrl.Direction.Vertical:
 					transform.localPosition = new Vector3(0.0f,
-						_unitPos.y * (listBoxID * -1 + _positionCtrl.listBoxes.Length / 2),
+						_unitPos * (listBoxID * -1 + _positionCtrl.listBoxes.Length / 2),
 						0.0f);
-					UpdateXPosition();
+					AdjustXPosition();
 					break;
 				case ListPositionCtrl.Direction.Horizontal:
 					transform.localPosition = new Vector3(
-						_unitPos.x * (listBoxID - _positionCtrl.listBoxes.Length / 2),
+						_unitPos * (listBoxID - _positionCtrl.listBoxes.Length / 2),
 						0.0f, 0.0f);
-					UpdateYPosition();
+					AdjustYPosition();
 					break;
 			}
 		}
 	}
 
-	/* Update the local position of ListBox accroding to the delta position at each frame.
-	 * Note that the deltaPosition must be in local space.
+	/* Move the box vertically and adjust its final position and size.
 	 */
-	public void UpdatePosition(Vector3 deltaPosition_L)
+	public void MoveVertically(float delta)
 	{
-		switch (_positionCtrl.direction) {
-			case ListPositionCtrl.Direction.Vertical:
-				transform.localPosition += new Vector3(0.0f, deltaPosition_L.y, 0.0f);
-				CheckBoundaryY();
-				UpdateXPosition();
-				break;
-			case ListPositionCtrl.Direction.Horizontal:
-				transform.localPosition += new Vector3(deltaPosition_L.x, 0.0f, 0.0f);
-				CheckBoundaryX();
-				UpdateYPosition();
-				break;
-		}
+		transform.localPosition += delta * Vector3.up;
+		CheckBoundaryY();
+		AdjustXPosition();
+	}
+
+	/* Move the box horizontally and adjust its final position and size.
+	 */
+	public void MoveHorizontally(float delta)
+	{
+		transform.localPosition += delta * Vector3.right;
+		CheckBoundaryX();
+		AdjustYPosition();
 	}
 
 	/* Calculate the x position accroding to the y position.
 	 */
-	private void UpdateXPosition()
+	private void AdjustXPosition()
 	{
 		// Formula: x = maxCurvePos_x * (cos(r) + cosValueAdjust),
 		// where r = (y / upper_y) * pi / 2, then r is in range [- pi / 2, pi / 2],
 		// and corresponding cosine value is from 0 to 1 to 0.
 		transform.localPosition = new Vector3(
-			_maxCurvePos.x * (_cosValueAdjust +
-			Mathf.Cos(transform.localPosition.y / _upperBoundPos.y * Mathf.PI / 2.0f)),
+			_maxCurvePos * (_cosValueAdjust +
+			Mathf.Cos(transform.localPosition.y / _upperBoundPos * Mathf.PI / 2.0f)),
 			transform.localPosition.y, transform.localPosition.z);
-		UpdateSize(_upperBoundPos.y, transform.localPosition.y);
 	}
 
 	/* Calculate the y position accroding to the x position.
 	 */
-	private void UpdateYPosition()
+	private void AdjustYPosition()
 	{
 		transform.localPosition = new Vector3(
 			transform.localPosition.x,
-			_maxCurvePos.y * (_cosValueAdjust +
-			Mathf.Cos(transform.localPosition.x / _upperBoundPos.x * Mathf.PI / 2.0f)),
+			_maxCurvePos * (_cosValueAdjust +
+			Mathf.Cos(transform.localPosition.x / _upperBoundPos * Mathf.PI / 2.0f)),
 			transform.localPosition.z);
-		UpdateSize(_upperBoundPos.x, transform.localPosition.x);
 	}
 
 	/* Check if the ListBox is beyond the checking boundary or not
@@ -215,18 +228,18 @@ public class ListBox : MonoBehaviour
 	{
 		float beyondPosY_L = 0.0f;
 
-		if (transform.localPosition.y < _changeSideLowerBoundPos.y) {
-			beyondPosY_L = transform.localPosition.y - _lowerBoundPos.y;
+		if (transform.localPosition.y < _changeSideLowerBoundPos) {
+			beyondPosY_L = transform.localPosition.y - _lowerBoundPos;
 			transform.localPosition = new Vector3(
 				transform.localPosition.x,
-				_upperBoundPos.y - _unitPos.y + beyondPosY_L,
+				_upperBoundPos - _unitPos + beyondPosY_L,
 				transform.localPosition.z);
 			UpdateToLastContent();
-		} else if (transform.localPosition.y > _changeSideUpperBoundPos.y) {
-			beyondPosY_L = transform.localPosition.y - _upperBoundPos.y;
+		} else if (transform.localPosition.y > _changeSideUpperBoundPos) {
+			beyondPosY_L = transform.localPosition.y - _upperBoundPos;
 			transform.localPosition = new Vector3(
 				transform.localPosition.x,
-				_lowerBoundPos.y + _unitPos.y + beyondPosY_L,
+				_lowerBoundPos + _unitPos + beyondPosY_L,
 				transform.localPosition.z);
 			UpdateToNextContent();
 		}
@@ -236,17 +249,17 @@ public class ListBox : MonoBehaviour
 	{
 		float beyondPosX_L = 0.0f;
 
-		if (transform.localPosition.x < _changeSideLowerBoundPos.x) {
-			beyondPosX_L = transform.localPosition.x - _lowerBoundPos.x;
+		if (transform.localPosition.x < _changeSideLowerBoundPos) {
+			beyondPosX_L = transform.localPosition.x - _lowerBoundPos;
 			transform.localPosition = new Vector3(
-				_upperBoundPos.x - _unitPos.x + beyondPosX_L,
+				_upperBoundPos - _unitPos + beyondPosX_L,
 				transform.localPosition.y,
 				transform.localPosition.z);
 			UpdateToNextContent();
-		} else if (transform.localPosition.x > _changeSideUpperBoundPos.x) {
-			beyondPosX_L = transform.localPosition.x - _upperBoundPos.x;
+		} else if (transform.localPosition.x > _changeSideUpperBoundPos) {
+			beyondPosX_L = transform.localPosition.x - _upperBoundPos;
 			transform.localPosition = new Vector3(
-				_lowerBoundPos.x + _unitPos.x + beyondPosX_L,
+				_lowerBoundPos + _unitPos + beyondPosX_L,
 				transform.localPosition.y,
 				transform.localPosition.z);
 			UpdateToLastContent();
