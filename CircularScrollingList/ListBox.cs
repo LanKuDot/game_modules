@@ -17,17 +17,18 @@ public class ListBox : MonoBehaviour
 	public ListBox lastListBox;
 	[HideInInspector]
 	public ListBox nextListBox;
+	private int _contentID;
 
 	private ListPositionCtrl _positionCtrl;
 	private BaseListBank _listBank;
-	private int _contentID;
+	private CurveResolver _positionCurve;
+	private CurveResolver _scaleCurve;
 
 	public delegate void UpdatePositionDelegate(float delta);
 	public UpdatePositionDelegate UpdatePosition;
 
 	/* ====== Position variables ====== */
 	// Position caculated here is in the local space of the list
-	private float _maxCurvePos;     // The maximum outer position
 	private float _unitPos;         // The distance between boxes
 	private float _lowerBoundPos;   // The left/down-most position of the box
 	private float _upperBoundPos;   // The right/up-most position of the box
@@ -35,9 +36,6 @@ public class ListBox : MonoBehaviour
 	// whether to move the box to the other end or not
 	private float _changeSideLowerBoundPos;
 	private float _changeSideUpperBoundPos;
-	private float _cosValueAdjust;
-
-	private Vector3 _initialLocalScale;
 
 	/* Output the information of the box to the Debug.Log
 	 */
@@ -55,6 +53,8 @@ public class ListBox : MonoBehaviour
 		return _contentID;
 	}
 
+	/* Initialize the box.
+	 */
 	public void Initialize(ListPositionCtrl listPositionCtrl)
 	{
 		_positionCtrl = listPositionCtrl;
@@ -62,26 +62,28 @@ public class ListBox : MonoBehaviour
 
 		switch (_positionCtrl.direction) {
 			case ListPositionCtrl.Direction.Vertical:
-				_maxCurvePos = _positionCtrl.canvasMaxPos_L.x * _positionCtrl.listCurvature;
 				_unitPos = _positionCtrl.unitPos_L.y;
 				_lowerBoundPos = _positionCtrl.lowerBoundPos_L.y;
 				_upperBoundPos = _positionCtrl.upperBoundPos_L.y;
+
 				UpdatePosition = MoveVertically;
 				break;
 			case ListPositionCtrl.Direction.Horizontal:
-				_maxCurvePos = _positionCtrl.canvasMaxPos_L.y * _positionCtrl.listCurvature;
 				_unitPos = _positionCtrl.unitPos_L.x;
 				_lowerBoundPos = _positionCtrl.lowerBoundPos_L.x;
 				_upperBoundPos = _positionCtrl.upperBoundPos_L.x;
+
 				UpdatePosition = MoveHorizontally;
 				break;
 		}
 
 		_changeSideLowerBoundPos = _lowerBoundPos + _unitPos * 0.3f;
 		_changeSideUpperBoundPos = _upperBoundPos - _unitPos * 0.3f;
-		_cosValueAdjust = _positionCtrl.positionAdjust;
 
-		_initialLocalScale = transform.localScale;
+		_positionCurve = new CurveResolver(
+			_positionCtrl.boxPositionCurve, _lowerBoundPos, _upperBoundPos);
+		_scaleCurve = new CurveResolver(
+			_positionCtrl.boxScaleCurve, _lowerBoundPos, _upperBoundPos);
 
 		InitialPosition();
 		InitialContent();
@@ -96,6 +98,127 @@ public class ListBox : MonoBehaviour
 		Button button = transform.GetComponent<Button>();
 		if (button != null)
 			button.onClick.AddListener(() => _positionCtrl.onBoxClick.Invoke(_contentID));
+	}
+
+	/* Initialize the local position of the list box accroding to its ID
+	 */
+	private void InitialPosition()
+	{
+		int numOfBoxes = _positionCtrl.listBoxes.Length;
+		float majorPosition = _unitPos * (listBoxID * -1 + numOfBoxes / 2);
+		float passivePosition;
+
+		// If there are even number of boxes, adjust the position one half unitPos down.
+		if ((numOfBoxes & 0x1) == 0) {
+			majorPosition = _unitPos * (listBoxID * -1 + numOfBoxes / 2) - _unitPos / 2;
+		}
+
+		passivePosition = GetPassivePosition(majorPosition);
+
+		switch (_positionCtrl.direction) {
+			case ListPositionCtrl.Direction.Vertical:
+				transform.localPosition = new Vector3(
+					passivePosition, majorPosition, transform.localPosition.z);
+				break;
+			case ListPositionCtrl.Direction.Horizontal:
+				transform.localPosition = new Vector3(
+					majorPosition, passivePosition, transform.localPosition.z);
+				break;
+		}
+
+		UpdateScale(majorPosition);
+	}
+
+	/* Move the box vertically and adjust its final position and size.
+	 *
+	 * This function is the UpdatePosition in the vertical mode.
+	 *
+	 * @param delta The moving distance
+	 */
+	private void MoveVertically(float delta)
+	{
+		bool needToUpdateToLastContent = false;
+		bool needToUpdateToNextContent = false;
+		float majorPosition = GetMajorPosition(transform.localPosition.y + delta,
+			ref needToUpdateToLastContent, ref needToUpdateToNextContent);
+		float passivePosition = GetPassivePosition(majorPosition);
+
+		transform.localPosition = new Vector3(
+			passivePosition, majorPosition, transform.localPosition.z);
+		UpdateScale(majorPosition);
+
+		if (needToUpdateToLastContent)
+			UpdateToLastContent();
+		else if (needToUpdateToNextContent)
+			UpdateToNextContent();
+	}
+
+	/* Move the box horizontally and adjust its final position and size.
+	 *
+	 * This function is the UpdatePosition in the horizontal mode.
+	 *
+	 * @param delta The moving distance
+	 */
+	private void MoveHorizontally(float delta)
+	{
+		bool needToUpdateToLastContent = false;
+		bool needToUpdateToNextContent = false;
+		float majorPosition = GetMajorPosition(transform.localPosition.x + delta,
+			ref needToUpdateToLastContent, ref needToUpdateToNextContent);
+		float passivePosition = GetPassivePosition(majorPosition);
+
+		transform.localPosition = new Vector3(
+			majorPosition, passivePosition, transform.localPosition.z);
+		UpdateScale(majorPosition);
+
+		if (needToUpdateToLastContent)
+			UpdateToLastContent();
+		else if (needToUpdateToNextContent)
+			UpdateToNextContent();
+	}
+
+	/* Get the major position according to the requested postion
+	 * If the box exceeds the boundary, one of the passed flags will be set
+	 * to indicate that the content needs to be updated.
+	 *
+	 * @param positionValue The requested position
+	 * @param needToUpdateToLastContent Is it need to update to the last content?
+	 * @param needToUpdateToNextContent Is it need to update to the next content?
+	 * @return The decided major position
+	 */
+	private float GetMajorPosition(float positionValue,
+		ref bool needToUpdateToLastContent, ref bool needToUpdateToNextContent)
+	{
+		float beyondPos = 0.0f;
+		float majorPos = positionValue;
+
+		if (positionValue < _changeSideLowerBoundPos) {
+			beyondPos = positionValue - _lowerBoundPos;
+			majorPos = _upperBoundPos - _unitPos + beyondPos;
+			needToUpdateToLastContent = true;
+		} else if (positionValue > _changeSideUpperBoundPos) {
+			beyondPos = positionValue - _upperBoundPos;
+			majorPos = _lowerBoundPos + _unitPos + beyondPos;
+			needToUpdateToNextContent = true;
+		}
+
+		return majorPos;
+	}
+
+	/* Get the passive position according to the major position
+	 */
+	private float GetPassivePosition(float majorPosition)
+	{
+		float passivePosFactor = _positionCurve.Evaulate(majorPosition);
+		return _upperBoundPos * passivePosFactor;
+	}
+
+	/* Scale the listBox accroding to the major position
+	 */
+	private void UpdateScale(float majorPosition)
+	{
+		float scaleValue = _scaleCurve.Evaulate(majorPosition);
+		transform.localScale = new Vector3(scaleValue, scaleValue, transform.localScale.z);
 	}
 
 	/* Initialize the content of ListBox.
@@ -138,146 +261,6 @@ public class ListBox : MonoBehaviour
 	{
 		// Update the content accroding to its contentID.
 		content.text = _listBank.GetListContent(_contentID);
-	}
-
-	/* Initialize the local position of the list box accroding to its ID
-	 */
-	private void InitialPosition()
-	{
-		// If there are even number of ListBoxes, adjust the initial position by an half unitPos.
-		if ((_positionCtrl.listBoxes.Length & 0x1) == 0) {
-			switch (_positionCtrl.direction) {
-				case ListPositionCtrl.Direction.Vertical:
-					transform.localPosition = new Vector3(0.0f,
-						_unitPos * (listBoxID * -1 + _positionCtrl.listBoxes.Length / 2) - _unitPos / 2,
-						0.0f);
-					AdjustXPosition();
-					break;
-				case ListPositionCtrl.Direction.Horizontal:
-					transform.localPosition = new Vector3(
-						_unitPos * (listBoxID - _positionCtrl.listBoxes.Length / 2) - _unitPos / 2,
-						0.0f, 0.0f);
-					AdjustYPosition();
-					break;
-			}
-		} else {
-			switch (_positionCtrl.direction) {
-				case ListPositionCtrl.Direction.Vertical:
-					transform.localPosition = new Vector3(0.0f,
-						_unitPos * (listBoxID * -1 + _positionCtrl.listBoxes.Length / 2),
-						0.0f);
-					AdjustXPosition();
-					break;
-				case ListPositionCtrl.Direction.Horizontal:
-					transform.localPosition = new Vector3(
-						_unitPos * (listBoxID - _positionCtrl.listBoxes.Length / 2),
-						0.0f, 0.0f);
-					AdjustYPosition();
-					break;
-			}
-		}
-	}
-
-	/* Move the box vertically and adjust its final position and size.
-	 */
-	public void MoveVertically(float delta)
-	{
-		transform.localPosition += delta * Vector3.up;
-		CheckBoundaryY();
-		AdjustXPosition();
-	}
-
-	/* Move the box horizontally and adjust its final position and size.
-	 */
-	public void MoveHorizontally(float delta)
-	{
-		transform.localPosition += delta * Vector3.right;
-		CheckBoundaryX();
-		AdjustYPosition();
-	}
-
-	/* Calculate the x position accroding to the y position.
-	 */
-	private void AdjustXPosition()
-	{
-		// Formula: x = maxCurvePos_x * (cos(r) + cosValueAdjust),
-		// where r = (y / upper_y) * pi / 2, then r is in range [- pi / 2, pi / 2],
-		// and corresponding cosine value is from 0 to 1 to 0.
-		transform.localPosition = new Vector3(
-			_maxCurvePos * (_cosValueAdjust +
-			Mathf.Cos(transform.localPosition.y / _upperBoundPos * Mathf.PI / 2.0f)),
-			transform.localPosition.y, transform.localPosition.z);
-	}
-
-	/* Calculate the y position accroding to the x position.
-	 */
-	private void AdjustYPosition()
-	{
-		transform.localPosition = new Vector3(
-			transform.localPosition.x,
-			_maxCurvePos * (_cosValueAdjust +
-			Mathf.Cos(transform.localPosition.x / _upperBoundPos * Mathf.PI / 2.0f)),
-			transform.localPosition.z);
-	}
-
-	/* Check if the ListBox is beyond the checking boundary or not
-	 * If it does, move the ListBox to the other end of the list
-	 * and update the content.
-	 */
-	private void CheckBoundaryY()
-	{
-		float beyondPosY_L = 0.0f;
-
-		if (transform.localPosition.y < _changeSideLowerBoundPos) {
-			beyondPosY_L = transform.localPosition.y - _lowerBoundPos;
-			transform.localPosition = new Vector3(
-				transform.localPosition.x,
-				_upperBoundPos - _unitPos + beyondPosY_L,
-				transform.localPosition.z);
-			UpdateToLastContent();
-		} else if (transform.localPosition.y > _changeSideUpperBoundPos) {
-			beyondPosY_L = transform.localPosition.y - _upperBoundPos;
-			transform.localPosition = new Vector3(
-				transform.localPosition.x,
-				_lowerBoundPos + _unitPos + beyondPosY_L,
-				transform.localPosition.z);
-			UpdateToNextContent();
-		}
-	}
-
-	private void CheckBoundaryX()
-	{
-		float beyondPosX_L = 0.0f;
-
-		if (transform.localPosition.x < _changeSideLowerBoundPos) {
-			beyondPosX_L = transform.localPosition.x - _lowerBoundPos;
-			transform.localPosition = new Vector3(
-				_upperBoundPos - _unitPos + beyondPosX_L,
-				transform.localPosition.y,
-				transform.localPosition.z);
-			UpdateToNextContent();
-		} else if (transform.localPosition.x > _changeSideUpperBoundPos) {
-			beyondPosX_L = transform.localPosition.x - _upperBoundPos;
-			transform.localPosition = new Vector3(
-				_lowerBoundPos + _unitPos + beyondPosX_L,
-				transform.localPosition.y,
-				transform.localPosition.z);
-			UpdateToLastContent();
-		}
-	}
-
-	/* Scale the listBox accroding to its position
-	 *
-	 * @param smallest_at The position at where the smallest listBox will be
-	 * @param target_value The position of the target listBox
-	 */
-	private void UpdateSize(float smallest_at, float target_value)
-	{
-		// The scale of the box at the either end is initialLocalScale.
-		// The scale of the box at the center is initialLocalScale * (1 + centerBoxScaleRatio).
-		transform.localScale = _initialLocalScale *
-			(1.0f + _positionCtrl.centerBoxScaleRatio *
-			 Mathf.InverseLerp(smallest_at, 0.0f, Mathf.Abs(target_value)));
 	}
 
 	/* Update the content to the last content of the next ListBox
@@ -331,5 +314,36 @@ public class ListBox : MonoBehaviour
 		}
 
 		UpdateDisplayContent();
+	}
+
+	/* The class for converting the custom range to fit the AnimationCurve for
+	 * evaluating the final value.
+	 */
+	private class CurveResolver {
+		private AnimationCurve _curve;
+		private float _maxValue;
+		private float _minValue;
+
+		/* Constructor
+		 *
+		 * @param curve The target AnimationCurve to fit
+		 * @param minValue The custom minimum value
+		 * @param maxValue The custom maximum value
+		 */
+		public CurveResolver(AnimationCurve curve, float minValue, float maxValue)
+		{
+			_curve = curve;
+			_minValue = minValue;
+			_maxValue = maxValue;
+		}
+
+		/* Convert the input value to the value of interpolation between [minValue, maxValue]
+		 * and pass the result to the curve to get the final value.
+		 */
+		public float Evaulate(float value)
+		{
+			float lerpValue = Mathf.InverseLerp(_minValue, _maxValue, value);
+			return _curve.Evaluate(lerpValue);
+		}
 	}
 }

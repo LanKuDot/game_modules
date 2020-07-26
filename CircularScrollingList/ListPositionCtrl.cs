@@ -53,29 +53,24 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	// It will be added to the listener of the onClick event by the ListBox,
 	// if the box contains Button component.
 	public ListBoxClickEvent onBoxClick;
-
+	// The callback will be invoked when the list is moving.
+	public ListEvent onListMove;
 	public Button[] controlButtons;
 
 	/* Parameters */
 	// Set the distance between each ListBox. The larger, the closer.
 	public float boxDensity = 2.0f;
-	// Set the sliding duration in frames. The larger, the longer.
-	public int boxSlidingFrames = 35;
-	// Set the sliding speed. The larger, the quicker.
-	[Range(0.0f, 1.0f)]
-	public float boxSlidingSpeedFactor = 0.2f;
-	// Set the scrolling list curving to left/right, or up/down in HORIZONTAL mode.
-	// Positive: Curve to right (up); Negative: Curve to left (down).
-	[Range(-1.0f, 1.0f)]
-	public float listCurvature = 0.3f;
-	// Set this value to make the whole list not to sway to one side.
-	// Adjust the horizontal position in the Vertical mode or
-	// the vertical position in the Horizontal mode.
-	// This value will be used in ListBox.update[X/Y]Position().
-	[Range(-1.0f, 1.0f)]
-	public float positionAdjust = -0.7f;
-	// Set the scale ratio of the center listBox.
-	public float centerBoxScaleRatio = 0.32f;
+	// Set the friction for the free sliding of ListBox. The larger, the rougher.
+	public float boxSlidingFriction = 2.0f;
+	[Tooltip("The curve of the box position. " +
+		"The valid range of the x axis is [0, 1]. " +
+		"The y axis specifies the shape of the list. " +
+		"Point (0.5, 0) is the center of the list.")]
+	public AnimationCurve boxPositionCurve = AnimationCurve.Constant(0.0f, 1.0f, 0.0f);
+	[Tooltip("The curve of the box scale. " +
+		"The valid range of the x axis is [0, 1]. " +
+		"The y axis specifies the 'localScale' of the box.")]
+	public AnimationCurve boxScaleCurve = AnimationCurve.Constant(0.0f, 1.0f, 1.0f);
 	/*===============================*/
 
 	// The canvas plane which the scrolling list is at.
