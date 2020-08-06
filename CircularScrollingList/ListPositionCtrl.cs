@@ -85,10 +85,10 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	private Canvas _parentCanvas;
 
 	// The constrains of position in the local space of the canvas plane.
-	public Vector2 canvasMaxPos_L { get; private set; }
-	public Vector2 unitPos_L { get; private set; }
-	public Vector2 lowerBoundPos_L { get; private set; }
-	public Vector2 upperBoundPos_L { get; private set; }
+	private float _canvasMaxPos;
+	public float unitPos { get; private set; }
+	public float lowerBoundPos { get; private set; }
+	public float upperBoundPos { get; private set; }
 
 	// Delegate functions
 	private delegate void InputPositionHandlerDelegate(
@@ -98,16 +98,16 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	private ScrollHandlerDelegate _scrollHandler;
 
 	// Input mouse/finger position in the local space of the list.
-	private Vector3 _startInputPos_L;
-	private Vector3 _endInputPos_L;
-	private Vector3 _curFrameInputPos_L;
-	private Vector3 _deltaInputPos_L;
+	private float _startInputPos;
+	private float _endInputPos;
+	private float _deltaInputPos;
 	private int _numOfInputFrames;
 
 	// Variables for moving listBoxes
+	private int boxSlidingFrames;
 	private int _slidingFramesLeft;
-	private Vector3 _slidingDistance;     // The sliding distance for each frame
-	private Vector3 _slidingDistanceLeft;
+	private float _boxSlidingVelocity;
+	private float _slidingDistanceLeft;
 	// The flag indicating that one of the boxes need to be centered after the sliding
 	private bool _needToAlignToCenter = false;
 
@@ -139,16 +139,24 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		/* Get the max position of canvas plane in the canvas space.
 		 * Assume that the origin of the canvas space is at the center of canvas plane. */
 		RectTransform rectTransform = _parentCanvas.GetComponent<RectTransform>();
-		canvasMaxPos_L = new Vector2(rectTransform.rect.width / 2, rectTransform.rect.height / 2);
 
-		unitPos_L = canvasMaxPos_L / boxDensity;
-		lowerBoundPos_L = unitPos_L * (-1 * listBoxes.Length / 2 - 1);
-		upperBoundPos_L = unitPos_L * (listBoxes.Length / 2 + 1);
+		switch (direction) {
+			case Direction.Vertical:
+				_canvasMaxPos = rectTransform.rect.height / 2;
+				break;
+			case Direction.Horizontal:
+				_canvasMaxPos = rectTransform.rect.width / 2;
+				break;
+		}
+
+		unitPos = _canvasMaxPos / boxDensity;
+		lowerBoundPos = unitPos * (-1 * listBoxes.Length / 2 - 1);
+		upperBoundPos = unitPos * (listBoxes.Length / 2 + 1);
 
 		// If there are even number of ListBoxes, narrow the boundary for 1 unitPos.
 		if ((listBoxes.Length & 0x1) == 0) {
-			lowerBoundPos_L += unitPos_L / 2;
-			upperBoundPos_L -= unitPos_L / 2;
+			lowerBoundPos += unitPos / 2;
+			upperBoundPos -= unitPos / 2;
 		}
 	}
 
@@ -227,20 +235,20 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		switch (state) {
 			case TouchPhase.Began:
 				_numOfInputFrames = 0;
-				_startInputPos_L = ScreenToCanvasSpace(pointer.position);
+				_startInputPos = GetInputCanvasPosition(pointer.position);
 				_slidingFramesLeft = 0; // Make the list stop sliding
 				break;
 
 			case TouchPhase.Moved:
 				++_numOfInputFrames;
-				_deltaInputPos_L = ScreenToCanvasSpace(pointer.delta);
+				_deltaInputPos = GetInputCanvasPosition(pointer.delta);
 				// Slide the list as long as the moving distance of the pointer
-				_slidingDistanceLeft = _deltaInputPos_L;
-				_slidingFramesLeft = 1;
+				foreach (ListBox listBox in listBoxes)
+					listBox.UpdatePosition(_deltaInputPos);
 				break;
 
 			case TouchPhase.Ended:
-				_endInputPos_L = ScreenToCanvasSpace(pointer.position);
+				_endInputPos = GetInputCanvasPosition(pointer.position);
 				SetSlidingEffect();
 				break;
 		}
@@ -267,11 +275,19 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		}
 	}
 
-	/* Transform the coordinate from the screen space to the canvas space
+	/* Get the input position in the canvas space and
+	 * return the value of the corresponding axis according to the moving direction.
 	 */
-	private Vector3 ScreenToCanvasSpace(Vector3 position)
+	private float GetInputCanvasPosition(Vector3 pointerPosition)
 	{
-		return position / _parentCanvas.scaleFactor;
+		switch (direction) {
+			case Direction.Vertical:
+				return pointerPosition.y / _parentCanvas.scaleFactor;
+			case Direction.Horizontal:
+				return pointerPosition.x / _parentCanvas.scaleFactor;
+			default:
+				return 0.0f;
+		}
 	}
 
 
@@ -321,21 +337,8 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	 */
 	private void SetSlidingEffect()
 	{
-		Vector3 deltaPos = _deltaInputPos_L;
-		Vector3 slideDistance = _endInputPos_L - _startInputPos_L;
-		bool fastSliding = IsFastSliding(_numOfInputFrames, slideDistance);
-
-		if (fastSliding)
-			deltaPos *= 5.0f;   // Slide more longer!
-
-		_slidingDistanceLeft = deltaPos;
-
-		if (alignMiddle) {
-			_slidingFramesLeft = fastSliding ? boxSlidingFrames >> 1 : boxSlidingFrames >> 2;
-			_needToAlignToCenter = true;
-		} else {
-			_slidingFramesLeft = fastSliding ? boxSlidingFrames * 2 : boxSlidingFrames;
-		}
+		_slidingDistanceLeft = _deltaInputPos;
+		_slidingFramesLeft = 20;
 	}
 
 	/* Determine if the finger or mouse sliding is the fast sliding.
@@ -347,12 +350,12 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		if (frames < 15) {
 			switch (direction) {
 				case Direction.Horizontal:
-					if (Mathf.Abs(distance.x) > canvasMaxPos_L.x * 2.0f / 3.0f)
+					if (Mathf.Abs(distance.x) > _canvasMaxPos * 2.0f / 3.0f)
 						return true;
 					else
 						return false;
 				case Direction.Vertical:
-					if (Mathf.Abs(distance.y) > canvasMaxPos_L.y * 2.0f / 3.0f)
+					if (Mathf.Abs(distance.y) > _canvasMaxPos * 2.0f / 3.0f)
 						return true;
 					else
 						return false;
@@ -365,18 +368,17 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	 */
 	private void SetSlidingToCenter()
 	{
-		_slidingDistanceLeft = FindDeltaPositionToCenter();
+		// _slidingDistanceLeft = FindDeltaPositionToCenter();
 		_slidingFramesLeft = boxSlidingFrames;
 	}
 
 	/* Find the listBox which is the closest to the center position,
 	 * and calculate the delta x or y position between it and the center position.
 	 */
-	private Vector3 FindDeltaPositionToCenter()
+	private float FindDeltaPositionToCenter()
 	{
 		float minDeltaPos = Mathf.Infinity;
-		float deltaPos;
-		Vector3 alignToCenterDistance;
+		float deltaPos = 0.0f;
 
 		switch (direction) {
 			case Direction.Vertical:
@@ -389,8 +391,6 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 					if (Mathf.Abs(deltaPos) < Mathf.Abs(minDeltaPos))
 						minDeltaPos = deltaPos;
 				}
-
-				alignToCenterDistance = new Vector3(0.0f, minDeltaPos, 0.0f);
 				break;
 
 			case Direction.Horizontal:
@@ -403,26 +403,29 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 					if (Mathf.Abs(deltaPos) < Mathf.Abs(minDeltaPos))
 						minDeltaPos = deltaPos;
 				}
-
-				alignToCenterDistance = new Vector3(minDeltaPos, 0.0f, 0.0f);
-				break;
-
-			default:
-				alignToCenterDistance = Vector3.zero;
 				break;
 		}
 
-		return alignToCenterDistance;
+		return deltaPos;
 	}
 
 	/* Move the list for the distance of times of unit position
 	 */
 	private void SetUnitMove(int unit)
 	{
-		Vector2 deltaPos = unitPos_L * unit;
+		float deltaPos = 0.0f;
+
+		switch (direction) {
+			case Direction.Vertical:
+				deltaPos = unitPos * unit;
+				break;
+			case Direction.Horizontal:
+				deltaPos = unitPos * unit;
+				break;
+		}
 
 		if (_slidingFramesLeft != 0)
-			deltaPos += (Vector2)_slidingDistanceLeft;
+			deltaPos += _slidingDistanceLeft;
 
 		_slidingDistanceLeft = deltaPos;
 		_slidingFramesLeft = boxSlidingFrames;
@@ -453,10 +456,9 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 				// If the list reaches the head and it keeps going down, or
 				// the list reaches the tail and it keeps going up,
 				// make the list end be stopped at the center.
-				if ((numOfUpperDisabledBoxes >= _maxNumOfDisabledBoxes && _slidingDistanceLeft.y < 0) ||
-					(numOfLowerDisabledBoxes >= _maxNumOfDisabledBoxes && _slidingDistanceLeft.y > 0)) {
-					Vector3 remainDistance = FindDeltaPositionToCenter();
-					_slidingDistanceLeft.y = remainDistance.y;
+				if ((numOfUpperDisabledBoxes >= _maxNumOfDisabledBoxes && _slidingDistanceLeft < 0) ||
+					(numOfLowerDisabledBoxes >= _maxNumOfDisabledBoxes && _slidingDistanceLeft > 0)) {
+					_slidingDistanceLeft = FindDeltaPositionToCenter();
 
 					if (_slidingFramesLeft == 1)
 						_slidingFramesLeft = boxSlidingFrames;
@@ -468,10 +470,9 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 				// If the list reaches the head and it keeps going left, or
 				// the list reaches the tail and it keeps going right,
 				// make the list end be stopped at the center.
-				if ((numOfUpperDisabledBoxes >= _maxNumOfDisabledBoxes && _slidingDistanceLeft.x > 0) ||
-				    (numOfLowerDisabledBoxes >= _maxNumOfDisabledBoxes && _slidingDistanceLeft.x < 0)) {
-					Vector3 remainDitance = FindDeltaPositionToCenter();
-					_slidingDistanceLeft.x = remainDitance.x;
+				if ((numOfUpperDisabledBoxes >= _maxNumOfDisabledBoxes && _slidingDistanceLeft > 0) ||
+				    (numOfLowerDisabledBoxes >= _maxNumOfDisabledBoxes && _slidingDistanceLeft < 0)) {
+					_slidingDistanceLeft = FindDeltaPositionToCenter();
 				}
 
 				break;

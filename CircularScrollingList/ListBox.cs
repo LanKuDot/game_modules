@@ -62,21 +62,16 @@ public class ListBox : MonoBehaviour
 
 		switch (_positionCtrl.direction) {
 			case ListPositionCtrl.Direction.Vertical:
-				_unitPos = _positionCtrl.unitPos_L.y;
-				_lowerBoundPos = _positionCtrl.lowerBoundPos_L.y;
-				_upperBoundPos = _positionCtrl.upperBoundPos_L.y;
-
 				UpdatePosition = MoveVertically;
 				break;
 			case ListPositionCtrl.Direction.Horizontal:
-				_unitPos = _positionCtrl.unitPos_L.x;
-				_lowerBoundPos = _positionCtrl.lowerBoundPos_L.x;
-				_upperBoundPos = _positionCtrl.upperBoundPos_L.x;
-
 				UpdatePosition = MoveHorizontally;
 				break;
 		}
 
+		_unitPos = _positionCtrl.unitPos;
+		_lowerBoundPos = _positionCtrl.lowerBoundPos;
+		_upperBoundPos = _positionCtrl.upperBoundPos;
 		_changeSideLowerBoundPos = _lowerBoundPos + _unitPos * 0.3f;
 		_changeSideUpperBoundPos = _upperBoundPos - _unitPos * 0.3f;
 
