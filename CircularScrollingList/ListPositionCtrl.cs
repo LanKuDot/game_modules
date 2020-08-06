@@ -41,7 +41,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	/* List mode */
 	[Tooltip("The type of the list.")]
 	public ListType listType = ListType.Circular;
-	[Tooltip("The contolling mode of the list.")]
+	[Tooltip("The controlling mode of the list.")]
 	public ControlMode controlMode = ControlMode.Drag;
 	[Tooltip("Should a box align in the middle of the list after sliding?")]
 	public bool alignMiddle = false;
@@ -228,7 +228,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	}
 
 
-	/* Move the list accroding to the dragging position and the dragging state
+	/* Move the list according to the dragging position and the dragging state
 	 */
 	private void DragPositionHandler(PointerEventData pointer, TouchPhase state)
 	{
@@ -254,7 +254,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		}
 	}
 
-	/* Scroll the list accroding to the delta of the mouse scrolling
+	/* Scroll the list according to the delta of the mouse scrolling
 	 */
 	private void ScrollDeltaHandler(Vector2 mouseScrollDelta)
 	{

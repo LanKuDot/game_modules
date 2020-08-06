@@ -28,7 +28,7 @@ public class ListBox : MonoBehaviour
 	public UpdatePositionDelegate UpdatePosition;
 
 	/* ====== Position variables ====== */
-	// Position caculated here is in the local space of the list
+	// Position calculated here is in the local space of the list
 	private float _unitPos;         // The distance between boxes
 	private float _lowerBoundPos;   // The left/down-most position of the box
 	private float _upperBoundPos;   // The right/up-most position of the box
@@ -95,7 +95,7 @@ public class ListBox : MonoBehaviour
 			button.onClick.AddListener(() => _positionCtrl.onBoxClick.Invoke(_contentID));
 	}
 
-	/* Initialize the local position of the list box accroding to its ID
+	/* Initialize the local position of the list box according to its ID
 	 */
 	private void InitialPosition()
 	{
@@ -172,7 +172,7 @@ public class ListBox : MonoBehaviour
 			UpdateToNextContent();
 	}
 
-	/* Get the major position according to the requested postion
+	/* Get the major position according to the requested position
 	 * If the box exceeds the boundary, one of the passed flags will be set
 	 * to indicate that the content needs to be updated.
 	 *
@@ -208,7 +208,7 @@ public class ListBox : MonoBehaviour
 		return _upperBoundPos * passivePosFactor;
 	}
 
-	/* Scale the listBox accroding to the major position
+	/* Scale the listBox according to the major position
 	 */
 	private void UpdateScale(float majorPosition)
 	{
@@ -223,7 +223,7 @@ public class ListBox : MonoBehaviour
 		// Get the content ID of the centered box
 		_contentID = _positionCtrl.centeredContentID;
 
-		// Adjust the contentID accroding to its initial order.
+		// Adjust the contentID according to its initial order.
 		_contentID += listBoxID - _positionCtrl.listBoxes.Length / 2;
 
 		// In the linear mode, disable the box if needed
@@ -250,11 +250,11 @@ public class ListBox : MonoBehaviour
 		UpdateDisplayContent();
 	}
 
-	/* Update the dispalying content on the ListBox.
+	/* Update the displaying content on the ListBox.
 	 */
 	private void UpdateDisplayContent()
 	{
-		// Update the content accroding to its contentID.
+		// Update the content according to its contentID.
 		content.text = _listBank.GetListContent(_contentID);
 	}
 
