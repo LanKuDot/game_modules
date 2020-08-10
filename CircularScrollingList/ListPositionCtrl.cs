@@ -5,6 +5,8 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
+using AnimationCurveExtend;
+
 public interface IControlEventHandler:
 	IBeginDragHandler, IDragHandler, IEndDragHandler, IScrollHandler
 {}
@@ -68,8 +70,6 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	/* Parameters */
 	[Tooltip("The distance between each box. The larger, the closer.")]
 	public float boxDensity = 2.0f;
-	[Tooltip("The friction for the free sliding of ListBox. The larger, the rougher.")]
-	public float boxSlidingFriction = 2.0f;
 	[Tooltip("The curve of the box position. " +
 		"The valid range of the x axis is [0, 1]. " +
 		"The y axis specifies the shape of the list. " +
@@ -79,6 +79,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		"The valid range of the x axis is [0, 1]. " +
 		"The y axis specifies the 'localScale' of the box.")]
 	public AnimationCurve boxScaleCurve = AnimationCurve.Constant(0.0f, 1.0f, 1.0f);
+	public AnimationCurve boxMovementCurve = AnimationCurve.Linear(0.0f, 0.0f, 1.0f, 1.0f);
 	/*===============================*/
 
 	// The canvas plane which the scrolling list is at.
@@ -104,9 +105,10 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	private int _numOfInputFrames;
 
 	// Variables for moving listBoxes
+	private IMovement _movementCurve;
+	private bool _isDragging = false;
 	private int boxSlidingFrames;
 	private int _slidingFramesLeft;
-	private float _boxSlidingVelocity;
 	private float _slidingDistanceLeft;
 	// The flag indicating that one of the boxes need to be centered after the sliding
 	private bool _needToAlignToCenter = false;
@@ -182,6 +184,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	{
 		switch (controlMode) {
 			case ControlMode.Drag:
+				_movementCurve = new VelocityMovement(boxMovementCurve);
 				_inputPositionHandler = DragPositionHandler;
 
 				_scrollHandler = delegate (Vector2 v) { };
@@ -190,12 +193,14 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 				break;
 
 			case ControlMode.Button:
+				_movementCurve = new DistanceMovement(boxMovementCurve);
 				_inputPositionHandler =
 					delegate (PointerEventData pointer, TouchPhase phase) { };
 				_scrollHandler = delegate (Vector2 v) { };
 				break;
 
 			case ControlMode.MouseWheel:
+				_movementCurve = new DistanceMovement(boxMovementCurve);
 				_scrollHandler = ScrollDeltaHandler;
 
 				_inputPositionHandler =
@@ -236,7 +241,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 			case TouchPhase.Began:
 				_numOfInputFrames = 0;
 				_startInputPos = GetInputCanvasPosition(pointer.position);
-				_slidingFramesLeft = 0; // Make the list stop sliding
+				_isDragging = true;
 				break;
 
 			case TouchPhase.Moved:
@@ -249,7 +254,8 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 
 			case TouchPhase.Ended:
 				_endInputPos = GetInputCanvasPosition(pointer.position);
-				SetSlidingEffect();
+				_isDragging = false;
+				SetSlidingMovement(_deltaInputPos / Time.deltaTime);
 				break;
 		}
 	}
@@ -292,53 +298,22 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 
 
 	/* ====== Movement functions ====== */
+	/* Set the sliding movement to the movement curve
+	 */
+	private void SetSlidingMovement(float value)
+	{
+		_movementCurve.SetMovement(value);
+	}
+
 	/* Control the movement of listBoxes
 	 */
 	private void Update()
 	{
-		if (_slidingFramesLeft > 0) {
-			if (listType == ListType.Linear) {
-				StopListWhenReachEnd();
-			}
-
-			--_slidingFramesLeft;
-
-			// Set sliding distance for this frame
-			if (_slidingFramesLeft == 0) {
-				if (_needToAlignToCenter) {
-					_needToAlignToCenter = false;
-					SetSlidingToCenter();
-				} else {
-					_slidingDistance = _slidingDistanceLeft;
-				}
-			} else
-				_slidingDistance = Vector3.Lerp(Vector3.zero, _slidingDistanceLeft,
-					boxSlidingSpeedFactor);
-
-			switch (direction) {
-				case Direction.Vertical:
-					foreach (ListBox listBox in listBoxes)
-						listBox.UpdatePosition(slidingDistance.y);
-					break;
-				case Direction.Horizontal:
-					foreach (ListBox listBox in listBoxes)
-						listBox.UpdatePosition(slidingDistance.x);
-					break;
-			}
-
-			_slidingDistanceLeft -= slidingDistance;
-
-			_slidingDistanceLeft -= _slidingDistance;
+		if (!_isDragging && !_movementCurve.IsMovementEnded()) {
+			float distance = _movementCurve.GetDistance(Time.deltaTime);
+			foreach (ListBox listBox in listBoxes)
+				listBox.UpdatePosition(distance);
 		}
-	}
-
-
-	/* Calculate the sliding distance and sliding frames
-	 */
-	private void SetSlidingEffect()
-	{
-		_slidingDistanceLeft = _deltaInputPos;
-		_slidingFramesLeft = 20;
 	}
 
 	/* Determine if the finger or mouse sliding is the fast sliding.
