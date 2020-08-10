@@ -107,6 +107,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	// Variables for moving listBoxes
 	private IMovement _movementCurve;
 	private bool _isDragging = false;
+	private float _lastUnitMoveDistance = 0.0f;
 	private int boxSlidingFrames;
 	private int _slidingFramesLeft;
 	private float _slidingDistanceLeft;
@@ -388,22 +389,10 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	 */
 	private void SetUnitMove(int unit)
 	{
-		float deltaPos = 0.0f;
-
-		switch (direction) {
-			case Direction.Vertical:
-				deltaPos = unitPos * unit;
-				break;
-			case Direction.Horizontal:
-				deltaPos = unitPos * unit;
-				break;
-		}
-
-		if (_slidingFramesLeft != 0)
-			deltaPos += _slidingDistanceLeft;
-
-		_slidingDistanceLeft = deltaPos;
-		_slidingFramesLeft = boxSlidingFrames;
+		float deltaPos = unitPos * unit +
+		    _lastUnitMoveDistance - _movementCurve.GetDistancePassed();
+		_movementCurve.SetMovement(deltaPos);
+		_lastUnitMoveDistance = deltaPos;
 	}
 
 	/* Move all listBoxes 1 unit up.
