@@ -24,6 +24,8 @@ namespace AnimationCurveExtend
 		{
 			_curve = curve;
 			_timeTotal = _curve[_curve.length - 1].time;
+			// Make the IsTimeOut() return true before the first Reset() call
+			_timePassed = _timeTotal + 1.0f;
 		}
 
 		/* Reset the time counter to start a new evaluation period
