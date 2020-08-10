@@ -56,6 +56,7 @@ namespace AnimationCurveExtend
 		void SetMovement(float baseValue);
 		bool IsMovementEnded();
 		float GetDistance(float deltaTime);
+		float GetDistancePassed();
 	}
 
 	/* Get the moving distance per frame in a movement,
@@ -69,6 +70,9 @@ namespace AnimationCurveExtend
 		/* The base velocity to be multiplied by the velocity factor in a movement
 		 */
 		private float _baseVelocity;
+		/* The distance passed in this movement
+		 */
+		private float _distancePassed;
 
 		public VelocityMovement(AnimationCurve velocityFactorCurve)
 		{
@@ -82,6 +86,7 @@ namespace AnimationCurveExtend
 		{
 			_velocityFactorCurve.Reset();
 			_baseVelocity = baseVelocity;
+			_distancePassed = 0.0f;
 		}
 
 		public bool IsMovementEnded()
@@ -95,7 +100,14 @@ namespace AnimationCurveExtend
 		 */
 		public float GetDistance(float deltaTime)
 		{
-			return _velocityFactorCurve.Evaluate(deltaTime) * _baseVelocity * deltaTime;
+			float distance = _velocityFactorCurve.Evaluate(deltaTime) * _baseVelocity * deltaTime;
+			_distancePassed += distance;
+			return distance;
+		}
+
+		public float GetDistancePassed()
+		{
+			return _distancePassed;
 		}
 	}
 
@@ -146,6 +158,11 @@ namespace AnimationCurveExtend
 
 			_distancePassed = nextDistance;
 			return deltaDistance;
+		}
+
+		public float GetDistancePassed()
+		{
+			return _distancePassed;
 		}
 	}
 }
