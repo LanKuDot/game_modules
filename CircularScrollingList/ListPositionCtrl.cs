@@ -99,10 +99,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	private ScrollHandlerDelegate _scrollHandler;
 
 	// Input mouse/finger position in the local space of the list.
-	private float _startInputPos;
-	private float _endInputPos;
 	private float _deltaInputPos;
-	private int _numOfInputFrames;
 
 	// Variables for moving listBoxes
 	private IMovement _movementCurve;
@@ -240,13 +237,10 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	{
 		switch (state) {
 			case TouchPhase.Began:
-				_numOfInputFrames = 0;
-				_startInputPos = GetInputCanvasPosition(pointer.position);
 				_isDragging = true;
 				break;
 
 			case TouchPhase.Moved:
-				++_numOfInputFrames;
 				_deltaInputPos = GetInputCanvasPosition(pointer.delta);
 				// Slide the list as long as the moving distance of the pointer
 				foreach (ListBox listBox in listBoxes)
@@ -254,7 +248,6 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 				break;
 
 			case TouchPhase.Ended:
-				_endInputPos = GetInputCanvasPosition(pointer.position);
 				_isDragging = false;
 				SetSlidingMovement(_deltaInputPos / Time.deltaTime);
 				break;
@@ -315,29 +308,6 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 			foreach (ListBox listBox in listBoxes)
 				listBox.UpdatePosition(distance);
 		}
-	}
-
-	/* Determine if the finger or mouse sliding is the fast sliding.
-	 * If the duration of a slide is within 15 frames and the distance is
-	 * longer than the 1/3 of the distance of the list, the slide is the fast sliding.
-	 */
-	private bool IsFastSliding(int frames, Vector3 distance)
-	{
-		if (frames < 15) {
-			switch (direction) {
-				case Direction.Horizontal:
-					if (Mathf.Abs(distance.x) > _canvasMaxPos * 2.0f / 3.0f)
-						return true;
-					else
-						return false;
-				case Direction.Vertical:
-					if (Mathf.Abs(distance.y) > _canvasMaxPos * 2.0f / 3.0f)
-						return true;
-					else
-						return false;
-			}
-		}
-		return false;
 	}
 
 	/* Set the sliding effect to make one of boxes align to center
