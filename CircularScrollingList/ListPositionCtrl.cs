@@ -80,6 +80,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		"The y axis specifies the 'localScale' of the box.")]
 	public AnimationCurve boxScaleCurve = AnimationCurve.Constant(0.0f, 1.0f, 1.0f);
 	public AnimationCurve boxMovementCurve = AnimationCurve.Linear(0.0f, 0.0f, 1.0f, 1.0f);
+	public AnimationCurve boxCenteringCurve = AnimationCurve.EaseInOut(0.0f, 0.0f, 0.25f, 1.0f);
 	/*===============================*/
 
 	// The canvas plane which the scrolling list is at.
@@ -102,14 +103,11 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	private float _deltaInputPos;
 
 	// Variables for moving listBoxes
-	private IMovement _movementCurve;
+	private IMovementCtrl _movementCtrl;
 	private bool _isDragging = false;
-	private float _lastUnitMoveDistance = 0.0f;
 	private int boxSlidingFrames;
 	private int _slidingFramesLeft;
 	private float _slidingDistanceLeft;
-	// The flag indicating that one of the boxes need to be centered after the sliding
-	private bool _needToAlignToCenter = false;
 
 	// Variables for linear mode
 	[HideInInspector]
@@ -182,7 +180,8 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	{
 		switch (controlMode) {
 			case ControlMode.Drag:
-				_movementCurve = new VelocityMovement(boxMovementCurve);
+				_movementCtrl = new VelocityMovement(boxMovementCurve,
+					boxCenteringCurve, alignMiddle, FindDeltaPositionToCenter);
 				_inputPositionHandler = DragPositionHandler;
 
 				_scrollHandler = delegate (Vector2 v) { };
@@ -191,14 +190,14 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 				break;
 
 			case ControlMode.Button:
-				_movementCurve = new DistanceMovement(boxMovementCurve);
+				_movementCtrl = new DistanceMovementCtrl(boxMovementCurve);
 				_inputPositionHandler =
 					delegate (PointerEventData pointer, TouchPhase phase) { };
 				_scrollHandler = delegate (Vector2 v) { };
 				break;
 
 			case ControlMode.MouseWheel:
-				_movementCurve = new DistanceMovement(boxMovementCurve);
+				_movementCtrl = new DistanceMovementCtrl(boxMovementCurve);
 				_scrollHandler = ScrollDeltaHandler;
 
 				_inputPositionHandler =
@@ -296,15 +295,15 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	 */
 	private void SetSlidingMovement(float value)
 	{
-		_movementCurve.SetMovement(value);
+		_movementCtrl.SetMovement(value);
 	}
 
 	/* Control the movement of listBoxes
 	 */
 	private void Update()
 	{
-		if (!_isDragging && !_movementCurve.IsMovementEnded()) {
-			float distance = _movementCurve.GetDistance(Time.deltaTime);
+		if (!_isDragging && !_movementCtrl.IsMovementEnded()) {
+			float distance = _movementCtrl.GetDistance(Time.deltaTime);
 			foreach (ListBox listBox in listBoxes)
 				listBox.UpdatePosition(distance);
 		}
@@ -352,17 +351,14 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 				break;
 		}
 
-		return deltaPos;
+		return minDeltaPos;
 	}
 
 	/* Move the list for the distance of times of unit position
 	 */
 	private void SetUnitMove(int unit)
 	{
-		float deltaPos = unitPos * unit +
-		    _lastUnitMoveDistance - _movementCurve.GetDistancePassed();
-		_movementCurve.SetMovement(deltaPos);
-		_lastUnitMoveDistance = deltaPos;
+		SetSlidingMovement(unit * unitPos);
 	}
 
 	/* Move all listBoxes 1 unit up.
