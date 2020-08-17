@@ -416,7 +416,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	{
 		float minPosition = Mathf.Infinity;
 		float position;
-		ListBox candicateBox = null;
+		ListBox candidateBox = null;
 
 		switch (direction) {
 			case Direction.Vertical:
@@ -424,7 +424,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 					position = Mathf.Abs(listBox.transform.localPosition.y);
 					if (position < minPosition) {
 						minPosition = position;
-						candicateBox = listBox;
+						candidateBox = listBox;
 					}
 				}
 				break;
@@ -433,13 +433,13 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 					position = Mathf.Abs(listBox.transform.localPosition.x);
 					if (position < minPosition) {
 						minPosition = position;
-						candicateBox = listBox;
+						candidateBox = listBox;
 					}
 				}
 				break;
 		}
 
-		return candicateBox;
+		return candidateBox;
 	}
 
 	/* Get the content ID of the centered box
