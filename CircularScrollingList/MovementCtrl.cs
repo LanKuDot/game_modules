@@ -8,9 +8,9 @@ public interface IMovementCtrl
 	float GetDistance(float deltaTime);
 }
 
-/* Control the movement that is decided by the velocity factor curve
+/* Control the movement for the free movement
  */
-public class VelocityMovement : IMovementCtrl
+public class FreeMovementCtrl : IMovementCtrl
 {
 	/* The curve that evaluating the velocity factor at the accumulated delta time
 	 * The evaluated value will be multiplied by the `_baseVelocity` to get the
@@ -48,7 +48,7 @@ public class VelocityMovement : IMovementCtrl
 	 * @param toAlign Is it need to aligning after a movement?
 	 * @param findAligningDistance The function that evaluate the distance for aligning
 	 */
-	public VelocityMovement(AnimationCurve movementCurve, AnimationCurve aligningCurve,
+	public FreeMovementCtrl(AnimationCurve movementCurve, AnimationCurve aligningCurve,
 		bool toAlign, CalculateDistanceDelegate findAligningDistance)
 	{
 		_velocityFactorCurve = new DeltaTimeCurve(movementCurve);

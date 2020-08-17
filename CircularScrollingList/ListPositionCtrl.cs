@@ -180,7 +180,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	{
 		switch (controlMode) {
 			case ControlMode.Drag:
-				_movementCtrl = new VelocityMovement(boxMovementCurve,
+				_movementCtrl = new FreeMovementCtrl(boxMovementCurve,
 					boxCenteringCurve, alignMiddle, FindDeltaPositionToCenter);
 				_inputPositionHandler = DragPositionHandler;
 
