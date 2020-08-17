@@ -51,5 +51,12 @@ namespace AnimationCurveExtend
 			_timePassed += deltaTime;
 			return _curve.Evaluate(_timePassed);
 		}
+
+		/* Get the evaluated value at the current accumulated time.
+		 */
+		public float CurrentEvaluate()
+		{
+			return _curve.Evaluate(_timePassed);
+		}
 	}
 }

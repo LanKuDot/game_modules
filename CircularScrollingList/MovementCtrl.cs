@@ -12,23 +12,18 @@ public interface IMovementCtrl
  */
 public class FreeMovementCtrl : IMovementCtrl
 {
-	/* The curve that evaluating the velocity factor at the accumulated delta time
-	 * The evaluated value will be multiplied by the `_baseVelocity` to get the
-	 * final velocity.
+	/* The movement for the free movement
 	 */
-	private DeltaTimeCurve _velocityFactorCurve;
-	/* The movement control for aligning the list
+	private readonly VelocityMovement _freeMovement;
+	/* The movement for aligning the list
 	 */
-	private DistanceMovementCtrl _aligningMovement;
+	private readonly DistanceMovement _aligningMovement;
 	/* Does it need to align the list after a movement?
 	 */
-	private bool _toAlign;
+	private readonly bool _toAlign;
 	/* Is the list aligning?
 	 */
 	private bool _isAligning;
-	/* The referencing velocity for a movement
-	 */
-	private float _baseVelocity;
 	/* The velocity threshold that stop the list to align it
 	 * It is used when `_alignMiddle` is true.
 	 */
@@ -41,7 +36,7 @@ public class FreeMovementCtrl : IMovementCtrl
 
 	/* Constructor
 	 *
-	 * @param movementCurve The curve that defines the velocity factor
+	 * @param movementCurve The curve that defines the velocity factor for the free movement
 	 *        The x axis is the moving duration, and the y axis is the factor.
 	 * @param aligningCurve The curve that defines the distance factor for aligning
 	 *        The x axis is the aligning duration, and the y axis is the factor.
@@ -51,18 +46,17 @@ public class FreeMovementCtrl : IMovementCtrl
 	public FreeMovementCtrl(AnimationCurve movementCurve, AnimationCurve aligningCurve,
 		bool toAlign, CalculateDistanceDelegate findAligningDistance)
 	{
-		_velocityFactorCurve = new DeltaTimeCurve(movementCurve);
-		_aligningMovement = new DistanceMovementCtrl(aligningCurve);
+		_freeMovement = new VelocityMovement(movementCurve);
+		_aligningMovement = new DistanceMovement(aligningCurve);
 		_toAlign = toAlign;
 		_findAligningDistance = findAligningDistance;
 	}
 
-	/* Set the base velocity for this new movement
+	/* Set the release velocity for this new movement
 	 */
-	public void SetMovement(float baseVelocity)
+	public void SetMovement(float releaseVelocity)
 	{
-		_velocityFactorCurve.Reset();
-		_baseVelocity = baseVelocity;
+		_freeMovement.SetMovement(releaseVelocity);
 	}
 
 	/* Is the movement ended?
@@ -71,16 +65,13 @@ public class FreeMovementCtrl : IMovementCtrl
 	public bool IsMovementEnded()
 	{
 		if (!_isAligning)
-			return _velocityFactorCurve.IsTimeOut();
+			return _freeMovement.IsMovementEnded();
 
 		return _aligningMovement.IsMovementEnded();
 	}
 
 	/* Get moving distance in the given delta time
 	 *
-	 * The given delta time will be accumulated first, and then get the velocity
-	 * at the accumulated time. The velocity will be multiplied by the given delta time
-	 * to get the moving distance.
 	 * If `_alignMiddle` is true, the movement will switch to the aligning movement
 	 * when the velocity is too slow.
 	 */
@@ -89,12 +80,12 @@ public class FreeMovementCtrl : IMovementCtrl
 		float distance;
 
 		if (!_isAligning) {
-			float velocity = _baseVelocity * _velocityFactorCurve.Evaluate(deltaTime);
-			distance = velocity * deltaTime;
+			distance = _freeMovement.GetDistance(deltaTime);
 
-			if (_toAlign && Mathf.Abs(velocity) < _stopVelocityThreshold) {
-				// Make the curve to be time out
-				_velocityFactorCurve.Evaluate(100.0f);
+			if (_toAlign &&
+			    Mathf.Abs(_freeMovement.lastVelocity) < _stopVelocityThreshold) {
+				// Make the free movement end
+				_freeMovement.GetDistance(100.0f);
 				_aligningMovement.SetMovement(_findAligningDistance());
 				_isAligning = true;
 			}
@@ -109,30 +100,22 @@ public class FreeMovementCtrl : IMovementCtrl
 	}
 }
 
-/* Control the movement that is decided by the total moving distance
+/* Control the movement for the unit movement
  */
-public class DistanceMovementCtrl : IMovementCtrl
+public class UnitMovementCtrl : IMovementCtrl
 {
-	/* The curve that evaluating the distance factor at the accumulated delta time
-	 * The evaluated value will be multiplied by `_distanceTotal` to get the final
-	 * moving distance.
+	/* The movement for the unit movement
 	 */
-	private DeltaTimeCurve _distanceFactorCurve;
-	/* The total moving distance in a movement
-	 */
-	private float _distanceTotal;
-	/* The passed moving distance in a movement
-	 */
-	private float _distancePassed;
+	private readonly DistanceMovement _unitMovement;
 
 	/* Constructor
 	 *
 	 * @param movementCurve The curve that defines the distance factor
 	 *        The x axis is the moving duration, and y axis is the factor value.
 	 */
-	public DistanceMovementCtrl(AnimationCurve movementCurve)
+	public UnitMovementCtrl(AnimationCurve movementCurve)
 	{
-		_distanceFactorCurve = new DeltaTimeCurve(movementCurve);
+		_unitMovement = new DistanceMovement(movementCurve);
 	}
 
 	/* Set the moving distance for this new movement
@@ -141,8 +124,116 @@ public class DistanceMovementCtrl : IMovementCtrl
 	 */
 	public void SetMovement(float distanceAdded)
 	{
+		distanceAdded += _unitMovement.distanceRemaining;
+		_unitMovement.SetMovement(distanceAdded);
+	}
+
+	public bool IsMovementEnded()
+	{
+		return _unitMovement.IsMovementEnded();
+	}
+
+	/* Get the moving distance in the given delta time
+	 */
+	public float GetDistance(float deltaTime)
+	{
+		return _unitMovement.GetDistance(deltaTime);
+	}
+}
+
+/* Evaluate the moving distance within the given delta time according to the velocity
+ * factor curve
+ */
+internal class VelocityMovement
+{
+	/* The curve that evaluating the velocity factor at the accumulated delta time
+	 * The evaluated value will be multiplied by the `_baseVelocity` to get the
+	 * final velocity.
+	 */
+	private readonly DeltaTimeCurve _velocityFactorCurve;
+	/* The referencing velocity for a movement
+	 */
+	private float _baseVelocity;
+	/* The velocity at the last `GetDistance()` call or the last `SetMovement()` call
+	 */
+	private float _lastVelocity;
+	public float lastVelocity => _lastVelocity;
+
+	/* Constructor
+	 *
+	 * @param factorCurve The curve that defines the velocity factor
+	 *        The x axis is the moving duration, and the y axis is the factor.
+	 */
+	public VelocityMovement(AnimationCurve factorCurve)
+	{
+		_velocityFactorCurve = new DeltaTimeCurve(factorCurve);
+	}
+
+	/* Set the base velocity for this new movement
+	 */
+	public void SetMovement(float baseVelocity)
+	{
+		_velocityFactorCurve.Reset();
+		_baseVelocity = baseVelocity;
+		_lastVelocity = _velocityFactorCurve.CurrentEvaluate() * _baseVelocity;
+	}
+
+	/* Is the movement ended?
+	 */
+	public bool IsMovementEnded()
+	{
+		return _velocityFactorCurve.IsTimeOut();
+	}
+
+	/* Get moving distance in the given delta time
+	 *
+	 * The given delta time will be accumulated first, and then get the velocity
+	 * at the accumulated time. The velocity will be multiplied by the given delta time
+	 * to get the moving distance.
+	 */
+	public float GetDistance(float deltaTime)
+	{
+		_lastVelocity = _velocityFactorCurve.Evaluate(deltaTime) * _baseVelocity;
+		return _lastVelocity * deltaTime;
+	}
+}
+
+/* Evaluate the moving distance within the given delta time according to the total
+ * moving distance
+ */
+internal class DistanceMovement
+{
+	/* The curve that evaluating the distance factor at the accumulated delta time
+	 * The evaluated value will be multiplied by `_distanceTotal` to get the final
+	 * moving distance.
+	 */
+	private readonly DeltaTimeCurve _distanceFactorCurve;
+	/* The total moving distance in a movement
+	 */
+	private float _distanceTotal;
+	/* The passed moving distance in a movement
+	 */
+	private float _distancePassed;
+	/* The remaining moving distance in a movement
+	 */
+	public float distanceRemaining => _distanceTotal - _distancePassed;
+
+	/* Constructor
+	 *
+	 * @param factorCurve The curve that defines the distance factor
+	 *        The x axis is the moving duration, and y axis is the factor value.
+	 */
+	public DistanceMovement(AnimationCurve factorCurve)
+	{
+		_distanceFactorCurve = new DeltaTimeCurve(factorCurve);
+	}
+
+	/* Set the moving distance for this new movement
+	 */
+	public void SetMovement(float totalDistance)
+	{
 		_distanceFactorCurve.Reset();
-		_distanceTotal = distanceAdded + (_distanceTotal - _distancePassed);
+		_distanceTotal = totalDistance;
 		_distancePassed = 0.0f;
 	}
 
@@ -159,8 +250,8 @@ public class DistanceMovementCtrl : IMovementCtrl
 	 */
 	public float GetDistance(float deltaTime)
 	{
-		float nextDistance = _distanceTotal * _distanceFactorCurve.Evaluate(deltaTime);
-		float deltaDistance = nextDistance - _distancePassed;
+		var nextDistance = _distanceTotal * _distanceFactorCurve.Evaluate(deltaTime);
+		var deltaDistance = nextDistance - _distancePassed;
 
 		_distancePassed = nextDistance;
 		return deltaDistance;

@@ -190,14 +190,14 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 				break;
 
 			case ControlMode.Button:
-				_movementCtrl = new DistanceMovementCtrl(boxMovementCurve);
+				_movementCtrl = new UnitMovementCtrl(boxMovementCurve);
 				_inputPositionHandler =
 					delegate (PointerEventData pointer, TouchPhase phase) { };
 				_scrollHandler = delegate (Vector2 v) { };
 				break;
 
 			case ControlMode.MouseWheel:
-				_movementCtrl = new DistanceMovementCtrl(boxMovementCurve);
+				_movementCtrl = new UnitMovementCtrl(boxMovementCurve);
 				_scrollHandler = ScrollDeltaHandler;
 
 				_inputPositionHandler =
