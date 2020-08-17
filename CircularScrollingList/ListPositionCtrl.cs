@@ -108,6 +108,8 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	private float _slidingDistanceLeft;
 
 	// Variables for linear mode
+	private float _movingValue;
+	private bool _isListReachingEnd = false;
 	[HideInInspector]
 	public int numOfUpperDisabledBoxes = 0;
 	[HideInInspector]
@@ -238,7 +240,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 				break;
 
 			case TouchPhase.Moved:
-				_deltaInputPos = GetInputCanvasPosition(pointer.delta);
+				_movingValue = _deltaInputPos = GetInputCanvasPosition(pointer.delta);
 				// Slide the list as long as the moving distance of the pointer
 				foreach (ListBox listBox in listBoxes)
 					listBox.UpdatePosition(_deltaInputPos);
@@ -293,6 +295,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	 */
 	private void SetSlidingMovement(float value)
 	{
+		_movingValue = value;
 		_movementCtrl.SetMovement(value);
 	}
 
@@ -300,6 +303,9 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	 */
 	private void Update()
 	{
+		if (listType == ListType.Linear)
+			CheckIfListReachEnd();
+
 		if (!_isDragging && !_movementCtrl.IsMovementEnded()) {
 			float distance = _movementCtrl.GetDistance(Time.deltaTime);
 			foreach (ListBox listBox in listBoxes)
@@ -377,19 +383,18 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	 *
 	 * This method is used for the linear mode.
 	 */
-	private void StopListWhenReachEnd()
+	private void CheckIfListReachEnd()
 	{
+		_isListReachingEnd = false;
+
 		switch (direction) {
 			case Direction.Vertical:
 				// If the list reaches the head and it keeps going down, or
 				// the list reaches the tail and it keeps going up,
 				// make the list end be stopped at the center.
-				if ((numOfUpperDisabledBoxes >= _maxNumOfDisabledBoxes && _slidingDistanceLeft < 0) ||
-					(numOfLowerDisabledBoxes >= _maxNumOfDisabledBoxes && _slidingDistanceLeft > 0)) {
-					_slidingDistanceLeft = FindDeltaPositionToCenter();
-
-					if (_slidingFramesLeft == 1)
-						_slidingFramesLeft = boxSlidingFrames;
+				if ((numOfUpperDisabledBoxes >= _maxNumOfDisabledBoxes && _movingValue < 0) ||
+					(numOfLowerDisabledBoxes >= _maxNumOfDisabledBoxes && _movingValue > 0)) {
+					_isListReachingEnd = true;
 				}
 
 				break;
@@ -398,9 +403,9 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 				// If the list reaches the head and it keeps going left, or
 				// the list reaches the tail and it keeps going right,
 				// make the list end be stopped at the center.
-				if ((numOfUpperDisabledBoxes >= _maxNumOfDisabledBoxes && _slidingDistanceLeft > 0) ||
-				    (numOfLowerDisabledBoxes >= _maxNumOfDisabledBoxes && _slidingDistanceLeft < 0)) {
-					_slidingDistanceLeft = FindDeltaPositionToCenter();
+				if ((numOfUpperDisabledBoxes >= _maxNumOfDisabledBoxes && _movingValue > 0) ||
+				    (numOfLowerDisabledBoxes >= _maxNumOfDisabledBoxes && _movingValue < 0)) {
+					_isListReachingEnd = true;
 				}
 
 				break;
