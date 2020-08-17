@@ -78,7 +78,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		"The y axis specifies the 'localScale' of the box.")]
 	public AnimationCurve boxScaleCurve = AnimationCurve.Constant(0.0f, 1.0f, 1.0f);
 	public AnimationCurve boxMovementCurve = AnimationCurve.Linear(0.0f, 0.0f, 1.0f, 1.0f);
-	public AnimationCurve boxCenteringCurve = AnimationCurve.EaseInOut(0.0f, 0.0f, 0.25f, 1.0f);
+	public AnimationCurve boxAligningCurve = AnimationCurve.EaseInOut(0.0f, 0.0f, 0.25f, 1.0f);
 	/*===============================*/
 
 	// The canvas plane which the scrolling list is at.
@@ -181,7 +181,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		switch (controlMode) {
 			case ControlMode.Drag:
 				_movementCtrl = new FreeMovementCtrl(boxMovementCurve,
-					boxCenteringCurve, alignMiddle, FindDeltaPositionToCenter);
+					boxAligningCurve, alignMiddle, FindDeltaPositionToCenter);
 				_inputPositionHandler = DragPositionHandler;
 
 				_scrollHandler = delegate (Vector2 v) { };
