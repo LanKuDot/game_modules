@@ -62,8 +62,6 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		"The registered callbacks will be added to the 'onClick' event of boxes, " +
 		"therefore, boxes should be 'Button's.")]
 	public ListBoxClickEvent onBoxClick;
-	// The callback will be invoked when the list is moving.
-	public ListEvent onListMove;
 	[Tooltip("The Buttons used by the Button mode.")]
 	public Button[] controlButtons;
 
