@@ -24,6 +24,12 @@ public class FreeMovementCtrl : IMovementCtrl
 	/* Is the list aligning?
 	 */
 	private bool _isAligning;
+	/* How long does the list exceed the end
+	 */
+	private float _overGoingTime;
+	/* How long could the 1ist exceed the end?
+	 */
+	private const float _overGoingTimeThreshold = 0.02f;
 	/* The velocity threshold that stop the list to align it
 	 * It is used when `_alignMiddle` is true.
 	 */
@@ -34,6 +40,11 @@ public class FreeMovementCtrl : IMovementCtrl
 	 */
 	private CalculateDistanceDelegate _findAligningDistance;
 
+	public delegate bool BoolValueGetterDelegate();
+	/* The function that getting the value of flag _isListReachingEnd in ListPositionCtrl
+	 */
+	private BoolValueGetterDelegate _isListReachingEnd;
+
 	/* Constructor
 	 *
 	 * @param movementCurve The curve that defines the velocity factor for the free movement
@@ -42,14 +53,18 @@ public class FreeMovementCtrl : IMovementCtrl
 	 *        The x axis is the aligning duration, and the y axis is the factor.
 	 * @param toAlign Is it need to aligning after a movement?
 	 * @param findAligningDistance The function that evaluate the distance for aligning
+	 * @param isListReachingEnd The function that return the flag indicating
+	 *        whether the list reaches end or not
 	 */
 	public FreeMovementCtrl(AnimationCurve movementCurve, AnimationCurve aligningCurve,
-		bool toAlign, CalculateDistanceDelegate findAligningDistance)
+		bool toAlign, CalculateDistanceDelegate findAligningDistance,
+		BoolValueGetterDelegate isListReachingEnd)
 	{
 		_freeMovement = new VelocityMovement(movementCurve);
 		_aligningMovement = new DistanceMovement(aligningCurve);
 		_toAlign = toAlign;
 		_findAligningDistance = findAligningDistance;
+		_isListReachingEnd = isListReachingEnd;
 	}
 
 	/* Set the release velocity for this new movement
@@ -57,6 +72,7 @@ public class FreeMovementCtrl : IMovementCtrl
 	public void SetMovement(float releaseVelocity)
 	{
 		_freeMovement.SetMovement(releaseVelocity);
+		_overGoingTime = _isListReachingEnd() ? _overGoingTimeThreshold : 0.0f;
 	}
 
 	/* Is the movement ended?
@@ -82,12 +98,17 @@ public class FreeMovementCtrl : IMovementCtrl
 		if (!_isAligning) {
 			distance = _freeMovement.GetDistance(deltaTime);
 
-			if (_toAlign &&
-			    Mathf.Abs(_freeMovement.lastVelocity) < _stopVelocityThreshold) {
+			if ((_isListReachingEnd() &&
+			    (_overGoingTime += deltaTime) > _overGoingTimeThreshold) ||
+			    (_toAlign &&
+			     Mathf.Abs(_freeMovement.lastVelocity) < _stopVelocityThreshold)) {
 				// Make the free movement end
 				_freeMovement.GetDistance(100.0f);
 				_aligningMovement.SetMovement(_findAligningDistance());
 				_isAligning = true;
+
+				// Start the aligning movement instead
+				distance = _aligningMovement.GetDistance(deltaTime);
 			}
 		} else {
 			distance = _aligningMovement.GetDistance(deltaTime);

@@ -181,7 +181,8 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		switch (controlMode) {
 			case ControlMode.Drag:
 				_movementCtrl = new FreeMovementCtrl(boxMovementCurve,
-					boxAligningCurve, alignMiddle, FindDeltaPositionToCenter);
+					boxAligningCurve, alignMiddle, FindDeltaPositionToCenter,
+					IsListReachingEnd);
 				_inputPositionHandler = DragPositionHandler;
 
 				_scrollHandler = delegate (Vector2 v) { };
@@ -242,6 +243,8 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 			case TouchPhase.Moved:
 				_movingValue = _deltaInputPos = GetInputCanvasPosition(pointer.delta);
 				// Slide the list as long as the moving distance of the pointer
+				if (_isListReachingEnd)
+					return;
 				foreach (ListBox listBox in listBoxes)
 					listBox.UpdatePosition(_deltaInputPos);
 				break;
@@ -295,7 +298,6 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	 */
 	private void SetSlidingMovement(float value)
 	{
-		_movingValue = value;
 		_movementCtrl.SetMovement(value);
 	}
 
@@ -303,14 +305,15 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	 */
 	private void Update()
 	{
-		if (listType == ListType.Linear)
-			CheckIfListReachEnd();
-
 		if (!_isDragging && !_movementCtrl.IsMovementEnded()) {
 			float distance = _movementCtrl.GetDistance(Time.deltaTime);
 			foreach (ListBox listBox in listBoxes)
 				listBox.UpdatePosition(distance);
+			_movingValue = distance;
 		}
+
+		if (listType == ListType.Linear)
+			CheckIfListReachEnd();
 	}
 
 	/* Set the sliding effect to make one of boxes align to center
@@ -410,6 +413,13 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 
 				break;
 		}
+	}
+
+	/* For the IMovementCtrl to access this variable
+	 */
+	public bool IsListReachingEnd()
+	{
+		return _isListReachingEnd;
 	}
 
 
