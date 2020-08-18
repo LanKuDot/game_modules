@@ -97,15 +97,11 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	private delegate void ScrollHandlerDelegate(Vector2 scrollDelta);
 	private ScrollHandlerDelegate _scrollHandler;
 
-	// Input mouse/finger position in the local space of the list.
-	private float _deltaInputPos;
-
 	// Variables for moving listBoxes
 	private IMovementCtrl _movementCtrl;
 	private bool _isDragging = false;
-	private int boxSlidingFrames;
-	private int _slidingFramesLeft;
-	private float _slidingDistanceLeft;
+	// Input mouse/finger position in the local space of the list.
+	private float _deltaInputPos;
 
 	// Variables for linear mode
 	private float _movingValue;
@@ -316,14 +312,6 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 			CheckIfListReachEnd();
 	}
 
-	/* Set the sliding effect to make one of boxes align to center
-	 */
-	private void SetSlidingToCenter()
-	{
-		// _slidingDistanceLeft = FindDeltaPositionToCenter();
-		_slidingFramesLeft = boxSlidingFrames;
-	}
-
 	/* Find the listBox which is the closest to the center position,
 	 * and calculate the delta x or y position between it and the center position.
 	 */
@@ -462,12 +450,5 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	public int GetCenteredContentID()
 	{
 		return GetCenteredBox().GetContentID();
-	}
-
-	/* Divide each component of vector a by vector b.
-	 */
-	private Vector3 DivideComponent(Vector3 a, Vector3 b)
-	{
-		return new Vector3(a.x / b.x, a.y / b.y, a.z / b.z);
 	}
 }
