@@ -95,10 +95,7 @@ public class FreeMovementCtrl : IMovementCtrl
 		if (!_isAligning) {
 			distance = _freeMovement.GetDistance(deltaTime);
 
-			if ((_isListReachingEnd() &&
-			    (_overGoingTime += deltaTime) > _overGoingTimeThreshold) ||
-			    (_toAlign &&
-			     Mathf.Abs(_freeMovement.lastVelocity) < _stopVelocityThreshold)) {
+			if (NeedToAlign(deltaTime)) {
 				// Make the free movement end
 				_freeMovement.GetDistance(100.0f);
 				_aligningMovement.SetMovement(_getAligningDistance());
@@ -115,6 +112,14 @@ public class FreeMovementCtrl : IMovementCtrl
 		}
 
 		return distance;
+	}
+
+	private bool NeedToAlign(float deltaTime)
+	{
+		return (_isListReachingEnd() &&
+		        (_overGoingTime += deltaTime) > _overGoingTimeThreshold) ||
+		       (_toAlign &&
+		        Mathf.Abs(_freeMovement.lastVelocity) < _stopVelocityThreshold);
 	}
 }
 
