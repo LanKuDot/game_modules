@@ -104,7 +104,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	private float _deltaInputPos;
 
 	// Variables for linear mode
-	private float _movingValue;
+	private float _movingDirection;
 	private bool _isListReachingEnd = false;
 	[HideInInspector]
 	public int numOfUpperDisabledBoxes = 0;
@@ -237,8 +237,9 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 				break;
 
 			case TouchPhase.Moved:
-				_movingValue = _deltaInputPos = GetInputCanvasPosition(pointer.delta);
+				_deltaInputPos = GetInputCanvasPosition(pointer.delta);
 				// Slide the list as long as the moving distance of the pointer
+				_movingDirection = Mathf.Sign(_deltaInputPos);
 				if (_isListReachingEnd)
 					return;
 				foreach (ListBox listBox in listBoxes)
@@ -305,7 +306,6 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 			float distance = _movementCtrl.GetDistance(Time.deltaTime);
 			foreach (ListBox listBox in listBoxes)
 				listBox.UpdatePosition(distance);
-			_movingValue = distance;
 		}
 
 		if (listType == ListType.Linear)
