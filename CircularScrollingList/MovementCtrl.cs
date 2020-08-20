@@ -1,4 +1,5 @@
 ﻿using AnimationCurveExtend;
+using System;
 using UnityEngine;
 
 public interface IMovementCtrl
@@ -34,16 +35,13 @@ public class FreeMovementCtrl : IMovementCtrl
 	 * It is used when `_alignMiddle` is true.
 	 */
 	private const float _stopVelocityThreshold = 200.0f;
-
-	public delegate float CalculateDistanceDelegate();
 	/* The function that calculating the distance to align the list
 	 */
-	private CalculateDistanceDelegate _findAligningDistance;
-
-	public delegate bool BoolValueGetterDelegate();
-	/* The function that getting the value of flag _isListReachingEnd in ListPositionCtrl
+	private readonly Func<float> _getAligningDistance;
+	/* The function that getting the flag indicating whether the list reaches end
+	 * or not
 	 */
-	private BoolValueGetterDelegate _isListReachingEnd;
+	private readonly Func<bool> _isListReachingEnd;
 
 	/* Constructor
 	 *
@@ -52,18 +50,17 @@ public class FreeMovementCtrl : IMovementCtrl
 	 * @param aligningCurve The curve that defines the distance factor for aligning
 	 *        The x axis is the aligning duration, and the y axis is the factor.
 	 * @param toAlign Is it need to aligning after a movement?
-	 * @param findAligningDistance The function that evaluate the distance for aligning
+	 * @param getAligningDistance The function that evaluate the distance for aligning
 	 * @param isListReachingEnd The function that return the flag indicating
 	 *        whether the list reaches end or not
 	 */
 	public FreeMovementCtrl(AnimationCurve movementCurve, AnimationCurve aligningCurve,
-		bool toAlign, CalculateDistanceDelegate findAligningDistance,
-		BoolValueGetterDelegate isListReachingEnd)
+		bool toAlign, Func<float> getAligningDistance, Func<bool> isListReachingEnd)
 	{
 		_freeMovement = new VelocityMovement(movementCurve);
 		_aligningMovement = new DistanceMovement(aligningCurve);
 		_toAlign = toAlign;
-		_findAligningDistance = findAligningDistance;
+		_getAligningDistance = getAligningDistance;
 		_isListReachingEnd = isListReachingEnd;
 	}
 
@@ -88,7 +85,7 @@ public class FreeMovementCtrl : IMovementCtrl
 
 	/* Get moving distance in the given delta time
 	 *
-	 * If `_alignMiddle` is true, the movement will switch to the aligning movement
+	 * If `_toAlign` is true, the movement will switch to the aligning movement
 	 * when the velocity is too slow.
 	 */
 	public float GetDistance(float deltaTime)
@@ -104,7 +101,7 @@ public class FreeMovementCtrl : IMovementCtrl
 			     Mathf.Abs(_freeMovement.lastVelocity) < _stopVelocityThreshold)) {
 				// Make the free movement end
 				_freeMovement.GetDistance(100.0f);
-				_aligningMovement.SetMovement(_findAligningDistance());
+				_aligningMovement.SetMovement(_getAligningDistance());
 				_isAligning = true;
 
 				// Start the aligning movement instead

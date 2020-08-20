@@ -177,8 +177,8 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		switch (controlMode) {
 			case ControlMode.Drag:
 				_movementCtrl = new FreeMovementCtrl(boxMovementCurve,
-					boxAligningCurve, alignMiddle, FindDeltaPositionToCenter,
-					IsListReachingEnd);
+					boxAligningCurve, alignMiddle,
+					() => _deltaDistanceToCenter, () => _isListReachingEnd);
 				_inputPositionHandler = DragPositionHandler;
 
 				_scrollHandler = delegate (Vector2 v) { };
@@ -346,7 +346,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 				break;
 		}
 
-		return minDeltaPos;
+		_deltaDistanceToCenter = minDeltaPos;
 	}
 
 	/* Move the list for the distance of times of unit position
@@ -402,14 +402,6 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 				break;
 		}
 	}
-
-	/* For the IMovementCtrl to access this variable
-	 */
-	public bool IsListReachingEnd()
-	{
-		return _isListReachingEnd;
-	}
-
 
 	/* Get the object of the centered ListBox.
 	 * The centered ListBox is found by comparing which one is the closest
