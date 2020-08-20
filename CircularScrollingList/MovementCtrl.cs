@@ -174,8 +174,7 @@ internal class VelocityMovement
 	private float _baseVelocity;
 	/* The velocity at the last `GetDistance()` call or the last `SetMovement()` call
 	 */
-	private float _lastVelocity;
-	public float lastVelocity => _lastVelocity;
+	public float lastVelocity { get; private set; }
 
 	/* Constructor
 	 *
@@ -193,7 +192,7 @@ internal class VelocityMovement
 	{
 		_velocityFactorCurve.Reset();
 		_baseVelocity = baseVelocity;
-		_lastVelocity = _velocityFactorCurve.CurrentEvaluate() * _baseVelocity;
+		lastVelocity = _velocityFactorCurve.CurrentEvaluate() * _baseVelocity;
 	}
 
 	/* Is the movement ended?
@@ -211,8 +210,8 @@ internal class VelocityMovement
 	 */
 	public float GetDistance(float deltaTime)
 	{
-		_lastVelocity = _velocityFactorCurve.Evaluate(deltaTime) * _baseVelocity;
-		return _lastVelocity * deltaTime;
+		lastVelocity = _velocityFactorCurve.Evaluate(deltaTime) * _baseVelocity;
+		return lastVelocity * deltaTime;
 	}
 }
 
@@ -234,7 +233,10 @@ internal class DistanceMovement
 	private float _distancePassed;
 	/* The remaining moving distance in a movement
 	 */
-	public float distanceRemaining => _distanceTotal - _distancePassed;
+	public float distanceRemaining
+	{
+		get { return _distanceTotal - _distancePassed; }
+	}
 
 	/* Constructor
 	 *
