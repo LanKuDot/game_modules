@@ -10,6 +10,11 @@ public interface IMovementCtrl
 }
 
 /* Control the movement for the free movement
+ *
+ * It is controlled by a velocity movement which moving velocity is related to
+ * the releasing velocity. If the aligning mode is on or the list reaches the end
+ * in the linear mode, it will switch to the aligning movement to move
+ * to the desired position.
  */
 public class FreeMovementCtrl : IMovementCtrl
 {
@@ -45,10 +50,10 @@ public class FreeMovementCtrl : IMovementCtrl
 
 	/* Constructor
 	 *
-	 * @param movementCurve The curve that defines the velocity factor for the free movement
-	 *        The x axis is the moving duration, and the y axis is the factor.
+	 * @param movementCurve The curve that defines the velocity factor for the free
+	 *        movement. The x axis is the moving duration, and the y axis is the factor.
 	 * @param aligningCurve The curve that defines the distance factor for aligning
-	 *        The x axis is the aligning duration, and the y axis is the factor.
+	 *        movement. The x axis is the aligning duration, and the y axis is the factor.
 	 * @param toAlign Is it need to aligning after a movement?
 	 * @param getAligningDistance The function that evaluate the distance for aligning
 	 * @param isListReachingEnd The function that return the flag indicating
@@ -84,9 +89,6 @@ public class FreeMovementCtrl : IMovementCtrl
 	}
 
 	/* Get moving distance in the given delta time
-	 *
-	 * If `_toAlign` is true, the movement will switch to the aligning movement
-	 * when the velocity is too slow.
 	 */
 	public float GetDistance(float deltaTime)
 	{
@@ -114,6 +116,11 @@ public class FreeMovementCtrl : IMovementCtrl
 		return distance;
 	}
 
+	/* Check whether it needs to switch to the aligning movement or not
+	 *
+	 * Return true if the list reaches the end and it exceeds the end for a while, or
+	 * if the aligning mode is on and the list moves too slow.
+	 */
 	private bool NeedToAlign(float deltaTime)
 	{
 		return (_isListReachingEnd() &&
@@ -124,35 +131,86 @@ public class FreeMovementCtrl : IMovementCtrl
 }
 
 /* Control the movement for the unit movement
+ *
+ * It is controlled by the distance movement which moves for the given distance.
+ * If the list reaches the end in the linear mode, it will controlled by the
+ * bouncing movement which performs a back and forth movement.
  */
 public class UnitMovementCtrl : IMovementCtrl
 {
 	/* The movement for the unit movement
 	 */
 	private readonly DistanceMovement _unitMovement;
+	/* The movement for the bouncing movement when the list reaches the end
+	 */
+	private readonly DistanceMovement _bouncingMovement;
+	/* The delta position for the bouncing effect
+	 */
+	private readonly float _bouncingDeltaPos;
+	/* Is the list bouncing?
+	 */
+	private bool _isBouncing = false;
+	/* How far does the list exceed the end?
+	 */
+	private float _overGoingDistance = 0.0f;
+	/* The function that returns the distance for aligning
+	 */
+	private readonly Func<float> _getAligningDistance;
+	/* The function that returns the flag indicating whether the list reaches
+	 * the end or not
+	 */
+	private readonly Func<bool> _isListReachingEnd;
 
 	/* Constructor
 	 *
 	 * @param movementCurve The curve that defines the distance factor
 	 *        The x axis is the moving duration, and y axis is the factor value.
+	 * @param bouncingCurve The curve that defines the distance factor
+	 *        for the bouncing effect
+	 * @param bouncingDeltaPos The delta position for bouncing effect
+	 * @param getAligningDistance The function that evaluates the distance
+	 *        for aligning
+	 * @param IsListReachingEnd The function that returns the flag
+	 *        indicating whether the list reaches the end or not
 	 */
-	public UnitMovementCtrl(AnimationCurve movementCurve)
-	{
+	public UnitMovementCtrl(AnimationCurve movementCurve,
+		AnimationCurve bouncingCurve, float bouncingDeltaPos,
+		Func<float> getAligningDistance, Func<bool> isListReachingEnd)
+	 {
 		_unitMovement = new DistanceMovement(movementCurve);
+		_bouncingMovement = new DistanceMovement(bouncingCurve);
+		_bouncingDeltaPos = bouncingDeltaPos;
+		_getAligningDistance = getAligningDistance;
+		_isListReachingEnd = isListReachingEnd;
 	}
 
 	/* Set the moving distance for this new movement
-	 * It there has the distance left in the last movement,
-	 * the moving distance will be accumulated.
+	 * If there has the distance left in the last movement, the moving distance
+	 * will be accumulated.
+	 * If the list reaches the end in the linear mode, the moving distance
+	 * will be ignored and use `_bouncingDeltaPos` for the bouncing movement.
 	 */
 	public void SetMovement(float distanceAdded)
 	{
-		distanceAdded += _unitMovement.distanceRemaining;
-		_unitMovement.SetMovement(distanceAdded);
+		// Ignore any movement when the list is aligning
+		if (_isBouncing)
+			return;
+
+		if (_isListReachingEnd()) {
+			var sign = Mathf.Sign(distanceAdded);
+			_bouncingMovement.SetMovement(sign * _bouncingDeltaPos);
+			_isBouncing = true;
+		} else {
+			distanceAdded += _unitMovement.distanceRemaining;
+			_unitMovement.SetMovement(distanceAdded);
+		}
 	}
 
 	public bool IsMovementEnded()
 	{
+		if (_isBouncing)
+			return _bouncingMovement.IsMovementEnded();
+
 		return _unitMovement.IsMovementEnded();
 	}
 
@@ -160,7 +218,45 @@ public class UnitMovementCtrl : IMovementCtrl
 	 */
 	public float GetDistance(float deltaTime)
 	{
-		return _unitMovement.GetDistance(deltaTime);
+		var distance = 0.0f;
+
+		if (!_isBouncing) {
+			distance = _unitMovement.GetDistance(deltaTime);
+
+			if (NeedToAlign(distance)) {
+				// Make the unit movement end
+				_unitMovement.GetDistance(100.0f);
+
+				_isBouncing = true;
+				_bouncingMovement.SetMovement(-1 * _getAligningDistance());
+				// Start at the furthest point to move back
+				_bouncingMovement.GetDistance(0.125f);
+				distance = _bouncingMovement.GetDistance(deltaTime);
+			}
+		} else {
+			distance = _bouncingMovement.GetDistance(deltaTime);
+
+			if (_bouncingMovement.IsMovementEnded())
+				_isBouncing = false;
+		}
+
+		return distance;
+	}
+
+	/* Check whether it needs to switch to the aligning mode
+	 *
+	 * Return true if the list exceeds the end for a distance or the unit movement
+	 * is ended.
+	 */
+	private bool NeedToAlign(float deltaDistance)
+	{
+		if (!_isListReachingEnd()) {
+			_overGoingDistance = 0.0f;
+			return false;
+		}
+
+		return (_overGoingDistance += Mathf.Abs(deltaDistance)) > _bouncingDeltaPos ||
+		       _unitMovement.IsMovementEnded();
 	}
 }
 

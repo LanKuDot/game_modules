@@ -1,11 +1,10 @@
 ﻿/* Handle the controlling event and send the moving information to the boxes it has
  */
+
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
-
-using AnimationCurveExtend;
 
 public interface IControlEventHandler:
 	IBeginDragHandler, IDragHandler, IEndDragHandler, IScrollHandler
@@ -79,6 +78,10 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	public AnimationCurve boxScaleCurve = AnimationCurve.Constant(0.0f, 1.0f, 1.0f);
 	public AnimationCurve boxMovementCurve = AnimationCurve.Linear(0.0f, 0.0f, 1.0f, 1.0f);
 	public AnimationCurve boxAligningCurve = AnimationCurve.EaseInOut(0.0f, 0.0f, 0.25f, 1.0f);
+	public AnimationCurve boxBouncingCurve = new AnimationCurve(
+		new Keyframe(0.0f, 0.0f),
+		new Keyframe(0.05f, 1.0f),
+		new Keyframe(0.1f, 0.0f));
 	/*===============================*/
 
 	// The canvas plane which the scrolling list is at.
@@ -188,14 +191,18 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 				break;
 
 			case ControlMode.Button:
-				_movementCtrl = new UnitMovementCtrl(boxMovementCurve);
+				_movementCtrl = new UnitMovementCtrl(boxMovementCurve, boxBouncingCurve,
+					unitPos * 0.3f,
+					() => _deltaDistanceToCenter,() => _isListReachingEnd);
 				_inputPositionHandler =
 					delegate (PointerEventData pointer, TouchPhase phase) { };
 				_scrollHandler = delegate (Vector2 v) { };
 				break;
 
 			case ControlMode.MouseWheel:
-				_movementCtrl = new UnitMovementCtrl(boxMovementCurve);
+				_movementCtrl = new UnitMovementCtrl(boxMovementCurve, boxBouncingCurve,
+					unitPos * 0.3f,
+					() => _deltaDistanceToCenter, () => _isListReachingEnd);
 				_scrollHandler = ScrollDeltaHandler;
 
 				_inputPositionHandler =
@@ -303,15 +310,20 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	 */
 	private void Update()
 	{
-		FindDeltaDistanceToCenter();
-		if (listType == ListType.Linear)
-			CheckIfListReachEnd();
-
 		if (!_isDragging && !_movementCtrl.IsMovementEnded()) {
 			float distance = _movementCtrl.GetDistance(Time.deltaTime);
 			foreach (ListBox listBox in listBoxes)
 				listBox.UpdatePosition(distance);
 		}
+	}
+
+	/* Check the status of the list
+	 */
+	private void LateUpdate()
+	{
+		FindDeltaDistanceToCenter();
+		if (listType == ListType.Linear)
+			CheckIfListReachEnd();
 	}
 
 	/* Find the listBox which is the closest to the center position,
@@ -355,6 +367,10 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	 */
 	private void SetUnitMove(int unit)
 	{
+		_movingDirection = Mathf.Sign(unit);
+		// Additional check for the moving direction changing
+		CheckIfListReachEnd();
+
 		SetSlidingMovement(unit * unitPos);
 	}
 
@@ -385,8 +401,10 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 				// If the list reaches the head and it keeps going down, or
 				// the list reaches the tail and it keeps going up,
 				// make the list end be stopped at the center.
-				if ((numOfUpperDisabledBoxes >= _maxNumOfDisabledBoxes && _movingValue < 0) ||
-					(numOfLowerDisabledBoxes >= _maxNumOfDisabledBoxes && _movingValue > 0)) {
+				if ((numOfUpperDisabledBoxes >= _maxNumOfDisabledBoxes &&
+				     _deltaDistanceToCenter > -1e-6 && _movingDirection < 0) ||
+					(numOfLowerDisabledBoxes >= _maxNumOfDisabledBoxes &&
+					 _deltaDistanceToCenter < 1e-6 && _movingDirection > 0)) {
 					_isListReachingEnd = true;
 				}
 
@@ -396,8 +414,10 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 				// If the list reaches the head and it keeps going left, or
 				// the list reaches the tail and it keeps going right,
 				// make the list end be stopped at the center.
-				if ((numOfUpperDisabledBoxes >= _maxNumOfDisabledBoxes && _movingValue > 0) ||
-				    (numOfLowerDisabledBoxes >= _maxNumOfDisabledBoxes && _movingValue < 0)) {
+				if ((numOfUpperDisabledBoxes >= _maxNumOfDisabledBoxes &&
+				     _deltaDistanceToCenter > -1e-6 && _movingDirection < 0) ||
+				    (numOfLowerDisabledBoxes >= _maxNumOfDisabledBoxes &&
+				     _deltaDistanceToCenter < 1e-6 && _movingDirection > 0)) {
 					_isListReachingEnd = true;
 				}
 
