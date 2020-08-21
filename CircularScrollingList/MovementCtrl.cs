@@ -233,14 +233,14 @@ internal class DistanceMovement
 	/* The total moving distance in a movement
 	 */
 	private float _distanceTotal;
-	/* The passed moving distance in a movement
+	/* The last target distance in a movement
 	 */
-	private float _distancePassed;
+	private float _lastDistance;
 	/* The remaining moving distance in a movement
 	 */
 	public float distanceRemaining
 	{
-		get { return _distanceTotal - _distancePassed; }
+		get { return _distanceTotal - _lastDistance; }
 	}
 
 	/* Constructor
@@ -259,7 +259,7 @@ internal class DistanceMovement
 	{
 		_distanceFactorCurve.Reset();
 		_distanceTotal = totalDistance;
-		_distancePassed = 0.0f;
+		_lastDistance = 0.0f;
 	}
 
 	public bool IsMovementEnded()
@@ -276,9 +276,9 @@ internal class DistanceMovement
 	public float GetDistance(float deltaTime)
 	{
 		var nextDistance = _distanceTotal * _distanceFactorCurve.Evaluate(deltaTime);
-		var deltaDistance = nextDistance - _distancePassed;
+		var deltaDistance = nextDistance - _lastDistance;
 
-		_distancePassed = nextDistance;
+		_lastDistance = nextDistance;
 		return deltaDistance;
 	}
 }
