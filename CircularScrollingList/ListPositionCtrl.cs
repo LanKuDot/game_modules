@@ -102,6 +102,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	private bool _isDragging = false;
 	// Input mouse/finger position in the local space of the list.
 	private float _deltaInputPos;
+	private float _deltaDistanceToCenter = 0.0f;
 
 	// Variables for linear mode
 	private float _movingDirection;
@@ -302,20 +303,21 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	 */
 	private void Update()
 	{
+		FindDeltaDistanceToCenter();
+		if (listType == ListType.Linear)
+			CheckIfListReachEnd();
+
 		if (!_isDragging && !_movementCtrl.IsMovementEnded()) {
 			float distance = _movementCtrl.GetDistance(Time.deltaTime);
 			foreach (ListBox listBox in listBoxes)
 				listBox.UpdatePosition(distance);
 		}
-
-		if (listType == ListType.Linear)
-			CheckIfListReachEnd();
 	}
 
 	/* Find the listBox which is the closest to the center position,
 	 * and calculate the delta x or y position between it and the center position.
 	 */
-	private float FindDeltaPositionToCenter()
+	private void FindDeltaDistanceToCenter()
 	{
 		float minDeltaPos = Mathf.Infinity;
 		float deltaPos = 0.0f;
