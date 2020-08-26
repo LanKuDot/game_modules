@@ -78,11 +78,6 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		"The y axis specifies the 'localScale' of the box.")]
 	public AnimationCurve boxScaleCurve = AnimationCurve.Constant(0.0f, 1.0f, 1.0f);
 	public AnimationCurve boxMovementCurve = AnimationCurve.Linear(0.0f, 0.0f, 1.0f, 1.0f);
-	public AnimationCurve boxAligningCurve = AnimationCurve.EaseInOut(0.0f, 0.0f, 0.25f, 1.0f);
-	public AnimationCurve boxBouncingCurve = new AnimationCurve(
-		new Keyframe(0.0f, 0.0f),
-		new Keyframe(0.05f, 1.0f),
-		new Keyframe(0.1f, 0.0f));
 	/*===============================*/
 
 	// The canvas plane which the scrolling list is at.
@@ -181,7 +176,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		switch (controlMode) {
 			case ControlMode.Drag:
 				_movementCtrl = new FreeMovementCtrl(
-					boxMovementCurve, boxAligningCurve, alignMiddle,
+					boxMovementCurve, alignMiddle,
 					getAligningDistance, isListReachingEnd);
 				_inputPositionHandler = DragPositionHandler;
 				_scrollHandler = (Vector2 v) => { };
@@ -192,7 +187,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 
 			case ControlMode.Button:
 				_movementCtrl = new UnitMovementCtrl(
-					boxMovementCurve, boxBouncingCurve, unitPos * 0.3f,
+					boxMovementCurve, unitPos * 0.3f,
 					getAligningDistance, isListReachingEnd);
 				_inputPositionHandler =
 					(PointerEventData pointer, TouchPhase phase) => { };
@@ -201,7 +196,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 
 			case ControlMode.MouseWheel:
 				_movementCtrl = new UnitMovementCtrl(
-					boxMovementCurve, boxBouncingCurve, unitPos * 0.3f,
+					boxMovementCurve, unitPos * 0.3f,
 					getAligningDistance, isListReachingEnd);
 				_inputPositionHandler =
 					(PointerEventData pointer, TouchPhase phase) => { };

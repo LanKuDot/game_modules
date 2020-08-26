@@ -58,18 +58,17 @@ public class FreeMovementCtrl : IMovementCtrl
 	 *
 	 * @param releasingCurve The curve that defines the velocity factor for the releasing
 	 *        movement. The x axis is the moving duration, and the y axis is the factor.
-	 * @param aligningCurve The curve that defines the distance factor for aligning
-	 *        movement. The x axis is the aligning duration, and the y axis is the factor.
 	 * @param toAlign Is it need to aligning after a movement?
 	 * @param getAligningDistance The function that evaluate the distance for aligning
 	 * @param isListReachingEnd The function that return the flag indicating
 	 *        whether the list reaches end or not
 	 */
-	public FreeMovementCtrl(AnimationCurve releasingCurve, AnimationCurve aligningCurve,
-		bool toAlign, Func<float> getAligningDistance, Func<bool> isListReachingEnd)
+	public FreeMovementCtrl(AnimationCurve releasingCurve, bool toAlign,
+		Func<float> getAligningDistance, Func<bool> isListReachingEnd)
 	{
 		_releasingMovement = new VelocityMovement(releasingCurve);
-		_aligningMovement = new DistanceMovement(aligningCurve);
+		_aligningMovement = new DistanceMovement(
+			AnimationCurve.EaseInOut(0.0f, 0.0f, 0.25f, 1.0f));
 		_toAlign = toAlign;
 		_getAligningDistance = getAligningDistance;
 		_isListReachingEnd = isListReachingEnd;
@@ -177,18 +176,20 @@ public class UnitMovementCtrl : IMovementCtrl
 	 *
 	 * @param movementCurve The curve that defines the distance factor
 	 *        The x axis is the moving duration, and y axis is the factor value.
-	 * @param bouncingCurve The curve that defines the distance factor
-	 *        for the bouncing effect
 	 * @param bouncingDeltaPos The delta position for bouncing effect
 	 * @param getAligningDistance The function that evaluates the distance
 	 *        for aligning
 	 * @param IsListReachingEnd The function that returns the flag
 	 *        indicating whether the list reaches the end or not
 	 */
-	public UnitMovementCtrl(AnimationCurve movementCurve,
-		AnimationCurve bouncingCurve, float bouncingDeltaPos,
+	public UnitMovementCtrl(AnimationCurve movementCurve, float bouncingDeltaPos,
 		Func<float> getAligningDistance, Func<bool> isListReachingEnd)
 	 {
+		var bouncingCurve = new AnimationCurve(
+			new Keyframe(0.0f, 0.0f, 0.0f, 5.0f),
+			new Keyframe(0.125f, 1.0f, 0.0f, 0.0f),
+			new Keyframe(0.25f, 0.0f, -5.0f, 0.0f));
+
 		_unitMovement = new DistanceMovement(movementCurve);
 		_bouncingMovement = new DistanceMovement(bouncingCurve);
 		_bouncingDeltaPos = bouncingDeltaPos;
