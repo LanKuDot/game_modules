@@ -4,7 +4,7 @@ using UnityEngine;
 
 public interface IMovementCtrl
 {
-	void SetMovement(float baseValue);
+	void SetMovement(float baseValue, bool flag);
 	bool IsMovementEnded();
 	float GetDistance(float deltaTime);
 }
@@ -24,6 +24,12 @@ public class FreeMovementCtrl : IMovementCtrl
 	/* The movement for aligning the list
 	 */
 	private readonly DistanceMovement _aligningMovement;
+	/* Is the list being dragged?
+	 */
+	private bool _isDragging;
+	/* The dragging distance
+	 */
+	private float _draggingDistance;
 	/* Does it need to align the list after a movement?
 	 */
 	private readonly bool _toAlign;
@@ -69,23 +75,34 @@ public class FreeMovementCtrl : IMovementCtrl
 		_isListReachingEnd = isListReachingEnd;
 	}
 
-	/* Set the release velocity for this new movement
+	/* Set the base value for this new movement
+	 *
+	 * @param value If `isDragging` is true, this value is the dragging distance.
+	 *        Otherwise, this value is the releasing velocity for the free movement.
 	 */
-	public void SetMovement(float releaseVelocity)
+	public void SetMovement(float value, bool isDragging)
 	{
-		_freeMovement.SetMovement(releaseVelocity);
+		if (isDragging) {
+			_isDragging = true;
+			_draggingDistance = value;
+		} else {
+			_freeMovement.SetMovement(value);
+		}
+
 		_overGoingTime = _isListReachingEnd() ? _overGoingTimeThreshold : 0.0f;
 	}
 
 	/* Is the movement ended?
-	 * If `_alignMiddle` is true, the aligning movement is also counted in the movement.
 	 */
 	public bool IsMovementEnded()
 	{
-		if (!_isAligning)
-			return _freeMovement.IsMovementEnded();
+		if (_isDragging)
+			return false;
 
-		return _aligningMovement.IsMovementEnded();
+		if (_isAligning)
+			return _aligningMovement.IsMovementEnded();
+
+		return _freeMovement.IsMovementEnded();
 	}
 
 	/* Get moving distance in the given delta time
@@ -94,7 +111,18 @@ public class FreeMovementCtrl : IMovementCtrl
 	{
 		float distance;
 
-		if (!_isAligning) {
+		/* If it's dragging, return the dragging distance set from `SetMovement()` */
+		if (_isDragging) {
+			_isDragging = false;
+			return _draggingDistance;
+		}
+
+		if (_isAligning) {
+			distance = _aligningMovement.GetDistance(deltaTime);
+
+			if (_aligningMovement.IsMovementEnded())
+				_isAligning = false;
+		} else {
 			distance = _freeMovement.GetDistance(deltaTime);
 
 			if (NeedToAlign(deltaTime)) {
@@ -106,11 +134,6 @@ public class FreeMovementCtrl : IMovementCtrl
 				// Start the aligning movement instead
 				distance = _aligningMovement.GetDistance(deltaTime);
 			}
-		} else {
-			distance = _aligningMovement.GetDistance(deltaTime);
-
-			if (_aligningMovement.IsMovementEnded())
-				_isAligning = false;
 		}
 
 		return distance;
@@ -190,7 +213,7 @@ public class UnitMovementCtrl : IMovementCtrl
 	 * If the list reaches the end in the linear mode, the moving distance
 	 * will be ignored and use `_bouncingDeltaPos` for the bouncing movement.
 	 */
-	public void SetMovement(float distanceAdded)
+	public void SetMovement(float distanceAdded, bool flag)
 	{
 		// Ignore any movement when the list is aligning
 		if (_isBouncing)

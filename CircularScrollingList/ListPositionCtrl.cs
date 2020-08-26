@@ -102,7 +102,6 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 
 	// Variables for moving listBoxes
 	private IMovementCtrl _movementCtrl;
-	private bool _isDragging = false;
 	// Input mouse/finger position in the local space of the list.
 	private float _deltaInputPos;
 	private float _deltaDistanceToCenter = 0.0f;
@@ -241,22 +240,17 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	{
 		switch (state) {
 			case TouchPhase.Began:
-				_isDragging = true;
 				break;
 
 			case TouchPhase.Moved:
 				_deltaInputPos = GetInputCanvasPosition(pointer.delta);
 				// Slide the list as long as the moving distance of the pointer
 				_movingDirection = Mathf.Sign(_deltaInputPos);
-				if (_isListReachingEnd)
-					return;
-				foreach (ListBox listBox in listBoxes)
-					listBox.UpdatePosition(_deltaInputPos);
+				_movementCtrl.SetMovement(_deltaInputPos, true);
 				break;
 
 			case TouchPhase.Ended:
-				_isDragging = false;
-				SetSlidingMovement(_deltaInputPos / Time.deltaTime);
+				_movementCtrl.SetMovement(_deltaInputPos / Time.deltaTime, false);
 				break;
 		}
 	}
@@ -299,19 +293,12 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 
 
 	/* ====== Movement functions ====== */
-	/* Set the sliding movement to the movement curve
-	 */
-	private void SetSlidingMovement(float value)
-	{
-		_movementCtrl.SetMovement(value);
-	}
-
 	/* Control the movement of listBoxes
 	 */
 	private void Update()
 	{
-		if (!_isDragging && !_movementCtrl.IsMovementEnded()) {
-			float distance = _movementCtrl.GetDistance(Time.deltaTime);
+		if (!_movementCtrl.IsMovementEnded()) {
+			var distance = _movementCtrl.GetDistance(Time.deltaTime);
 			foreach (ListBox listBox in listBoxes)
 				listBox.UpdatePosition(distance);
 		}
@@ -371,7 +358,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		// Additional check for the moving direction changing
 		CheckIfListReachEnd();
 
-		SetSlidingMovement(unit * unitPos);
+		_movementCtrl.SetMovement(unit * unitPos, false);
 	}
 
 	/* Move all listBoxes 1 unit up.
