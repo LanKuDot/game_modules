@@ -383,6 +383,7 @@ internal class DistanceMovement
 	public void EndMovement()
 	{
 		_distanceFactorCurve.Evaluate(_distanceFactorCurve.timeTotal);
+		_lastDistance = _distanceTotal;
 	}
 
 	/* Get the moving distance in the given delta time
