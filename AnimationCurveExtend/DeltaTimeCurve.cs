@@ -15,7 +15,7 @@ namespace AnimationCurveExtend
 		/* The total time period of the curve
 		 * It is the time of the last KeyFrame of the `_curve`.
 		 */
-		private float _timeTotal;
+		public float timeTotal { get; private set; }
 		/* The passed time in this evaluation period
 		 */
 		private float _timePassed;
@@ -23,9 +23,9 @@ namespace AnimationCurveExtend
 		public DeltaTimeCurve(AnimationCurve curve)
 		{
 			_curve = curve;
-			_timeTotal = _curve[_curve.length - 1].time;
+			timeTotal = _curve[_curve.length - 1].time;
 			// Make the IsTimeOut() return true before the first Reset() call
-			_timePassed = _timeTotal + 1.0f;
+			_timePassed = timeTotal + 1.0f;
 		}
 
 		/* Reset the time counter to start a new evaluation period
@@ -39,7 +39,7 @@ namespace AnimationCurveExtend
 		 */
 		public bool IsTimeOut()
 		{
-			return _timePassed > _timeTotal;
+			return _timePassed > timeTotal;
 		}
 
 		/* Evaluate the value by providing the delta time in this evaluation period

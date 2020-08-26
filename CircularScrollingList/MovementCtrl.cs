@@ -120,10 +120,10 @@ public class FreeMovementCtrl : IMovementCtrl
 
 			if (NeedToAlign(deltaTime)) {
 				// Make the releasing movement end
-				_releasingMovement.GetDistance(100.0f);
-				_aligningMovement.SetMovement(_getAligningDistance());
+				_releasingMovement.EndMovement();
 
 				// Start the aligning movement instead
+				_aligningMovement.SetMovement(_getAligningDistance());
 				distance = _aligningMovement.GetDistance(deltaTime);
 			}
 		}
@@ -238,7 +238,7 @@ public class UnitMovementCtrl : IMovementCtrl
 
 			if (NeedToAlign(distance)) {
 				// Make the unit movement end
-				_unitMovement.GetDistance(100.0f);
+				_unitMovement.EndMovement();
 
 				_bouncingMovement.SetMovement(-1 * _getAligningDistance());
 				// Start at the furthest point to move back
@@ -310,6 +310,13 @@ internal class VelocityMovement
 		return _velocityFactorCurve.IsTimeOut();
 	}
 
+	/* Forcely end the movement by making it time out
+	 */
+	public void EndMovement()
+	{
+		_velocityFactorCurve.Evaluate(_velocityFactorCurve.timeTotal);
+	}
+
 	/* Get moving distance in the given delta time
 	 *
 	 * The given delta time will be accumulated first, and then get the velocity
@@ -368,6 +375,13 @@ internal class DistanceMovement
 	public bool IsMovementEnded()
 	{
 		return _distanceFactorCurve.IsTimeOut();
+	}
+
+	/* Forcely end the movement by making it time out
+	 */
+	public void EndMovement()
+	{
+		_distanceFactorCurve.Evaluate(_distanceFactorCurve.timeTotal);
 	}
 
 	/* Get the moving distance in the given delta time
