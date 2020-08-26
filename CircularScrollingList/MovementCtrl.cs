@@ -36,12 +36,12 @@ public class FreeMovementCtrl : IMovementCtrl
 	/* Does it need to align the list after a movement?
 	 */
 	private readonly bool _toAlign;
-	/* How long does the list exceed the end
+	/* How far does the list exceed the end
 	 */
-	private float _overGoingTime;
-	/* How long could the 1ist exceed the end?
+	private float _overGoingDistance;
+	/* How far could the 1ist exceed the end?
 	 */
-	private const float _overGoingTimeThreshold = 0.02f;
+	private readonly float _overGoingDistanceThreshold;
 	/* The velocity threshold that stop the list to align it
 	 * It is used when `_alignMiddle` is true.
 	 */
@@ -59,17 +59,20 @@ public class FreeMovementCtrl : IMovementCtrl
 	 * @param releasingCurve The curve that defines the velocity factor for the releasing
 	 *        movement. The x axis is the moving duration, and the y axis is the factor.
 	 * @param toAlign Is it need to aligning after a movement?
+	 * @param overGoingDistanceThreshold How far could the list exceed the end?
 	 * @param getAligningDistance The function that evaluate the distance for aligning
 	 * @param isListReachingEnd The function that return the flag indicating
 	 *        whether the list reaches end or not
 	 */
 	public FreeMovementCtrl(AnimationCurve releasingCurve, bool toAlign,
+		float overGoingDistanceThreshold,
 		Func<float> getAligningDistance, Func<bool> isListReachingEnd)
 	{
 		_releasingMovement = new VelocityMovement(releasingCurve);
 		_aligningMovement = new DistanceMovement(
 			AnimationCurve.EaseInOut(0.0f, 0.0f, 0.25f, 1.0f));
 		_toAlign = toAlign;
+		_overGoingDistanceThreshold = overGoingDistanceThreshold;
 		_getAligningDistance = getAligningDistance;
 		_isListReachingEnd = isListReachingEnd;
 	}
@@ -78,17 +81,19 @@ public class FreeMovementCtrl : IMovementCtrl
 	 *
 	 * @param value If `isDragging` is true, this value is the dragging distance.
 	 *        Otherwise, this value is the base velocity for the releasing movement.
+	 * @param isDragging Is the list being dragged?
 	 */
 	public void SetMovement(float value, bool isDragging)
 	{
 		if (isDragging) {
 			_isDragging = true;
 			_draggingDistance = value;
+
+			if (!_releasingMovement.IsMovementEnded())
+				_releasingMovement.EndMovement();
 		} else {
 			_releasingMovement.SetMovement(value);
 		}
-
-		_overGoingTime = _isListReachingEnd() ? _overGoingTimeThreshold : 0.0f;
 	}
 
 	/* Is the movement ended?
@@ -96,28 +101,35 @@ public class FreeMovementCtrl : IMovementCtrl
 	public bool IsMovementEnded()
 	{
 		return !_isDragging &&
-			_aligningMovement.IsMovementEnded() &&
-			_releasingMovement.IsMovementEnded();
+		       _aligningMovement.IsMovementEnded() &&
+		       _releasingMovement.IsMovementEnded();
 	}
 
 	/* Get moving distance in the given delta time
 	 */
 	public float GetDistance(float deltaTime)
 	{
-		float distance;
+		var distance = 0.0f;
 
 		/* If it's dragging, return the dragging distance set from `SetMovement()` */
 		if (_isDragging) {
 			_isDragging = false;
-			return _draggingDistance;
-		}
+			distance = _draggingDistance;
 
-		if (!_aligningMovement.IsMovementEnded()) {
+			if (IsGoingTooFar(_draggingDistance)) {
+				var threshold = _overGoingDistanceThreshold * Mathf.Sign(_overGoingDistance);
+				distance -= _overGoingDistance - threshold;
+			}
+		}
+		/* Aligning */
+		else if (!_aligningMovement.IsMovementEnded()) {
 			distance = _aligningMovement.GetDistance(deltaTime);
-		} else {
+		}
+		/* Releasing */
+		else if (!_releasingMovement.IsMovementEnded()) {
 			distance = _releasingMovement.GetDistance(deltaTime);
 
-			if (NeedToAlign(deltaTime)) {
+			if (NeedToAlign(distance)) {
 				// Make the releasing movement end
 				_releasingMovement.EndMovement();
 
@@ -132,15 +144,24 @@ public class FreeMovementCtrl : IMovementCtrl
 
 	/* Check whether it needs to switch to the aligning movement or not
 	 *
-	 * Return true if the list reaches the end and it exceeds the end for a while, or
+	 * Return true if the list reaches the end and it exceeds the end for a distance, or
 	 * if the aligning mode is on and the list moves too slow.
 	 */
-	private bool NeedToAlign(float deltaTime)
+	private bool NeedToAlign(float distance)
 	{
-		return (_isListReachingEnd() &&
-		        (_overGoingTime += deltaTime) > _overGoingTimeThreshold) ||
+		return IsGoingTooFar(distance) ||
 		       (_toAlign &&
 		        Mathf.Abs(_releasingMovement.lastVelocity) < _stopVelocityThreshold);
+	}
+
+	private bool IsGoingTooFar(float distance)
+	{
+		if (_isListReachingEnd()) {
+			_overGoingDistance = -1 * _getAligningDistance();
+			return Mathf.Abs(_overGoingDistance += distance) > _overGoingDistanceThreshold;
+		}
+
+		return false;
 	}
 }
 
@@ -223,7 +244,7 @@ public class UnitMovementCtrl : IMovementCtrl
 	public bool IsMovementEnded()
 	{
 		return _bouncingMovement.IsMovementEnded() &&
-			_unitMovement.IsMovementEnded();
+		       _unitMovement.IsMovementEnded();
 	}
 
 	/* Get the moving distance in the given delta time

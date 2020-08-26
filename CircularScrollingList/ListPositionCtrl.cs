@@ -172,11 +172,12 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	{
 		Func<float> getAligningDistance = () => _deltaDistanceToCenter;
 		Func<bool> isListReachingEnd = () => _isListReachingEnd;
+		var overGoingThreshold = unitPos * 0.3f;
 
 		switch (controlMode) {
 			case ControlMode.Drag:
 				_movementCtrl = new FreeMovementCtrl(
-					boxMovementCurve, alignMiddle,
+					boxMovementCurve, alignMiddle, overGoingThreshold,
 					getAligningDistance, isListReachingEnd);
 				_inputPositionHandler = DragPositionHandler;
 				_scrollHandler = (Vector2 v) => { };
@@ -187,7 +188,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 
 			case ControlMode.Button:
 				_movementCtrl = new UnitMovementCtrl(
-					boxMovementCurve, unitPos * 0.3f,
+					boxMovementCurve, overGoingThreshold,
 					getAligningDistance, isListReachingEnd);
 				_inputPositionHandler =
 					(PointerEventData pointer, TouchPhase phase) => { };
@@ -196,7 +197,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 
 			case ControlMode.MouseWheel:
 				_movementCtrl = new UnitMovementCtrl(
-					boxMovementCurve, unitPos * 0.3f,
+					boxMovementCurve, overGoingThreshold,
 					getAligningDistance, isListReachingEnd);
 				_inputPositionHandler =
 					(PointerEventData pointer, TouchPhase phase) => { };
