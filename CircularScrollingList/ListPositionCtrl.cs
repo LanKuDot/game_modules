@@ -95,11 +95,8 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	public float upperBoundPos { get; private set; }
 
 	// Delegate functions
-	private delegate void InputPositionHandlerDelegate(
-		PointerEventData pointer, TouchPhase state);
-	private InputPositionHandlerDelegate _inputPositionHandler;
-	private delegate void ScrollHandlerDelegate(Vector2 scrollDelta);
-	private ScrollHandlerDelegate _scrollHandler;
+	private Action<PointerEventData, TouchPhase> _inputPositionHandler;
+	private Action<Vector2> _scrollHandler;
 
 	// Variables for moving listBoxes
 	private IMovementCtrl _movementCtrl;
@@ -187,7 +184,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 					boxMovementCurve, boxAligningCurve, alignMiddle,
 					getAligningDistance, isListReachingEnd);
 				_inputPositionHandler = DragPositionHandler;
-				_scrollHandler = delegate (Vector2 v) { };
+				_scrollHandler = (Vector2 v) => { };
 
 				foreach (Button button in controlButtons)
 					button.gameObject.SetActive(false);
@@ -198,8 +195,8 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 					boxMovementCurve, boxBouncingCurve, unitPos * 0.3f,
 					getAligningDistance, isListReachingEnd);
 				_inputPositionHandler =
-					delegate (PointerEventData pointer, TouchPhase phase) { };
-				_scrollHandler = delegate (Vector2 v) { };
+					(PointerEventData pointer, TouchPhase phase) => { };
+				_scrollHandler = (Vector2 v) => { };
 				break;
 
 			case ControlMode.MouseWheel:
@@ -207,7 +204,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 					boxMovementCurve, boxBouncingCurve, unitPos * 0.3f,
 					getAligningDistance, isListReachingEnd);
 				_inputPositionHandler =
-					delegate (PointerEventData pointer, TouchPhase phase) { };
+					(PointerEventData pointer, TouchPhase phase) => { };
 				_scrollHandler = ScrollDeltaHandler;
 
 				foreach (Button button in controlButtons)
