@@ -36,9 +36,6 @@ public class FreeMovementCtrl : IMovementCtrl
 	/* Does it need to align the list after a movement?
 	 */
 	private readonly bool _toAlign;
-	/* Is the list aligning?
-	 */
-	private bool _isAligning;
 	/* How long does the list exceed the end
 	 */
 	private float _overGoingTime;
@@ -99,13 +96,9 @@ public class FreeMovementCtrl : IMovementCtrl
 	 */
 	public bool IsMovementEnded()
 	{
-		if (_isDragging)
-			return false;
-
-		if (_isAligning)
-			return _aligningMovement.IsMovementEnded();
-
-		return _releasingMovement.IsMovementEnded();
+		return !_isDragging &&
+			_aligningMovement.IsMovementEnded() &&
+			_releasingMovement.IsMovementEnded();
 	}
 
 	/* Get moving distance in the given delta time
@@ -120,11 +113,8 @@ public class FreeMovementCtrl : IMovementCtrl
 			return _draggingDistance;
 		}
 
-		if (_isAligning) {
+		if (!_aligningMovement.IsMovementEnded()) {
 			distance = _aligningMovement.GetDistance(deltaTime);
-
-			if (_aligningMovement.IsMovementEnded())
-				_isAligning = false;
 		} else {
 			distance = _releasingMovement.GetDistance(deltaTime);
 
@@ -132,7 +122,6 @@ public class FreeMovementCtrl : IMovementCtrl
 				// Make the releasing movement end
 				_releasingMovement.GetDistance(100.0f);
 				_aligningMovement.SetMovement(_getAligningDistance());
-				_isAligning = true;
 
 				// Start the aligning movement instead
 				distance = _aligningMovement.GetDistance(deltaTime);
@@ -173,9 +162,6 @@ public class UnitMovementCtrl : IMovementCtrl
 	/* The delta position for the bouncing effect
 	 */
 	private readonly float _bouncingDeltaPos;
-	/* Is the list bouncing?
-	 */
-	private bool _isBouncing = false;
 	/* How far does the list exceed the end?
 	 */
 	private float _overGoingDistance = 0.0f;
@@ -219,25 +205,24 @@ public class UnitMovementCtrl : IMovementCtrl
 	public void SetMovement(float distanceAdded, bool flag)
 	{
 		// Ignore any movement when the list is aligning
-		if (_isBouncing)
+		if (!_bouncingMovement.IsMovementEnded())
 			return;
 
 		if (_isListReachingEnd()) {
 			var sign = Mathf.Sign(distanceAdded);
 			_bouncingMovement.SetMovement(sign * _bouncingDeltaPos);
-			_isBouncing = true;
 		} else {
 			distanceAdded += _unitMovement.distanceRemaining;
 			_unitMovement.SetMovement(distanceAdded);
 		}
 	}
 
+	/* Is the movement ended?
+	 */
 	public bool IsMovementEnded()
 	{
-		if (_isBouncing)
-			return _bouncingMovement.IsMovementEnded();
-
-		return _unitMovement.IsMovementEnded();
+		return _bouncingMovement.IsMovementEnded() &&
+			_unitMovement.IsMovementEnded();
 	}
 
 	/* Get the moving distance in the given delta time
@@ -246,24 +231,20 @@ public class UnitMovementCtrl : IMovementCtrl
 	{
 		var distance = 0.0f;
 
-		if (!_isBouncing) {
+		if (!_bouncingMovement.IsMovementEnded()) {
+			distance = _bouncingMovement.GetDistance(deltaTime);
+		} else {
 			distance = _unitMovement.GetDistance(deltaTime);
 
 			if (NeedToAlign(distance)) {
 				// Make the unit movement end
 				_unitMovement.GetDistance(100.0f);
 
-				_isBouncing = true;
 				_bouncingMovement.SetMovement(-1 * _getAligningDistance());
 				// Start at the furthest point to move back
 				_bouncingMovement.GetDistance(0.125f);
 				distance = _bouncingMovement.GetDistance(deltaTime);
 			}
-		} else {
-			distance = _bouncingMovement.GetDistance(deltaTime);
-
-			if (_bouncingMovement.IsMovementEnded())
-				_isBouncing = false;
 		}
 
 		return distance;
