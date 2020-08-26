@@ -1,6 +1,7 @@
 ﻿/* Handle the controlling event and send the moving information to the boxes it has
  */
 
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
@@ -177,35 +178,38 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	 */
 	private void InitializeInputFunction()
 	{
+		Func<float> getAligningDistance = () => _deltaDistanceToCenter;
+		Func<bool> isListReachingEnd = () => _isListReachingEnd;
+
 		switch (controlMode) {
 			case ControlMode.Drag:
-				_movementCtrl = new FreeMovementCtrl(boxMovementCurve,
-					boxAligningCurve, alignMiddle,
-					() => _deltaDistanceToCenter, () => _isListReachingEnd);
+				_movementCtrl = new FreeMovementCtrl(
+					boxMovementCurve, boxAligningCurve, alignMiddle,
+					getAligningDistance, isListReachingEnd);
 				_inputPositionHandler = DragPositionHandler;
-
 				_scrollHandler = delegate (Vector2 v) { };
+
 				foreach (Button button in controlButtons)
 					button.gameObject.SetActive(false);
 				break;
 
 			case ControlMode.Button:
-				_movementCtrl = new UnitMovementCtrl(boxMovementCurve, boxBouncingCurve,
-					unitPos * 0.3f,
-					() => _deltaDistanceToCenter,() => _isListReachingEnd);
+				_movementCtrl = new UnitMovementCtrl(
+					boxMovementCurve, boxBouncingCurve, unitPos * 0.3f,
+					getAligningDistance, isListReachingEnd);
 				_inputPositionHandler =
 					delegate (PointerEventData pointer, TouchPhase phase) { };
 				_scrollHandler = delegate (Vector2 v) { };
 				break;
 
 			case ControlMode.MouseWheel:
-				_movementCtrl = new UnitMovementCtrl(boxMovementCurve, boxBouncingCurve,
-					unitPos * 0.3f,
-					() => _deltaDistanceToCenter, () => _isListReachingEnd);
-				_scrollHandler = ScrollDeltaHandler;
-
+				_movementCtrl = new UnitMovementCtrl(
+					boxMovementCurve, boxBouncingCurve, unitPos * 0.3f,
+					getAligningDistance, isListReachingEnd);
 				_inputPositionHandler =
 					delegate (PointerEventData pointer, TouchPhase phase) { };
+				_scrollHandler = ScrollDeltaHandler;
+
 				foreach (Button button in controlButtons)
 					button.gameObject.SetActive(false);
 				break;
