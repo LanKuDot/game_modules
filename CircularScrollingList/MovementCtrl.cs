@@ -234,6 +234,10 @@ public class UnitMovementCtrl : IMovementCtrl
 
 		if (!_bouncingMovement.IsMovementEnded()) {
 			distance = _bouncingMovement.GetDistance(deltaTime);
+
+			// Reset _overGoingDistance after the bouncing movement
+			if (_bouncingMovement.IsMovementEnded())
+				_overGoingDistance = 0.0f;
 		} else {
 			distance = _unitMovement.GetDistance(deltaTime);
 
@@ -258,13 +262,9 @@ public class UnitMovementCtrl : IMovementCtrl
 	 */
 	private bool NeedToAlign(float deltaDistance)
 	{
-		if (!_isListReachingEnd()) {
-			_overGoingDistance = 0.0f;
-			return false;
-		}
-
-		return (_overGoingDistance += Mathf.Abs(deltaDistance)) > _bouncingDeltaPos ||
-		       _unitMovement.IsMovementEnded();
+		return _isListReachingEnd() &&
+		       ((_overGoingDistance += Mathf.Abs(deltaDistance)) > _bouncingDeltaPos ||
+		        _unitMovement.IsMovementEnded());
 	}
 }
 
