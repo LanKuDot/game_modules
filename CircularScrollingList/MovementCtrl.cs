@@ -11,16 +11,19 @@ public interface IMovementCtrl
 
 /* Control the movement for the free movement
  *
- * It is controlled by a velocity movement which moving velocity is related to
- * the releasing velocity. If the aligning mode is on or the list reaches the end
- * in the linear mode, it will switch to the aligning movement to move
- * to the desired position.
+ * There are three status of the movement:
+ * - Dragging: The moving distance is the same as the dragging distance
+ * - Released: When the list is released after being dragged, the moving distance
+ *   is decided by the releasing velocity and a velocity factor curve
+ * - Aligning: If the aligning option is set or the list reaches the end
+ *   in the linear mode, the movement will switch to this status to make the list
+ *   move to the desired position.
  */
 public class FreeMovementCtrl : IMovementCtrl
 {
 	/* The movement for the free movement
 	 */
-	private readonly VelocityMovement _freeMovement;
+	private readonly VelocityMovement _releasingMovement;
 	/* The movement for aligning the list
 	 */
 	private readonly DistanceMovement _aligningMovement;
@@ -56,7 +59,7 @@ public class FreeMovementCtrl : IMovementCtrl
 
 	/* Constructor
 	 *
-	 * @param movementCurve The curve that defines the velocity factor for the free
+	 * @param releasingCurve The curve that defines the velocity factor for the releasing
 	 *        movement. The x axis is the moving duration, and the y axis is the factor.
 	 * @param aligningCurve The curve that defines the distance factor for aligning
 	 *        movement. The x axis is the aligning duration, and the y axis is the factor.
@@ -65,10 +68,10 @@ public class FreeMovementCtrl : IMovementCtrl
 	 * @param isListReachingEnd The function that return the flag indicating
 	 *        whether the list reaches end or not
 	 */
-	public FreeMovementCtrl(AnimationCurve movementCurve, AnimationCurve aligningCurve,
+	public FreeMovementCtrl(AnimationCurve releasingCurve, AnimationCurve aligningCurve,
 		bool toAlign, Func<float> getAligningDistance, Func<bool> isListReachingEnd)
 	{
-		_freeMovement = new VelocityMovement(movementCurve);
+		_releasingMovement = new VelocityMovement(releasingCurve);
 		_aligningMovement = new DistanceMovement(aligningCurve);
 		_toAlign = toAlign;
 		_getAligningDistance = getAligningDistance;
@@ -78,7 +81,7 @@ public class FreeMovementCtrl : IMovementCtrl
 	/* Set the base value for this new movement
 	 *
 	 * @param value If `isDragging` is true, this value is the dragging distance.
-	 *        Otherwise, this value is the releasing velocity for the free movement.
+	 *        Otherwise, this value is the base velocity for the releasing movement.
 	 */
 	public void SetMovement(float value, bool isDragging)
 	{
@@ -86,7 +89,7 @@ public class FreeMovementCtrl : IMovementCtrl
 			_isDragging = true;
 			_draggingDistance = value;
 		} else {
-			_freeMovement.SetMovement(value);
+			_releasingMovement.SetMovement(value);
 		}
 
 		_overGoingTime = _isListReachingEnd() ? _overGoingTimeThreshold : 0.0f;
@@ -102,7 +105,7 @@ public class FreeMovementCtrl : IMovementCtrl
 		if (_isAligning)
 			return _aligningMovement.IsMovementEnded();
 
-		return _freeMovement.IsMovementEnded();
+		return _releasingMovement.IsMovementEnded();
 	}
 
 	/* Get moving distance in the given delta time
@@ -123,11 +126,11 @@ public class FreeMovementCtrl : IMovementCtrl
 			if (_aligningMovement.IsMovementEnded())
 				_isAligning = false;
 		} else {
-			distance = _freeMovement.GetDistance(deltaTime);
+			distance = _releasingMovement.GetDistance(deltaTime);
 
 			if (NeedToAlign(deltaTime)) {
-				// Make the free movement end
-				_freeMovement.GetDistance(100.0f);
+				// Make the releasing movement end
+				_releasingMovement.GetDistance(100.0f);
 				_aligningMovement.SetMovement(_getAligningDistance());
 				_isAligning = true;
 
@@ -149,7 +152,7 @@ public class FreeMovementCtrl : IMovementCtrl
 		return (_isListReachingEnd() &&
 		        (_overGoingTime += deltaTime) > _overGoingTimeThreshold) ||
 		       (_toAlign &&
-		        Mathf.Abs(_freeMovement.lastVelocity) < _stopVelocityThreshold);
+		        Mathf.Abs(_releasingMovement.lastVelocity) < _stopVelocityThreshold);
 	}
 }
 
