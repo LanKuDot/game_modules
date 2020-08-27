@@ -59,30 +59,37 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 
 	/* Containers */
 	[Tooltip("The game object which holds the content bank for the list. " +
-		"It will be the derived class of the BaseListBank.")]
+	         "It will be the derived class of the BaseListBank.")]
 	public BaseListBank listBank;
 	[Tooltip("Specify the initial content ID for the centered box.")]
 	public int centeredContentID = 0;
 	[Tooltip("The boxes which belong to this list.")]
 	public ListBox[] listBoxes;
 	[Tooltip("The callbacks for the event of the clicking on boxes." +
-		"The registered callbacks will be added to the 'onClick' event of boxes, " +
-		"therefore, boxes should be 'Button's.")]
+	         "The registered callbacks will be added to the 'onClick' event of boxes, " +
+	         "therefore, boxes should be 'Button's.")]
 	public ListBoxClickEvent onBoxClick;
 
 	/* Parameters */
 	[Tooltip("The distance between each box. The larger, the closer.")]
 	public float boxDensity = 2.0f;
-	[Tooltip("The curve of the box position. " +
-		"The valid range of the x axis is [0, 1]. " +
-		"The y axis specifies the shape of the list. " +
-		"Point (0.5, 0) is the center of the list layout.")]
+	[Tooltip("The curve specifying the box position. " +
+	         "The x axis is the range of the list, which is [0, 1]. " +
+	         "The y axis defines the factor of the passive position of the box. " +
+	         "Point (0.5, 0) is the center of the list layout.")]
 	public AnimationCurve boxPositionCurve = AnimationCurve.Constant(0.0f, 1.0f, 0.0f);
-	[Tooltip("The curve of the box scale. " +
-		"The valid range of the x axis is [0, 1]. " +
-		"The y axis specifies the 'localScale' of the box.")]
+	[Tooltip("The curve specifying the box scale. " +
+	         "The x axis is the range of the list, which is [0, 1]. " +
+	         "The y axis specifies the value of 'localScale' of the box at the " +
+	         "corresponding position.")]
 	public AnimationCurve boxScaleCurve = AnimationCurve.Constant(0.0f, 1.0f, 1.0f);
-	public AnimationCurve boxMovementCurve = AnimationCurve.Linear(0.0f, 0.0f, 1.0f, 1.0f);
+	[Tooltip("The curve specifying the movement of the box. " +
+	         "The x axis is the moving duration in seconds, which starts from 0. " +
+	         "The y axis is the factor of the releasing velocity in Drag mode, or " +
+	         "the factor of the target position in Function and Mouse Wheel modes.")]
+	public AnimationCurve boxMovementCurve = new AnimationCurve(
+		new Keyframe(0.0f, 1.0f, 0.0f, -2.5f),
+		new Keyframe(1.0f, 0.0f, 0.0f, 0.0f));
 	/*===============================*/
 
 	// The canvas plane which the scrolling list is at.
