@@ -29,7 +29,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	public enum ControlMode
 	{
 		Drag,       // By the mouse pointer or finger
-		Button,     // By the up/down button
+		Function,   // By the calling MoveOneUnitUp/MoveOneUnitDown function
 		MouseWheel  // By the mouse wheel
 	};
 
@@ -69,8 +69,6 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		"The registered callbacks will be added to the 'onClick' event of boxes, " +
 		"therefore, boxes should be 'Button's.")]
 	public ListBoxClickEvent onBoxClick;
-	[Tooltip("The Buttons used by the Button mode.")]
-	public Button[] controlButtons;
 
 	/* Parameters */
 	[Tooltip("The distance between each box. The larger, the closer.")]
@@ -187,12 +185,9 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 					getAligningDistance, getPositionState);
 				_inputPositionHandler = DragPositionHandler;
 				_scrollHandler = (Vector2 v) => { };
-
-				foreach (Button button in controlButtons)
-					button.gameObject.SetActive(false);
 				break;
 
-			case ControlMode.Button:
+			case ControlMode.Function:
 				_movementCtrl = new UnitMovementCtrl(
 					boxMovementCurve, overGoingThreshold,
 					getAligningDistance, getPositionState);
@@ -208,9 +203,6 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 				_inputPositionHandler =
 					(PointerEventData pointer, TouchPhase phase) => { };
 				_scrollHandler = ScrollDeltaHandler;
-
-				foreach (Button button in controlButtons)
-					button.gameObject.SetActive(false);
 				break;
 		}
 	}
