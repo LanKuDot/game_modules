@@ -1,6 +1,7 @@
 ﻿using AnimationCurveExtend;
 using System;
 using UnityEngine;
+using PositionState = ListPositionCtrl.PositionState;
 
 public interface IMovementCtrl
 {
@@ -49,10 +50,9 @@ public class FreeMovementCtrl : IMovementCtrl
 	/* The function that calculating the distance to align the list
 	 */
 	private readonly Func<float> _getAligningDistance;
-	/* The function that getting the flag indicating whether the list reaches end
-	 * or not
+	/* The function that getting the state of the list position
 	 */
-	private readonly Func<bool> _isListReachingEnd;
+	private readonly Func<PositionState> _getPositionState;
 
 	/* Constructor
 	 *
@@ -60,13 +60,12 @@ public class FreeMovementCtrl : IMovementCtrl
 	 *        movement. The x axis is the moving duration, and the y axis is the factor.
 	 * @param toAlign Is it need to aligning after a movement?
 	 * @param overGoingDistanceThreshold How far could the list exceed the end?
-	 * @param getAligningDistance The function that evaluate the distance for aligning
-	 * @param isListReachingEnd The function that return the flag indicating
-	 *        whether the list reaches end or not
+	 * @param getAligningDistance The function that evaluates the distance for aligning
+	 * @param getPositionState The function that returns the state of the list position
 	 */
 	public FreeMovementCtrl(AnimationCurve releasingCurve, bool toAlign,
 		float overGoingDistanceThreshold,
-		Func<float> getAligningDistance, Func<bool> isListReachingEnd)
+		Func<float> getAligningDistance, Func<PositionState> getPositionState)
 	{
 		_releasingMovement = new VelocityMovement(releasingCurve);
 		_aligningMovement = new DistanceMovement(
@@ -74,7 +73,7 @@ public class FreeMovementCtrl : IMovementCtrl
 		_toAlign = toAlign;
 		_overGoingDistanceThreshold = overGoingDistanceThreshold;
 		_getAligningDistance = getAligningDistance;
-		_isListReachingEnd = isListReachingEnd;
+		_getPositionState = getPositionState;
 	}
 
 	/* Set the base value for this new movement
@@ -89,8 +88,11 @@ public class FreeMovementCtrl : IMovementCtrl
 			_isDragging = true;
 			_draggingDistance = value;
 
+			// End the last releasing movement when start dragging
 			if (!_releasingMovement.IsMovementEnded())
 				_releasingMovement.EndMovement();
+		} else if (_getPositionState() != PositionState.Middle) {
+			_aligningMovement.SetMovement(_getAligningDistance());
 		} else {
 			_releasingMovement.SetMovement(value);
 		}
@@ -156,12 +158,11 @@ public class FreeMovementCtrl : IMovementCtrl
 
 	private bool IsGoingTooFar(float distance)
 	{
-		if (_isListReachingEnd()) {
-			_overGoingDistance = -1 * _getAligningDistance();
-			return Mathf.Abs(_overGoingDistance += distance) > _overGoingDistanceThreshold;
-		}
+		if (_getPositionState() == PositionState.Middle)
+			return false;
 
-		return false;
+		_overGoingDistance = -1 * _getAligningDistance();
+		return Mathf.Abs(_overGoingDistance += distance) > _overGoingDistanceThreshold;
 	}
 }
 
@@ -182,16 +183,12 @@ public class UnitMovementCtrl : IMovementCtrl
 	/* The delta position for the bouncing effect
 	 */
 	private readonly float _bouncingDeltaPos;
-	/* How far does the list exceed the end?
-	 */
-	private float _overGoingDistance = 0.0f;
 	/* The function that returns the distance for aligning
 	 */
 	private readonly Func<float> _getAligningDistance;
-	/* The function that returns the flag indicating whether the list reaches
-	 * the end or not
+	/* The function that returns the state of the list position
 	 */
-	private readonly Func<bool> _isListReachingEnd;
+	private readonly Func<PositionState> _getPositionState;
 
 	/* Constructor
 	 *
@@ -200,11 +197,10 @@ public class UnitMovementCtrl : IMovementCtrl
 	 * @param bouncingDeltaPos The delta position for bouncing effect
 	 * @param getAligningDistance The function that evaluates the distance
 	 *        for aligning
-	 * @param IsListReachingEnd The function that returns the flag
-	 *        indicating whether the list reaches the end or not
+	 * @param getPositionState The function that returns the state of the list position
 	 */
 	public UnitMovementCtrl(AnimationCurve movementCurve, float bouncingDeltaPos,
-		Func<float> getAligningDistance, Func<bool> isListReachingEnd)
+		Func<float> getAligningDistance, Func<PositionState> getPositionState)
 	 {
 		var bouncingCurve = new AnimationCurve(
 			new Keyframe(0.0f, 0.0f, 0.0f, 5.0f),
@@ -215,8 +211,8 @@ public class UnitMovementCtrl : IMovementCtrl
 		_bouncingMovement = new DistanceMovement(bouncingCurve);
 		_bouncingDeltaPos = bouncingDeltaPos;
 		_getAligningDistance = getAligningDistance;
-		_isListReachingEnd = isListReachingEnd;
-	}
+		_getPositionState = getPositionState;
+	 }
 
 	/* Set the moving distance for this new movement
 	 * If there has the distance left in the last movement, the moving distance
@@ -230,9 +226,12 @@ public class UnitMovementCtrl : IMovementCtrl
 		if (!_bouncingMovement.IsMovementEnded())
 			return;
 
-		if (_isListReachingEnd()) {
-			var sign = Mathf.Sign(distanceAdded);
-			_bouncingMovement.SetMovement(sign * _bouncingDeltaPos);
+		var state = _getPositionState();
+		var movingDirection = Mathf.Sign(distanceAdded);
+
+		if ((state == PositionState.Top && movingDirection < 0) ||
+		    (state == PositionState.Bottom && movingDirection > 0)) {
+			_bouncingMovement.SetMovement(movingDirection * _bouncingDeltaPos);
 		} else {
 			distanceAdded += _unitMovement.distanceRemaining;
 			_unitMovement.SetMovement(distanceAdded);
@@ -255,10 +254,6 @@ public class UnitMovementCtrl : IMovementCtrl
 
 		if (!_bouncingMovement.IsMovementEnded()) {
 			distance = _bouncingMovement.GetDistance(deltaTime);
-
-			// Reset _overGoingDistance after the bouncing movement
-			if (_bouncingMovement.IsMovementEnded())
-				_overGoingDistance = 0.0f;
 		} else {
 			distance = _unitMovement.GetDistance(deltaTime);
 
@@ -283,9 +278,11 @@ public class UnitMovementCtrl : IMovementCtrl
 	 */
 	private bool NeedToAlign(float deltaDistance)
 	{
-		return _isListReachingEnd() &&
-		       ((_overGoingDistance += Mathf.Abs(deltaDistance)) > _bouncingDeltaPos ||
-		        _unitMovement.IsMovementEnded());
+		if (_getPositionState() == PositionState.Middle)
+			return false;
+
+		return Mathf.Abs(_getAligningDistance() * -1 + deltaDistance) > _bouncingDeltaPos ||
+		        _unitMovement.IsMovementEnded();
 	}
 }
 

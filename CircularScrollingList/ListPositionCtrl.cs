@@ -39,6 +39,13 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		Horizontal
 	};
 
+	public enum PositionState
+	{
+		Top,	// The list reaches the top
+		Middle,	// The list doesn't reach either end
+		Bottom	// The list reaches the bottom
+	};
+
 	/*========== Settings ==========*/
 	/* List mode */
 	[Tooltip("The type of the list.")]
@@ -100,8 +107,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	private float _deltaDistanceToCenter = 0.0f;
 
 	// Variables for linear mode
-	private float _movingDirection;
-	private bool _isListReachingEnd = false;
+	private PositionState _positionState = PositionState.Middle;
 	[HideInInspector]
 	public int numOfUpperDisabledBoxes = 0;
 	[HideInInspector]
@@ -171,14 +177,14 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	private void InitializeInputFunction()
 	{
 		Func<float> getAligningDistance = () => _deltaDistanceToCenter;
-		Func<bool> isListReachingEnd = () => _isListReachingEnd;
+		Func<PositionState> getPositionState = () => _positionState;
 		var overGoingThreshold = unitPos * 0.3f;
 
 		switch (controlMode) {
 			case ControlMode.Drag:
 				_movementCtrl = new FreeMovementCtrl(
 					boxMovementCurve, alignMiddle, overGoingThreshold,
-					getAligningDistance, isListReachingEnd);
+					getAligningDistance, getPositionState);
 				_inputPositionHandler = DragPositionHandler;
 				_scrollHandler = (Vector2 v) => { };
 
@@ -189,7 +195,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 			case ControlMode.Button:
 				_movementCtrl = new UnitMovementCtrl(
 					boxMovementCurve, overGoingThreshold,
-					getAligningDistance, isListReachingEnd);
+					getAligningDistance, getPositionState);
 				_inputPositionHandler =
 					(PointerEventData pointer, TouchPhase phase) => { };
 				_scrollHandler = (Vector2 v) => { };
@@ -198,7 +204,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 			case ControlMode.MouseWheel:
 				_movementCtrl = new UnitMovementCtrl(
 					boxMovementCurve, overGoingThreshold,
-					getAligningDistance, isListReachingEnd);
+					getAligningDistance, getPositionState);
 				_inputPositionHandler =
 					(PointerEventData pointer, TouchPhase phase) => { };
 				_scrollHandler = ScrollDeltaHandler;
@@ -242,7 +248,6 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 			case TouchPhase.Moved:
 				_deltaInputPos = GetInputCanvasPosition(pointer.delta);
 				// Slide the list as long as the moving distance of the pointer
-				_movingDirection = Mathf.Sign(_deltaInputPos);
 				_movementCtrl.SetMovement(_deltaInputPos, true);
 				break;
 
@@ -307,7 +312,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	{
 		FindDeltaDistanceToCenter();
 		if (listType == ListType.Linear)
-			CheckIfListReachEnd();
+			UpdatePositionState();
 	}
 
 	/* Find the listBox which is the closest to the center position,
@@ -351,10 +356,6 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	 */
 	private void SetUnitMove(int unit)
 	{
-		_movingDirection = Mathf.Sign(unit);
-		// Additional check for the moving direction changing
-		CheckIfListReachEnd();
-
 		_movementCtrl.SetMovement(unit * unitPos, false);
 	}
 
@@ -376,12 +377,16 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	 *
 	 * This method is used for the linear mode.
 	 */
-	private void CheckIfListReachEnd()
+	private void UpdatePositionState()
 	{
-		_isListReachingEnd = (numOfUpperDisabledBoxes >= _maxNumOfDisabledBoxes &&
-		                      _deltaDistanceToCenter > -1e-6 && _movingDirection < 0) ||
-		                     (numOfLowerDisabledBoxes >= _maxNumOfDisabledBoxes &&
-		                      _deltaDistanceToCenter < 1e-6 && _movingDirection > 0);
+		if (numOfUpperDisabledBoxes >= _maxNumOfDisabledBoxes &&
+		    _deltaDistanceToCenter > -1e-4)
+			_positionState = PositionState.Top;
+		else if (numOfLowerDisabledBoxes >= _maxNumOfDisabledBoxes &&
+		         _deltaDistanceToCenter < 1e-4)
+			_positionState = PositionState.Bottom;
+		else
+			_positionState = PositionState.Middle;
 	}
 
 	/* Get the object of the centered ListBox.
