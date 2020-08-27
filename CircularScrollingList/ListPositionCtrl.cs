@@ -372,41 +372,16 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 		SetUnitMove(-1);
 	}
 
-	/* Make list can't go further, when the it reaches the end.
+	/* Check if the list reaches the end, and store the result to `_isListReachingEnd`
 	 *
 	 * This method is used for the linear mode.
 	 */
 	private void CheckIfListReachEnd()
 	{
-		_isListReachingEnd = false;
-
-		switch (direction) {
-			case Direction.Vertical:
-				// If the list reaches the head and it keeps going down, or
-				// the list reaches the tail and it keeps going up,
-				// make the list end be stopped at the center.
-				if ((numOfUpperDisabledBoxes >= _maxNumOfDisabledBoxes &&
-				     _deltaDistanceToCenter > -1e-6 && _movingDirection < 0) ||
-					(numOfLowerDisabledBoxes >= _maxNumOfDisabledBoxes &&
-					 _deltaDistanceToCenter < 1e-6 && _movingDirection > 0)) {
-					_isListReachingEnd = true;
-				}
-
-				break;
-
-			case Direction.Horizontal:
-				// If the list reaches the head and it keeps going left, or
-				// the list reaches the tail and it keeps going right,
-				// make the list end be stopped at the center.
-				if ((numOfUpperDisabledBoxes >= _maxNumOfDisabledBoxes &&
-				     _deltaDistanceToCenter > -1e-6 && _movingDirection < 0) ||
-				    (numOfLowerDisabledBoxes >= _maxNumOfDisabledBoxes &&
-				     _deltaDistanceToCenter < 1e-6 && _movingDirection > 0)) {
-					_isListReachingEnd = true;
-				}
-
-				break;
-		}
+		_isListReachingEnd = (numOfUpperDisabledBoxes >= _maxNumOfDisabledBoxes &&
+		                      _deltaDistanceToCenter > -1e-6 && _movingDirection < 0) ||
+		                     (numOfLowerDisabledBoxes >= _maxNumOfDisabledBoxes &&
+		                      _deltaDistanceToCenter < 1e-6 && _movingDirection > 0);
 	}
 
 	/* Get the object of the centered ListBox.
