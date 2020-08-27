@@ -329,7 +329,7 @@ internal class VelocityMovement
 		return _velocityFactorCurve.IsTimeOut();
 	}
 
-	/* Forcely end the movement by making it time out
+	/* Forcibly end the movement by making it time out
 	 */
 	public void EndMovement()
 	{
@@ -396,7 +396,7 @@ internal class DistanceMovement
 		return _distanceFactorCurve.IsTimeOut();
 	}
 
-	/* Forcely end the movement by making it time out
+	/* Forcibly end the movement by making it time out
 	 */
 	public void EndMovement()
 	{
