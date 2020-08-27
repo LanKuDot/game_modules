@@ -72,8 +72,8 @@ public class ListBox : MonoBehaviour
 		_unitPos = _positionCtrl.unitPos;
 		_lowerBoundPos = _positionCtrl.lowerBoundPos;
 		_upperBoundPos = _positionCtrl.upperBoundPos;
-		_changeSideLowerBoundPos = _lowerBoundPos + _unitPos * 0.3f;
-		_changeSideUpperBoundPos = _upperBoundPos - _unitPos * 0.3f;
+		_changeSideLowerBoundPos = _lowerBoundPos + _unitPos * 0.5f;
+		_changeSideUpperBoundPos = _upperBoundPos - _unitPos * 0.5f;
 
 		_positionCurve = new CurveResolver(
 			_positionCtrl.boxPositionCurve, _lowerBoundPos, _upperBoundPos);
