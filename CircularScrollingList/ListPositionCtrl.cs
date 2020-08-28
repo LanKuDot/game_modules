@@ -65,12 +65,8 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	public int centeredContentID = 0;
 	[Tooltip("The boxes which belong to this list.")]
 	public ListBox[] listBoxes;
-	[Tooltip("The callbacks for the event of the clicking on boxes." +
-	         "The registered callbacks will be added to the 'onClick' event of boxes, " +
-	         "therefore, boxes should be 'Button's.")]
-	public ListBoxClickEvent onBoxClick;
 
-	/* Parameters */
+	/* Appearance */
 	[Tooltip("The distance between each box. The larger, the closer.")]
 	public float boxDensity = 2.0f;
 	[Tooltip("The curve specifying the box position. " +
@@ -90,6 +86,12 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	public AnimationCurve boxMovementCurve = new AnimationCurve(
 		new Keyframe(0.0f, 1.0f, 0.0f, -2.5f),
 		new Keyframe(1.0f, 0.0f, 0.0f, 0.0f));
+
+	/* Events */
+	[Tooltip("The callbacks for the event of the clicking on boxes." +
+	         "The registered callbacks will be added to the 'onClick' event of boxes, " +
+	         "therefore, boxes should be 'Button's.")]
+	public ListBoxClickEvent onBoxClick;
 	/*===============================*/
 
 	// The canvas plane which the scrolling list is at.
