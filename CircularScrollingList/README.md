@@ -80,21 +80,21 @@ public class MyListBank: BaseListBank
 * Box Density: The gap between boxes. The larger, the closer.
 * Box Position Curve: The curve specifying the box position. The x axis is the major position of the box, which is mapped to [0, 1] (from the smallest value to the largest value). The y axis is the factor of the passive position. \
   For example, in the vertical mode, the major position is the y position and the passive position is the x position: \
-  ![Imgur](https://i.imgur.com/JqPRBTy.png) \
+  <img src="https://i.imgur.com/JqPRBTy.png" width=700px /> \
   It is intuitive in the horizontal mode: \
-  ![Imgur](https://i.imgur.com/RxOLC3S.png)
+  <img src="https://i.imgur.com/RxOLC3S.png" width=700px />
 * Box Scale Curve: Similar to the Box Position Curve, but the y axis defines the scale value of the box at that major position.
 * Box Movement Curve: The curve specifying movement of the box. The x axis is the movement duration in seconds, which starts from 0. The value of y axis is depended on the mode:
     * In the Drag mode, it is the factor relative to the releasing velocity;
     * In the Function or Mouse Wheel mode, it is the factor relative to the target position. \
-    ![Imgur](https://i.imgur.com/MBMrISG.png)
+    <img src="https://i.imgur.com/MBMrISG.png" width=650px />
 
 The project provides curve presets. Open the curve editing panel and select the `BoxCurvePresets` to use them. \
-![Imgur](https://i.imgur.com/m02LeMk.png) \
+<img src="https://i.imgur.com/m02LeMk.png" width=500px /> \
 ![Imgur](https://i.imgur.com/ZKzKGyg.png) \
 The first three curves are position curves, the 4th and 5th one are scale curves, the 6th one is a velocity related curve, and the last one is a position related curve.
 
-After configuration, the set up of the list is done! Click Play button of the scene to check the list.
+After configuration, the set up of the list is done! Click Play button of the scene to check the list. \
 <img src="https://i.imgur.com/rkbJ8tb.gif" width=300px />
 
 ### Get the ID of the Selected Content
@@ -147,4 +147,4 @@ public class MyApplication: MonoBehaviour
 ```
 
 It will be like:\
-<img src="https://i.imgur.com/ODVSR2t.gif" width=400px />
+<img src="https://i.imgur.com/zgxpO3M.gif" width=300px />
