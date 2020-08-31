@@ -10,9 +10,10 @@ public class ListPositionCtrlEditor : Editor
 		return serializedObject.FindProperty(proptyName);
 	}
 
-	private void SetPropertyField(string proptyName)
+	private void SetPropertyField(string proptyName, bool includeChildren = false)
 	{
-		EditorGUILayout.PropertyField(serializedObject.FindProperty(proptyName));
+		EditorGUILayout.PropertyField(
+			serializedObject.FindProperty(proptyName), includeChildren);
 	}
 
 	public override void OnInspectorGUI()
@@ -23,15 +24,17 @@ public class ListPositionCtrlEditor : Editor
 		SetPropertyField("listType");
 		SetPropertyField("controlMode");
 		if (GetProperty("controlMode").enumValueIndex == (int) ControlMode.Drag) {
+			++EditorGUI.indentLevel;
 			SetPropertyField("alignMiddle");
+			--EditorGUI.indentLevel;
 		}
 		SetPropertyField("direction");
-		SetPropertyField("listBoxes");
+		SetPropertyField("listBoxes", true);
 		SetPropertyField("listBank");
 		SetPropertyField("centeredContentID");
 
 		/* Appearance */
-		EditorGUILayout.Space(5);
+		EditorGUILayout.Space();
 		EditorGUILayout.LabelField("List Appearance", EditorStyles.boldLabel);
 		SetPropertyField("boxDensity");
 		SetPropertyField("boxPositionCurve");
@@ -39,7 +42,7 @@ public class ListPositionCtrlEditor : Editor
 		SetPropertyField("boxMovementCurve");
 
 		/* Events */
-		EditorGUILayout.Space(5);
+		EditorGUILayout.Space();
 		EditorGUILayout.LabelField("List Event", EditorStyles.boldLabel);
 		SetPropertyField("onBoxClick");
 
