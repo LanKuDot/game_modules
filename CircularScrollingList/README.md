@@ -1,17 +1,19 @@
 # Circular Scrolling List
 
+<img src="https://i.imgur.com/MdOcobs.gif" width=350px/>
+
 ## Features
 
 * Use finite list boxes to display infinite list items
 * Use Unity's event system to detect input events
+* Use `AnimationCurve` to define the layout and the movement
 * Support all three render modes of the canvas plane
-* Multiple lists can be placed in the same scene.
 * Support Unity 5+ (Tested in Unity 5.6.7f1)
 
 ### List mode
 
 * List type: Circular or Linear mode
-* Control mode: Drag, Button, or Mouse wheel
+* Control mode: Drag, Function, or Mouse wheel
 * Direction: Vertical or Horizontal
 
 [Demo video](https://youtu.be/k63eqwfj-1c)
@@ -20,21 +22,16 @@
 
 ### Set up the List
 
-1. Download the scripts in the directory `CircularScrollingList` and put into a unity project.
-2. Go to the tool bar -> Edit -> Project Settings -> Script Execution Order. Set the execution order of the `ListPositionCtrl.cs` prior to the `ListBox.cs`, and then click "Apply" button (or the script will be initialized in the alphabet order).\
-	![Imgur](https://i.imgur.com/cyGnLQ9.png)
-3. Add a Canvas plane to the scene. Set the render mode  to "Screen Space - Camera" (for example), and assign the "Main Camera" to the "Render Camera".\
+1. Download the directory `CircularScrollingList` and `AnimationCurveExtended` and put into an unity project.
+2. Add a Canvas plane to the scene. Set the render mode  to "Screen Space - Camera" (for example), and assign the "Main Camera" to the "Render Camera".\
 	![Imgur](https://i.imgur.com/YgysLbH.png)
-4. Create an empty gameobject as the child of the Canvas plane, rename it to `CircularList` (or another name you like), and attach the script `ListPositionCtrl.cs` to it.\
-	![Imgur](https://i.imgur.com/5eU8kPq.png)
-5. Create a Button gameobject as the child of the `CircularList`, rename it to `ListBox`, and attach the script `ListBox.cs` to it.
-6. Assign the gameobject "Text" of the Button to the "Content" of the `ListBox.cs`.\
-	![Imgur](https://i.imgur.com/BbZaece.png)
-7. Duplicate the gameobject `ListBox` as many times as you want (4 times here, for exmaple), and assign them to the "List Boxes" of the script `ListPositionCtrl.cs`.\
-	![Imgur](https://i.imgur.com/ABxPlrZ.png)
-8. Set the list mode.\
-	![Imgur](https://i.imgur.com/3B40zJr.png)
-9. "Play" the scene to view the layout of the list, and adjust boxes to the proper size. (Exceptions will be raised, because the `ListBank` hasn't been created yet.)
+3. Create an empty gameobject as the child of the Canvas plane, rename it to `CircularList` (or another name you like), set the scale to 0.6, and attach the script `ListPositionCtrl.cs` to it.\
+	![Imgur](https://i.imgur.com/JqBNYF2.png)
+4. Create a Button gameobject as the child of the `CircularList`, rename it to `ListBox`, change the sprite and the font size if needed.
+5.  Attach the script `ListBox.cs` to it, assign the gameobject "Text" of the Button to the "Content" of the `ListBox.cs`, and then create a prefab of it.\
+	![Imgur](https://i.imgur.com/x5yzlaQ.png)
+6. Duplicate the gameobject `ListBox` or create gameobjects from the prefab as many times as you want (4 times here, for exmaple), and assign them to the "List Boxes" of the script `ListPositionCtrl.cs`.\
+	![Imgur](https://i.imgur.com/JuvUPs7.png)
 
 ### Create `ListBank`
 
@@ -63,12 +60,42 @@ public class MyListBank: BaseListBank
 }
 ```
 4. Attach the script `MyListBank.cs` to the gameobject `CircularList` (or another gameobject), and assign the gameobject to the "List Bank" of the script `ListPositionCtrl.cs`.\
-	![Imgur](https://i.imgur.com/fK47UV5.png)
-5. Set the "Centered Content ID" to change the initial displaying content if needed.
-6. "Play" the scene and the list works properly.\
-	![Imgur](https://i.imgur.com/KHrZZ3o.gif)
+	![Imgur](https://i.imgur.com/FsysiTY.png)
 
-Additional settings for the control mode of Button, please see the section "Control Mode: Button".
+
+### Configure the List Mode and Appearance
+
+![Imgur](https://i.imgur.com/CURaq6S.png)
+
+**Basic Configuration**
+* List Type: Circular or Linear
+* Control Mode: Drag, Function, or Mouse Wheel
+    * Align Middle: Whether to align a box at the center of the list when the list stop moving. Only available in Drag mode.
+    * If the Function mode is selected, move the list by invoking `ListPositionCtrl.MoveOneUnitUp()` and `ListPositionCtrl.MoveOneUnitDown()`. For example, you can assign these two functions to buttons to control the list.
+* Direction: Vertical or Horizontal
+* Centered Content ID: The initial content ID for the centered box
+
+**List Appearance**
+
+* Box Density: The gap between boxes. The larger, the closer.
+* Box Position Curve: The curve specifying the box position. The x axis is the major position of the box, which is mapped to [0, 1] (from the smallest value to the largest value). The y axis is the factor of the passive position. \
+  For example, in the vertical mode, the major position is the y position and the passive position is the x position: \
+  ![Imgur](https://i.imgur.com/JqPRBTy.png) \
+  It is intuitive in the horizontal mode: \
+  ![Imgur](https://i.imgur.com/RxOLC3S.png)
+* Box Scale Curve: Similar to the Box Position Curve, but the y axis defines the scale value of the box at that major position.
+* Box Movement Curve: The curve specifying movement of the box. The x axis is the movement duration in seconds, which starts from 0. The value of y axis is depended on the mode:
+    * In the Drag mode, it is the factor relative to the releasing velocity;
+    * In the Function or Mouse Wheel mode, it is the factor relative to the target position. \
+    ![Imgur](https://i.imgur.com/MBMrISG.png)
+
+The project provides curve presets. Open the curve editing panel and select the `BoxCurvePresets` to use them. \
+![Imgur](https://i.imgur.com/m02LeMk.png) \
+![Imgur](https://i.imgur.com/ZKzKGyg.png) \
+The first three curves are position curves, the 4th and 5th one are scale curves, the 6th one is a velocity related curve, and the last one is a position related curve.
+
+After configuration, the set up of the list is done! Click Play button of the scene to check the list.
+<img src="https://i.imgur.com/rkbJ8tb.gif" width=300px />
 
 ### Get the ID of the Selected Content
 
@@ -91,11 +118,12 @@ public void GetSelectedContentID(int contentID)
 }
 ```
 
-Then, add it to the "On Box Click (Int 32)" of the script `ListPositionCtrl.cs` in the inspector.\
-![Imgur](https://i.imgur.com/EmzRYr2.png)
+Then, add it to the "On Box Click (Int 32)" of the script `ListPositionCtrl.cs` in the inspector. (Note that select the function in the "dynamic int" section)\
+![Imgur](https://i.imgur.com/EmzRYr2.png)\
+![Imgur](https://i.imgur.com/4UPloXz.png)
 
 It will be like:\
-![Imgur](https://i.imgur.com/khBJMpn.gif)
+<img src="https://i.imgur.com/mNhwjRQ.gif" width=400px />
 
 **Get the Centered Content ID**
 
@@ -119,27 +147,4 @@ public class MyApplication: MonoBehaviour
 ```
 
 It will be like:\
-![Imgur](https://i.imgur.com/ODVSR2t.gif)
-
-### Control Mode: Button
-
-In this mode, you have to create two additional Button gameobjects for controlling the list.
-
-1. Create two Buttons as the child of the gameobject `CircularList`, and rename them to `Button_NextContent` and `Button_LastContent`.
-2. Place the gameobject `Button_NextContent` to the top of the list, and the other to the bottom of the list.\
-	![Imgur](https://i.imgur.com/MwasBgp.png)
-3. Assign the function `ListPositionCtrl.MoveOneUnitUp()` to the `onClick` event of the gameobject `Button_NextContent`, and assign the function `ListPositionCtrl.MoveOneUnitDown()` to same event of the other gameobject.\
-	![Imgur](https://i.imgur.com/jWQLDpj.png)
-4. Done!\
-	![Imgur](https://i.imgur.com/hbQL73Q.gif)
-
-### Layout Settings
-
-There are some settings to modify the layout of the list:
-
-* Box gap factor: Set the distance between the boxes. The larger, the closer.
-* Box sliding frames: Set the sliding duration. The larger, the longer.
-* Box sliding speed factor: Set the sliding speed. The larger, the quicker.
-* List curvature: Set the whole list curving left/right (in vertical mode), or up/down (in horizontal mode).
-* Position adjust: Adjust the centroid of the whole list.
-* Center box scale rate: The scaling of the centered box.
+<img src="https://i.imgur.com/ODVSR2t.gif" width=400px />
