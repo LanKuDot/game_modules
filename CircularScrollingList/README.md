@@ -20,9 +20,9 @@
 
 ## How to Use
 
-### Download the Code
+### Related Code
 
-Download the directory `CircularScrollingList` and `AnimationCurveExtended` and put into an unity project.
+The code in the `AnimationCurveExtend` and `CircularScrollingList` directory
 
 ### Set up the List
 
