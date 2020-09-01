@@ -17,6 +17,13 @@ public interface IControlEventHandler:
 public class ListBoxClickEvent : UnityEvent<int>
 {}
 
+/* The callback for the event of the list.
+ * The ListPositionCtrl parameter is the list which fires the event.
+ */
+[System.Serializable]
+public class ListEvent : UnityEvent<ListPositionCtrl>
+{}
+
 public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 {
 	public enum ListType
@@ -91,6 +98,8 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	         "The registered callbacks will be added to the 'onClick' event of boxes, " +
 	         "therefore, boxes should be 'Button's.")]
 	public ListBoxClickEvent onBoxClick;
+	// The callback will be invoked when the list is moving.
+	public ListEvent onListMove;
 	/*===============================*/
 
 	// The canvas plane which the scrolling list is at.
@@ -125,6 +134,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	 */
 	private void Start()
 	{
+		Application.targetFrameRate = 60;
 		InitializePositionVars();
 		InitializeInputFunction();
 		InitializeBoxDependency();
