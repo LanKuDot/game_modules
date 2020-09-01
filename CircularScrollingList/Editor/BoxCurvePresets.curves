@@ -183,7 +183,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  - m_Name: Movement_Drag
+  - m_Name: Movement_VelocityRelated
     m_Curve:
       serializedVersion: 2
       m_Curve:
@@ -208,7 +208,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  - m_Name: Movement_Func-Wheel
+  - m_Name: Movement_PositionRelated
     m_Curve:
       serializedVersion: 2
       m_Curve:
