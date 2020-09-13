@@ -2,6 +2,7 @@
  * Control the position and update the content of the list element.
  */
 
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,9 +22,7 @@ public class ListBox : MonoBehaviour
 	private CurveResolver _positionCurve;
 	private CurveResolver _scaleCurve;
 
-	public delegate void UpdatePositionDelegate(float delta);
-
-	public UpdatePositionDelegate UpdatePosition;
+	public Action<float> UpdatePosition { private set; get; }
 
 	/* ====== Position variables ====== */
 	// Position calculated here is in the local space of the list
