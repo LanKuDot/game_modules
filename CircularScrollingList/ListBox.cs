@@ -7,16 +7,13 @@ using UnityEngine.UI;
 
 public class ListBox : MonoBehaviour
 {
-	public Text content;    // The display text for the content of the list box
+	public Text content; // The display text for the content of the list box
 
 	// These public variables will be initialized
 	// in ListPositionCtrl.InitializeBoxDependency().
-	[HideInInspector]
-	public int listBoxID;   // The same as the order in the `listBoxes`
-	[HideInInspector]
-	public ListBox lastListBox;
-	[HideInInspector]
-	public ListBox nextListBox;
+	[HideInInspector] public int listBoxID; // The same as the order in the `listBoxes`
+	[HideInInspector] public ListBox lastListBox;
+	[HideInInspector] public ListBox nextListBox;
 	private int _contentID;
 
 	private ListPositionCtrl _positionCtrl;
@@ -25,13 +22,14 @@ public class ListBox : MonoBehaviour
 	private CurveResolver _scaleCurve;
 
 	public delegate void UpdatePositionDelegate(float delta);
+
 	public UpdatePositionDelegate UpdatePosition;
 
 	/* ====== Position variables ====== */
 	// Position calculated here is in the local space of the list
-	private float _unitPos;         // The distance between boxes
-	private float _lowerBoundPos;   // The left/down-most position of the box
-	private float _upperBoundPos;   // The right/up-most position of the box
+	private float _unitPos; // The distance between boxes
+	private float _lowerBoundPos; // The left/down-most position of the box
+	private float _upperBoundPos; // The right/up-most position of the box
 	// _changeSide(Lower/Upper)BoundPos is the boundary for checking that
 	// whether to move the box to the other end or not
 	private float _changeSideLowerBoundPos;
@@ -42,8 +40,8 @@ public class ListBox : MonoBehaviour
 	public void ShowBoxInfo()
 	{
 		Debug.Log("Box ID: " + listBoxID.ToString() +
-			", Content ID: " + _contentID.ToString() +
-			", Content: " + _listBank.GetListContent(_contentID));
+		          ", Content ID: " + _contentID.ToString() +
+		          ", Content: " + _listBank.GetListContent(_contentID));
 	}
 
 	/* Get the content ID of the box
@@ -206,7 +204,7 @@ public class ListBox : MonoBehaviour
 	 */
 	private float GetPassivePosition(float majorPosition)
 	{
-		float passivePosFactor = _positionCurve.Evaulate(majorPosition);
+		float passivePosFactor = _positionCurve.Evaluate(majorPosition);
 		return _upperBoundPos * passivePosFactor;
 	}
 
@@ -214,7 +212,7 @@ public class ListBox : MonoBehaviour
 	 */
 	private void UpdateScale(float majorPosition)
 	{
-		float scaleValue = _scaleCurve.Evaulate(majorPosition);
+		float scaleValue = _scaleCurve.Evaluate(majorPosition);
 		transform.localScale = new Vector3(scaleValue, scaleValue, transform.localScale.z);
 	}
 
@@ -269,7 +267,7 @@ public class ListBox : MonoBehaviour
 
 		if (_positionCtrl.listType == ListPositionCtrl.ListType.Linear) {
 			if (_contentID == _listBank.GetListLength() - 1 ||
-				!nextListBox.isActiveAndEnabled) {
+			    !nextListBox.isActiveAndEnabled) {
 				// If the box has been disabled at the other side,
 				// decrease the counter of the other side.
 				if (!isActiveAndEnabled)
@@ -316,7 +314,8 @@ public class ListBox : MonoBehaviour
 	/* The class for converting the custom range to fit the AnimationCurve for
 	 * evaluating the final value.
 	 */
-	private class CurveResolver {
+	private class CurveResolver
+	{
 		private AnimationCurve _curve;
 		private float _maxValue;
 		private float _minValue;
@@ -337,7 +336,7 @@ public class ListBox : MonoBehaviour
 		/* Convert the input value to the value of interpolation between [minValue, maxValue]
 		 * and pass the result to the curve to get the final value.
 		 */
-		public float Evaulate(float value)
+		public float Evaluate(float value)
 		{
 			float lerpValue = Mathf.InverseLerp(_minValue, _maxValue, value);
 			return _curve.Evaluate(lerpValue);
