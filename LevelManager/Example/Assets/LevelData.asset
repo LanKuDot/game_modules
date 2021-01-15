@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94fb28e3752b49e468fdd23f7ac52633, type: 3}
+  m_Name: LevelData
+  m_EditorClassIdentifier: 
+  _levels:
+  - _levelScene:
+      m_AssetGUID: 55afbd90652bd3f4e995e634033bcdbf
+      m_SubObjectName: 
+      m_SubObjectType: 
+    _levelData: Level 0 -> A
+  - _levelScene:
+      m_AssetGUID: 55afbd90652bd3f4e995e634033bcdbf
+      m_SubObjectName: 
+      m_SubObjectType: 
+    _levelData: Level 1 -> B
+  - _levelScene:
+      m_AssetGUID: 55afbd90652bd3f4e995e634033bcdbf
+      m_SubObjectName: 
+      m_SubObjectType: 
+    _levelData: Level 2 -> C
+  - _levelScene:
+      m_AssetGUID: 55afbd90652bd3f4e995e634033bcdbf
+      m_SubObjectName: 
+      m_SubObjectType: 
+    _levelData: Level 3 -> D
+  - _levelScene:
+      m_AssetGUID: 55afbd90652bd3f4e995e634033bcdbf
+      m_SubObjectName: 
+      m_SubObjectType: 
+    _levelData: Level 4 -> E
+  - _levelScene:
+      m_AssetGUID: 55afbd90652bd3f4e995e634033bcdbf
+      m_SubObjectName: 
+      m_SubObjectType: 
+    _levelData: Level 5 -> F
+  - _levelScene:
+      m_AssetGUID: 55afbd90652bd3f4e995e634033bcdbf
+      m_SubObjectName: 
+      m_SubObjectType: 
+    _levelData: Level 6 -> G
+  - _levelScene:
+      m_AssetGUID: 55afbd90652bd3f4e995e634033bcdbf
+      m_SubObjectName: 
+      m_SubObjectType: 
+    _levelData: Level 7 -> H
+  - _levelScene:
+      m_AssetGUID: 55afbd90652bd3f4e995e634033bcdbf
+      m_SubObjectName: 
+      m_SubObjectType: 
+    _levelData: Level 8 -> I
+  - _levelScene:
+      m_AssetGUID: 55afbd90652bd3f4e995e634033bcdbf
+      m_SubObjectName: 
+      m_SubObjectType: 
+    _levelData: Level 9 -> J
