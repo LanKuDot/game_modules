@@ -10,7 +10,7 @@
     ```
     * or downloading the zip file of this repo from GitHub and then unzip it to the "Plugins" directory.
 
-## Module
+## Modules
 
 ### Circular Scrolling List - v4
 
@@ -24,3 +24,10 @@
   - Control mode: Drag, Function, or Mouse Wheel
   - Direction: Vertical or Horizontal
 - See [README](CircularScrollingList/README.md) for more information and how to use it in the project
+
+### [Level Manager](LevelManager/)
+
+- The general purpose level manager
+- Manage the level scene loading
+- Support single and additive loading
+- Custom level data and the level selection UI
