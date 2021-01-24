@@ -79,12 +79,14 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 	         "The x axis is the major position of the box, which is mapped to [0, 1]. " +
 	         "The y axis defines the factor of the passive position of the box. " +
 	         "Point (0.5, 0) is the center of the list layout.")]
-	public AnimationCurve boxPositionCurve = AnimationCurve.Constant(0.0f, 1.0f, 0.0f);
+	public AnimationCurve boxPositionCurve = new AnimationCurve(
+		new Keyframe(0.0f, 0.0f), new Keyframe(1.0f, 0.0f));
 	[Tooltip("The curve specifying the box scale. " +
 	         "The x axis is the major position of the box, which is mapped to [0, 1]. " +
 	         "The y axis specifies the value of 'localScale' of the box at the " +
 	         "corresponding position.")]
-	public AnimationCurve boxScaleCurve = AnimationCurve.Constant(0.0f, 1.0f, 1.0f);
+	public AnimationCurve boxScaleCurve = new AnimationCurve(
+		new Keyframe(0.0f, 1.0f), new Keyframe(1.0f, 1.0f));
 	[Tooltip("The curve specifying the movement of the box. " +
 	         "The x axis is the moving duration in seconds, which starts from 0. " +
 	         "The y axis is the factor of the releasing velocity in Drag mode, or " +
