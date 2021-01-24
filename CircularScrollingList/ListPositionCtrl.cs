@@ -1,7 +1,4 @@
-﻿/* Handle the controlling event and send the moving information to the boxes it has
- */
-
-using System;
+﻿using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -10,49 +7,89 @@ public interface IControlEventHandler:
     IBeginDragHandler, IDragHandler, IEndDragHandler, IScrollHandler
 {}
 
-/* The callback for passing the onClick event sent from the clicked ListBox.
- * The int parameter will be the ID of the content which the clicked ListBox holds.
- */
-[System.Serializable]
+/// <summary>
+/// The event is fired when a box in the list is clicked<para/>
+/// The int parameter is the content ID of the clicked box
+/// </summary>
+[Serializable]
 public class ListBoxClickEvent : UnityEvent<int>
 {}
 
-/* The callback for the event of the list.
- * The ListPositionCtrl parameter is the list which fires the event.
- */
-[System.Serializable]
+/// <summary>
+/// The event is fired when something happened in the list
+/// The <c>ListPositionCtrl</c> parameter is the list which fires the event.
+/// </summary>
+[Serializable]
 public class ListEvent : UnityEvent<ListPositionCtrl>
 {}
 
+/// <summary>
+/// Control the position of boxes
+/// </summary>
 public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 {
+    #region Enum Definitions
+
+    /// <summary>
+    /// The type of the list
+    /// </summary>
     public enum ListType
     {
         Circular,
         Linear
     };
 
+    /// <summary>
+    /// The controlling mode of the list
+    /// </summary>
     public enum ControlMode
     {
-        Drag,       // By the mouse pointer or finger
-        Function,   // By the calling MoveOneUnitUp/MoveOneUnitDown function
-        MouseWheel  // By the mouse wheel
+        /// <summary>
+        /// Control the list by the mouse pointer or finger
+        /// </summary>
+        Drag,
+        /// <summary>
+        /// Control the list by invoking functions
+        /// </summary>
+        Function,
+        /// <summary>
+        /// Control the list by the mouse wheel
+        /// </summary>
+        MouseWheel
     };
 
+    /// <summary>
+    /// The major moving direction of the list
+    /// </summary>
     public enum Direction
     {
         Vertical,
         Horizontal
     };
 
+    /// <summary>
+    /// The state of the position of the list
+    /// </summary>
     public enum PositionState
     {
-        Top,    // The list reaches the top
-        Middle,    // The list doesn't reach either end
-        Bottom    // The list reaches the bottom
+        /// <summary>
+        /// The list reaches the top
+        /// </summary>
+        Top,
+        /// <summary>
+        /// The list doesn't reach either end
+        /// </summary>
+        Middle,
+        /// <summary>
+        /// The list reaches the bottom
+        /// </summary>
+        Bottom
     };
 
-    /*========== Settings ==========*/
+    #endregion
+
+    #region Settings
+
     /* List mode */
     [Tooltip("The type of the list.")]
     public ListType listType = ListType.Circular;
@@ -93,14 +130,18 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
         new Keyframe(0.0f, 1.0f, 0.0f, -2.5f),
         new Keyframe(1.0f, 0.0f, 0.0f, 0.0f));
 
-    /* Events */
+    #endregion
+
+    #region Events
+
     [Tooltip("The callbacks for the event of the clicking on boxes." +
              "The registered callbacks will be added to the 'onClick' event of boxes, " +
              "therefore, boxes should be 'Button's.")]
     public ListBoxClickEvent onBoxClick;
     // The callback will be invoked when the list is moving.
     public ListEvent onListMove;
-    /*===============================*/
+
+    #endregion
 
     // The canvas plane which the scrolling list is at.
     private Canvas _parentCanvas;
@@ -123,10 +164,8 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 
     // Variables for linear mode
     private PositionState _positionState = PositionState.Middle;
-    [HideInInspector]
-    public int numOfUpperDisabledBoxes = 0;
-    [HideInInspector]
-    public int numOfLowerDisabledBoxes = 0;
+    public int numOfUpperDisabledBoxes { set; get; }
+    public int numOfLowerDisabledBoxes { set; get; }
     private int _maxNumOfDisabledBoxes = 0;
 
     /* Notice: ListBox will initialize its variables from here, so ListPositionCtrl
@@ -143,6 +182,8 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
             listBox.Initialize(this);
     }
 
+    #region Initialization
+
     private void InitializePositionVars()
     {
         /* The the reference of canvas plane */
@@ -150,7 +191,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 
         /* Get the max position of canvas plane in the canvas space.
          * Assume that the origin of the canvas space is at the center of canvas plane. */
-        RectTransform rectTransform = _parentCanvas.GetComponent<RectTransform>();
+        var rectTransform = _parentCanvas.GetComponent<RectTransform>();
 
         switch (direction) {
             case Direction.Vertical:
@@ -161,27 +202,27 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
                 break;
         }
 
-        unitPos = _canvasMaxPos / boxDensity;
-        lowerBoundPos = unitPos * (-1 * listBoxes.Length / 2 - 1);
-        upperBoundPos = unitPos * (listBoxes.Length / 2 + 1);
-
         // If there are even number of ListBoxes, narrow the boundary for 1 unitPos.
-        if ((listBoxes.Length & 0x1) == 0) {
-            lowerBoundPos += unitPos / 2;
-            upperBoundPos -= unitPos / 2;
-        }
+        var boundPosAdjust =
+            ((listBoxes.Length & 0x1) == 0) ? unitPos / 2 : 0;
+
+        unitPos = _canvasMaxPos / boxDensity;
+        lowerBoundPos = unitPos * (-1 * listBoxes.Length / 2 - 1) + boundPosAdjust;
+        upperBoundPos = unitPos * (listBoxes.Length / 2 + 1) - boundPosAdjust;
     }
 
     private void InitializeBoxDependency()
     {
         // Set the box ID according to the order in the container `listBoxes`
-        for (int i = 0; i < listBoxes.Length; ++i)
+        for (var i = 0; i < listBoxes.Length; ++i)
             listBoxes[i].listBoxID = i;
 
         // Set the neighbor boxes
-        for (int i = 0; i < listBoxes.Length; ++i) {
-            listBoxes[i].lastListBox = listBoxes[(i - 1 >= 0) ? i - 1 : listBoxes.Length - 1];
-            listBoxes[i].nextListBox = listBoxes[(i + 1 < listBoxes.Length) ? i + 1 : 0];
+        for (var i = 0; i < listBoxes.Length; ++i) {
+            listBoxes[i].lastListBox =
+                listBoxes[(i - 1 >= 0) ? i - 1 : listBoxes.Length - 1];
+            listBoxes[i].nextListBox =
+                listBoxes[(i + 1 < listBoxes.Length) ? i + 1 : 0];
         }
     }
 
@@ -192,40 +233,42 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
      */
     private void InitializeInputFunction()
     {
-        Func<float> getAligningDistance = () => _deltaDistanceToCenter;
-        Func<PositionState> getPositionState = () => _positionState;
+        float GetAligningDistance() => _deltaDistanceToCenter;
+        PositionState GetPositionState() => _positionState;
+
         var overGoingThreshold = unitPos * 0.3f;
 
         switch (controlMode) {
             case ControlMode.Drag:
                 _movementCtrl = new FreeMovementCtrl(
                     boxMovementCurve, alignMiddle, overGoingThreshold,
-                    getAligningDistance, getPositionState);
+                    GetAligningDistance, GetPositionState);
                 _inputPositionHandler = DragPositionHandler;
-                _scrollHandler = (Vector2 v) => { };
+                _scrollHandler = v => { };
                 break;
 
             case ControlMode.Function:
                 _movementCtrl = new UnitMovementCtrl(
                     boxMovementCurve, overGoingThreshold,
-                    getAligningDistance, getPositionState);
-                _inputPositionHandler =
-                    (PointerEventData pointer, TouchPhase phase) => { };
-                _scrollHandler = (Vector2 v) => { };
+                    GetAligningDistance, GetPositionState);
+                _inputPositionHandler = (pointer, phase) => { };
+                _scrollHandler = v => { };
                 break;
 
             case ControlMode.MouseWheel:
                 _movementCtrl = new UnitMovementCtrl(
                     boxMovementCurve, overGoingThreshold,
-                    getAligningDistance, getPositionState);
-                _inputPositionHandler =
-                    (PointerEventData pointer, TouchPhase phase) => { };
+                    GetAligningDistance, GetPositionState);
+                _inputPositionHandler = (pointer, phase) => { };
                 _scrollHandler = ScrollDeltaHandler;
                 break;
         }
     }
 
-    /* ====== Callback functions for the unity event system ====== */
+    #endregion
+
+    #region Event System Callback
+
     public void OnBeginDrag(PointerEventData pointer)
     {
         _inputPositionHandler(pointer, TouchPhase.Began);
@@ -246,6 +289,9 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
         _scrollHandler(pointer.scrollDelta);
     }
 
+    #endregion
+
+    #region Input Value Handler
 
     /* Move the list according to the dragging position and the dragging state
      */
@@ -303,17 +349,18 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
         }
     }
 
+    #endregion
 
-    /* ====== Movement functions ====== */
     /* Control the movement of listBoxes
      */
     private void Update()
     {
-        if (!_movementCtrl.IsMovementEnded()) {
-            var distance = _movementCtrl.GetDistance(Time.deltaTime);
-            foreach (ListBox listBox in listBoxes)
-                listBox.UpdatePosition(distance);
-        }
+        if (_movementCtrl.IsMovementEnded())
+            return;
+
+        var distance = _movementCtrl.GetDistance(Time.deltaTime);
+        foreach (var listBox in listBoxes)
+            listBox.UpdatePosition(distance);
     }
 
     /* Check the status of the list
@@ -325,17 +372,19 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
             UpdatePositionState();
     }
 
+    #region Movement Control
+
     /* Find the listBox which is the closest to the center position,
      * and calculate the delta x or y position between it and the center position.
      */
     private void FindDeltaDistanceToCenter()
     {
-        float minDeltaPos = Mathf.Infinity;
-        float deltaPos = 0.0f;
+        var minDeltaPos = Mathf.Infinity;
+        var deltaPos = 0.0f;
 
         switch (direction) {
             case Direction.Vertical:
-                foreach (ListBox listBox in listBoxes) {
+                foreach (var listBox in listBoxes) {
                     // Skip the disabled box in linear mode
                     if (!listBox.isActiveAndEnabled)
                         continue;
@@ -347,7 +396,7 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
                 break;
 
             case Direction.Horizontal:
-                foreach (ListBox listBox in listBoxes) {
+                foreach (var listBox in listBoxes) {
                     // Skip the disabled box in linear mode
                     if (!listBox.isActiveAndEnabled)
                         continue;
@@ -369,24 +418,25 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
         _movementCtrl.SetMovement(unit * unitPos, false);
     }
 
-    /* Move all listBoxes 1 unit up.
-     */
+    /// <summary>
+    /// Move all boxes 1 unit up
+    /// </summary>
     public void MoveOneUnitUp()
     {
         SetUnitMove(1);
     }
 
-    /* Move all listBoxes 1 unit down.
-     */
+    /// <summary>
+    /// Move all boxes 1 unit down
+    /// </summary>
     public void MoveOneUnitDown()
     {
         SetUnitMove(-1);
     }
 
-    /* Check if the list reaches the end, and store the result to `_isListReachingEnd`
-     *
-     * This method is used for the linear mode.
-     */
+    /// <summary>
+    /// Check if the list reaches the end and update the position state
+    /// </summary>
     private void UpdatePositionState()
     {
         if (numOfUpperDisabledBoxes >= _maxNumOfDisabledBoxes &&
@@ -399,44 +449,50 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
             _positionState = PositionState.Middle;
     }
 
-    /* Get the object of the centered ListBox.
-     * The centered ListBox is found by comparing which one is the closest
-     * to the center.
-     */
+    #endregion
+
+    #region Center Box Searching
+
+    /// <summary>
+    /// Get the centered ListBox<para />
+    /// The centered ListBox is found by comparing which one is the closest
+    /// to the center.
+    /// </summary>
+    /// <returns>The ListBox</returns>
     public ListBox GetCenteredBox()
     {
-        float minPosition = Mathf.Infinity;
-        float position;
+        var minPosition = Mathf.Infinity;
         ListBox candidateBox = null;
 
-        switch (direction) {
-            case Direction.Vertical:
-                foreach (ListBox listBox in listBoxes) {
-                    position = Mathf.Abs(listBox.transform.localPosition.y);
-                    if (position < minPosition) {
-                        minPosition = position;
-                        candidateBox = listBox;
-                    }
-                }
-                break;
-            case Direction.Horizontal:
-                foreach (ListBox listBox in listBoxes) {
-                    position = Mathf.Abs(listBox.transform.localPosition.x);
-                    if (position < minPosition) {
-                        minPosition = position;
-                        candidateBox = listBox;
-                    }
-                }
-                break;
+        bool IsCloser(Vector3 localPos)
+        {
+            var value =
+                Mathf.Abs(direction == Direction.Horizontal ? localPos.x : localPos.y);
+
+            if (value < minPosition) {
+                minPosition = value;
+                return true;
+            }
+
+            return false;
+        }
+
+        foreach (var listBox in listBoxes) {
+            if (IsCloser(listBox.transform.localPosition))
+                candidateBox = listBox;
         }
 
         return candidateBox;
     }
 
-    /* Get the content ID of the centered box
-     */
+    /// <summary>
+    /// Get the content ID of the centered box
+    /// </summary>
+    /// <returns>The content ID of the centered box</returns>
     public int GetCenteredContentID()
     {
         return GetCenteredBox().GetContentID();
     }
+
+    #endregion
 }
