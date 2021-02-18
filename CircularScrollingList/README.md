@@ -20,10 +20,6 @@
 
 ## How to Use
 
-### Related Code
-
-The code in the `AnimationCurveExtend` and `CircularScrollingList` directory
-
 ### Set up the List
 
 1. Add a Canvas plane to the scene. Set the render mode  to "Screen Space - Camera" (for example), and assign the "Main Camera" to the "Render Camera". \
