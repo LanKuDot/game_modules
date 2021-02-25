@@ -173,7 +173,6 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
      */
     private void Start()
     {
-        Application.targetFrameRate = 60;
         InitializePositionVars();
         InitializeInputFunction();
         InitializeBoxDependency();
