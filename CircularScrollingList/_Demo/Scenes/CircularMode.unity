@@ -512,8 +512,6 @@ MonoBehaviour:
   onListMove:
     m_PersistentCalls:
       m_Calls: []
-  numOfUpperDisabledBoxes: 0
-  numOfLowerDisabledBoxes: 0
 --- !u!114 &96940623
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -946,8 +944,6 @@ MonoBehaviour:
   onListMove:
     m_PersistentCalls:
       m_Calls: []
-  numOfUpperDisabledBoxes: 0
-  numOfLowerDisabledBoxes: 0
 --- !u!114 &515080206
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2380,8 +2376,6 @@ MonoBehaviour:
   onListMove:
     m_PersistentCalls:
       m_Calls: []
-  numOfUpperDisabledBoxes: 0
-  numOfLowerDisabledBoxes: 0
 --- !u!114 &1124026714
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2627,8 +2621,6 @@ MonoBehaviour:
   onListMove:
     m_PersistentCalls:
       m_Calls: []
-  numOfUpperDisabledBoxes: 0
-  numOfLowerDisabledBoxes: 0
 --- !u!114 &1188397709
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3721,6 +3713,7 @@ GameObject:
   - component: {fileID: 2014843332}
   - component: {fileID: 2014843331}
   - component: {fileID: 2014843330}
+  - component: {fileID: 2014843333}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -3793,6 +3786,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2014843333
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2014843329}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 845f7d1b53348bc48936f1772afd76c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _targetFPS: 60
 --- !u!1001 &2174604990620271880
 PrefabInstance:
   m_ObjectHideFlags: 0
