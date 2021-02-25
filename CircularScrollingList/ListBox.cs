@@ -1,20 +1,24 @@
-﻿/* The basic component of the scrolling list.
- * Control the position and update the content of the list element.
- */
-
-using System;
+﻿using System;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// The basic component of the scrolling list.
+/// Control the position and update the content of the list element.
+/// </summary>
 public class ListBox : MonoBehaviour
 {
-    public Text content; // The display text for the content of the list box
+    [Tooltip("The text for displaying the content of the element")]
+    public Text content;
 
-    // These public variables will be initialized
-    // in ListPositionCtrl.InitializeBoxDependency().
-    [HideInInspector] public int listBoxID; // The same as the order in the `listBoxes`
-    [HideInInspector] public ListBox lastListBox;
-    [HideInInspector] public ListBox nextListBox;
+    #region Setting Properties
+
+    public int listBoxID { set; get; }
+    public ListBox lastListBox { set; get; }
+    public ListBox nextListBox { set; get; }
+
+    #endregion
+
     private int _contentID;
 
     private ListPositionCtrl _positionCtrl;
@@ -24,18 +28,35 @@ public class ListBox : MonoBehaviour
 
     public Action<float> UpdatePosition { private set; get; }
 
-    /* ====== Position variables ====== */
+    #region Position Controlling Variables
+
     // Position calculated here is in the local space of the list
-    private float _unitPos; // The distance between boxes
-    private float _lowerBoundPos; // The left/down-most position of the box
-    private float _upperBoundPos; // The right/up-most position of the box
-    // _changeSide(Lower/Upper)BoundPos is the boundary for checking that
-    // whether to move the box to the other end or not
+    /// <summary>
+    /// The distance between boxes
+    /// </summary>
+    private float _unitPos;
+    /// <summary>
+    /// The left/down-most position of the box
+    /// </summary>
+    private float _lowerBoundPos;
+    /// <summary>
+    /// The right/up-most position of the box
+    /// </summary>
+    private float _upperBoundPos;
+    /// <summary>
+    /// The lower boundary where the box will be moved to the other end
+    /// </summary>
     private float _changeSideLowerBoundPos;
+    /// <summary>
+    /// The upper boundary where the box will be moved to the other end
+    /// </summary>
     private float _changeSideUpperBoundPos;
 
-    /* Output the information of the box to the Debug.Log
-     */
+    #endregion
+
+    /// <summary>
+    /// Output the information of the box to the Debug.Log
+    /// </summary>
     public void ShowBoxInfo()
     {
         Debug.Log("Box ID: " + listBoxID.ToString() +
@@ -43,15 +64,20 @@ public class ListBox : MonoBehaviour
                   ", Content: " + _listBank.GetListContent(_contentID));
     }
 
-    /* Get the content ID of the box
-     */
+    /// <summary>
+    /// Get the content ID of the box
+    /// </summary>
     public int GetContentID()
     {
         return _contentID;
     }
 
-    /* Initialize the box.
-     */
+    #region Initialization
+
+    /// <summary>
+    /// Initialize the box
+    /// </summary>
+    /// <param name="listPositionCtrl">The position controller of this box</param>
     public void Initialize(ListPositionCtrl listPositionCtrl)
     {
         _positionCtrl = listPositionCtrl;
@@ -84,61 +110,70 @@ public class ListBox : MonoBehaviour
         AddClickEvent();
     }
 
-    /* Add an additional listener to Button.onClick event for passing the content ID
-     * of the clicked box to the event handlers registered at ListPositionCtrl.onBoxClick
-     */
+    /// <summary>
+    /// Add an additional listener to Button.onClick event for passing click
+    /// event to target <c>ListPositionCtrl</c>
+    /// </summary>
     private void AddClickEvent()
     {
-        Button button = transform.GetComponent<Button>();
+        var button = transform.GetComponent<Button>();
         if (button != null)
-            button.onClick.AddListener(() => _positionCtrl.onBoxClick.Invoke(_contentID));
+            button.onClick.AddListener(
+                () => _positionCtrl.onBoxClick.Invoke(_contentID));
     }
 
-    /* Initialize the local position of the list box according to its ID
-     */
+    /// <summary>
+    /// Initialize the local position of the list box according to its ID
+    /// </summary>
     private void InitialPosition()
     {
-        int numOfBoxes = _positionCtrl.listBoxes.Length;
-        float majorPosition = _unitPos * (listBoxID * -1 + numOfBoxes / 2);
-        float passivePosition;
+        var numOfBoxes = _positionCtrl.listBoxes.Length;
+        var majorPosition = _unitPos * (listBoxID * -1 + numOfBoxes / 2);
+        var passivePosition = 0f;
 
         // If there are even number of boxes, adjust the position one half unitPos down.
         if ((numOfBoxes & 0x1) == 0) {
-            majorPosition = _unitPos * (listBoxID * -1 + numOfBoxes / 2) - _unitPos / 2;
+            majorPosition =
+                _unitPos * (listBoxID * -1 + numOfBoxes / 2) - _unitPos / 2;
         }
 
         passivePosition = GetPassivePosition(majorPosition);
 
         switch (_positionCtrl.direction) {
             case ListPositionCtrl.Direction.Vertical:
-                transform.localPosition = new Vector3(
-                    passivePosition, majorPosition, transform.localPosition.z);
+                transform.localPosition =
+                    new Vector3(
+                        passivePosition, majorPosition, transform.localPosition.z);
                 break;
             case ListPositionCtrl.Direction.Horizontal:
-                transform.localPosition = new Vector3(
-                    majorPosition, passivePosition, transform.localPosition.z);
+                transform.localPosition =
+                    new Vector3(
+                        majorPosition, passivePosition, transform.localPosition.z);
                 break;
         }
 
         UpdateScale(majorPosition);
     }
 
-    /* Move the box vertically and adjust its final position and size.
-     *
-     * This function is the UpdatePosition in the vertical mode.
-     *
-     * @param delta The moving distance
-     */
+    #endregion
+
+    #region Position Controlling
+
+    /// <summary>
+    /// Move the box vertically and adjust its final position and size
+    /// </summary>
+    /// <param name="delta">The moving distance</param>
     private void MoveVertically(float delta)
     {
-        bool needToUpdateToLastContent = false;
-        bool needToUpdateToNextContent = false;
-        float majorPosition = GetMajorPosition(transform.localPosition.y + delta,
+        var needToUpdateToLastContent = false;
+        var needToUpdateToNextContent = false;
+        var majorPosition = GetMajorPosition(transform.localPosition.y + delta,
             ref needToUpdateToLastContent, ref needToUpdateToNextContent);
-        float passivePosition = GetPassivePosition(majorPosition);
+        var passivePosition = GetPassivePosition(majorPosition);
 
-        transform.localPosition = new Vector3(
-            passivePosition, majorPosition, transform.localPosition.z);
+        transform.localPosition =
+            new Vector3(
+                passivePosition, majorPosition, transform.localPosition.z);
         UpdateScale(majorPosition);
 
         if (needToUpdateToLastContent)
@@ -147,22 +182,21 @@ public class ListBox : MonoBehaviour
             UpdateToNextContent();
     }
 
-    /* Move the box horizontally and adjust its final position and size.
-     *
-     * This function is the UpdatePosition in the horizontal mode.
-     *
-     * @param delta The moving distance
-     */
+    /// <summary>
+    /// Move the box horizontally and adjust its final position and size
+    /// </summary>
+    /// <param name="delta">The moving distance</param>
     private void MoveHorizontally(float delta)
     {
-        bool needToUpdateToLastContent = false;
-        bool needToUpdateToNextContent = false;
-        float majorPosition = GetMajorPosition(transform.localPosition.x + delta,
+        var needToUpdateToLastContent = false;
+        var needToUpdateToNextContent = false;
+        var majorPosition = GetMajorPosition(transform.localPosition.x + delta,
             ref needToUpdateToLastContent, ref needToUpdateToNextContent);
-        float passivePosition = GetPassivePosition(majorPosition);
+        var passivePosition = GetPassivePosition(majorPosition);
 
-        transform.localPosition = new Vector3(
-            majorPosition, passivePosition, transform.localPosition.z);
+        transform.localPosition =
+            new Vector3(
+                majorPosition, passivePosition, transform.localPosition.z);
         UpdateScale(majorPosition);
 
         if (needToUpdateToLastContent)
@@ -171,20 +205,25 @@ public class ListBox : MonoBehaviour
             UpdateToNextContent();
     }
 
-    /* Get the major position according to the requested position
-     * If the box exceeds the boundary, one of the passed flags will be set
-     * to indicate that the content needs to be updated.
-     *
-     * @param positionValue The requested position
-     * @param needToUpdateToLastContent Is it need to update to the last content?
-     * @param needToUpdateToNextContent Is it need to update to the next content?
-     * @return The decided major position
-     */
-    private float GetMajorPosition(float positionValue,
+    /// <summary>
+    /// Get the major position according to the requested position
+    /// If the box exceeds the boundary, one of the passed flags will be set
+    /// to indicate that the content needs to be updated.
+    /// </summary>
+    /// <param name="positionValue">The requested position</param>
+    /// <param name="needToUpdateToLastContent">
+    /// Does it need to update to the last content?
+    /// </param>
+    /// <param name="needToUpdateToNextContent">
+    /// Does it need to update to the next content?
+    /// </param>
+    /// <returns>The final major position</returns>
+    private float GetMajorPosition(
+        float positionValue,
         ref bool needToUpdateToLastContent, ref bool needToUpdateToNextContent)
     {
-        float beyondPos = 0.0f;
-        float majorPos = positionValue;
+        var beyondPos = 0.0f;
+        var majorPos = positionValue;
 
         if (positionValue < _changeSideLowerBoundPos) {
             beyondPos = positionValue - _lowerBoundPos;
@@ -199,24 +238,34 @@ public class ListBox : MonoBehaviour
         return majorPos;
     }
 
-    /* Get the passive position according to the major position
-     */
+    /// <summary>
+    /// Get the passive position according to the major position
+    /// </summary>
+    /// <param name="majorPosition">The major position</param>
+    /// <returns>The passive position</returns>
     private float GetPassivePosition(float majorPosition)
     {
-        float passivePosFactor = _positionCurve.Evaluate(majorPosition);
+        var passivePosFactor = _positionCurve.Evaluate(majorPosition);
         return _upperBoundPos * passivePosFactor;
     }
 
-    /* Scale the listBox according to the major position
-     */
+    /// <summary>
+    /// Scale the listBox according to the major position
+    /// </summary>
     private void UpdateScale(float majorPosition)
     {
-        float scaleValue = _scaleCurve.Evaluate(majorPosition);
-        transform.localScale = new Vector3(scaleValue, scaleValue, transform.localScale.z);
+        var scaleValue = _scaleCurve.Evaluate(majorPosition);
+        transform.localScale =
+            new Vector3(scaleValue, scaleValue, transform.localScale.z);
     }
 
-    /* Initialize the content of ListBox.
-     */
+    #endregion
+
+    #region Content Handling
+
+    /// <summary>
+    /// Initialize the content of ListBox.
+    /// </summary>
     private void InitialContent()
     {
         // Get the content ID of the centered box
@@ -249,16 +298,18 @@ public class ListBox : MonoBehaviour
         UpdateDisplayContent();
     }
 
-    /* Update the displaying content on the ListBox.
-     */
+    /// <summary>
+    /// Update the displaying content on the ListBox
+    /// </summary>
     private void UpdateDisplayContent()
     {
         // Update the content according to its contentID.
         content.text = _listBank.GetListContent(_contentID);
     }
 
-    /* Update the content to the last content of the next ListBox
-     */
+    /// <summary>
+    /// Update the content to the last content of the next ListBox
+    /// </summary>
     private void UpdateToLastContent()
     {
         _contentID = nextListBox.GetContentID() - 1;
@@ -286,8 +337,9 @@ public class ListBox : MonoBehaviour
         UpdateDisplayContent();
     }
 
-    /* Update the content to the next content of the last ListBox
-     */
+    /// <summary>
+    /// Update the content to the next content of the last ListBox
+    /// </summary>
     private void UpdateToNextContent()
     {
         _contentID = lastListBox.GetContentID() + 1;
@@ -310,35 +362,6 @@ public class ListBox : MonoBehaviour
         UpdateDisplayContent();
     }
 
-    /* The class for converting the custom range to fit the AnimationCurve for
-     * evaluating the final value.
-     */
-    private class CurveResolver
-    {
-        private AnimationCurve _curve;
-        private float _maxValue;
-        private float _minValue;
+    #endregion
 
-        /* Constructor
-         *
-         * @param curve The target AnimationCurve to fit
-         * @param minValue The custom minimum value
-         * @param maxValue The custom maximum value
-         */
-        public CurveResolver(AnimationCurve curve, float minValue, float maxValue)
-        {
-            _curve = curve;
-            _minValue = minValue;
-            _maxValue = maxValue;
-        }
-
-        /* Convert the input value to the value of interpolation between [minValue, maxValue]
-         * and pass the result to the curve to get the final value.
-         */
-        public float Evaluate(float value)
-        {
-            float lerpValue = Mathf.InverseLerp(_minValue, _maxValue, value);
-            return _curve.Evaluate(lerpValue);
-        }
-    }
 }
