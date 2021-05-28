@@ -168,21 +168,21 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
     public int numOfLowerDisabledBoxes { set; get; }
     private int _maxNumOfDisabledBoxes = 0;
 
-    /* Notice: ListBox will initialize its variables from here, so ListPositionCtrl
-     * must be executed before ListBox. You have to set the execution order in the inspector.
-     */
     private void Start()
     {
         InitializePositionVars();
         InitializeInputFunction();
         InitializeBoxDependency();
         _maxNumOfDisabledBoxes = listBoxes.Length / 2;
-        foreach (ListBox listBox in listBoxes)
+        foreach (var listBox in listBoxes)
             listBox.Initialize(this);
     }
 
     #region Initialization
 
+    /// <summary>
+    /// Initialize the position related controlling variables
+    /// </summary>
     private void InitializePositionVars()
     {
         /* The the reference of canvas plane */
@@ -210,6 +210,9 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
         upperBoundPos = unitPos * (listBoxes.Length / 2 + 1) - boundPosAdjust;
     }
 
+    /// <summary>
+    /// Initialize the dependency between the registered boxes
+    /// </summary>
     private void InitializeBoxDependency()
     {
         // Set the box ID according to the order in the container `listBoxes`
@@ -225,11 +228,11 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
         }
     }
 
-    /* Initialize the corresponding handlers for the selected controlling mode
-     *
-     * The unused handler will be assigned a dummy function to
-     * prevent the handling of the event.
-     */
+    /// <summary>
+    /// Initialize the corresponding handlers for the selected controlling mode
+    /// </summary>
+    /// The unused handler will be assigned a dummy function to
+    /// prevent the handling of the event.
     private void InitializeInputFunction()
     {
         float GetAligningDistance() => _deltaDistanceToCenter;
@@ -292,8 +295,11 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 
     #region Input Value Handler
 
-    /* Move the list according to the dragging position and the dragging state
-     */
+    /// <summary>
+    /// Move the list according to the dragging position and the dragging state
+    /// </summary>
+    /// <param name="pointer">The information of the pointer</param>
+    /// <param name="state">The dragging state</param>
     private void DragPositionHandler(PointerEventData pointer, TouchPhase state)
     {
         switch (state) {
@@ -312,8 +318,10 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
         }
     }
 
-    /* Scroll the list according to the delta of the mouse scrolling
-     */
+    /// <summary>
+    /// Scroll the list according to the delta of the mouse scrolling
+    /// </summary>
+    /// <param name="mouseScrollDelta">The delta scrolling distance</param>
     private void ScrollDeltaHandler(Vector2 mouseScrollDelta)
     {
         switch (direction) {
@@ -333,9 +341,13 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
         }
     }
 
-    /* Get the input position in the canvas space and
-     * return the value of the corresponding axis according to the moving direction.
-     */
+    /// <summary>
+    /// Get the input position in the canvas space and
+    /// return the value of the corresponding axis according to the moving direction
+    /// </summary>
+    /// <param name="pointerPosition">
+    /// The position of the pointer in canvas space
+    /// </param>
     private float GetInputCanvasPosition(Vector3 pointerPosition)
     {
         switch (direction) {
@@ -350,10 +362,9 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
 
     #endregion
 
-    /* Control the movement of listBoxes
-     */
     private void Update()
     {
+        // Update the position of boxes
         if (_movementCtrl.IsMovementEnded())
             return;
 
@@ -362,10 +373,9 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
             listBox.UpdatePosition(distance);
     }
 
-    /* Check the status of the list
-     */
     private void LateUpdate()
     {
+        // Update the state of the boxes
         FindDeltaDistanceToCenter();
         if (listType == ListType.Linear)
             UpdatePositionState();
