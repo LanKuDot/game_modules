@@ -34,7 +34,7 @@
 
 ### Create `ListBank`
 
-1. Create a new script named `MyListBox.cs` and launch the editor.
+1. Create a new script named `MyListBank.cs` and launch the editor.
 2. Inherit the abstract class `BaseListBank` (The class `BaseListBank` inherits the `MonoBehaviour`, therefore, you could initialize list contents in `Start()` and attach the script to a gameobject).
 3. There are two functions which must be implemented:
     * `public string GetListContent(int index)`: Get the string representation of the specified content.
