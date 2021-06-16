@@ -16,14 +16,6 @@ public class ListBoxClickEvent : UnityEvent<int>
 {}
 
 /// <summary>
-/// The event is fired when something happened in the list
-/// The <c>ListPositionCtrl</c> parameter is the list which fires the event.
-/// </summary>
-[Serializable]
-public class ListEvent : UnityEvent<ListPositionCtrl>
-{}
-
-/// <summary>
 /// Control the position of boxes
 /// </summary>
 public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
@@ -138,8 +130,6 @@ public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
              "The registered callbacks will be added to the 'onClick' event of boxes, " +
              "therefore, boxes should be 'Button's.")]
     public ListBoxClickEvent onBoxClick;
-    // The callback will be invoked when the list is moving.
-    public ListEvent onListMove;
 
     #endregion
 
