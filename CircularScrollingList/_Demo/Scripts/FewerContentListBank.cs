@@ -2,17 +2,17 @@
 
 public class FewerContentListBank : BaseListBank
 {
-	private int[] contents = {
-		1, 2, 3,
-	};
+    private int[] contents = {
+        1, 2, 3,
+    };
 
-	public override object GetListContent(int index)
-	{
-		return contents[index].ToString();
-	}
+    public override object GetListContent(int index)
+    {
+        return contents[index].ToString();
+    }
 
-	public override int GetListLength()
-	{
-		return contents.Length;
-	}
+    public override int GetListLength()
+    {
+        return contents.Length;
+    }
 }
