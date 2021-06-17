@@ -6,7 +6,7 @@ public class FewerContentListBank : BaseListBank
 		1, 2, 3,
 	};
 
-	public override string GetListContent(int index)
+	public override object GetListContent(int index)
 	{
 		return contents[index].ToString();
 	}

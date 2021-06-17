@@ -6,9 +6,9 @@ using UnityEngine;
  *
  * Create the individual ListBank by inheriting this class
  */
-public abstract class BaseListBank: MonoBehaviour
+public abstract class BaseListBank : MonoBehaviour
 {
-    public abstract string GetListContent(int index);
+    public abstract object GetListContent(int index);
     public abstract int GetListLength();
 }
 
@@ -20,7 +20,7 @@ public class ListBank : BaseListBank
         1, 2, 3, 4, 5, 6, 7, 8, 9, 10
     };
 
-    public override string GetListContent(int index)
+    public override object GetListContent(int index)
     {
         return contents[index].ToString();
     }

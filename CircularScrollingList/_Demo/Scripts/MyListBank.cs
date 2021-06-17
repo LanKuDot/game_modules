@@ -8,7 +8,7 @@ public class MyListBank : BaseListBank
 		1, 2, 3, 4, 5, 6, 7, 8, 9, 10
 	};
 
-	public override string GetListContent(int index)
+	public override object GetListContent(int index)
 	{
 		return _contents[index].ToString();
 	}

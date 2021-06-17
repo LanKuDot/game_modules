@@ -9,7 +9,7 @@ public class MyApplication : MonoBehaviour
     public void DisplayCenteredContent()
     {
         int contentID = list.GetCenteredContentID();
-        string centeredContent = list.listBank.GetListContent(contentID);
+        string centeredContent = (string) list.listBank.GetListContent(contentID);
         displayText.text = "Centered content: " + centeredContent;
     }
 

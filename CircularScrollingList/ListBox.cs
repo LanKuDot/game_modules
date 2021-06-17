@@ -8,9 +8,6 @@ using UnityEngine.UI;
 /// </summary>
 public class ListBox : MonoBehaviour
 {
-    [Tooltip("The text for displaying the content of the element")]
-    public Text content;
-
     #region Setting Properties
 
     public int listBoxID { set; get; }
@@ -295,16 +292,7 @@ public class ListBox : MonoBehaviour
             _contentID += _listBank.GetListLength();
         _contentID = _contentID % _listBank.GetListLength();
 
-        UpdateDisplayContent();
-    }
-
-    /// <summary>
-    /// Update the displaying content on the ListBox
-    /// </summary>
-    private void UpdateDisplayContent()
-    {
-        // Update the content according to its contentID.
-        content.text = _listBank.GetListContent(_contentID);
+        UpdateDisplayContent(GetListContent());
     }
 
     /// <summary>
@@ -334,7 +322,7 @@ public class ListBox : MonoBehaviour
             }
         }
 
-        UpdateDisplayContent();
+        UpdateDisplayContent(GetListContent());
     }
 
     /// <summary>
@@ -359,7 +347,25 @@ public class ListBox : MonoBehaviour
             }
         }
 
-        UpdateDisplayContent();
+        UpdateDisplayContent(GetListContent());
+    }
+
+    /// <summary>
+    /// Update the displaying content on the ListBox
+    /// </summary>
+    /// <param name="content">The content to be displayed</param>
+    protected virtual void UpdateDisplayContent(object content)
+    {
+        Debug.Log(content);
+    }
+
+    /// <summary>
+    /// Get the content of box's content ID from the list bank
+    /// </summary>
+    /// <returns>The object of the content</returns>
+    private object GetListContent()
+    {
+        return _listBank.GetListContent(_contentID);
     }
 
     #endregion
