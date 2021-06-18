@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using AirFishLab.ScrollingList;
+using UnityEngine;
 
 public class FewerContentListBank : BaseListBank
 {

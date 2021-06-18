@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using AirFishLab.ScrollingList;
 using UnityEngine;
 
 public class MyListBank : BaseListBank

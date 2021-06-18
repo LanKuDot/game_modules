@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using AirFishLab.ScrollingList;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class MyListBox : ListBox
