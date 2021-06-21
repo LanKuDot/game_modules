@@ -138,11 +138,7 @@ namespace AirFishLab.ScrollingList
 
         #endregion
 
-        // The canvas plane which the scrolling list is at.
         private Canvas _parentCanvas;
-
-        // The constrains of position in the local space of the canvas plane.
-        private float _canvasMaxPos;
         public float unitPos { get; private set; }
         public float lowerBoundPos { get; private set; }
         public float upperBoundPos { get; private set; }
@@ -180,27 +176,27 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private void InitializePositionVars()
         {
-            /* The the reference of canvas plane */
             _parentCanvas = GetComponentInParent<Canvas>();
 
-            /* Get the max position of canvas plane in the canvas space.
-             * Assume that the origin of the canvas space is at the center of canvas plane. */
-            var rectTransform = _parentCanvas.GetComponent<RectTransform>();
+            // Get the range of the rect transform that this list belongs to
+            var rectRange = GetComponent<RectTransform>().rect;
+            var rectLength = 0f;
 
             switch (direction) {
                 case Direction.Vertical:
-                    _canvasMaxPos = rectTransform.rect.height / 2;
+                    rectLength = rectRange.height;
                     break;
                 case Direction.Horizontal:
-                    _canvasMaxPos = rectTransform.rect.width / 2;
+                    rectLength = rectRange.width;
                     break;
             }
+
+            unitPos = rectLength / (listBoxes.Length - 1);
 
             // If there are even number of ListBoxes, narrow the boundary for 1 unitPos.
             var boundPosAdjust =
                 ((listBoxes.Length & 0x1) == 0) ? unitPos / 2 : 0;
 
-            unitPos = _canvasMaxPos / boxDensity;
             lowerBoundPos = unitPos * (-1 * listBoxes.Length / 2 - 1) + boundPosAdjust;
             upperBoundPos = unitPos * (listBoxes.Length / 2 + 1) - boundPosAdjust;
         }
