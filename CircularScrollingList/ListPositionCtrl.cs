@@ -138,7 +138,14 @@ namespace AirFishLab.ScrollingList
 
         #endregion
 
-        private Canvas _parentCanvas;
+        /// <summary>
+        /// The camera for transforming the point from screen space to local space
+        /// </summary>
+        private Camera _canvasRefCamera;
+        /// <summary>
+        /// The rect transform that this list belongs to
+        /// </summary>
+        private RectTransform _rectTransform;
         public float unitPos { get; private set; }
         public float lowerBoundPos { get; private set; }
         public float upperBoundPos { get; private set; }
@@ -150,6 +157,7 @@ namespace AirFishLab.ScrollingList
         // Variables for moving listBoxes
         private IMovementCtrl _movementCtrl;
         // Input mouse/finger position in the local space of the list.
+        private Vector2 _lastInputPos;
         private float _deltaInputPos;
         private float _deltaDistanceToCenter = 0.0f;
 
@@ -158,6 +166,11 @@ namespace AirFishLab.ScrollingList
         public int numOfUpperDisabledBoxes { set; get; }
         public int numOfLowerDisabledBoxes { set; get; }
         private int _maxNumOfDisabledBoxes = 0;
+
+        private void Awake()
+        {
+            _rectTransform = GetComponent<RectTransform>();
+        }
 
         private void Start()
         {
@@ -176,10 +189,8 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private void InitializePositionVars()
         {
-            _parentCanvas = GetComponentInParent<Canvas>();
-
             // Get the range of the rect transform that this list belongs to
-            var rectRange = GetComponent<RectTransform>().rect;
+            var rectRange = _rectTransform.rect;
             var rectLength = 0f;
 
             switch (direction) {
@@ -256,6 +267,10 @@ namespace AirFishLab.ScrollingList
                     _scrollHandler = ScrollDeltaHandler;
                     break;
             }
+
+            var parentCanvas = GetComponentInParent<Canvas>();
+            if (parentCanvas.renderMode != RenderMode.ScreenSpaceOverlay)
+                _canvasRefCamera = parentCanvas.worldCamera;
         }
 
         #endregion
@@ -295,10 +310,12 @@ namespace AirFishLab.ScrollingList
         {
             switch (state) {
                 case TouchPhase.Began:
+                    _lastInputPos = ScreenToLocalPos(pointer.position);
                     break;
 
                 case TouchPhase.Moved:
-                    _deltaInputPos = GetInputCanvasPosition(pointer.delta);
+                    _deltaInputPos = GetDeltaInputPos(
+                        ScreenToLocalPos(pointer.position));
                     // Slide the list as long as the moving distance of the pointer
                     _movementCtrl.SetMovement(_deltaInputPos, true);
                     break;
@@ -333,22 +350,39 @@ namespace AirFishLab.ScrollingList
         }
 
         /// <summary>
-        /// Get the input position in the canvas space and
-        /// return the value of the corresponding axis according to the moving direction
+        /// Transform the point in the screen space to the point in the
+        /// space of the local rect transform
         /// </summary>
-        /// <param name="pointerPosition">
-        /// The position of the pointer in canvas space
-        /// </param>
-        private float GetInputCanvasPosition(Vector3 pointerPosition)
+        private Vector2 ScreenToLocalPos(Vector2 screenPos)
         {
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                _rectTransform, screenPos, _canvasRefCamera, out var localPos);
+
+            return localPos;
+        }
+
+        /// <summary>
+        /// Get the delta position of the pointer in the local space
+        /// </summary>
+        /// <param name="pointerLocalPos">
+        /// The position of the pointer in local space
+        /// </param>
+        private float GetDeltaInputPos(Vector2 pointerLocalPos)
+        {
+            var deltaLocalPos = 0f;
+
             switch (direction) {
                 case Direction.Vertical:
-                    return pointerPosition.y / _parentCanvas.scaleFactor;
+                    deltaLocalPos = pointerLocalPos.y - _lastInputPos.y;
+                    break;
                 case Direction.Horizontal:
-                    return pointerPosition.x / _parentCanvas.scaleFactor;
-                default:
-                    return 0.0f;
+                    deltaLocalPos = pointerLocalPos.x - _lastInputPos.x;
+                    break;
             }
+
+            _lastInputPos = pointerLocalPos;
+
+            return deltaLocalPos;
         }
 
         #endregion
