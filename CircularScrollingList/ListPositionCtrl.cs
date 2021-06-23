@@ -1,6 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
 namespace AirFishLab.ScrollingList
@@ -15,77 +14,17 @@ namespace AirFishLab.ScrollingList
     /// </summary>
     public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
     {
-        #region Enum Definitions
-
-        /// <summary>
-        /// The type of the list
-        /// </summary>
-        public enum ListType
-        {
-            Circular,
-            Linear
-        };
-
-        /// <summary>
-        /// The controlling mode of the list
-        /// </summary>
-        public enum ControlMode
-        {
-            /// <summary>
-            /// Control the list by the mouse pointer or finger
-            /// </summary>
-            Drag,
-            /// <summary>
-            /// Control the list by invoking functions
-            /// </summary>
-            Function,
-            /// <summary>
-            /// Control the list by the mouse wheel
-            /// </summary>
-            MouseWheel
-        };
-
-        /// <summary>
-        /// The major moving direction of the list
-        /// </summary>
-        public enum Direction
-        {
-            Vertical,
-            Horizontal
-        };
-
-        /// <summary>
-        /// The state of the position of the list
-        /// </summary>
-        public enum PositionState
-        {
-            /// <summary>
-            /// The list reaches the top
-            /// </summary>
-            Top,
-            /// <summary>
-            /// The list doesn't reach either end
-            /// </summary>
-            Middle,
-            /// <summary>
-            /// The list reaches the bottom
-            /// </summary>
-            Bottom
-        };
-
-        #endregion
-
         #region Settings
 
         /* List mode */
         [Tooltip("The type of the list.")]
-        public ListType listType = ListType.Circular;
+        public CircularScrollingList.ListType listType = CircularScrollingList.ListType.Circular;
         [Tooltip("The controlling mode of the list.")]
-        public ControlMode controlMode = ControlMode.Drag;
+        public CircularScrollingList.ControlMode controlMode = CircularScrollingList.ControlMode.Drag;
         [Tooltip("Should a box align in the middle of the list after sliding?")]
         public bool alignMiddle = false;
         [Tooltip("The major moving direction of the list.")]
-        public Direction direction = Direction.Vertical;
+        public CircularScrollingList.Direction direction = CircularScrollingList.Direction.Vertical;
 
         /* Containers */
         [Tooltip("The game object which holds the content bank for the list. " +
@@ -153,7 +92,7 @@ namespace AirFishLab.ScrollingList
         private float _deltaDistanceToCenter = 0.0f;
 
         // Variables for linear mode
-        private PositionState _positionState = PositionState.Middle;
+        private CircularScrollingList.PositionState _positionState = CircularScrollingList.PositionState.Middle;
         public int numOfUpperDisabledBoxes { set; get; }
         public int numOfLowerDisabledBoxes { set; get; }
         private int _maxNumOfDisabledBoxes = 0;
@@ -185,10 +124,10 @@ namespace AirFishLab.ScrollingList
             var rectLength = 0f;
 
             switch (direction) {
-                case Direction.Vertical:
+                case CircularScrollingList.Direction.Vertical:
                     rectLength = rectRange.height;
                     break;
-                case Direction.Horizontal:
+                case CircularScrollingList.Direction.Horizontal:
                     rectLength = rectRange.width;
                     break;
             }
@@ -229,12 +168,12 @@ namespace AirFishLab.ScrollingList
         private void InitializeInputFunction()
         {
             float GetAligningDistance() => _deltaDistanceToCenter;
-            PositionState GetPositionState() => _positionState;
+            CircularScrollingList.PositionState GetPositionState() => _positionState;
 
             var overGoingThreshold = unitPos * 0.3f;
 
             switch (controlMode) {
-                case ControlMode.Drag:
+                case CircularScrollingList.ControlMode.Drag:
                     _movementCtrl = new FreeMovementCtrl(
                         boxMovementCurve, alignMiddle, overGoingThreshold,
                         GetAligningDistance, GetPositionState);
@@ -242,7 +181,7 @@ namespace AirFishLab.ScrollingList
                     _scrollHandler = v => { };
                     break;
 
-                case ControlMode.Function:
+                case CircularScrollingList.ControlMode.Function:
                     _movementCtrl = new UnitMovementCtrl(
                         boxMovementCurve, overGoingThreshold,
                         GetAligningDistance, GetPositionState);
@@ -250,7 +189,7 @@ namespace AirFishLab.ScrollingList
                     _scrollHandler = v => { };
                     break;
 
-                case ControlMode.MouseWheel:
+                case CircularScrollingList.ControlMode.MouseWheel:
                     _movementCtrl = new UnitMovementCtrl(
                         boxMovementCurve, overGoingThreshold,
                         GetAligningDistance, GetPositionState);
@@ -324,14 +263,14 @@ namespace AirFishLab.ScrollingList
         private void ScrollDeltaHandler(Vector2 mouseScrollDelta)
         {
             switch (direction) {
-                case Direction.Vertical:
+                case CircularScrollingList.Direction.Vertical:
                     if (mouseScrollDelta.y > 0)
                         MoveOneUnitUp();
                     else if (mouseScrollDelta.y < 0)
                         MoveOneUnitDown();
                     break;
 
-                case Direction.Horizontal:
+                case CircularScrollingList.Direction.Horizontal:
                     if (mouseScrollDelta.y > 0)
                         MoveOneUnitDown();
                     else if (mouseScrollDelta.y < 0)
@@ -363,10 +302,10 @@ namespace AirFishLab.ScrollingList
             var deltaLocalPos = 0f;
 
             switch (direction) {
-                case Direction.Vertical:
+                case CircularScrollingList.Direction.Vertical:
                     deltaLocalPos = pointerLocalPos.y - _lastInputPos.y;
                     break;
-                case Direction.Horizontal:
+                case CircularScrollingList.Direction.Horizontal:
                     deltaLocalPos = pointerLocalPos.x - _lastInputPos.x;
                     break;
             }
@@ -393,7 +332,7 @@ namespace AirFishLab.ScrollingList
         {
             // Update the state of the boxes
             FindDeltaDistanceToCenter();
-            if (listType == ListType.Linear)
+            if (listType == CircularScrollingList.ListType.Linear)
                 UpdatePositionState();
         }
 
@@ -408,7 +347,7 @@ namespace AirFishLab.ScrollingList
             var deltaPos = 0.0f;
 
             switch (direction) {
-                case Direction.Vertical:
+                case CircularScrollingList.Direction.Vertical:
                     foreach (var listBox in listBoxes) {
                         // Skip the disabled box in linear mode
                         if (!listBox.isActiveAndEnabled)
@@ -421,7 +360,7 @@ namespace AirFishLab.ScrollingList
 
                     break;
 
-                case Direction.Horizontal:
+                case CircularScrollingList.Direction.Horizontal:
                     foreach (var listBox in listBoxes) {
                         // Skip the disabled box in linear mode
                         if (!listBox.isActiveAndEnabled)
@@ -468,12 +407,12 @@ namespace AirFishLab.ScrollingList
         {
             if (numOfUpperDisabledBoxes >= _maxNumOfDisabledBoxes &&
                 _deltaDistanceToCenter > -1e-4)
-                _positionState = PositionState.Top;
+                _positionState = CircularScrollingList.PositionState.Top;
             else if (numOfLowerDisabledBoxes >= _maxNumOfDisabledBoxes &&
                      _deltaDistanceToCenter < 1e-4)
-                _positionState = PositionState.Bottom;
+                _positionState = CircularScrollingList.PositionState.Bottom;
             else
-                _positionState = PositionState.Middle;
+                _positionState = CircularScrollingList.PositionState.Middle;
         }
 
         #endregion
@@ -494,7 +433,7 @@ namespace AirFishLab.ScrollingList
             bool IsCloser(Vector3 localPos)
             {
                 var value =
-                    Mathf.Abs(direction == Direction.Horizontal
+                    Mathf.Abs(direction == CircularScrollingList.Direction.Horizontal
                         ? localPos.x
                         : localPos.y);
 

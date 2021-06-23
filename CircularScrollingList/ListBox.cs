@@ -83,10 +83,10 @@ namespace AirFishLab.ScrollingList
             _listBank = _positionCtrl.listBank;
 
             switch (_positionCtrl.direction) {
-                case ListPositionCtrl.Direction.Vertical:
+                case CircularScrollingList.Direction.Vertical:
                     UpdatePosition = MoveVertically;
                     break;
-                case ListPositionCtrl.Direction.Horizontal:
+                case CircularScrollingList.Direction.Horizontal:
                     UpdatePosition = MoveHorizontally;
                     break;
             }
@@ -139,12 +139,12 @@ namespace AirFishLab.ScrollingList
             passivePosition = GetPassivePosition(majorPosition);
 
             switch (_positionCtrl.direction) {
-                case ListPositionCtrl.Direction.Vertical:
+                case CircularScrollingList.Direction.Vertical:
                     transform.localPosition =
                         new Vector3(
                             passivePosition, majorPosition, transform.localPosition.z);
                     break;
-                case ListPositionCtrl.Direction.Horizontal:
+                case CircularScrollingList.Direction.Horizontal:
                     transform.localPosition =
                         new Vector3(
                             majorPosition, passivePosition, transform.localPosition.z);
@@ -274,7 +274,7 @@ namespace AirFishLab.ScrollingList
             _contentID += listBoxID - _positionCtrl.listBoxes.Length / 2;
 
             // In the linear mode, disable the box if needed
-            if (_positionCtrl.listType == ListPositionCtrl.ListType.Linear) {
+            if (_positionCtrl.listType == CircularScrollingList.ListType.Linear) {
                 // Disable the boxes at the upper half of the list
                 // which will hold the item at the tail of the contents.
                 if (_contentID < 0) {
@@ -305,7 +305,7 @@ namespace AirFishLab.ScrollingList
             _contentID = nextListBox.GetContentID() - 1;
             _contentID = (_contentID < 0) ? _listBank.GetListLength() - 1 : _contentID;
 
-            if (_positionCtrl.listType == ListPositionCtrl.ListType.Linear) {
+            if (_positionCtrl.listType == CircularScrollingList.ListType.Linear) {
                 if (_contentID == _listBank.GetListLength() - 1 ||
                     !nextListBox.isActiveAndEnabled) {
                     // If the box has been disabled at the other side,
@@ -335,7 +335,7 @@ namespace AirFishLab.ScrollingList
             _contentID = lastListBox.GetContentID() + 1;
             _contentID = (_contentID == _listBank.GetListLength()) ? 0 : _contentID;
 
-            if (_positionCtrl.listType == ListPositionCtrl.ListType.Linear) {
+            if (_positionCtrl.listType == CircularScrollingList.ListType.Linear) {
                 if (_contentID == 0 || !lastListBox.isActiveAndEnabled) {
                     if (!isActiveAndEnabled)
                         --_positionCtrl.numOfUpperDisabledBoxes;

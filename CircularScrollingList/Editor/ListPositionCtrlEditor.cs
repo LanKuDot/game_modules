@@ -25,7 +25,7 @@ namespace AirFishLab.ScrollingList.Editor
             SetPropertyField("listType");
             SetPropertyField("controlMode");
             if (GetProperty("controlMode").enumValueIndex ==
-                (int) ListPositionCtrl.ControlMode.Drag) {
+                (int) CircularScrollingList.ControlMode.Drag) {
                 ++EditorGUI.indentLevel;
                 SetPropertyField("alignMiddle");
                 --EditorGUI.indentLevel;
