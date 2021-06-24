@@ -53,7 +53,7 @@ namespace AirFishLab.ScrollingList
         private readonly Func<float> _getAligningDistance;
         /* The function that getting the state of the list position
          */
-        private readonly Func<CircularScrollingList.PositionState> _getPositionState;
+        private readonly Func<ListPositionCtrl.PositionState> _getPositionState;
 
         /* Constructor
          *
@@ -66,7 +66,7 @@ namespace AirFishLab.ScrollingList
          */
         public FreeMovementCtrl(AnimationCurve releasingCurve, bool toAlign,
             float overGoingDistanceThreshold,
-            Func<float> getAligningDistance, Func<CircularScrollingList.PositionState> getPositionState)
+            Func<float> getAligningDistance, Func<ListPositionCtrl.PositionState> getPositionState)
         {
             _releasingMovement = new VelocityMovement(releasingCurve);
             _aligningMovement = new DistanceMovement(
@@ -92,7 +92,7 @@ namespace AirFishLab.ScrollingList
                 // End the last releasing movement when start dragging
                 if (!_releasingMovement.IsMovementEnded())
                     _releasingMovement.EndMovement();
-            } else if (_getPositionState() != CircularScrollingList.PositionState.Middle) {
+            } else if (_getPositionState() != ListPositionCtrl.PositionState.Middle) {
                 _aligningMovement.SetMovement(_getAligningDistance());
             } else {
                 _releasingMovement.SetMovement(value);
@@ -160,7 +160,7 @@ namespace AirFishLab.ScrollingList
 
         private bool IsGoingTooFar(float distance)
         {
-            if (_getPositionState() == CircularScrollingList.PositionState.Middle)
+            if (_getPositionState() == ListPositionCtrl.PositionState.Middle)
                 return false;
 
             _overGoingDistance = -1 * _getAligningDistance();
@@ -191,7 +191,7 @@ namespace AirFishLab.ScrollingList
         private readonly Func<float> _getAligningDistance;
         /* The function that returns the state of the list position
          */
-        private readonly Func<CircularScrollingList.PositionState> _getPositionState;
+        private readonly Func<ListPositionCtrl.PositionState> _getPositionState;
 
         /* Constructor
          *
@@ -203,7 +203,7 @@ namespace AirFishLab.ScrollingList
          * @param getPositionState The function that returns the state of the list position
          */
         public UnitMovementCtrl(AnimationCurve movementCurve, float bouncingDeltaPos,
-            Func<float> getAligningDistance, Func<CircularScrollingList.PositionState> getPositionState)
+            Func<float> getAligningDistance, Func<ListPositionCtrl.PositionState> getPositionState)
         {
             var bouncingCurve = new AnimationCurve(
                 new Keyframe(0.0f, 0.0f, 0.0f, 5.0f),
@@ -232,8 +232,8 @@ namespace AirFishLab.ScrollingList
             var state = _getPositionState();
             var movingDirection = Mathf.Sign(distanceAdded);
 
-            if ((state == CircularScrollingList.PositionState.Top && movingDirection < 0) ||
-                (state == CircularScrollingList.PositionState.Bottom && movingDirection > 0)) {
+            if ((state == ListPositionCtrl.PositionState.Top && movingDirection < 0) ||
+                (state == ListPositionCtrl.PositionState.Bottom && movingDirection > 0)) {
                 _bouncingMovement.SetMovement(movingDirection * _bouncingDeltaPos);
             } else {
                 distanceAdded += _unitMovement.distanceRemaining;
@@ -281,7 +281,7 @@ namespace AirFishLab.ScrollingList
          */
         private bool NeedToAlign(float deltaDistance)
         {
-            if (_getPositionState() == CircularScrollingList.PositionState.Middle)
+            if (_getPositionState() == ListPositionCtrl.PositionState.Middle)
                 return false;
 
             return Mathf.Abs(_getAligningDistance() * -1 + deltaDistance) >

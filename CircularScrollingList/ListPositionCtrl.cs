@@ -14,6 +14,29 @@ namespace AirFishLab.ScrollingList
     /// </summary>
     public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
     {
+        #region Enums
+
+        /// <summary>
+        /// The state of the position of the list
+        /// </summary>
+        public enum PositionState
+        {
+            /// <summary>
+            /// The list reaches the top
+            /// </summary>
+            Top,
+            /// <summary>
+            /// The list doesn't reach either end
+            /// </summary>
+            Middle,
+            /// <summary>
+            /// The list reaches the bottom
+            /// </summary>
+            Bottom
+        };
+
+        #endregion
+
         #region Settings
 
         /* List mode */
@@ -92,7 +115,7 @@ namespace AirFishLab.ScrollingList
         private float _deltaDistanceToCenter = 0.0f;
 
         // Variables for linear mode
-        private CircularScrollingList.PositionState _positionState = CircularScrollingList.PositionState.Middle;
+        private PositionState _positionState = PositionState.Middle;
         public int numOfUpperDisabledBoxes { set; get; }
         public int numOfLowerDisabledBoxes { set; get; }
         private int _maxNumOfDisabledBoxes = 0;
@@ -168,7 +191,7 @@ namespace AirFishLab.ScrollingList
         private void InitializeInputFunction()
         {
             float GetAligningDistance() => _deltaDistanceToCenter;
-            CircularScrollingList.PositionState GetPositionState() => _positionState;
+            PositionState GetPositionState() => _positionState;
 
             var overGoingThreshold = unitPos * 0.3f;
 
@@ -407,12 +430,12 @@ namespace AirFishLab.ScrollingList
         {
             if (numOfUpperDisabledBoxes >= _maxNumOfDisabledBoxes &&
                 _deltaDistanceToCenter > -1e-4)
-                _positionState = CircularScrollingList.PositionState.Top;
+                _positionState = PositionState.Top;
             else if (numOfLowerDisabledBoxes >= _maxNumOfDisabledBoxes &&
                      _deltaDistanceToCenter < 1e-4)
-                _positionState = CircularScrollingList.PositionState.Bottom;
+                _positionState = PositionState.Bottom;
             else
-                _positionState = CircularScrollingList.PositionState.Middle;
+                _positionState = PositionState.Middle;
         }
 
         #endregion

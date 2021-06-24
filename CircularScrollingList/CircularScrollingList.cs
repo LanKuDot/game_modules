@@ -47,25 +47,6 @@ namespace AirFishLab.ScrollingList
             Horizontal
         };
 
-        /// <summary>
-        /// The state of the position of the list
-        /// </summary>
-        public enum PositionState
-        {
-            /// <summary>
-            /// The list reaches the top
-            /// </summary>
-            Top,
-            /// <summary>
-            /// The list doesn't reach either end
-            /// </summary>
-            Middle,
-            /// <summary>
-            /// The list reaches the bottom
-            /// </summary>
-            Bottom
-        };
-
         #endregion
     }
 }
