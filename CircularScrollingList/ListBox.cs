@@ -20,10 +20,15 @@ namespace AirFishLab.ScrollingList
 
         private int _contentID;
 
+        #region Referenced Components
+
+        private CircularScrollingListSetting _listSetting;
         private ListPositionCtrl _positionCtrl;
         private BaseListBank _listBank;
         private CurveResolver _positionCurve;
         private CurveResolver _scaleCurve;
+
+        #endregion
 
         public Action<float> UpdatePosition { private set; get; }
 
@@ -76,13 +81,17 @@ namespace AirFishLab.ScrollingList
         /// <summary>
         /// Initialize the box
         /// </summary>
+        /// <param name="setting">The setting of the list</param>
         /// <param name="listPositionCtrl">The position controller of this box</param>
-        public void Initialize(ListPositionCtrl listPositionCtrl)
+        public void Initialize(
+            CircularScrollingListSetting setting,
+            ListPositionCtrl listPositionCtrl)
         {
+            _listSetting = setting;
             _positionCtrl = listPositionCtrl;
-            _listBank = _positionCtrl.listBank;
+            _listBank = _listSetting.listBank;
 
-            switch (_positionCtrl.direction) {
+            switch (_listSetting.direction) {
                 case CircularScrollingList.Direction.Vertical:
                     UpdatePosition = MoveVertically;
                     break;
@@ -97,12 +106,16 @@ namespace AirFishLab.ScrollingList
             _changeSideLowerBoundPos = _lowerBoundPos + _unitPos * 0.5f;
             _changeSideUpperBoundPos = _upperBoundPos - _unitPos * 0.5f;
 
-            _positionCurve = new CurveResolver(
-                _positionCtrl.boxPositionCurve,
-                _changeSideLowerBoundPos, _changeSideUpperBoundPos);
-            _scaleCurve = new CurveResolver(
-                _positionCtrl.boxScaleCurve,
-                _changeSideLowerBoundPos, _changeSideUpperBoundPos);
+            _positionCurve =
+                new CurveResolver(
+                    _listSetting.boxPositionCurve,
+                    _changeSideLowerBoundPos,
+                    _changeSideUpperBoundPos);
+            _scaleCurve =
+                new CurveResolver(
+                    _listSetting.boxScaleCurve,
+                    _changeSideLowerBoundPos,
+                    _changeSideUpperBoundPos);
 
             InitialPosition();
             InitialContent();
@@ -118,7 +131,7 @@ namespace AirFishLab.ScrollingList
             var button = transform.GetComponent<Button>();
             if (button != null)
                 button.onClick.AddListener(
-                    () => _positionCtrl.onBoxClick.Invoke(_contentID));
+                    () => _listSetting.onBoxClick.Invoke(_contentID));
         }
 
         /// <summary>
@@ -126,7 +139,7 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private void InitialPosition()
         {
-            var numOfBoxes = _positionCtrl.listBoxes.Length;
+            var numOfBoxes = _listSetting.listBoxes.Count;
             var majorPosition = _unitPos * (listBoxID * -1 + numOfBoxes / 2);
             var passivePosition = 0f;
 
@@ -138,7 +151,7 @@ namespace AirFishLab.ScrollingList
 
             passivePosition = GetPassivePosition(majorPosition);
 
-            switch (_positionCtrl.direction) {
+            switch (_listSetting.direction) {
                 case CircularScrollingList.Direction.Vertical:
                     transform.localPosition =
                         new Vector3(
@@ -268,13 +281,13 @@ namespace AirFishLab.ScrollingList
         private void InitialContent()
         {
             // Get the content ID of the centered box
-            _contentID = _positionCtrl.centeredContentID;
+            _contentID = _listSetting.centeredContentId;
 
             // Adjust the contentID according to its initial order.
-            _contentID += listBoxID - _positionCtrl.listBoxes.Length / 2;
+            _contentID += listBoxID - _listSetting.listBoxes.Count / 2;
 
             // In the linear mode, disable the box if needed
-            if (_positionCtrl.listType == CircularScrollingList.ListType.Linear) {
+            if (_listSetting.listType == CircularScrollingList.ListType.Linear) {
                 // Disable the boxes at the upper half of the list
                 // which will hold the item at the tail of the contents.
                 if (_contentID < 0) {
@@ -305,7 +318,7 @@ namespace AirFishLab.ScrollingList
             _contentID = nextListBox.GetContentID() - 1;
             _contentID = (_contentID < 0) ? _listBank.GetListLength() - 1 : _contentID;
 
-            if (_positionCtrl.listType == CircularScrollingList.ListType.Linear) {
+            if (_listSetting.listType == CircularScrollingList.ListType.Linear) {
                 if (_contentID == _listBank.GetListLength() - 1 ||
                     !nextListBox.isActiveAndEnabled) {
                     // If the box has been disabled at the other side,
@@ -335,7 +348,7 @@ namespace AirFishLab.ScrollingList
             _contentID = lastListBox.GetContentID() + 1;
             _contentID = (_contentID == _listBank.GetListLength()) ? 0 : _contentID;
 
-            if (_positionCtrl.listType == CircularScrollingList.ListType.Linear) {
+            if (_listSetting.listType == CircularScrollingList.ListType.Linear) {
                 if (_contentID == 0 || !lastListBox.isActiveAndEnabled) {
                     if (!isActiveAndEnabled)
                         --_positionCtrl.numOfUpperDisabledBoxes;

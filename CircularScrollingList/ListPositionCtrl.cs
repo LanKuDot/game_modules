@@ -12,7 +12,7 @@ namespace AirFishLab.ScrollingList
     /// <summary>
     /// Control the position of boxes
     /// </summary>
-    public class ListPositionCtrl : MonoBehaviour, IControlEventHandler
+    public class ListPositionCtrl
     {
         #region Enums
 
@@ -37,102 +37,57 @@ namespace AirFishLab.ScrollingList
 
         #endregion
 
-        #region Settings
+        #region Referenced Components
 
-        /* List mode */
-        [Tooltip("The type of the list.")]
-        public CircularScrollingList.ListType listType = CircularScrollingList.ListType.Circular;
-        [Tooltip("The controlling mode of the list.")]
-        public CircularScrollingList.ControlMode controlMode = CircularScrollingList.ControlMode.Drag;
-        [Tooltip("Should a box align in the middle of the list after sliding?")]
-        public bool alignMiddle = false;
-        [Tooltip("The major moving direction of the list.")]
-        public CircularScrollingList.Direction direction = CircularScrollingList.Direction.Vertical;
-
-        /* Containers */
-        [Tooltip("The game object which holds the content bank for the list. " +
-                 "It will be the derived class of the BaseListBank.")]
-        public BaseListBank listBank;
-        [Tooltip("Specify the initial content ID for the centered box.")]
-        public int centeredContentID = 0;
-        [Tooltip("The boxes which belong to this list.")]
-        public ListBox[] listBoxes;
-
-        /* Appearance */
-        [Tooltip("The distance between each box. The larger, the closer.")]
-        public float boxDensity = 2.0f;
-        [Tooltip("The curve specifying the box position. " +
-                 "The x axis is the major position of the box, which is mapped to [0, 1]. " +
-                 "The y axis defines the factor of the passive position of the box. " +
-                 "Point (0.5, 0) is the center of the list layout.")]
-        public AnimationCurve boxPositionCurve =
-            AnimationCurve.Constant(0.0f, 1.0f, 0.0f);
-        [Tooltip("The curve specifying the box scale. " +
-                 "The x axis is the major position of the box, which is mapped to [0, 1]. " +
-                 "The y axis specifies the value of 'localScale' of the box at the " +
-                 "corresponding position.")]
-        public AnimationCurve boxScaleCurve = AnimationCurve.Constant(0.0f, 1.0f, 1.0f);
-        [Tooltip("The curve specifying the movement of the box. " +
-                 "The x axis is the moving duration in seconds, which starts from 0. " +
-                 "The y axis is the factor of the releasing velocity in Drag mode, or " +
-                 "the factor of the target position in Function and Mouse Wheel modes.")]
-        public AnimationCurve boxMovementCurve = new AnimationCurve(
-            new Keyframe(0.0f, 1.0f, 0.0f, -2.5f),
-            new Keyframe(1.0f, 0.0f, 0.0f, 0.0f));
-
-        #endregion
-
-        #region Events
-
-        [Tooltip("The callbacks for the event of the clicking on boxes." +
-                 "The registered callbacks will be added to the 'onClick' event of boxes, " +
-                 "therefore, boxes should be 'Button's.")]
-        public ListBoxClickEvent onBoxClick;
-
-        #endregion
-
+        private readonly CircularScrollingListSetting _listSetting;
         /// <summary>
         /// The camera for transforming the point from screen space to local space
         /// </summary>
-        private Camera _canvasRefCamera;
-        /// <summary>
-        /// The rect transform that this list belongs to
-        /// </summary>
-        private RectTransform _rectTransform;
-        public float unitPos { get; private set; }
-        public float lowerBoundPos { get; private set; }
-        public float upperBoundPos { get; private set; }
+        private readonly Camera _canvasRefCamera;
+        private readonly RectTransform _rectTransform;
 
-        // Delegate functions
+        #endregion
+
+        #region Handler Delegate
+
         private Action<PointerEventData, TouchPhase> _inputPositionHandler;
         private Action<Vector2> _scrollHandler;
 
-        // Variables for moving listBoxes
-        private IMovementCtrl _movementCtrl;
-        // Input mouse/finger position in the local space of the list.
-        private Vector2 _lastInputPos;
-        private float _deltaInputPos;
-        private float _deltaDistanceToCenter = 0.0f;
+        #endregion
 
-        // Variables for linear mode
+
+        #region Movement Variables
+
+        private IMovementCtrl _movementCtrl;
+        private Vector2 _lastInputLocalPos;
+        private float _deltaInputLocalPos;
+        private float _deltaDistanceToCenter;
         private PositionState _positionState = PositionState.Middle;
+        private readonly int _maxNumOfDisabledBoxes;
+
+        #endregion
+
+        #region Exposed Movement Variables
+
+        public float unitPos { get; private set; }
+        public float lowerBoundPos { get; private set; }
+        public float upperBoundPos { get; private set; }
         public int numOfUpperDisabledBoxes { set; get; }
         public int numOfLowerDisabledBoxes { set; get; }
-        private int _maxNumOfDisabledBoxes = 0;
 
-        private void Awake()
-        {
-            _rectTransform = GetComponent<RectTransform>();
-        }
+        #endregion
 
-        private void Start()
+        public ListPositionCtrl(
+            CircularScrollingListSetting listSetting,
+            RectTransform rectTransform, Camera canvasRefCamera)
         {
+            _listSetting = listSetting;
+            _rectTransform = rectTransform;
+            _canvasRefCamera = canvasRefCamera;
+            _maxNumOfDisabledBoxes = _listSetting.listBoxes.Count / 2;
+
             InitializePositionVars();
             InitializeInputFunction();
-            InitializeBoxDependency();
-            _maxNumOfDisabledBoxes = listBoxes.Length / 2;
-            foreach (var listBox in listBoxes)
-                listBox.Initialize(this);
         }
 
         #region Initialization
@@ -146,7 +101,7 @@ namespace AirFishLab.ScrollingList
             var rectRange = _rectTransform.rect;
             var rectLength = 0f;
 
-            switch (direction) {
+            switch (_listSetting.direction) {
                 case CircularScrollingList.Direction.Vertical:
                     rectLength = rectRange.height;
                     break;
@@ -155,32 +110,16 @@ namespace AirFishLab.ScrollingList
                     break;
             }
 
-            unitPos = rectLength / (listBoxes.Length - 1);
+            var numOfBoxes = _listSetting.listBoxes.Count;
+
+            unitPos = rectLength / (numOfBoxes - 1);
 
             // If there are even number of ListBoxes, narrow the boundary for 1 unitPos.
             var boundPosAdjust =
-                ((listBoxes.Length & 0x1) == 0) ? unitPos / 2 : 0;
+                ((numOfBoxes & 0x1) == 0) ? unitPos / 2 : 0;
 
-            lowerBoundPos = unitPos * (-1 * listBoxes.Length / 2 - 1) + boundPosAdjust;
-            upperBoundPos = unitPos * (listBoxes.Length / 2 + 1) - boundPosAdjust;
-        }
-
-        /// <summary>
-        /// Initialize the dependency between the registered boxes
-        /// </summary>
-        private void InitializeBoxDependency()
-        {
-            // Set the box ID according to the order in the container `listBoxes`
-            for (var i = 0; i < listBoxes.Length; ++i)
-                listBoxes[i].listBoxID = i;
-
-            // Set the neighbor boxes
-            for (var i = 0; i < listBoxes.Length; ++i) {
-                listBoxes[i].lastListBox =
-                    listBoxes[(i - 1 >= 0) ? i - 1 : listBoxes.Length - 1];
-                listBoxes[i].nextListBox =
-                    listBoxes[(i + 1 < listBoxes.Length) ? i + 1 : 0];
-            }
+            lowerBoundPos = unitPos * (-1 * numOfBoxes / 2 - 1) + boundPosAdjust;
+            upperBoundPos = unitPos * (numOfBoxes / 2 + 1) - boundPosAdjust;
         }
 
         /// <summary>
@@ -195,10 +134,12 @@ namespace AirFishLab.ScrollingList
 
             var overGoingThreshold = unitPos * 0.3f;
 
-            switch (controlMode) {
+            switch (_listSetting.controlMode) {
                 case CircularScrollingList.ControlMode.Drag:
                     _movementCtrl = new FreeMovementCtrl(
-                        boxMovementCurve, alignMiddle, overGoingThreshold,
+                        _listSetting.boxMovementCurve,
+                        _listSetting.alignMiddle,
+                        overGoingThreshold,
                         GetAligningDistance, GetPositionState);
                     _inputPositionHandler = DragPositionHandler;
                     _scrollHandler = v => { };
@@ -206,7 +147,8 @@ namespace AirFishLab.ScrollingList
 
                 case CircularScrollingList.ControlMode.Function:
                     _movementCtrl = new UnitMovementCtrl(
-                        boxMovementCurve, overGoingThreshold,
+                        _listSetting.boxMovementCurve,
+                        overGoingThreshold,
                         GetAligningDistance, GetPositionState);
                     _inputPositionHandler = (pointer, phase) => { };
                     _scrollHandler = v => { };
@@ -214,45 +156,41 @@ namespace AirFishLab.ScrollingList
 
                 case CircularScrollingList.ControlMode.MouseWheel:
                     _movementCtrl = new UnitMovementCtrl(
-                        boxMovementCurve, overGoingThreshold,
+                        _listSetting.boxMovementCurve,
+                        overGoingThreshold,
                         GetAligningDistance, GetPositionState);
                     _inputPositionHandler = (pointer, phase) => { };
                     _scrollHandler = ScrollDeltaHandler;
                     break;
             }
-
-            var parentCanvas = GetComponentInParent<Canvas>();
-            if (parentCanvas.renderMode != RenderMode.ScreenSpaceOverlay)
-                _canvasRefCamera = parentCanvas.worldCamera;
         }
 
         #endregion
 
-        #region Event System Callback
+        #region Public Functions
 
-        public void OnBeginDrag(PointerEventData pointer)
+        /// <summary>
+        /// Handle the input position event
+        /// </summary>
+        /// <param name="eventData">The data of the event</param>
+        /// <param name="phase">The phase of the input action</param>
+        public void InputPositionHandler(PointerEventData eventData, TouchPhase phase)
         {
-            _inputPositionHandler(pointer, TouchPhase.Began);
+            _inputPositionHandler(eventData, phase);
         }
 
-        public void OnDrag(PointerEventData pointer)
+        /// <summary>
+        /// Handle the scrolling event
+        /// </summary>
+        /// <param name="eventData">The data of the event</param>
+        public void ScrollHandler(PointerEventData eventData)
         {
-            _inputPositionHandler(pointer, TouchPhase.Moved);
-        }
-
-        public void OnEndDrag(PointerEventData pointer)
-        {
-            _inputPositionHandler(pointer, TouchPhase.Ended);
-        }
-
-        public void OnScroll(PointerEventData pointer)
-        {
-            _scrollHandler(pointer.scrollDelta);
+            _scrollHandler(eventData.scrollDelta);
         }
 
         #endregion
 
-        #region Input Value Handler
+        #region Input Value Handlers
 
         /// <summary>
         /// Move the list according to the dragging position and the dragging state
@@ -263,41 +201,18 @@ namespace AirFishLab.ScrollingList
         {
             switch (state) {
                 case TouchPhase.Began:
-                    _lastInputPos = ScreenToLocalPos(pointer.position);
+                    _lastInputLocalPos = ScreenToLocalPos(pointer.position);
                     break;
 
                 case TouchPhase.Moved:
-                    _deltaInputPos = GetDeltaInputPos(
+                    _deltaInputLocalPos = GetDeltaInputPos(
                         ScreenToLocalPos(pointer.position));
                     // Slide the list as long as the moving distance of the pointer
-                    _movementCtrl.SetMovement(_deltaInputPos, true);
+                    _movementCtrl.SetMovement(_deltaInputLocalPos, true);
                     break;
 
                 case TouchPhase.Ended:
-                    _movementCtrl.SetMovement(_deltaInputPos / Time.deltaTime, false);
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Scroll the list according to the delta of the mouse scrolling
-        /// </summary>
-        /// <param name="mouseScrollDelta">The delta scrolling distance</param>
-        private void ScrollDeltaHandler(Vector2 mouseScrollDelta)
-        {
-            switch (direction) {
-                case CircularScrollingList.Direction.Vertical:
-                    if (mouseScrollDelta.y > 0)
-                        MoveOneUnitUp();
-                    else if (mouseScrollDelta.y < 0)
-                        MoveOneUnitDown();
-                    break;
-
-                case CircularScrollingList.Direction.Horizontal:
-                    if (mouseScrollDelta.y > 0)
-                        MoveOneUnitDown();
-                    else if (mouseScrollDelta.y < 0)
-                        MoveOneUnitUp();
+                    _movementCtrl.SetMovement(_deltaInputLocalPos / Time.deltaTime, false);
                     break;
             }
         }
@@ -324,54 +239,86 @@ namespace AirFishLab.ScrollingList
         {
             var deltaLocalPos = 0f;
 
-            switch (direction) {
+            switch (_listSetting.direction) {
                 case CircularScrollingList.Direction.Vertical:
-                    deltaLocalPos = pointerLocalPos.y - _lastInputPos.y;
+                    deltaLocalPos = pointerLocalPos.y - _lastInputLocalPos.y;
                     break;
                 case CircularScrollingList.Direction.Horizontal:
-                    deltaLocalPos = pointerLocalPos.x - _lastInputPos.x;
+                    deltaLocalPos = pointerLocalPos.x - _lastInputLocalPos.x;
                     break;
             }
 
-            _lastInputPos = pointerLocalPos;
+            _lastInputLocalPos = pointerLocalPos;
 
             return deltaLocalPos;
         }
 
+        /// <summary>
+        /// Scroll the list according to the delta of the mouse scrolling
+        /// </summary>
+        /// <param name="mouseScrollDelta">The delta scrolling distance</param>
+        private void ScrollDeltaHandler(Vector2 mouseScrollDelta)
+        {
+            if (Mathf.Approximately(mouseScrollDelta.y, 0))
+                return;
+
+            switch (_listSetting.direction) {
+                case CircularScrollingList.Direction.Vertical:
+                    SetUnitMove(mouseScrollDelta.y > 0 ? 1 : -1);
+                    break;
+
+                case CircularScrollingList.Direction.Horizontal:
+                    SetUnitMove(mouseScrollDelta.y < 0 ? 1 : -1);
+                    break;
+            }
+        }
+
         #endregion
 
-        private void Update()
+        #region Update Functions
+
+        /// <summary>
+        /// Update the position of the boxes
+        /// </summary>
+        public void Update()
         {
             // Update the position of boxes
             if (_movementCtrl.IsMovementEnded())
                 return;
 
             var distance = _movementCtrl.GetDistance(Time.deltaTime);
-            foreach (var listBox in listBoxes)
+            foreach (var listBox in _listSetting.listBoxes)
                 listBox.UpdatePosition(distance);
         }
 
-        private void LateUpdate()
+        /// <summary>
+        /// Update the position state and find the distance for aligning a box
+        /// to the center
+        /// </summary>
+        public void LateUpdate()
         {
             // Update the state of the boxes
             FindDeltaDistanceToCenter();
-            if (listType == CircularScrollingList.ListType.Linear)
+            if (_listSetting.listType == CircularScrollingList.ListType.Linear)
                 UpdatePositionState();
         }
 
+        #endregion
+
         #region Movement Control
 
-        /* Find the listBox which is the closest to the center position,
-         * and calculate the delta x or y position between it and the center position.
-         */
+        /// <summary>
+        /// Find the listBox which is the closest to the center position,
+        /// and calculate the delta x or y position between it and the center position.
+        /// </summary>
         private void FindDeltaDistanceToCenter()
         {
             var minDeltaPos = Mathf.Infinity;
             var deltaPos = 0.0f;
 
-            switch (direction) {
+            switch (_listSetting.direction) {
                 case CircularScrollingList.Direction.Vertical:
-                    foreach (var listBox in listBoxes) {
+                    foreach (var listBox in _listSetting.listBoxes) {
                         // Skip the disabled box in linear mode
                         if (!listBox.isActiveAndEnabled)
                             continue;
@@ -384,7 +331,7 @@ namespace AirFishLab.ScrollingList
                     break;
 
                 case CircularScrollingList.Direction.Horizontal:
-                    foreach (var listBox in listBoxes) {
+                    foreach (var listBox in _listSetting.listBoxes) {
                         // Skip the disabled box in linear mode
                         if (!listBox.isActiveAndEnabled)
                             continue;
@@ -400,27 +347,13 @@ namespace AirFishLab.ScrollingList
             _deltaDistanceToCenter = minDeltaPos;
         }
 
-        /* Move the list for the distance of times of unit position
-         */
-        private void SetUnitMove(int unit)
+        /// <summary>
+        /// Move the list for the distance of times of unit position
+        /// </summary>
+        /// <param name="unit">The number of units</param>
+        public void SetUnitMove(int unit)
         {
             _movementCtrl.SetMovement(unit * unitPos, false);
-        }
-
-        /// <summary>
-        /// Move all boxes 1 unit up
-        /// </summary>
-        public void MoveOneUnitUp()
-        {
-            SetUnitMove(1);
-        }
-
-        /// <summary>
-        /// Move all boxes 1 unit down
-        /// </summary>
-        public void MoveOneUnitDown()
-        {
-            SetUnitMove(-1);
         }
 
         /// <summary>
@@ -456,9 +389,11 @@ namespace AirFishLab.ScrollingList
             bool IsCloser(Vector3 localPos)
             {
                 var value =
-                    Mathf.Abs(direction == CircularScrollingList.Direction.Horizontal
-                        ? localPos.x
-                        : localPos.y);
+                    Mathf.Abs(
+                        _listSetting.direction
+                        == CircularScrollingList.Direction.Horizontal
+                            ? localPos.x
+                            : localPos.y);
 
                 if (value < minPosition) {
                     minPosition = value;
@@ -468,7 +403,7 @@ namespace AirFishLab.ScrollingList
                 return false;
             }
 
-            foreach (var listBox in listBoxes) {
+            foreach (var listBox in _listSetting.listBoxes) {
                 if (IsCloser(listBox.transform.localPosition))
                     candidateBox = listBox;
             }
