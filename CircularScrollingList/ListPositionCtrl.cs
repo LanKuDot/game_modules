@@ -417,7 +417,7 @@ namespace AirFishLab.ScrollingList
         /// <returns>The content ID of the centered box</returns>
         public int GetCenteredContentID()
         {
-            return GetCenteredBox().GetContentID();
+            return GetCenteredBox().contentID;
         }
 
         #endregion

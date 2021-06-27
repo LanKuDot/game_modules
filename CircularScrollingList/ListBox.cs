@@ -15,10 +15,12 @@ namespace AirFishLab.ScrollingList
         public int listBoxID { set; get; }
         public ListBox lastListBox { set; get; }
         public ListBox nextListBox { set; get; }
+        /// <summary>
+        /// The ID of the content that the box references
+        /// </summary>
+        public int contentID { get; private set; }
 
         #endregion
-
-        private int _contentID;
 
         #region Referenced Components
 
@@ -64,16 +66,8 @@ namespace AirFishLab.ScrollingList
         public void ShowBoxInfo()
         {
             Debug.Log("Box ID: " + listBoxID.ToString() +
-                      ", Content ID: " + _contentID.ToString() +
-                      ", Content: " + _listBank.GetListContent(_contentID));
-        }
-
-        /// <summary>
-        /// Get the content ID of the box
-        /// </summary>
-        public int GetContentID()
-        {
-            return _contentID;
+                      ", Content ID: " + contentID.ToString() +
+                      ", Content: " + _listBank.GetListContent(contentID));
         }
 
         #region Initialization
@@ -171,7 +165,7 @@ namespace AirFishLab.ScrollingList
             var button = transform.GetComponent<Button>();
             if (button != null)
                 button.onClick.AddListener(
-                    () => _listSetting.onBoxClick.Invoke(_contentID));
+                    () => _listSetting.onBoxClick.Invoke(contentID));
         }
 
         #endregion
@@ -288,31 +282,31 @@ namespace AirFishLab.ScrollingList
         private void InitializeContent()
         {
             // Get the content ID of the centered box
-            _contentID = _listSetting.centeredContnetID;
+            contentID = _listSetting.centeredContnetID;
 
             // Adjust the contentID according to its initial order.
-            _contentID += listBoxID - _listSetting.listBoxes.Count / 2;
+            contentID += listBoxID - _listSetting.listBoxes.Count / 2;
 
             // In the linear mode, disable the box if needed
             if (_listSetting.listType == CircularScrollingList.ListType.Linear) {
                 // Disable the boxes at the upper half of the list
                 // which will hold the item at the tail of the contents.
-                if (_contentID < 0) {
+                if (contentID < 0) {
                     _positionCtrl.numOfUpperDisabledBoxes += 1;
                     gameObject.SetActive(false);
                 }
                 // Disable the box at the lower half of the list
                 // which will hold the repeated item.
-                else if (_contentID >= _listBank.GetListLength()) {
+                else if (contentID >= _listBank.GetListLength()) {
                     _positionCtrl.numOfLowerDisabledBoxes += 1;
                     gameObject.SetActive(false);
                 }
             }
 
             // Round the content id
-            while (_contentID < 0)
-                _contentID += _listBank.GetListLength();
-            _contentID = _contentID % _listBank.GetListLength();
+            while (contentID < 0)
+                contentID += _listBank.GetListLength();
+            contentID = contentID % _listBank.GetListLength();
 
             UpdateDisplayContent(GetListContent());
         }
@@ -322,11 +316,11 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private void UpdateToLastContent()
         {
-            _contentID = nextListBox.GetContentID() - 1;
-            _contentID = (_contentID < 0) ? _listBank.GetListLength() - 1 : _contentID;
+            contentID = nextListBox.contentID - 1;
+            contentID = (contentID < 0) ? _listBank.GetListLength() - 1 : contentID;
 
             if (_listSetting.listType == CircularScrollingList.ListType.Linear) {
-                if (_contentID == _listBank.GetListLength() - 1 ||
+                if (contentID == _listBank.GetListLength() - 1 ||
                     !nextListBox.isActiveAndEnabled) {
                     // If the box has been disabled at the other side,
                     // decrease the counter of the other side.
@@ -352,11 +346,11 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private void UpdateToNextContent()
         {
-            _contentID = lastListBox.GetContentID() + 1;
-            _contentID = (_contentID == _listBank.GetListLength()) ? 0 : _contentID;
+            contentID = lastListBox.contentID + 1;
+            contentID = (contentID == _listBank.GetListLength()) ? 0 : contentID;
 
             if (_listSetting.listType == CircularScrollingList.ListType.Linear) {
-                if (_contentID == 0 || !lastListBox.isActiveAndEnabled) {
+                if (contentID == 0 || !lastListBox.isActiveAndEnabled) {
                     if (!isActiveAndEnabled)
                         --_positionCtrl.numOfUpperDisabledBoxes;
 
@@ -387,7 +381,7 @@ namespace AirFishLab.ScrollingList
         /// <returns>The object of the content</returns>
         private object GetListContent()
         {
-            return _listBank.GetListContent(_contentID);
+            return _listBank.GetListContent(contentID);
         }
 
         #endregion
