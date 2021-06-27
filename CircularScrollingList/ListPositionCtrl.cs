@@ -59,8 +59,9 @@ namespace AirFishLab.ScrollingList
 
         #endregion
 
-        #region Handler Delegate
+        #region Private Members
 
+        private ListBox _centeredBox;
         private Action<PointerEventData, TouchPhase> _inputPositionHandler;
         private Action<Vector2> _scrollHandler;
 
@@ -327,37 +328,28 @@ namespace AirFishLab.ScrollingList
         private void FindDeltaDistanceToCenter()
         {
             var minDeltaPos = Mathf.Infinity;
-            var deltaPos = 0.0f;
+            ListBox candidateBox = null;
 
-            switch (_listSetting.direction) {
-                case CircularScrollingList.Direction.Vertical:
-                    foreach (var listBox in _listBoxes) {
-                        // Skip the disabled box in linear mode
-                        if (!listBox.isActiveAndEnabled)
-                            continue;
+            foreach (var listBox in _listBoxes) {
+                // Skip the disabled box in linear mode
+                if (!listBox.isActiveAndEnabled)
+                    continue;
 
-                        deltaPos = -listBox.transform.localPosition.y;
-                        if (Mathf.Abs(deltaPos) < Mathf.Abs(minDeltaPos))
-                            minDeltaPos = deltaPos;
-                    }
+                var localPos = listBox.transform.localPosition;
+                var deltaPos =
+                    _listSetting.direction == CircularScrollingList.Direction.Vertical
+                        ? -localPos.y
+                        : -localPos.x;
 
-                    break;
+                if (Mathf.Abs(deltaPos) >= Mathf.Abs(minDeltaPos))
+                    continue;
 
-                case CircularScrollingList.Direction.Horizontal:
-                    foreach (var listBox in _listBoxes) {
-                        // Skip the disabled box in linear mode
-                        if (!listBox.isActiveAndEnabled)
-                            continue;
-
-                        deltaPos = -listBox.transform.localPosition.x;
-                        if (Mathf.Abs(deltaPos) < Mathf.Abs(minDeltaPos))
-                            minDeltaPos = deltaPos;
-                    }
-
-                    break;
+                minDeltaPos = deltaPos;
+                candidateBox = listBox;
             }
 
             _deltaDistanceToCenter = minDeltaPos;
+            _centeredBox = candidateBox;
         }
 
         /// <summary>
@@ -389,39 +381,11 @@ namespace AirFishLab.ScrollingList
         #region Center Box Searching
 
         /// <summary>
-        /// Get the centered ListBox<para />
-        /// The centered ListBox is found by comparing which one is the closest
-        /// to the center.
+        /// Get the box that is closet to the center
         /// </summary>
-        /// <returns>The ListBox</returns>
         public ListBox GetCenteredBox()
         {
-            var minPosition = Mathf.Infinity;
-            ListBox candidateBox = null;
-
-            bool IsCloser(Vector3 localPos)
-            {
-                var value =
-                    Mathf.Abs(
-                        _listSetting.direction
-                        == CircularScrollingList.Direction.Horizontal
-                            ? localPos.x
-                            : localPos.y);
-
-                if (value < minPosition) {
-                    minPosition = value;
-                    return true;
-                }
-
-                return false;
-            }
-
-            foreach (var listBox in _listBoxes) {
-                if (IsCloser(listBox.transform.localPosition))
-                    candidateBox = listBox;
-            }
-
-            return candidateBox;
+            return _centeredBox;
         }
 
         /// <summary>
