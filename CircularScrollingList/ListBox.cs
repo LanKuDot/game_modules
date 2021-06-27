@@ -10,11 +10,20 @@ namespace AirFishLab.ScrollingList
     /// </summary>
     public class ListBox : MonoBehaviour
     {
-        #region Setting Properties
+        #region Exposed Properties
 
-        public int listBoxID { set; get; }
-        public ListBox lastListBox { set; get; }
-        public ListBox nextListBox { set; get; }
+        /// <summary>
+        /// The ID of this box in the registered boxes
+        /// </summary>
+        public int listBoxID { get; private set; }
+        /// <summary>
+        /// The previous box of this box
+        /// </summary>
+        public ListBox lastListBox { get; private set; }
+        /// <summary>
+        /// The next box of this box
+        /// </summary>
+        public ListBox nextListBox { get; private set; }
         /// <summary>
         /// The ID of the content that the box references
         /// </summary>
@@ -67,13 +76,16 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         /// <param name="setting">The setting of the list</param>
         /// <param name="listPositionCtrl">The position controller of this box</param>
+        /// <param name="listBoxID">The ID of this box</param>
         public void Initialize(
             CircularScrollingListSetting setting,
-            ListPositionCtrl listPositionCtrl)
+            ListPositionCtrl listPositionCtrl,
+            int listBoxID)
         {
             _listSetting = setting;
             _positionCtrl = listPositionCtrl;
             _listBank = _listSetting.listBank;
+            this.listBoxID = listBoxID;
 
             switch (_listSetting.direction) {
                 case CircularScrollingList.Direction.Vertical:
@@ -86,6 +98,7 @@ namespace AirFishLab.ScrollingList
 
             InitializePositionVars();
             InitializePosition();
+            InitializeBoxDependency();
             InitializeContent();
             AddClickEvent();
         }
@@ -144,6 +157,18 @@ namespace AirFishLab.ScrollingList
             }
 
             UpdateScale(majorPosition);
+        }
+
+        /// <summary>
+        /// Initialize the box dependency
+        /// </summary>
+        private void InitializeBoxDependency()
+        {
+            var listBoxes = _listSetting.listBoxes;
+            var numOfBoxes = listBoxes.Count;
+
+            lastListBox = listBoxes[(int) Mathf.Repeat(listBoxID - 1, numOfBoxes)];
+            nextListBox = listBoxes[(int) Mathf.Repeat(listBoxID + 1, numOfBoxes)];
         }
 
         /// <summary>

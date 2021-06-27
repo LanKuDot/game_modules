@@ -109,31 +109,9 @@ namespace AirFishLab.ScrollingList
                 new ListPositionCtrl(
                     _setting, _rectTransform, _canvasRefCamera);
 
-            InitializeBoxDependency();
-
-            foreach (var box in _setting.listBoxes)
-                box.Initialize(_setting, _listPositionCtrl);
-        }
-
-        /// <summary>
-        /// Initialize the dependency between the registered boxes
-        /// </summary>
-        private void InitializeBoxDependency()
-        {
-            var listBoxes = _setting.listBoxes;
-            var numOfBoxes = listBoxes.Count;
-
-            // Set the box ID according to the order in the container `listBoxes`
-            for (var i = 0; i < numOfBoxes; ++i)
-                listBoxes[i].listBoxID = i;
-
-            // Set the neighbor boxes
-            for (var i = 0; i < numOfBoxes; ++i) {
-                listBoxes[i].lastListBox =
-                    listBoxes[(i - 1 >= 0) ? i - 1 : numOfBoxes - 1];
-                listBoxes[i].nextListBox =
-                    listBoxes[(i + 1 < numOfBoxes) ? i + 1 : 0];
-            }
+            var boxes = _setting.listBoxes;
+            for (var i = 0; i < boxes.Count; ++i)
+                boxes[i].Initialize(_setting, _listPositionCtrl, i);
         }
 
         #endregion
