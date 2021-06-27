@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -39,12 +40,22 @@ namespace AirFishLab.ScrollingList
 
         #region Referenced Components
 
+        /// <summary>
+        /// The setting of the list
+        /// </summary>
         private readonly CircularScrollingListSetting _listSetting;
         /// <summary>
         /// The camera for transforming the point from screen space to local space
         /// </summary>
         private readonly Camera _canvasRefCamera;
+        /// <summary>
+        /// The rect transform that the list belongs to
+        /// </summary>
         private readonly RectTransform _rectTransform;
+        /// <summary>
+        /// The boxes that belongs to the list
+        /// </summary>
+        private readonly List<ListBox> _listBoxes;
 
         #endregion
 
@@ -54,7 +65,6 @@ namespace AirFishLab.ScrollingList
         private Action<Vector2> _scrollHandler;
 
         #endregion
-
 
         #region Movement Variables
 
@@ -79,12 +89,15 @@ namespace AirFishLab.ScrollingList
 
         public ListPositionCtrl(
             CircularScrollingListSetting listSetting,
-            RectTransform rectTransform, Camera canvasRefCamera)
+            RectTransform rectTransform,
+            Camera canvasRefCamera,
+            List<ListBox> listBoxes)
         {
             _listSetting = listSetting;
             _rectTransform = rectTransform;
             _canvasRefCamera = canvasRefCamera;
-            _maxNumOfDisabledBoxes = _listSetting.listBoxes.Count / 2;
+            _listBoxes = listBoxes;
+            _maxNumOfDisabledBoxes = listBoxes.Count / 2;
 
             InitializePositionVars();
             InitializeInputFunction();
@@ -110,7 +123,7 @@ namespace AirFishLab.ScrollingList
                     break;
             }
 
-            var numOfBoxes = _listSetting.listBoxes.Count;
+            var numOfBoxes = _listBoxes.Count;
 
             unitPos = rectLength / (numOfBoxes - 1);
 
@@ -287,7 +300,7 @@ namespace AirFishLab.ScrollingList
                 return;
 
             var distance = _movementCtrl.GetDistance(Time.deltaTime);
-            foreach (var listBox in _listSetting.listBoxes)
+            foreach (var listBox in _listBoxes)
                 listBox.UpdatePosition(distance);
         }
 
@@ -318,7 +331,7 @@ namespace AirFishLab.ScrollingList
 
             switch (_listSetting.direction) {
                 case CircularScrollingList.Direction.Vertical:
-                    foreach (var listBox in _listSetting.listBoxes) {
+                    foreach (var listBox in _listBoxes) {
                         // Skip the disabled box in linear mode
                         if (!listBox.isActiveAndEnabled)
                             continue;
@@ -331,7 +344,7 @@ namespace AirFishLab.ScrollingList
                     break;
 
                 case CircularScrollingList.Direction.Horizontal:
-                    foreach (var listBox in _listSetting.listBoxes) {
+                    foreach (var listBox in _listBoxes) {
                         // Skip the disabled box in linear mode
                         if (!listBox.isActiveAndEnabled)
                             continue;
@@ -403,7 +416,7 @@ namespace AirFishLab.ScrollingList
                 return false;
             }
 
-            foreach (var listBox in _listSetting.listBoxes) {
+            foreach (var listBox in _listBoxes) {
                 if (IsCloser(listBox.transform.localPosition))
                     candidateBox = listBox;
             }

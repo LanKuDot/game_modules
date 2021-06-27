@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -36,6 +37,7 @@ namespace AirFishLab.ScrollingList
         private CircularScrollingListSetting _listSetting;
         private ListPositionCtrl _positionCtrl;
         private BaseListBank _listBank;
+        private List<ListBox> _listBoxes;
         private CurveResolver _positionCurve;
         private CurveResolver _scaleCurve;
 
@@ -76,15 +78,20 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         /// <param name="setting">The setting of the list</param>
         /// <param name="listPositionCtrl">The position controller of this box</param>
+        /// <param name="listBank">The content bank of the list</param>
+        /// <param name="listBoxes">The boxes that belongs to the list</param>
         /// <param name="listBoxID">The ID of this box</param>
         public void Initialize(
             CircularScrollingListSetting setting,
             ListPositionCtrl listPositionCtrl,
+            BaseListBank listBank,
+            List<ListBox> listBoxes,
             int listBoxID)
         {
             _listSetting = setting;
             _positionCtrl = listPositionCtrl;
-            _listBank = _listSetting.listBank;
+            _listBank = listBank;
+            _listBoxes = listBoxes;
             this.listBoxID = listBoxID;
 
             switch (_listSetting.direction) {
@@ -131,7 +138,7 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private void InitializePosition()
         {
-            var numOfBoxes = _listSetting.listBoxes.Count;
+            var numOfBoxes = _listBoxes.Count;
             var majorPosition = _unitPos * (listBoxID * -1 + numOfBoxes / 2);
             var passivePosition = 0f;
 
@@ -164,11 +171,10 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private void InitializeBoxDependency()
         {
-            var listBoxes = _listSetting.listBoxes;
-            var numOfBoxes = listBoxes.Count;
+            var numOfBoxes = _listBoxes.Count;
 
-            lastListBox = listBoxes[(int) Mathf.Repeat(listBoxID - 1, numOfBoxes)];
-            nextListBox = listBoxes[(int) Mathf.Repeat(listBoxID + 1, numOfBoxes)];
+            lastListBox = _listBoxes[(int) Mathf.Repeat(listBoxID - 1, numOfBoxes)];
+            nextListBox = _listBoxes[(int) Mathf.Repeat(listBoxID + 1, numOfBoxes)];
         }
 
         /// <summary>
@@ -300,7 +306,7 @@ namespace AirFishLab.ScrollingList
             contentID = _listSetting.centeredContnetID;
 
             // Adjust the contentID according to its initial order.
-            contentID += listBoxID - _listSetting.listBoxes.Count / 2;
+            contentID += listBoxID - _listBoxes.Count / 2;
 
             // In the linear mode, disable the box if needed
             if (_listSetting.listType == CircularScrollingList.ListType.Linear) {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -54,7 +55,22 @@ namespace AirFishLab.ScrollingList
         #region Settings
 
         [SerializeField]
+        [Tooltip("The game object which holds the content bank for the list. " +
+                 "It will be the derived class of the BaseListBank.")]
+        private BaseListBank _listBank;
+        [SerializeField]
+        [Tooltip("The boxes which belong to this list.")]
+        private List<ListBox> _listBoxes;
+        [SerializeField]
+        [Tooltip("The setting of this list")]
         private CircularScrollingListSetting _setting;
+
+        #endregion
+
+        #region Exposed Properties
+
+        public BaseListBank listBank => _listBank;
+        public CircularScrollingListSetting setting => _setting;
 
         #endregion
 
@@ -72,12 +88,6 @@ namespace AirFishLab.ScrollingList
         /// The component that controlling the position of each list box
         /// </summary>
         private ListPositionCtrl _listPositionCtrl;
-
-        #endregion
-
-        #region Exposed Properties
-
-        public CircularScrollingListSetting setting => _setting;
 
         #endregion
 
@@ -107,11 +117,11 @@ namespace AirFishLab.ScrollingList
         {
             _listPositionCtrl =
                 new ListPositionCtrl(
-                    _setting, _rectTransform, _canvasRefCamera);
+                    _setting, _rectTransform, _canvasRefCamera, _listBoxes);
 
-            var boxes = _setting.listBoxes;
-            for (var i = 0; i < boxes.Count; ++i)
-                boxes[i].Initialize(_setting, _listPositionCtrl, i);
+            for (var i = 0; i < _listBoxes.Count; ++i)
+                _listBoxes[i].Initialize(
+                    _setting, _listPositionCtrl, _listBank, _listBoxes, i);
         }
 
         #endregion

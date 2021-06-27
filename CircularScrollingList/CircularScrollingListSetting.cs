@@ -24,21 +24,9 @@ namespace AirFishLab.ScrollingList
         [Tooltip("The major moving direction of the list.")]
         private CircularScrollingList.Direction _direction =
             CircularScrollingList.Direction.Vertical;
-
-        #endregion
-
-        #region Containers
-
-        [SerializeField]
-        [Tooltip("The game object which holds the content bank for the list. " +
-                 "It will be the derived class of the BaseListBank.")]
-        private BaseListBank _listBank;
         [SerializeField]
         [Tooltip("Specify the initial content ID for the centered box.")]
         private int centeredContentID = 0;
-        [SerializeField]
-        [Tooltip("The boxes which belong to this list.")]
-        private List<ListBox> _listBoxes;
 
         #endregion
 
@@ -87,10 +75,7 @@ namespace AirFishLab.ScrollingList
         public CircularScrollingList.ControlMode controlMode => _controlMode;
         public bool alignMiddle => _alignMiddle;
         public CircularScrollingList.Direction direction => _direction;
-
-        public BaseListBank listBank => _listBank;
         public int centeredContnetID => centeredContentID;
-        public List<ListBox> listBoxes => _listBoxes;
 
         public float boxDensity => _boxDensity;
         public AnimationCurve boxPositionCurve => _boxPositionCurve;
