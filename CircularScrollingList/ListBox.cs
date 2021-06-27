@@ -100,6 +100,17 @@ namespace AirFishLab.ScrollingList
                     break;
             }
 
+            InitializePositionVars();
+            InitializePosition();
+            InitializeContent();
+            AddClickEvent();
+        }
+
+        /// <summary>
+        /// Initialize the position variables
+        /// </summary>
+        private void InitializePositionVars()
+        {
             _unitPos = _positionCtrl.unitPos;
             _lowerBoundPos = _positionCtrl.lowerBoundPos;
             _upperBoundPos = _positionCtrl.upperBoundPos;
@@ -116,28 +127,12 @@ namespace AirFishLab.ScrollingList
                     _listSetting.boxScaleCurve,
                     _changeSideLowerBoundPos,
                     _changeSideUpperBoundPos);
-
-            InitialPosition();
-            InitialContent();
-            AddClickEvent();
-        }
-
-        /// <summary>
-        /// Add an additional listener to Button.onClick event for passing click
-        /// event to target <c>ListPositionCtrl</c>
-        /// </summary>
-        private void AddClickEvent()
-        {
-            var button = transform.GetComponent<Button>();
-            if (button != null)
-                button.onClick.AddListener(
-                    () => _listSetting.onBoxClick.Invoke(_contentID));
         }
 
         /// <summary>
         /// Initialize the local position of the list box according to its ID
         /// </summary>
-        private void InitialPosition()
+        private void InitializePosition()
         {
             var numOfBoxes = _listSetting.listBoxes.Count;
             var majorPosition = _unitPos * (listBoxID * -1 + numOfBoxes / 2);
@@ -165,6 +160,18 @@ namespace AirFishLab.ScrollingList
             }
 
             UpdateScale(majorPosition);
+        }
+
+        /// <summary>
+        /// Add an additional listener to Button.onClick event for passing click
+        /// event to target <c>ListPositionCtrl</c>
+        /// </summary>
+        private void AddClickEvent()
+        {
+            var button = transform.GetComponent<Button>();
+            if (button != null)
+                button.onClick.AddListener(
+                    () => _listSetting.onBoxClick.Invoke(_contentID));
         }
 
         #endregion
@@ -278,10 +285,10 @@ namespace AirFishLab.ScrollingList
         /// <summary>
         /// Initialize the content of ListBox.
         /// </summary>
-        private void InitialContent()
+        private void InitializeContent()
         {
             // Get the content ID of the centered box
-            _contentID = _listSetting.centeredContentId;
+            _contentID = _listSetting.centeredContnetID;
 
             // Adjust the contentID according to its initial order.
             _contentID += listBoxID - _listSetting.listBoxes.Count / 2;

@@ -35,7 +35,7 @@ namespace AirFishLab.ScrollingList
         private BaseListBank _listBank;
         [SerializeField]
         [Tooltip("Specify the initial content ID for the centered box.")]
-        private int _centeredContentID = 0;
+        private int centeredContentID = 0;
         [SerializeField]
         [Tooltip("The boxes which belong to this list.")]
         private List<ListBox> _listBoxes;
@@ -89,7 +89,7 @@ namespace AirFishLab.ScrollingList
         public CircularScrollingList.Direction direction => _direction;
 
         public BaseListBank listBank => _listBank;
-        public int centeredContentId => _centeredContentID;
+        public int centeredContnetID => centeredContentID;
         public List<ListBox> listBoxes => _listBoxes;
 
         public float boxDensity => _boxDensity;
