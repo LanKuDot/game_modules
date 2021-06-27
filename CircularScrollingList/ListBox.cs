@@ -60,16 +60,6 @@ namespace AirFishLab.ScrollingList
 
         #endregion
 
-        /// <summary>
-        /// Output the information of the box to the Debug.Log
-        /// </summary>
-        public void ShowBoxInfo()
-        {
-            Debug.Log("Box ID: " + listBoxID.ToString() +
-                      ", Content ID: " + contentID.ToString() +
-                      ", Content: " + _listBank.GetListContent(contentID));
-        }
-
         #region Initialization
 
         /// <summary>
