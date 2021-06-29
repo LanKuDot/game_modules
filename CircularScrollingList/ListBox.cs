@@ -325,9 +325,7 @@ namespace AirFishLab.ScrollingList
             }
 
             // Round the content id
-            while (contentID < 0)
-                contentID += _listBank.GetListLength();
-            contentID = contentID % _listBank.GetListLength();
+            contentID = (int) Mathf.Repeat(contentID, _listBank.GetListLength());
 
             UpdateDisplayContent(GetListContent());
         }
