@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using AirFishLab.ScrollingList.AnimationCurveUtils;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -38,8 +39,8 @@ namespace AirFishLab.ScrollingList
         private ListPositionCtrl _positionCtrl;
         private BaseListBank _listBank;
         private List<ListBox> _listBoxes;
-        private CurveResolver _positionCurve;
-        private CurveResolver _scaleCurve;
+        private RangeMappingCurve _positionCurve;
+        private RangeMappingCurve _scaleCurve;
 
         #endregion
 
@@ -122,12 +123,12 @@ namespace AirFishLab.ScrollingList
             _changeSideUpperBoundPos = _upperBoundPos - _unitPos * 0.5f;
 
             _positionCurve =
-                new CurveResolver(
+                new RangeMappingCurve(
                     _listSetting.boxPositionCurve,
                     _changeSideLowerBoundPos,
                     _changeSideUpperBoundPos);
             _scaleCurve =
-                new CurveResolver(
+                new RangeMappingCurve(
                     _listSetting.boxScaleCurve,
                     _changeSideLowerBoundPos,
                     _changeSideUpperBoundPos);
