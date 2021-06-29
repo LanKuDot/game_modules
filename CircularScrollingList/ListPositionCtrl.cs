@@ -5,11 +5,6 @@ using UnityEngine.EventSystems;
 
 namespace AirFishLab.ScrollingList
 {
-    public interface IControlEventHandler :
-        IBeginDragHandler, IDragHandler, IEndDragHandler, IScrollHandler
-    {
-    }
-
     /// <summary>
     /// Control the position of boxes
     /// </summary>
