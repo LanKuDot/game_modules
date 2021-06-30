@@ -5,7 +5,7 @@ namespace AirFishLab.ScrollingList
     /// <summary>
     /// Manage the list content
     /// </summary>
-    public class ListContentCtrl
+    public class ListContentManager
     {
         #region Exposed Properties
 
@@ -32,7 +32,7 @@ namespace AirFishLab.ScrollingList
         /// The bank containing the contents for list to display
         /// </param>
         /// <param name="numOfBoxes">The number of list boxes</param>
-        public ListContentCtrl(
+        public ListContentManager(
             CircularScrollingListSetting setting,
             BaseListBank listBank,
             int numOfBoxes)

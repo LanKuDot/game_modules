@@ -37,7 +37,7 @@ namespace AirFishLab.ScrollingList
 
         private CircularScrollingListSetting _listSetting;
         private ListPositionCtrl _positionCtrl;
-        private ListContentCtrl _contentCtrl;
+        private ListContentManager _contentManager;
         private BaseListBank _listBank;
         private List<ListBox> _listBoxes;
         private RangeMappingCurve _positionCurve;
@@ -80,21 +80,21 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         /// <param name="setting">The setting of the list</param>
         /// <param name="listPositionCtrl">The position controller of this box</param>
-        /// <param name="listContentCtrl">The content controller</param>
+        /// <param name="listContentManager">The content controller</param>
         /// <param name="listBank">The content bank of the list</param>
         /// <param name="listBoxes">The boxes that belongs to the list</param>
         /// <param name="listBoxID">The ID of this box</param>
         public void Initialize(
             CircularScrollingListSetting setting,
             ListPositionCtrl listPositionCtrl,
-            ListContentCtrl listContentCtrl,
+            ListContentManager listContentManager,
             BaseListBank listBank,
             List<ListBox> listBoxes,
             int listBoxID)
         {
             _listSetting = setting;
             _positionCtrl = listPositionCtrl;
-            _contentCtrl = listContentCtrl;
+            _contentManager = listContentManager;
             _listBank = listBank;
             _listBoxes = listBoxes;
             this.listBoxID = listBoxID;
@@ -307,7 +307,7 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private void InitializeContent()
         {
-            contentID = _contentCtrl.GetInitialContentID(listBoxID);
+            contentID = _contentManager.GetInitialContentID(listBoxID);
 
             // In the linear mode, disable the box if needed
             if (_listSetting.listType == CircularScrollingList.ListType.Linear) {
@@ -319,7 +319,7 @@ namespace AirFishLab.ScrollingList
                 }
                 // Disable the box at the lower half of the list
                 // which will hold the repeated item.
-                else if (contentID >= _contentCtrl.ContentCount) {
+                else if (contentID >= _contentManager.ContentCount) {
                     _positionCtrl.numOfLowerDisabledBoxes += 1;
                     gameObject.SetActive(false);
                 }
@@ -335,10 +335,10 @@ namespace AirFishLab.ScrollingList
         private void UpdateToLastContent()
         {
             contentID = nextListBox.contentID - 1;
-            contentID = (contentID < 0) ? _contentCtrl.ContentCount - 1 : contentID;
+            contentID = (contentID < 0) ? _contentManager.ContentCount - 1 : contentID;
 
             if (_listSetting.listType == CircularScrollingList.ListType.Linear) {
-                if (contentID == _contentCtrl.ContentCount - 1 ||
+                if (contentID == _contentManager.ContentCount - 1 ||
                     !nextListBox.isActiveAndEnabled) {
                     // If the box has been disabled at the other side,
                     // decrease the counter of the other side.
@@ -365,7 +365,7 @@ namespace AirFishLab.ScrollingList
         private void UpdateToNextContent()
         {
             contentID = lastListBox.contentID + 1;
-            contentID = (contentID == _contentCtrl.ContentCount) ? 0 : contentID;
+            contentID = (contentID == _contentManager.ContentCount) ? 0 : contentID;
 
             if (_listSetting.listType == CircularScrollingList.ListType.Linear) {
                 if (contentID == 0 || !lastListBox.isActiveAndEnabled) {
@@ -398,7 +398,7 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private void UpdateDisplayContentPrivate()
         {
-            UpdateDisplayContent(_contentCtrl.GetListContent(contentID));
+            UpdateDisplayContent(_contentManager.GetListContent(contentID));
         }
 
         #endregion
