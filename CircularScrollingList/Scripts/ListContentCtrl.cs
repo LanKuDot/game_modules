@@ -7,6 +7,15 @@ namespace AirFishLab.ScrollingList
     /// </summary>
     public class ListContentCtrl
     {
+        #region Exposed Properties
+
+        /// <summary>
+        /// The number of contents in the list bank
+        /// </summary>
+        public int ContentCount => _listBank.GetListLength();
+
+        #endregion
+
         #region Referenced Components
 
         private readonly CircularScrollingListSetting _listSetting;

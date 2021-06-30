@@ -319,7 +319,7 @@ namespace AirFishLab.ScrollingList
                 }
                 // Disable the box at the lower half of the list
                 // which will hold the repeated item.
-                else if (contentID >= _listBank.GetListLength()) {
+                else if (contentID >= _contentCtrl.ContentCount) {
                     _positionCtrl.numOfLowerDisabledBoxes += 1;
                     gameObject.SetActive(false);
                 }
@@ -335,10 +335,10 @@ namespace AirFishLab.ScrollingList
         private void UpdateToLastContent()
         {
             contentID = nextListBox.contentID - 1;
-            contentID = (contentID < 0) ? _listBank.GetListLength() - 1 : contentID;
+            contentID = (contentID < 0) ? _contentCtrl.ContentCount - 1 : contentID;
 
             if (_listSetting.listType == CircularScrollingList.ListType.Linear) {
-                if (contentID == _listBank.GetListLength() - 1 ||
+                if (contentID == _contentCtrl.ContentCount - 1 ||
                     !nextListBox.isActiveAndEnabled) {
                     // If the box has been disabled at the other side,
                     // decrease the counter of the other side.
@@ -365,7 +365,7 @@ namespace AirFishLab.ScrollingList
         private void UpdateToNextContent()
         {
             contentID = lastListBox.contentID + 1;
-            contentID = (contentID == _listBank.GetListLength()) ? 0 : contentID;
+            contentID = (contentID == _contentCtrl.ContentCount) ? 0 : contentID;
 
             if (_listSetting.listType == CircularScrollingList.ListType.Linear) {
                 if (contentID == 0 || !lastListBox.isActiveAndEnabled) {
