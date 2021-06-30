@@ -37,6 +37,7 @@ namespace AirFishLab.ScrollingList
 
         private CircularScrollingListSetting _listSetting;
         private ListPositionCtrl _positionCtrl;
+        private ListContentCtrl _contentCtrl;
         private BaseListBank _listBank;
         private List<ListBox> _listBoxes;
         private RangeMappingCurve _positionCurve;
@@ -79,18 +80,21 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         /// <param name="setting">The setting of the list</param>
         /// <param name="listPositionCtrl">The position controller of this box</param>
+        /// <param name="listContentCtrl">The content controller</param>
         /// <param name="listBank">The content bank of the list</param>
         /// <param name="listBoxes">The boxes that belongs to the list</param>
         /// <param name="listBoxID">The ID of this box</param>
         public void Initialize(
             CircularScrollingListSetting setting,
             ListPositionCtrl listPositionCtrl,
+            ListContentCtrl listContentCtrl,
             BaseListBank listBank,
             List<ListBox> listBoxes,
             int listBoxID)
         {
             _listSetting = setting;
             _positionCtrl = listPositionCtrl;
+            _contentCtrl = listContentCtrl;
             _listBank = listBank;
             _listBoxes = listBoxes;
             this.listBoxID = listBoxID;
@@ -303,11 +307,7 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private void InitializeContent()
         {
-            // Get the content ID of the centered box
-            contentID = _listSetting.centeredContnetID;
-
-            // Adjust the contentID according to its initial order.
-            contentID += listBoxID - _listBoxes.Count / 2;
+            contentID = _contentCtrl.GetInitialContentID(listBoxID);
 
             // In the linear mode, disable the box if needed
             if (_listSetting.listType == CircularScrollingList.ListType.Linear) {
@@ -325,10 +325,8 @@ namespace AirFishLab.ScrollingList
                 }
             }
 
-            // Round the content id
-            contentID = (int) Mathf.Repeat(contentID, _listBank.GetListLength());
-
-            UpdateDisplayContent(GetListContent());
+            if (gameObject.activeSelf)
+                UpdateDisplayContentPrivate();
         }
 
         /// <summary>
@@ -358,7 +356,7 @@ namespace AirFishLab.ScrollingList
                 }
             }
 
-            UpdateDisplayContent(GetListContent());
+            UpdateDisplayContentPrivate();
         }
 
         /// <summary>
@@ -383,7 +381,7 @@ namespace AirFishLab.ScrollingList
                 }
             }
 
-            UpdateDisplayContent(GetListContent());
+            UpdateDisplayContentPrivate();
         }
 
         /// <summary>
@@ -396,12 +394,11 @@ namespace AirFishLab.ScrollingList
         }
 
         /// <summary>
-        /// Get the content of box's content ID from the list bank
+        /// The wrapper for invoking the custom UpdateDisplayContent
         /// </summary>
-        /// <returns>The object of the content</returns>
-        private object GetListContent()
+        private void UpdateDisplayContentPrivate()
         {
-            return _listBank.GetListContent(contentID);
+            UpdateDisplayContent(_contentCtrl.GetListContent(contentID));
         }
 
         #endregion

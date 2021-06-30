@@ -85,9 +85,13 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private Camera _canvasRefCamera;
         /// <summary>
-        /// The component that controlling the position of each list box
+        /// The component that controlling the position of each box
         /// </summary>
         private ListPositionCtrl _listPositionCtrl;
+        /// <summary>
+        /// The component that controlling the content for each box
+        /// </summary>
+        private ListContentCtrl _listContentCtrl;
 
         #endregion
 
@@ -118,10 +122,14 @@ namespace AirFishLab.ScrollingList
             _listPositionCtrl =
                 new ListPositionCtrl(
                     _setting, _rectTransform, _canvasRefCamera, _listBoxes);
+            _listContentCtrl =
+                new ListContentCtrl(
+                    _setting, _listBank, _listBoxes.Count);
 
             for (var i = 0; i < _listBoxes.Count; ++i)
                 _listBoxes[i].Initialize(
-                    _setting, _listPositionCtrl, _listBank, _listBoxes, i);
+                    _setting, _listPositionCtrl, _listContentCtrl,
+                    _listBank, _listBoxes, i);
         }
 
         #endregion
