@@ -310,13 +310,19 @@ namespace AirFishLab.ScrollingList
                 // Disable the boxes at the upper half of the list
                 // which will hold the item at the tail of the contents.
                 if (contentID < 0) {
-                    _positionCtrl.numOfUpperDisabledBoxes += 1;
+                    if (_listSetting.reverseOrder)
+                        _positionCtrl.numOfLowerDisabledBoxes += 1;
+                    else
+                        _positionCtrl.numOfUpperDisabledBoxes += 1;
                     gameObject.SetActive(false);
                 }
                 // Disable the box at the lower half of the list
                 // which will hold the repeated item.
                 else if (contentID >= _contentManager.ContentCount) {
-                    _positionCtrl.numOfLowerDisabledBoxes += 1;
+                    if (_listSetting.reverseOrder)
+                        _positionCtrl.numOfUpperDisabledBoxes += 1;
+                    else
+                        _positionCtrl.numOfLowerDisabledBoxes += 1;
                     gameObject.SetActive(false);
                 }
             }

@@ -55,7 +55,10 @@ namespace AirFishLab.ScrollingList
             var contentID = _listSetting.centeredContnetID;
 
             // Adjust the contentID according to its initial order
-            contentID += listBoxID - _numOfBoxes / 2;
+            contentID +=
+                _listSetting.reverseOrder ?
+                    _numOfBoxes / 2 - listBoxID :
+                    listBoxID - _numOfBoxes / 2;
 
             return RepeatIDIfNeeded(contentID);
         }
@@ -77,7 +80,8 @@ namespace AirFishLab.ScrollingList
         /// <returns></returns>
         public int GetIDFromNextBox(int nextBoxContentID)
         {
-            var contentID = nextBoxContentID - 1;
+            var contentID =
+                _listSetting.reverseOrder ? nextBoxContentID + 1 : nextBoxContentID - 1;
             return RepeatIDIfNeeded(contentID);
         }
 
@@ -88,7 +92,8 @@ namespace AirFishLab.ScrollingList
         /// <returns></returns>
         public int GetIDFromLastBox(int lastBoxContentID)
         {
-            var contentID = lastBoxContentID + 1;
+            var contentID =
+                _listSetting.reverseOrder ? lastBoxContentID - 1 : lastBoxContentID + 1;
             return RepeatIDIfNeeded(contentID);
         }
 
