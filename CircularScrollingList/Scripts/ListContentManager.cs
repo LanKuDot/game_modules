@@ -52,7 +52,7 @@ namespace AirFishLab.ScrollingList
         /// <returns>The content ID</returns>
         public int GetInitialContentID(int listBoxID)
         {
-            var contentID = _listSetting.centeredContnetID;
+            var contentID = _listSetting.centeredContentID;
 
             // Adjust the contentID according to its initial order
             contentID +=

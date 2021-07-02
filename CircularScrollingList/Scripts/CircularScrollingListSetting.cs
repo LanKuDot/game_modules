@@ -26,7 +26,7 @@ namespace AirFishLab.ScrollingList
             CircularScrollingList.Direction.Vertical;
         [SerializeField]
         [Tooltip("Specify the initial content ID for the centered box.")]
-        private int centeredContentID = 0;
+        private int _centeredContentID = 0;
         [SerializeField]
         [Tooltip("To show the list in the reverse order")]
         private bool _reverseOrder;
@@ -79,7 +79,7 @@ namespace AirFishLab.ScrollingList
         public bool alignMiddle => _alignMiddle;
         public CircularScrollingList.Direction direction => _direction;
         public bool reverseOrder => _reverseOrder;
-        public int centeredContnetID => centeredContentID;
+        public int centeredContentID => _centeredContentID;
 
         public float boxDensity => _boxDensity;
         public AnimationCurve boxPositionCurve => _boxPositionCurve;
