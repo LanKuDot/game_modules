@@ -57,11 +57,7 @@ namespace AirFishLab.ScrollingList
             // Adjust the contentID according to its initial order
             contentID += listBoxID - _numOfBoxes / 2;
 
-            if (_listSetting.listType == CircularScrollingList.ListType.Circular)
-                contentID =
-                    (int) Mathf.Repeat(contentID, _listBank.GetListLength());
-
-            return contentID;
+            return RepeatIDIfNeeded(contentID);
         }
 
         /// <summary>
@@ -72,6 +68,47 @@ namespace AirFishLab.ScrollingList
         public object GetListContent(int contentID)
         {
             return _listBank.GetListContent(contentID);
+        }
+
+        /// <summary>
+        /// Get the content ID according the next list box
+        /// </summary>
+        /// <param name="nextBoxContentID">The content ID of the next list box</param>
+        /// <returns></returns>
+        public int GetIDFromNextBox(int nextBoxContentID)
+        {
+            var contentID = nextBoxContentID - 1;
+            return RepeatIDIfNeeded(contentID);
+        }
+
+        /// <summary>
+        /// Get the content ID according to the last list box
+        /// </summary>
+        /// <param name="lastBoxContentID">The content ID of the last list box</param>
+        /// <returns></returns>
+        public int GetIDFromLastBox(int lastBoxContentID)
+        {
+            var contentID = lastBoxContentID + 1;
+            return RepeatIDIfNeeded(contentID);
+        }
+
+        /// <summary>
+        /// If the list is in the circular mode, repeat the id
+        /// </summary>
+        private int RepeatIDIfNeeded(int id)
+        {
+            if (_listSetting.listType == CircularScrollingList.ListType.Circular)
+                return (int) Mathf.Repeat(id, _listBank.GetListLength());
+
+            return id;
+        }
+
+        /// <summary>
+        /// Check if the id is valid or not
+        /// </summary>
+        public bool IsIDValid(int id)
+        {
+            return id >= 0 && id < _listBank.GetListLength();
         }
     }
 }

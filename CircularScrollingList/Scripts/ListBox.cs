@@ -330,12 +330,10 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private void UpdateToLastContent()
         {
-            contentID = nextListBox.contentID - 1;
-            contentID = (contentID < 0) ? _contentManager.ContentCount - 1 : contentID;
+            contentID = _contentManager.GetIDFromNextBox(nextListBox.contentID);
 
             if (_listSetting.listType == CircularScrollingList.ListType.Linear) {
-                if (contentID == _contentManager.ContentCount - 1 ||
-                    !nextListBox.isActiveAndEnabled) {
+                if (!_contentManager.IsIDValid(contentID)) {
                     // If the box has been disabled at the other side,
                     // decrease the counter of the other side.
                     if (!isActiveAndEnabled)
@@ -344,9 +342,12 @@ namespace AirFishLab.ScrollingList
                     // In linear mode, don't display the content of the other end
                     gameObject.SetActive(false);
                     ++_positionCtrl.numOfUpperDisabledBoxes;
-                } else if (!isActiveAndEnabled) {
-                    // The disabled boxes from the other end will be enabled again,
-                    // if the next box is enabled.
+
+                    return;
+                }
+
+                // The disabled boxes from the other end will be enabled again
+                if (!isActiveAndEnabled) {
                     gameObject.SetActive(true);
                     --_positionCtrl.numOfLowerDisabledBoxes;
                 }
@@ -360,18 +361,21 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private void UpdateToNextContent()
         {
-            contentID = lastListBox.contentID + 1;
-            contentID = (contentID == _contentManager.ContentCount) ? 0 : contentID;
+            contentID = _contentManager.GetIDFromLastBox(lastListBox.contentID);
 
             if (_listSetting.listType == CircularScrollingList.ListType.Linear) {
-                if (contentID == 0 || !lastListBox.isActiveAndEnabled) {
+                if (!_contentManager.IsIDValid(contentID)) {
                     if (!isActiveAndEnabled)
                         --_positionCtrl.numOfUpperDisabledBoxes;
 
                     // In linear mode, don't display the content of the other end
                     gameObject.SetActive(false);
                     ++_positionCtrl.numOfLowerDisabledBoxes;
-                } else if (!isActiveAndEnabled) {
+
+                    return;
+                }
+
+                if (!isActiveAndEnabled) {
                     gameObject.SetActive(true);
                     --_positionCtrl.numOfUpperDisabledBoxes;
                 }
