@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace AirFishLab.ScrollingList
 {
@@ -24,6 +25,19 @@ namespace AirFishLab.ScrollingList
 
         #endregion
 
+        #region Private Members
+
+        /// <summary>
+        /// The factor for getting the next/last content ID
+        /// </summary>
+        private readonly int _idFactor;
+        /// <summary>
+        /// Handle the input id and return a proper id
+        /// </summary>
+        private readonly Func<int, int> _idHandler;
+
+        #endregion
+
         /// <summary>
         /// Manage the list content
         /// </summary>
@@ -40,6 +54,13 @@ namespace AirFishLab.ScrollingList
             _listSetting = setting;
             _listBank = listBank;
             _numOfBoxes = numOfBoxes;
+
+            _idFactor = setting.reverseOrder ? -1 : 1;
+            _idHandler =
+                setting.listType == CircularScrollingList.ListType.Circular
+                    ? (Func<int, int>) (x => 
+                        (int) Mathf.Repeat(x, _listBank.GetListLength()))
+                    : x => x;
         }
 
         /// <summary>
@@ -60,7 +81,7 @@ namespace AirFishLab.ScrollingList
                     _numOfBoxes / 2 - listBoxID :
                     listBoxID - _numOfBoxes / 2;
 
-            return RepeatIDIfNeeded(contentID);
+            return _idHandler(contentID);
         }
 
         /// <summary>
@@ -80,9 +101,8 @@ namespace AirFishLab.ScrollingList
         /// <returns></returns>
         public int GetIDFromNextBox(int nextBoxContentID)
         {
-            var contentID =
-                _listSetting.reverseOrder ? nextBoxContentID + 1 : nextBoxContentID - 1;
-            return RepeatIDIfNeeded(contentID);
+            var contentID = nextBoxContentID - _idFactor;
+            return _idHandler(contentID);
         }
 
         /// <summary>
@@ -92,20 +112,8 @@ namespace AirFishLab.ScrollingList
         /// <returns></returns>
         public int GetIDFromLastBox(int lastBoxContentID)
         {
-            var contentID =
-                _listSetting.reverseOrder ? lastBoxContentID - 1 : lastBoxContentID + 1;
-            return RepeatIDIfNeeded(contentID);
-        }
-
-        /// <summary>
-        /// If the list is in the circular mode, repeat the id
-        /// </summary>
-        private int RepeatIDIfNeeded(int id)
-        {
-            if (_listSetting.listType == CircularScrollingList.ListType.Circular)
-                return (int) Mathf.Repeat(id, _listBank.GetListLength());
-
-            return id;
+            var contentID = lastBoxContentID + _idFactor;
+            return _idHandler(contentID);
         }
 
         /// <summary>
