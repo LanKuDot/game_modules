@@ -58,8 +58,10 @@ namespace AirFishLab.ScrollingList
         #region Private Members
 
         private ListBox _centeredBox;
+        private Func<Vector2, float> _getFactor;
         private Action<PointerEventData, TouchPhase> _inputPositionHandler;
         private Action<Vector2> _scrollHandler;
+        private Action<float> _scrollDirectionHandler;
 
         #endregion
 
@@ -67,7 +69,7 @@ namespace AirFishLab.ScrollingList
 
         private IMovementCtrl _movementCtrl;
         private Vector2 _lastInputLocalPos;
-        private float _deltaInputLocalPos;
+        private float _deltaInputDistance;
         private float _deltaDistanceToCenter;
         private PositionState _positionState = PositionState.Middle;
         private readonly int _maxNumOfDisabledBoxes;
@@ -175,6 +177,19 @@ namespace AirFishLab.ScrollingList
                     _scrollFactor = _listSetting.reverseDirection ? -1 : 1;
                     break;
             }
+
+            // It is ok to set _scrollHandler here without mode checking,
+            // because it is only invoked when in mouse scrolling mode.
+            switch (_listSetting.direction) {
+                case CircularScrollingList.Direction.Vertical:
+                    _getFactor = FactorUtility.GetVector2Y;
+                    _scrollDirectionHandler = ScrollVertically;
+                    break;
+                case CircularScrollingList.Direction.Horizontal:
+                    _getFactor = FactorUtility.GetVector2X;
+                    _scrollDirectionHandler = ScrollHorizontally;
+                    break;
+            }
         }
 
         #endregion
@@ -217,14 +232,14 @@ namespace AirFishLab.ScrollingList
                     break;
 
                 case TouchPhase.Moved:
-                    _deltaInputLocalPos = GetDeltaInputPos(
-                        ScreenToLocalPos(pointer.position));
+                    _deltaInputDistance =
+                        GetDeltaInputDistance(ScreenToLocalPos(pointer.position));
                     // Slide the list as long as the moving distance of the pointer
-                    _movementCtrl.SetMovement(_deltaInputLocalPos, true);
+                    _movementCtrl.SetMovement(_deltaInputDistance, true);
                     break;
 
                 case TouchPhase.Ended:
-                    _movementCtrl.SetMovement(_deltaInputLocalPos / Time.deltaTime, false);
+                    _movementCtrl.SetMovement(_deltaInputDistance / Time.deltaTime, false);
                     break;
             }
         }
@@ -247,22 +262,14 @@ namespace AirFishLab.ScrollingList
         /// <param name="pointerLocalPos">
         /// The position of the pointer in local space
         /// </param>
-        private float GetDeltaInputPos(Vector2 pointerLocalPos)
+        private float GetDeltaInputDistance(Vector2 pointerLocalPos)
         {
-            var deltaLocalPos = 0f;
-
-            switch (_listSetting.direction) {
-                case CircularScrollingList.Direction.Vertical:
-                    deltaLocalPos = pointerLocalPos.y - _lastInputLocalPos.y;
-                    break;
-                case CircularScrollingList.Direction.Horizontal:
-                    deltaLocalPos = pointerLocalPos.x - _lastInputLocalPos.x;
-                    break;
-            }
+            var deltaInputDistance =
+                _getFactor(pointerLocalPos) - _getFactor(_lastInputLocalPos);
 
             _lastInputLocalPos = pointerLocalPos;
 
-            return deltaLocalPos;
+            return deltaInputDistance;
         }
 
         /// <summary>
@@ -274,15 +281,23 @@ namespace AirFishLab.ScrollingList
             if (Mathf.Approximately(mouseScrollDelta.y, 0))
                 return;
 
-            switch (_listSetting.direction) {
-                case CircularScrollingList.Direction.Vertical:
-                    SetUnitMove(mouseScrollDelta.y > 0 ? _scrollFactor : -_scrollFactor);
-                    break;
+            _scrollDirectionHandler(mouseScrollDelta.y);
+        }
 
-                case CircularScrollingList.Direction.Horizontal:
-                    SetUnitMove(mouseScrollDelta.y < 0 ? _scrollFactor : -_scrollFactor);
-                    break;
-            }
+        /// <summary>
+        /// Scroll the list in vertical direction
+        /// </summary>
+        private void ScrollVertically(float scrollDelta)
+        {
+            SetUnitMove(scrollDelta > 0 ? _scrollFactor : -_scrollFactor);
+        }
+
+        /// <summary>
+        /// Scroll the list in horizontal direction
+        /// </summary>
+        private void ScrollHorizontally(float scrollDelta)
+        {
+            SetUnitMove(scrollDelta < 0 ? _scrollFactor : -_scrollFactor);
         }
 
         #endregion
@@ -325,7 +340,7 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private void FindDeltaDistanceToCenter()
         {
-            var minDeltaPos = Mathf.Infinity;
+            var minDeltaDistance = Mathf.Infinity;
             ListBox candidateBox = null;
 
             foreach (var listBox in _listBoxes) {
@@ -334,19 +349,16 @@ namespace AirFishLab.ScrollingList
                     continue;
 
                 var localPos = listBox.transform.localPosition;
-                var deltaPos =
-                    _listSetting.direction == CircularScrollingList.Direction.Vertical
-                        ? -localPos.y
-                        : -localPos.x;
+                var deltaDistance = -_getFactor(localPos);
 
-                if (Mathf.Abs(deltaPos) >= Mathf.Abs(minDeltaPos))
+                if (Mathf.Abs(deltaDistance) >= Mathf.Abs(minDeltaDistance))
                     continue;
 
-                minDeltaPos = deltaPos;
+                minDeltaDistance = deltaDistance;
                 candidateBox = listBox;
             }
 
-            _deltaDistanceToCenter = minDeltaPos;
+            _deltaDistanceToCenter = minDeltaDistance;
             _centeredBox = candidateBox;
         }
 
