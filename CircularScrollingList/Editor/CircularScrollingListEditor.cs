@@ -62,11 +62,17 @@ namespace AirFishLab.ScrollingList.Editor
             DrawSettingProperty("_listType");
             DrawSettingProperty("_controlMode");
             var controlMode = GetSettingProperty("_controlMode");
-            if (controlMode.enumValueIndex
-                == (int) CircularScrollingList.ControlMode.Drag) {
-                ++EditorGUI.indentLevel;
-                DrawSettingProperty("_alignMiddle");
-                --EditorGUI.indentLevel;
+            switch (controlMode.enumValueIndex) {
+                case (int) CircularScrollingList.ControlMode.Drag:
+                    ++EditorGUI.indentLevel;
+                    DrawSettingProperty("_alignMiddle");
+                    --EditorGUI.indentLevel;
+                    break;
+                case (int) CircularScrollingList.ControlMode.MouseWheel:
+                    ++EditorGUI.indentLevel;
+                    DrawSettingProperty("_reverseDirection");
+                    --EditorGUI.indentLevel;
+                    break;
             }
             DrawSettingProperty("_direction");
             DrawSettingProperty("_centeredContentID");

@@ -71,6 +71,7 @@ namespace AirFishLab.ScrollingList
         private float _deltaDistanceToCenter;
         private PositionState _positionState = PositionState.Middle;
         private readonly int _maxNumOfDisabledBoxes;
+        private int _scrollFactor;
 
         #endregion
 
@@ -171,6 +172,7 @@ namespace AirFishLab.ScrollingList
                         GetAligningDistance, GetPositionState);
                     _inputPositionHandler = (pointer, phase) => { };
                     _scrollHandler = ScrollDeltaHandler;
+                    _scrollFactor = _listSetting.reverseDirection ? -1 : 1;
                     break;
             }
         }
@@ -274,11 +276,11 @@ namespace AirFishLab.ScrollingList
 
             switch (_listSetting.direction) {
                 case CircularScrollingList.Direction.Vertical:
-                    SetUnitMove(mouseScrollDelta.y > 0 ? 1 : -1);
+                    SetUnitMove(mouseScrollDelta.y > 0 ? _scrollFactor : -_scrollFactor);
                     break;
 
                 case CircularScrollingList.Direction.Horizontal:
-                    SetUnitMove(mouseScrollDelta.y < 0 ? 1 : -1);
+                    SetUnitMove(mouseScrollDelta.y < 0 ? _scrollFactor : -_scrollFactor);
                     break;
             }
         }

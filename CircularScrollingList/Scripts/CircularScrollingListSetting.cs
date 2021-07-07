@@ -21,6 +21,9 @@ namespace AirFishLab.ScrollingList
         [Tooltip("Should a box align in the middle of the list after sliding?")]
         private bool _alignMiddle = false;
         [SerializeField]
+        [Tooltip("Whether to reverse the scrolling direction or not")]
+        private bool _reverseDirection = false;
+        [SerializeField]
         [Tooltip("The major moving direction of the list.")]
         private CircularScrollingList.Direction _direction =
             CircularScrollingList.Direction.Vertical;
@@ -77,6 +80,7 @@ namespace AirFishLab.ScrollingList
         public CircularScrollingList.ListType listType => _listType;
         public CircularScrollingList.ControlMode controlMode => _controlMode;
         public bool alignMiddle => _alignMiddle;
+        public bool reverseDirection => _reverseDirection;
         public CircularScrollingList.Direction direction => _direction;
         public bool reverseOrder => _reverseOrder;
         public int centeredContentID => _centeredContentID;
