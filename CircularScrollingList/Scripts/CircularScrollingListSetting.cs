@@ -55,13 +55,21 @@ namespace AirFishLab.ScrollingList
                  "corresponding position.")]
         private AnimationCurve _boxScaleCurve = AnimationCurve.Constant(0.0f, 1.0f, 1.0f);
         [SerializeField]
+        [Tooltip("The curve specifying the velocity of the box after releasing. " +
+                 "The x axis is the the moving duration in seconds, which starts from 0. " +
+                 "The y axis is the factor of releasing velocity.")]
+        private AnimationCurve _boxVelocityCurve =
+            new AnimationCurve(
+                new Keyframe(0.0f, 1.0f, 0.0f, -2.5f),
+                new Keyframe(1.0f, 0.0f, 0.0f, 0.0f));
+        [SerializeField]
         [Tooltip("The curve specifying the movement of the box. " +
                  "The x axis is the moving duration in seconds, which starts from 0. " +
-                 "The y axis is the factor of the releasing velocity in Drag mode, or " +
-                 "the factor of the target position in Function and Mouse Wheel modes.")]
-        private AnimationCurve _boxMovementCurve = new AnimationCurve(
-            new Keyframe(0.0f, 1.0f, 0.0f, -2.5f),
-            new Keyframe(1.0f, 0.0f, 0.0f, 0.0f));
+                 "The y axis is the factor for reaching the target position.")]
+        private AnimationCurve _boxMovementCurve =
+            new AnimationCurve(
+                new Keyframe(0.0f, 0.0f, 0.0f, 8f),
+                new Keyframe(0.25f, 1.0f, 0.0f, 0.0f));
 
         #endregion
 
@@ -88,6 +96,7 @@ namespace AirFishLab.ScrollingList
         public float boxDensity => _boxDensity;
         public AnimationCurve boxPositionCurve => _boxPositionCurve;
         public AnimationCurve boxScaleCurve => _boxScaleCurve;
+        public AnimationCurve boxVelocityCurve => _boxVelocityCurve;
         public AnimationCurve boxMovementCurve => _boxMovementCurve;
 
         public ListBoxClickEvent onBoxClick => _onBoxClick;

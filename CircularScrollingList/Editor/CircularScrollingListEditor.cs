@@ -26,6 +26,7 @@ namespace AirFishLab.ScrollingList.Editor
         #region Setting Property Drawer
 
         private SerializedProperty _settingProperty;
+        private SerializedProperty _controlMode;
 
         private SerializedProperty GetSettingProperty(string path)
         {
@@ -47,6 +48,7 @@ namespace AirFishLab.ScrollingList.Editor
 
             ++EditorGUI.indentLevel;
 
+            _controlMode = GetSettingProperty("_controlMode");
             DrawListMode();
             EditorGUILayout.Space();
             DrawListAppearance();
@@ -61,8 +63,7 @@ namespace AirFishLab.ScrollingList.Editor
             EditorGUILayout.LabelField("List Mode", EditorStyles.boldLabel);
             DrawSettingProperty("_listType");
             DrawSettingProperty("_controlMode");
-            var controlMode = GetSettingProperty("_controlMode");
-            switch (controlMode.enumValueIndex) {
+            switch (_controlMode.enumValueIndex) {
                 case (int) CircularScrollingList.ControlMode.Drag:
                     ++EditorGUI.indentLevel;
                     DrawSettingProperty("_alignMiddle");
@@ -85,7 +86,11 @@ namespace AirFishLab.ScrollingList.Editor
             DrawSettingProperty("_boxDensity");
             DrawSettingProperty("_boxPositionCurve");
             DrawSettingProperty("_boxScaleCurve");
-            DrawSettingProperty("_boxMovementCurve");
+            DrawSettingProperty(
+                _controlMode.enumValueIndex
+                == (int) CircularScrollingList.ControlMode.Drag
+                    ? "_boxVelocityCurve"
+                    : "_boxMovementCurve");
         }
 
         private void DrawEvents()
