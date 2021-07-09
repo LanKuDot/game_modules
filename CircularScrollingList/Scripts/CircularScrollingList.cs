@@ -168,6 +168,23 @@ namespace AirFishLab.ScrollingList
             _listPositionCtrl.SetUnitMove(-1);
         }
 
+        /// <summary>
+        /// Make the boxes recalculate their content ID and
+        /// reacquire the contents from bank
+        /// </summary>
+        public void Refresh()
+        {
+            _listPositionCtrl.numOfLowerDisabledBoxes = 0;
+            _listPositionCtrl.numOfUpperDisabledBoxes = 0;
+
+            var centeredBox = _listPositionCtrl.GetCenteredBox();
+            // Make sure that the content ID will not exceed the number of content
+            var centeredContentID =
+                Mathf.Min(centeredBox.contentID, _listBank.GetListLength() - 1);
+            foreach (var listBox in _listBoxes)
+                listBox.Refresh(centeredBox.listBoxID, centeredContentID);
+        }
+
         #endregion
 
         #region Event System Callback

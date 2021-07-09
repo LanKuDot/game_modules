@@ -305,30 +305,37 @@ namespace AirFishLab.ScrollingList
         {
             contentID = _contentManager.GetInitialContentID(listBoxID);
 
-            // In the linear mode, disable the box if needed
-            if (_listSetting.listType == CircularScrollingList.ListType.Linear) {
-                // Disable the boxes at the upper half of the list
-                // which will hold the item at the tail of the contents.
-                if (contentID < 0) {
-                    if (_listSetting.reverseOrder)
-                        _positionCtrl.numOfLowerDisabledBoxes += 1;
-                    else
-                        _positionCtrl.numOfUpperDisabledBoxes += 1;
-                    gameObject.SetActive(false);
-                }
-                // Disable the box at the lower half of the list
-                // which will hold the repeated item.
-                else if (contentID >= _contentManager.ContentCount) {
-                    if (_listSetting.reverseOrder)
-                        _positionCtrl.numOfUpperDisabledBoxes += 1;
-                    else
-                        _positionCtrl.numOfLowerDisabledBoxes += 1;
-                    gameObject.SetActive(false);
-                }
-            }
-
+            CheckToBeDisabled();
             if (gameObject.activeSelf)
                 UpdateDisplayContentPrivate();
+        }
+
+        /// <summary>
+        /// Disable the box if needed in the linear mode
+        /// </summary>
+        private void CheckToBeDisabled()
+        {
+            if (_listSetting.listType != CircularScrollingList.ListType.Linear)
+                return;
+
+            // Disable the boxes at the upper half of the list
+            // which will hold the item at the tail of the contents.
+            if (contentID < 0) {
+                if (_listSetting.reverseOrder)
+                    _positionCtrl.numOfLowerDisabledBoxes += 1;
+                else
+                    _positionCtrl.numOfUpperDisabledBoxes += 1;
+                gameObject.SetActive(false);
+            }
+            // Disable the box at the lower half of the list
+            // which will hold the repeated item.
+            else if (contentID >= _contentManager.ContentCount) {
+                if (_listSetting.reverseOrder)
+                    _positionCtrl.numOfUpperDisabledBoxes += 1;
+                else
+                    _positionCtrl.numOfLowerDisabledBoxes += 1;
+                gameObject.SetActive(false);
+            }
         }
 
         /// <summary>
@@ -405,6 +412,34 @@ namespace AirFishLab.ScrollingList
         private void UpdateDisplayContentPrivate()
         {
             UpdateDisplayContent(_contentManager.GetListContent(contentID));
+        }
+
+        /// <summary>
+        /// Recalculate the contentID and reacquire the content from the bank
+        /// </summary>
+        /// <param name="centerBoxID">The id of the centered box</param>
+        /// <param name="centerContentID">The content ID for the centered box</param>>
+        public void Refresh(int centerBoxID, int centerContentID)
+        {
+            var localPos = transform.localPosition;
+            var posFactor =
+                _listSetting.direction == CircularScrollingList.Direction.Horizontal
+                    ? FactorUtility.GetVector2X(localPos)
+                    : FactorUtility.GetVector2Y(localPos);
+            var tempBoxID = listBoxID;
+
+            // Make the box ID be "in order"
+            if (listBoxID > centerBoxID && posFactor > 0)
+                tempBoxID -= _listBoxes.Count;
+            else if (listBoxID < centerBoxID && posFactor < 0)
+                tempBoxID += _listBoxes.Count;
+
+            contentID =
+                _contentManager.GetContentID(tempBoxID - centerBoxID, centerContentID);
+
+            CheckToBeDisabled();
+            if (gameObject.activeSelf)
+                UpdateDisplayContentPrivate();
         }
 
         #endregion

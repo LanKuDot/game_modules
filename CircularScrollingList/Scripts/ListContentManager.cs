@@ -58,7 +58,7 @@ namespace AirFishLab.ScrollingList
             _idFactor = setting.reverseOrder ? -1 : 1;
             _idHandler =
                 setting.listType == CircularScrollingList.ListType.Circular
-                    ? (Func<int, int>) (x => 
+                    ? (Func<int, int>) (x =>
                         (int) Mathf.Repeat(x, _listBank.GetListLength()))
                     : x => x;
         }
@@ -80,6 +80,27 @@ namespace AirFishLab.ScrollingList
                 _listSetting.reverseOrder ?
                     _numOfBoxes / 2 - listBoxID :
                     listBoxID - _numOfBoxes / 2;
+
+            return _idHandler(contentID);
+        }
+
+        /// <summary>
+        /// Get the content ID
+        /// </summary>
+        /// Similar to <c>GetInitialContentID</c> but for the situation that
+        /// the list is not in the initial state
+        /// <param name="boxIDOffset">
+        /// The offset of the box ID relative to the centered box ID
+        /// </param>
+        /// <param name="centerContentID">
+        /// The content ID of the centered box
+        /// </param>
+        public int GetContentID(int boxIDOffset, int centerContentID)
+        {
+            var contentID =
+                _listSetting.reverseOrder
+                    ? centerContentID - boxIDOffset
+                    : centerContentID + boxIDOffset;
 
             return _idHandler(contentID);
         }
