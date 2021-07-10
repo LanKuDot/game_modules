@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -220,5 +221,25 @@ namespace AirFishLab.ScrollingList
         {
             _listPositionCtrl.LateUpdate();
         }
+
+#if UNITY_EDITOR
+
+        #region Editor Utility
+
+        [ContextMenu("Assign References of Bank and Boxes")]
+        private void AssignReferences()
+        {
+            _listBank = GetComponent<BaseListBank>();
+            _listBoxes.Clear();
+            foreach (Transform child in transform) {
+                var listBox = child.GetComponent<ListBox>();
+                if (listBox)
+                    _listBoxes.Add(listBox);
+            }
+        }
+
+        #endregion
+
+#endif
     }
 }
