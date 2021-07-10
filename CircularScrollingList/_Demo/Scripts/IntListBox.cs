@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MyListBox : ListBox
+public class IntListBox : ListBox
 {
     [SerializeField]
     private Text _contentText;
