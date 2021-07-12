@@ -39,10 +39,11 @@ namespace AirFishLab.ScrollingList
         #region List Appearance
 
         [SerializeField]
-        [Tooltip("The distance between each box. The larger, the closer.")]
+        [Tooltip("The factor that adjusting the distance between boxes. " +
+                 "The larger, the closer.")]
         private float _boxDensity = 2.0f;
         [SerializeField]
-        [Tooltip("The curve specifying the box position. " +
+        [Tooltip("The curve specifying the passive position of the box. " +
                  "The x axis is the major position of the box, which is mapped to [0, 1]. " +
                  "The y axis defines the factor of the passive position of the box. " +
                  "Point (0.5, 0) is the center of the list layout.")]
@@ -55,7 +56,7 @@ namespace AirFishLab.ScrollingList
                  "corresponding position.")]
         private AnimationCurve _boxScaleCurve = AnimationCurve.Constant(0.0f, 1.0f, 1.0f);
         [SerializeField]
-        [Tooltip("The curve specifying the velocity of the box after releasing. " +
+        [Tooltip("The curve specifying the velocity factor of the box after releasing. " +
                  "The x axis is the the moving duration in seconds, which starts from 0. " +
                  "The y axis is the factor of releasing velocity.")]
         private AnimationCurve _boxVelocityCurve =
@@ -63,7 +64,7 @@ namespace AirFishLab.ScrollingList
                 new Keyframe(0.0f, 1.0f, 0.0f, -2.5f),
                 new Keyframe(1.0f, 0.0f, 0.0f, 0.0f));
         [SerializeField]
-        [Tooltip("The curve specifying the movement of the box. " +
+        [Tooltip("The curve specifying the movement factor of the box. " +
                  "The x axis is the moving duration in seconds, which starts from 0. " +
                  "The y axis is the factor for reaching the target position.")]
         private AnimationCurve _boxMovementCurve =
@@ -76,7 +77,7 @@ namespace AirFishLab.ScrollingList
         #region Events
 
         [SerializeField]
-        [Tooltip("The callbacks for the event of the clicking on boxes." +
+        [Tooltip("The callback to be invoked when a box is clicked. " +
                  "The registered callbacks will be added to the 'onClick' event of boxes, " +
                  "therefore, boxes should be 'Button's.")]
         private ListBoxClickEvent _onBoxClick;
