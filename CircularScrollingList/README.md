@@ -17,7 +17,7 @@
 
 ## Properties
 
-<img src="./_ReadmeData/circular_scrolling_list_panel.PNG" width=400px />
+<img src="./_ReadmeData/circular_scrolling_list_panel.png" width=400px />
 
 |Property|Description|
 |:--------|:--------|
