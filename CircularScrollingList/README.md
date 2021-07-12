@@ -5,18 +5,41 @@
 ## Features
 
 * Use finite list boxes to display infinite list items
-* Use Unity's event system to detect input events
-* Use `AnimationCurve` to define the layout and the movement
+* 2 list types: Circular or Linear mode
+* 3 Control modes: Drag, Function, or Mouse wheel
+* Support both vertical and horizontal scrolling
+* Custom layout and movement
+* Custom displaying contents
 * Support all three render modes of the canvas plane
 * Support Unity 5+ (Tested in Unity 5.6.7f1)
 
-### List mode
-
-* List type: Circular or Linear mode
-* Control mode: Drag, Function, or Mouse wheel
-* Direction: Vertical or Horizontal
-
 [Demo video](https://youtu.be/k63eqwfj-1c)
+
+## Properties
+
+<img src="./_ReadmeData/circular_scrolling_list_panel.PNG" width=400px />
+
+|Property|Description|
+|:--------|:--------|
+|**List Bank**|The game object that stores the contents for the list to display|
+|**List Boxes**|The game objects that used for displaying the content|
+|**Setting**|The setting of the list|
+|[List Mode]||
+|-- **List Type**|The type of the list. Could be **Circular** or **Linear**|
+|-- **Control Mode**|The controlling mode. Could be **Drag**, **Function**, or **Mouse Wheel**|
+|---- **Align Middle**|Whether to align a box in the middle after sliding or not.<br>Available if the control mode is **Drag**.|
+|---- **Reverse Direction**|Whether to reverse the scrolling direction or not.<br>Available if the control mode is **Mouse Wheel**.|
+|-- **Direction**|The major scrolling direction. Could be **Vertical** or **Horizontal**|
+|-- **Centered**<br>**Content ID**|The initial content ID to be displayed in the centered box|
+|-- **Reverse Order**|Whether to reverse the content displaying order or not|
+|[List Appearance]||
+|-- **Box Density**|The factor for adjusting the distance between boxes.<br>The larger, the closer|
+|-- **Box Position Curve**|The curve specifying the passive position of the box|
+|-- **Box Scale Curve**|The curve specifying the box scale|
+|-- **Box Velocity Curve**|The curve specifying the velocity factor of the box after releasing.<br>Available if the control mode is **Drag**.|
+|-- **Box Movement Curve**|The curve specifying the movement factor of the box.<br>Available if the control mode is **Function** or **Mouse Wheel**.|
+|[List Event]||
+|-- **On Box Click**|The callback to be invoked when a box is clicked.<br>The int parameter is the content ID of the clicked box.|
 
 ## How to Use
 
