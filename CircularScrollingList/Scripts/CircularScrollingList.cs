@@ -231,7 +231,10 @@ namespace AirFishLab.ScrollingList
         private void AssignReferences()
         {
             _listBank = GetComponent<BaseListBank>();
-            _listBoxes.Clear();
+            if (_listBoxes == null)
+                _listBoxes = new List<ListBox>();
+            else
+                _listBoxes.Clear();
             foreach (Transform child in transform) {
                 var listBox = child.GetComponent<ListBox>();
                 if (listBox)
