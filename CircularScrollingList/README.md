@@ -45,45 +45,78 @@
 
 ### Set up the List
 
-1. Add a Canvas plane to the scene. Set the render mode  to "Screen Space - Camera" (for example), and assign the "Main Camera" to the "Render Camera". \
-    ![Imgur](https://i.imgur.com/YgysLbH.png)
-2. Create an empty gameobject as the child of the canvas plane, rename it to `CircularList` (or another name you like), set the scale to 0.6, and attach the script `ListPositionCtrl.cs` to it. \
-    ![Imgur](https://i.imgur.com/JqBNYF2.png)
-3. Create a Button gameobject as the child of the `CircularList`, rename it to `ListBox`, change the sprite and the font size if needed.
-4.  Attach the script `ListBox.cs` to it, assign the gameobject "Text" of the Button to the "Content" of the `ListBox.cs`, and then create a prefab of it .\
-    ![Imgur](https://i.imgur.com/x5yzlaQ.png)
-5. Duplicate the gameobject `ListBox` or create gameobjects from the prefab as many times as you want (4 times here, for exmaple), and assign them to the "List Boxes" of the script `ListPositionCtrl.cs`. \
-    ![Imgur](https://i.imgur.com/JuvUPs7.png)
+1. Add a Canvas plane to the scene. Set the render mode to "Screen Space - Camera" for example, and assign the "Main Camera" to the "Render Camera". \
+    <img src="./_ReadmeData/step_a_1.PNG" width=400px />
+2. Create an empty gameobject as the child of the canvas plane, rename it to "CircularScrollingList" (or another name you like), and attach the script `ListPositionCtrl.cs` to it. \
+    <img src="./_ReadmeData/step_a_2.PNG" width=650px />
+3. Create a Button gameobject as the child of the "CircularList", rename it to "ListBox", change the sprite and the font size if needed. \
+    <img src="./_ReadmeData/step_a_3.PNG" width=650px />
+4. Create a new script `IntListBox.cs` and add the following code. For more information, see [ListBank and ListBox](#listBank-and-listBox) section.
 
-### Create `ListBank`
+    ```csharp
+    using AirFishLab.ScrollingList;
+    using UnityEngine;
+    using UnityEngine.UI;
 
-1. Create a new script named `MyListBox.cs` and launch the editor.
-2. Inherit the abstract class `BaseListBank` (The class `BaseListBank` inherits the `MonoBehaviour`, therefore, you could initialize list contents in `Start()` and attach the script to a gameobject).
-3. There are two functions which must be implemented:
-    * `public string GetListContent(int index)`: Get the string representation of the specified content.
-    * `public int GetListLength()`: Get the number of the list contents.
-```csharp
-// The example of the simplest ListBank
-public class MyListBank: BaseListBank
-{
-    private int[] _contents = {
-        1, 2, 3, 4, 5, 6, 7, 8, 9, 10
-    };
-
-    public override string GetListContent(int index)
+    // The box used for displaying the content
+    // Must be inherited from the class ListBox
+    public class IntListBox : ListBox
     {
-        return _contents[index].ToString();
-    }
+        [SerializeField]
+        private Text _contentText;
 
-    public override int GetListLength()
+        // This function is invoked by the `CircularScrollingList` for updating the list content.
+        // The type of the content will be converted to `object` in the `IntListBank` (Defined later)
+        // So it should be converted back to its own type for being used.
+        // The original type of the content is `int`, so it could be converted to `string` here.
+        protected override void UpdateDisplayContent(object content)
+        {
+            _contentText.text = (string) content;
+        }
+    }
+    ```
+
+5. Attach the script `IntListBox.cs` to it, assign the gameobject "Text" of the Button to the "Content Text" of the `ListBox.cs`, and then create a prefab of it .\
+    <img src="./_ReadmeData/step_a_5.PNG" width=650px/>
+6. Duplicate the gameobject `ListBox` or create gameobjects from the prefab as many times as you want (4 times here, for exmaple)
+7. Click the menu of the `CircularScrollingList` and select "Assign References of Bank and Boxes" to automatically add the reference of boxes to it (The list boxes must be the children of `CircularScrollingList`), or maually assign them to the property "List Boxes". \
+    <img src="./_ReadmeData/step_a_7-1.PNG" width=400px />
+    <img src="./_ReadmeData/step_a_7-2.PNG" width=650px />
+8. Create a new script `IntListBank.cs` and add the following code. For more information, see [ListBank and ListBox](#listBank-and-listBox) section.
+
+    ```csharp
+    using AirFishLab.ScrollingList;
+
+    // The bank for providing the content for the box to display
+    // Must be inherit from the class BaseListBank
+    public class IntListBank : BaseListBank
     {
-        return _contents.Length;
-    }
-}
-```
-4. Attach the script `MyListBank.cs` to the gameobject `CircularList` (or another gameobject), and assign the gameobject to the "List Bank" of the script `ListPositionCtrl.cs`. \
-    ![Imgur](https://i.imgur.com/FsysiTY.png)
+        private readonly int[] _contents = {
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+        };
 
+        // This function will be invoked by the `CircularScrollingList`
+        // when acquiring the content to display
+        // The object returned will be converted to the type `object`
+        // which will be converted back to its own type in `IntListBox.UpdateDisplayContent()`
+        public override object GetListContent(int index)
+        {
+            return _contents[index].ToString();
+        }
+
+        public override int GetListLength()
+        {
+            return _contents.Length;
+        }
+    }
+    ```
+
+9. Attach the script `IntListBank.cs` to the gameobject "CircularScrollingList"
+10. Again click the menu of the `CircularScrollingList` and select "Assign References of Bank and Boxes" to automatically add the reference of `IntListBank` to it (The script must be in the same gameobject of the `CircularScrollingList`), or manually assign it to the property "List Bank". \
+    <img src="./_ReadmeData/step_a_10.PNG" width=400px />
+11. Adjust the height or width of the rect transform of the gameobject "CircularScrollingList". When running, the list boxes will be evenly distributed in the range of height (for **Vertically** scrolling list) or width (fot **Horizontally** scrolling list). \
+    <img src="./_ReadmeData/step_a_11.PNG" width=7000px />
+12. Click "Play" to see the result
 
 ### Configure the List Mode and Appearance
 
@@ -123,6 +156,14 @@ After configuration, the set up of the list is done! Click Play button of the sc
 You could adjust the position and the size of the list by setting the position and the scale of the gameobject `CircularList`.
 
 <img src="https://i.imgur.com/rkbJ8tb.gif" width=300px />
+
+## `ListBank` and `ListBox`
+
+[TBD]
+
+### Avoid Boxing/Unboxing Problem
+
+[TBD]
 
 ## Get the ID of the Selected Content
 
