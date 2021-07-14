@@ -26,7 +26,7 @@
 |**Setting**|The setting of the list|
 |[List Mode]||
 |-- **List Type**|The type of the list. Could be **Circular** or **Linear**|
-|-- **Control Mode**|The controlling mode. Could be **Drag**, **Function**, or **Mouse Wheel**|
+|-- **Control Mode**|The controlling mode. Could be **Drag**, **Function**, or **Mouse Wheel**<br>See [Set the Control Mode](#set-the-control-mode) for more information|
 |---- **Align Middle**|Whether to align a box in the middle after sliding or not.<br>Available if the control mode is **Drag**.|
 |---- **Reverse Direction**|Whether to reverse the scrolling direction or not.<br>Available if the control mode is **Mouse Wheel**.|
 |-- **Direction**|The major scrolling direction. Could be **Vertical** or **Horizontal**|
@@ -34,7 +34,7 @@
 |-- **Reverse Order**|Whether to reverse the content displaying order or not|
 |[List Appearance]||
 |-- **Box Density**|The factor for adjusting the distance between boxes.<br>The larger, the closer|
-|-- **Box Position Curve**|The curve specifying the passive position of the box|
+|-- **Box Position Curve**|The curve specifying the passive position of the box<br>See [Appearance Curves](#appearance-curves) for more information|
 |-- **Box Scale Curve**|The curve specifying the box scale|
 |-- **Box Velocity Curve**|The curve specifying the velocity factor of the box after releasing.<br>Available if the control mode is **Drag**.|
 |-- **Box Movement Curve**|The curve specifying the movement factor of the box.<br>Available if the control mode is **Function** or **Mouse Wheel**.|
@@ -51,7 +51,7 @@
     <img src="./_ReadmeData/step_a_2.PNG" width=650px />
 3. Create a Button gameobject as the child of the "CircularList", rename it to "ListBox", change the sprite and the font size if needed. \
     <img src="./_ReadmeData/step_a_3.PNG" width=650px />
-4. Create a new script `IntListBox.cs` and add the following code. For more information, see [ListBank and ListBox](#listBank-and-listBox) section.
+4. Create a new script `IntListBox.cs` and add the following code. For more information, see [ListBank and ListBox](#listbank-and-listbox) section.
 
     ```csharp
     using AirFishLab.ScrollingList;
@@ -82,7 +82,7 @@
 7. Click the menu of the `CircularScrollingList` and select "Assign References of Bank and Boxes" to automatically add the reference of boxes to it (The list boxes must be the children of `CircularScrollingList`), or maually assign them to the property "List Boxes". \
     <img src="./_ReadmeData/step_a_7-1.PNG" width=400px />
     <img src="./_ReadmeData/step_a_7-2.PNG" width=650px />
-8. Create a new script `IntListBank.cs` and add the following code. For more information, see [ListBank and ListBox](#listBank-and-listBox) section.
+8. Create a new script `IntListBank.cs` and add the following code. For more information, see [ListBank and ListBox](#listbank-and-listbox) section.
 
     ```csharp
     using AirFishLab.ScrollingList;
@@ -115,47 +115,52 @@
 10. Again click the menu of the `CircularScrollingList` and select "Assign References of Bank and Boxes" to automatically add the reference of `IntListBank` to it (The script must be in the same gameobject of the `CircularScrollingList`), or manually assign it to the property "List Bank". \
     <img src="./_ReadmeData/step_a_10.PNG" width=400px />
 11. Adjust the height or width of the rect transform of the gameobject "CircularScrollingList". When running, the list boxes will be evenly distributed in the range of height (for **Vertically** scrolling list) or width (fot **Horizontally** scrolling list). \
-    <img src="./_ReadmeData/step_a_11.PNG" width=7000px />
+    <img src="./_ReadmeData/step_a_11.PNG" width=800px />
 12. Click "Play" to see the result
 
-### Configure the List Mode and Appearance
+### Set the Control Mode
 
-![Imgur](https://i.imgur.com/CURaq6S.png)
+There are 3 control mode for the list:
 
-**Basic Configuration**
+* **Drag**: The list can be moved by dragging it.
+* **Function**: The list can be moved by invoking `CircularScrollingList.MoveOneUnitUp()` or `CicularScrollingList.MoveOneUnitDown()`. \
+  For the **horizontally** scolling list, invoking `CircularScrollingList.MoveOneUnitUp()` will move the list one unit right, and one unit left by invoking `CicularScrollingList.MoveOneUnitDown()`. \
+  In this mode, the list can be moved by additional buttons by assigning these two function to them. \
+  <img src="./_ReadmeData/function_mode_demo.png" width=650px>
+* **Mouse Wheel**: The list can be moved by scrolling the mouse wheel.
 
-* List Type: Circular or Linear
-* Control Mode: Drag, Function, or Mouse Wheel
-    * Align Middle: Whether to align a box at the center of the list when the list stop moving. Only available in Drag mode.
-    * If the Function mode is selected, move the list by invoking `ListPositionCtrl.MoveOneUnitUp()` and `ListPositionCtrl.MoveOneUnitDown()`. For example, you could assign these two functions to buttons to control the list.
-* Direction: Vertical or Horizontal
-* Centered Content ID: The initial content ID for the centered (or focused) box
+### Appearance Curves
 
-**List Appearance**
+* **Box Position Curve**: The curve specifying the passive position of the box
+  * X axis: The major position of the box, which is mapped to [0, 1] (from the smallest value to the largest value).
+  * Y axis: The factor of the passive position. One unit equals to an half of moving range.
 
-* Box Density: The gap between boxes. The larger, the closer.
-* Box Position Curve: The curve specifying the box position. The x axis is the major position of the box, which is mapped to [0, 1] (from the smallest value to the largest value). The y axis is the factor of the passive position. \
   For example, in the vertical mode, the major position is the y position and the passive position is the x position: \
   <img src="https://i.imgur.com/JqPRBTy.png" width=700px /> \
   It is intuitive in the horizontal mode: \
   <img src="https://i.imgur.com/RxOLC3S.png" width=700px />
-* Box Scale Curve: Similar to the Box Position Curve, but the y axis defines the scale value of the box at that major position.
-* Box Movement Curve: The curve specifying movement of the box. The x axis is the movement duration in seconds, which starts from 0. The value of y axis is depended on the mode:
-    * In the Drag mode, it is the factor relative to the releasing velocity;
-    * In the Function or Mouse Wheel mode, it is the factor relative to the target position.
-    <img src="https://i.imgur.com/MBMrISG.png" width=650px />
+* **Box Scale Curve**: The curve specifying the box scale
+  * X axis: Same as the box position curve
+  * Y axis: The scale value of the box at that major position
+* **Box Velocity Curve**: The curve specifying the velocity factor of the box after releasing
+  * X axis: The movement duration in seconds, which starts from 0.
+  * Y axis: The factor relative to the releasing velocity
 
-**Curve Presets**
+  The y value of curve should **start from 1 and end with 0**. \
+  <img src="./_ReadmeData/box_velocity_curve_example.PNG" width=400px />
+* **Box Movement Curve**: The curve specifying the movement factor of the box. 
+  * X axis: Same as the box velocity curve
+  * Y axis: The factor relative to the target position.
+
+  The y value of curve should **start from 0 and end with 1**. \
+  <img src="./_ReadmeData/box_movement_curve_example.PNG" width=400px />
+
+#### Curve Presets
 
 The project provides curve presets. Open the curve editing panel and select the `BoxCurvePresets` to use them. \
-<img src="https://i.imgur.com/m02LeMk.png" width=500px /> \
-![Imgur](https://i.imgur.com/ZKzKGyg.png) \
-The first three curves are position curves, the 4th and 5th one are scale curves, the 6th one is a velocity related curve, and the last one is a position related curve.
-
-After configuration, the set up of the list is done! Click Play button of the scene to check the list.\
-You could adjust the position and the size of the list by setting the position and the scale of the gameobject `CircularList`.
-
-<img src="https://i.imgur.com/rkbJ8tb.gif" width=300px />
+<img src="./_ReadmeData/import_curve_preset.png" width=500px /> \
+<img src="./_ReadmeData/curve_preset_detail.png" /> \
+Part A are position curves, part B are scale curves, part C is a velocity curve, and part D is a movement curve.
 
 ## `ListBank` and `ListBox`
 
