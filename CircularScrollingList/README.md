@@ -17,7 +17,7 @@
 
 ## Properties
 
-<img src="./_ReadmeData/circular_scrolling_list_panel.png" width=400px />
+<img src="./ReadmeData~/circular_scrolling_list_panel.png" width=400px />
 
 |Property|Description|
 |:--------|:--------|
@@ -46,11 +46,11 @@
 ### Set up the List
 
 1. Add a Canvas plane to the scene. Set the render mode to "Screen Space - Camera" for example, and assign the "Main Camera" to the "Render Camera". \
-    <img src="./_ReadmeData/step_a_1.PNG" width=400px />
+    <img src="./ReadmeData~/step_a_1.PNG" width=400px />
 2. Create an empty gameobject as the child of the canvas plane, rename it to "CircularScrollingList" (or another name you like), and attach the script `ListPositionCtrl.cs` to it. \
-    <img src="./_ReadmeData/step_a_2.PNG" width=650px />
+    <img src="./ReadmeData~/step_a_2.PNG" width=650px />
 3. Create a Button gameobject as the child of the "CircularList", rename it to "ListBox", change the sprite and the font size if needed. \
-    <img src="./_ReadmeData/step_a_3.PNG" width=650px />
+    <img src="./ReadmeData~/step_a_3.PNG" width=650px />
 4. Create a new script `IntListBox.cs` and add the following code. For more information, see [ListBank and ListBox](#listbank-and-listbox) section.
 
     ```csharp
@@ -77,11 +77,11 @@
     ```
 
 5. Attach the script `IntListBox.cs` to it, assign the gameobject "Text" of the Button to the "Content Text" of the `ListBox.cs`, and then create a prefab of it .\
-    <img src="./_ReadmeData/step_a_5.PNG" width=650px/>
+    <img src="./ReadmeData~/step_a_5.PNG" width=650px/>
 6. Duplicate the gameobject `ListBox` or create gameobjects from the prefab as many times as you want (4 times here, for exmaple)
 7. Click the menu of the `CircularScrollingList` and select "Assign References of Bank and Boxes" to automatically add the reference of boxes to it (The list boxes must be the children of `CircularScrollingList`), or maually assign them to the property "List Boxes". \
-    <img src="./_ReadmeData/step_a_7-1.PNG" width=400px />
-    <img src="./_ReadmeData/step_a_7-2.PNG" width=650px />
+    <img src="./ReadmeData~/step_a_7-1.PNG" width=400px />
+    <img src="./ReadmeData~/step_a_7-2.PNG" width=650px />
 8. Create a new script `IntListBank.cs` and add the following code. For more information, see [ListBank and ListBox](#listbank-and-listbox) section.
 
     ```csharp
@@ -113,9 +113,9 @@
 
 9. Attach the script `IntListBank.cs` to the gameobject "CircularScrollingList"
 10. Again click the menu of the `CircularScrollingList` and select "Assign References of Bank and Boxes" to automatically add the reference of `IntListBank` to it (The script must be in the same gameobject of the `CircularScrollingList`), or manually assign it to the property "List Bank". \
-    <img src="./_ReadmeData/step_a_10.PNG" width=400px />
+    <img src="./ReadmeData~/step_a_10.PNG" width=400px />
 11. Adjust the height or width of the rect transform of the gameobject "CircularScrollingList". When running, the list boxes will be evenly distributed in the range of height (for **Vertically** scrolling list) or width (fot **Horizontally** scrolling list). \
-    <img src="./_ReadmeData/step_a_11.PNG" width=800px />
+    <img src="./ReadmeData~/step_a_11.PNG" width=800px />
 12. Click "Play" to see the result
 
 ### Set the Control Mode
@@ -126,7 +126,7 @@ There are 3 control mode for the list:
 * **Function**: The list can be moved by invoking `CircularScrollingList.MoveOneUnitUp()` or `CicularScrollingList.MoveOneUnitDown()`. \
   For the **horizontally** scolling list, invoking `CircularScrollingList.MoveOneUnitUp()` will move the list one unit right, and one unit left by invoking `CicularScrollingList.MoveOneUnitDown()`. \
   In this mode, the list can be moved by additional buttons by assigning these two function to them. \
-  <img src="./_ReadmeData/function_mode_demo.png" width=650px>
+  <img src="./ReadmeData~/function_mode_demo.png" width=650px>
 * **Mouse Wheel**: The list can be moved by scrolling the mouse wheel.
 
 ### Appearance Curves
@@ -147,19 +147,19 @@ There are 3 control mode for the list:
   * Y axis: The factor relative to the releasing velocity
 
   The y value of curve should **start from 1 and end with 0**. \
-  <img src="./_ReadmeData/box_velocity_curve_example.PNG" width=400px />
+  <img src="./ReadmeData~/box_velocity_curve_example.PNG" width=400px />
 * **Box Movement Curve**: The curve specifying the movement factor of the box. 
   * X axis: Same as the box velocity curve
   * Y axis: The factor relative to the target position.
 
   The y value of curve should **start from 0 and end with 1**. \
-  <img src="./_ReadmeData/box_movement_curve_example.PNG" width=400px />
+  <img src="./ReadmeData~/box_movement_curve_example.PNG" width=400px />
 
 #### Curve Presets
 
 The project provides curve presets. Open the curve editing panel and select the `BoxCurvePresets` to use them. \
-<img src="./_ReadmeData/import_curve_preset.png" width=500px /> \
-<img src="./_ReadmeData/curve_preset_detail.png" /> \
+<img src="./ReadmeData~/import_curve_preset.png" width=500px /> \
+<img src="./ReadmeData~/curve_preset_detail.png" /> \
 Part A are position curves, part B are scale curves, part C is a velocity curve, and part D is a movement curve.
 
 ## `ListBank` and `ListBox`
