@@ -68,10 +68,10 @@
         // This function is invoked by the `CircularScrollingList` for updating the list content.
         // The type of the content will be converted to `object` in the `IntListBank` (Defined later)
         // So it should be converted back to its own type for being used.
-        // The original type of the content is `int`, so it could be converted to `string` here.
+        // The original type of the content is `int`.
         protected override void UpdateDisplayContent(object content)
         {
-            _contentText.text = (string) content;
+            _contentText.text = ((int) content).ToString();
         }
     }
     ```
@@ -101,7 +101,7 @@
         // which will be converted back to its own type in `IntListBox.UpdateDisplayContent()`
         public override object GetListContent(int index)
         {
-            return _contents[index].ToString();
+            return _contents[index];
         }
 
         public override int GetListLength()
@@ -111,7 +111,7 @@
     }
     ```
 
-9. Attach the script `IntListBank.cs` to the gameobject "CircularScrollingList"
+9. Attach the script `IntListBank.cs` to the gameobject "CircularScrollingList" (or another gameobejct you like)
 10. Again click the menu of the `CircularScrollingList` and select "Assign References of Bank and Boxes" to automatically add the reference of `IntListBank` to it (The script must be in the same gameobject of the `CircularScrollingList`), or manually assign it to the property "List Bank". \
     <img src="./ReadmeData~/step_a_10.PNG" width=400px />
 11. Adjust the height or width of the rect transform of the gameobject "CircularScrollingList". When running, the list boxes will be evenly distributed in the range of height (for **Vertically** scrolling list) or width (fot **Horizontally** scrolling list). \
@@ -164,11 +164,129 @@ Part A are position curves, part B are scale curves, part C is a velocity curve,
 
 ## `ListBank` and `ListBox`
 
-[TBD]
+Scene version 5, the list supports custom content type. Different type of `ListBank` and `ListBox` can be used in the different list. In this section mentions how to implement your own `ListBank` and `ListBox`.
+
+<img src="./ReadmeData~/custom_list_example.png" width=200px>
+
+### Custom `ListBank`
+
+Here is the example of the custom `ColorStrListBank`:
+
+```csharp
+public class ColorStrListBank : BaseListBank
+{
+    [SerializeField]
+    private ColorString[] _contents;
+
+    public override object GetListContent(int index)
+    {
+        return _contents[index];
+    }
+
+    public override int GetListLength()
+    {
+        return _contents.Length;
+    }
+}
+
+[Serializable]
+public class ColorString
+{
+    public Color color;
+    public string name;
+}
+```
+
+The class must inherit from the class `BaseListBank`, and there are 2 methods to be implemented:
+
+* `public override object GetListContent(int index)`: The function for the list to request the content to display. This function always convert the returned content to type `object`, and it should be converted back to its orignal type for being used in the custom `ListBox`.
+* `public override int GetListLength()`: Get the number of the contents.
+
+### Custom `ListBox`
+
+Here is the example of the corresponding `ColorStrListBox`:
+
+```csharp
+using AirFishLab.ScrollingList;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class ColorStrListBox : ListBox
+{
+    [SerializeField]
+    private Image _contentImage;
+    [SerializeField]
+    private Text _contentText;
+
+    protected override void UpdateDisplayContent(object content)
+    {
+        var colorString = (ColorString) content;
+        _contentImage.color = colorString.color;
+        _contentText.text = colorString.name;
+    }
+}
+```
+
+The class must inherit from the class `ListBox`, and there are 1 method to be implemented:
+
+* `protected override void UpdateDisplayContent(object content)`: The function for the list to update the content of the box. `content` is the content requested from the custom list bank, and it should be converted back to its original type for being used.
+
+### Use Them in the List
+
+Same as the setup steps in the [Set up the List](#set-up-the-list) section but replacing the `IntListBox` and `IntListBank` with your own version of `ListBox` and `ListBank`.
+
+<img src="./ReadmeData~/custom_list_box_example.png" width=650px /> \
+<img src="./ReadmeData~/custom_list_bank_example.png" width=650px />
 
 ### Avoid Boxing/Unboxing Problem
 
-[TBD]
+According to [this C# programming guide](https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/types/boxing-and-unboxing), converting a value type to `object` type is called boxing, and converting `object` type to a value type is called unboxing, which causes a performance problem. To avoid this situation, create a data class to carry the data of value type.
+
+The modified version of `IntListBank`:
+
+```csharp
+public class IntListBank : BaseListBank
+{
+    private readonly int[] _contents = {
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+    };
+
+    // Create a data wrapper for carrying the data
+    private DataWrapper _dataWrapper = new DataWrapper();
+
+    public override object GetListContent(int index)
+    {
+        _dataWrapper.value = _contents[index];
+        return _dataWrapper;
+    }
+
+    public override int GetListLength()
+    {
+        return _contents.Length;
+    }
+}
+
+public class DataWrapper
+{
+    public int value;
+}
+```
+
+The modified version of `IntListBox`:
+
+```csharp
+public class IntListBox : ListBox
+{
+    [SerializeField]
+    private Text _contentText;
+
+    protected override void UpdateDisplayContent(object content)
+    {
+        var data = (DataWrapper) content;
+        _contentText.text = (string) data.value;
+    }
+}
+```
 
 ## Get the ID of the Selected Content
 
