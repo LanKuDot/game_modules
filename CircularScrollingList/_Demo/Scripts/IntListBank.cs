@@ -8,7 +8,7 @@ public class IntListBank : BaseListBank
 
     public override object GetListContent(int index)
     {
-        return _contents[index].ToString();
+        return _contents[index];
     }
 
     public override int GetListLength()

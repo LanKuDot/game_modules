@@ -12,13 +12,13 @@ public class DisplayAndSelectExample : MonoBehaviour
     public void DisplayCenteredContent()
     {
         var contentID = _list.GetCenteredContentID();
-        var centeredContent = (string) _list.listBank.GetListContent(contentID);
+        var centeredContent = (int) _list.listBank.GetListContent(contentID);
         _displayText.text = "Centered content: " + centeredContent;
     }
 
     public void GetSelectedContentID(int selectedContentID)
     {
         Debug.Log("Selected content ID: " + selectedContentID +
-                  ", Content: " + _list.listBank.GetListContent(selectedContentID));
+                  ", Content: " + (int) _list.listBank.GetListContent(selectedContentID));
     }
 }

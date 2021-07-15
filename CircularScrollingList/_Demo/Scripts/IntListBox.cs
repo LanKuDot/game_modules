@@ -9,6 +9,6 @@ public class IntListBox : ListBox
 
     protected override void UpdateDisplayContent(object content)
     {
-        _contentText.text = (string) content;
+        _contentText.text = ((int) content).ToString();
     }
 }

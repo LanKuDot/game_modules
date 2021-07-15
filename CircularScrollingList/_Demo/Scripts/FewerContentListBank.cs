@@ -9,7 +9,7 @@ public class FewerContentListBank : BaseListBank
 
     public override object GetListContent(int index)
     {
-        return contents[index].ToString();
+        return contents[index];
     }
 
     public override int GetListLength()
