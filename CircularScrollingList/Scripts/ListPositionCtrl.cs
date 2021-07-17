@@ -62,6 +62,12 @@ namespace AirFishLab.ScrollingList
         private Action<PointerEventData, TouchPhase> _inputPositionHandler;
         private Action<Vector2> _scrollHandler;
         private Action<float> _scrollDirectionHandler;
+        /// <summary>
+        /// Whether to run LateUpdate
+        /// </summary>
+        /// This will be false when a movement is ended.
+        /// And It becomes true again when the list starts new movement.
+        private bool _toRunLateUpdate = true;
 
         #endregion
 
@@ -204,6 +210,7 @@ namespace AirFishLab.ScrollingList
         public void InputPositionHandler(PointerEventData eventData, TouchPhase phase)
         {
             _inputPositionHandler(eventData, phase);
+            _toRunLateUpdate = true;
         }
 
         /// <summary>
@@ -213,6 +220,7 @@ namespace AirFishLab.ScrollingList
         public void ScrollHandler(PointerEventData eventData)
         {
             _scrollHandler(eventData.scrollDelta);
+            _toRunLateUpdate = true;
         }
 
         #endregion
@@ -309,7 +317,6 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         public void Update()
         {
-            // Update the position of boxes
             if (_movementCtrl.IsMovementEnded())
                 return;
 
@@ -324,10 +331,17 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         public void LateUpdate()
         {
+            if (!_toRunLateUpdate)
+                return;
+
             // Update the state of the boxes
             FindDeltaDistanceToCenter();
             if (_listSetting.listType == CircularScrollingList.ListType.Linear)
                 UpdatePositionState();
+
+            // Not to update the state of box after the last frame of movement
+            if (_movementCtrl.IsMovementEnded())
+                _toRunLateUpdate = false;
         }
 
         #endregion
@@ -362,7 +376,7 @@ namespace AirFishLab.ScrollingList
 
             if (_centeredBox != candidateBox)
                 _listSetting.onCenteredContentChanged?.Invoke(candidateBox.contentID);
-            
+
             _centeredBox = candidateBox;
         }
 
