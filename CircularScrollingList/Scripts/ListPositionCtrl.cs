@@ -359,6 +359,10 @@ namespace AirFishLab.ScrollingList
             }
 
             _deltaDistanceToCenter = minDeltaDistance;
+
+            if (_centeredBox != candidateBox)
+                _listSetting.onCenteredContentChanged?.Invoke(candidateBox.contentID);
+            
             _centeredBox = candidateBox;
         }
 

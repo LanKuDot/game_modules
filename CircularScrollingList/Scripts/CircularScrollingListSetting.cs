@@ -80,7 +80,11 @@ namespace AirFishLab.ScrollingList
         [Tooltip("The callback to be invoked when a box is clicked. " +
                  "The registered callbacks will be added to the 'onClick' event of boxes, " +
                  "therefore, boxes should be 'Button's.")]
-        private ListBoxClickEvent _onBoxClick;
+        private ListBoxIntEvent _onBoxClick;
+        [SerializeField]
+        [Tooltip("The callback to be invoked when the centered content is changed. " +
+                 "The int parameter is the new content ID.")]
+        private ListBoxIntEvent _onCenteredContentChanged;
 
         #endregion
 
@@ -100,7 +104,8 @@ namespace AirFishLab.ScrollingList
         public AnimationCurve boxVelocityCurve => _boxVelocityCurve;
         public AnimationCurve boxMovementCurve => _boxMovementCurve;
 
-        public ListBoxClickEvent onBoxClick => _onBoxClick;
+        public ListBoxIntEvent onBoxClick => _onBoxClick;
+        public ListBoxIntEvent onCenteredContentChanged => _onCenteredContentChanged;
 
         #endregion
     }

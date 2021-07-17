@@ -4,11 +4,11 @@ using UnityEngine.Events;
 namespace AirFishLab.ScrollingList
 {
     /// <summary>
-    /// The event is fired when a box in the list is clicked<para/>
+    /// This event is used for passing the content ID
     /// The int parameter is the content ID of the clicked box
     /// </summary>
     [Serializable]
-    public class ListBoxClickEvent : UnityEvent<int>
+    public class ListBoxIntEvent : UnityEvent<int>
     {
     }
 }
