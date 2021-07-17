@@ -8,6 +8,8 @@ public class DisplayAndSelectExample : MonoBehaviour
     private CircularScrollingList _list;
     [SerializeField]
     private Text _displayText;
+    [SerializeField]
+    private Text _centeredContentText;
 
     public void DisplayCenteredContent()
     {
@@ -20,5 +22,11 @@ public class DisplayAndSelectExample : MonoBehaviour
     {
         Debug.Log("Selected content ID: " + selectedContentID +
                   ", Content: " + (int) _list.listBank.GetListContent(selectedContentID));
+    }
+
+    public void OnListCenteredContentChanged(int centeredContentID)
+    {
+        var content = (int) _list.listBank.GetListContent(centeredContentID);
+        _centeredContentText.text = "(Auto updated)\nCentered content: " + content;
     }
 }
