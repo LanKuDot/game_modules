@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using AirFishLab.ScrollingList.AnimationCurveUtils;
+﻿using System.Collections.Generic;
+using AirFishLab.ScrollingList.BoxTransformCtrl;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -39,36 +38,12 @@ namespace AirFishLab.ScrollingList
         private ListPositionCtrl _positionCtrl;
         private ListContentManager _contentManager;
         private List<ListBox> _listBoxes;
-        private RangeMappingCurve _positionCurve;
-        private RangeMappingCurve _scaleCurve;
 
         #endregion
 
-        public Action<float> UpdatePosition { private set; get; }
+        #region Private Memebers
 
-        #region Position Controlling Variables
-
-        // Position calculated here is in the local space of the list
-        /// <summary>
-        /// The distance between boxes
-        /// </summary>
-        private float _unitPos;
-        /// <summary>
-        /// The left/down-most position of the box
-        /// </summary>
-        private float _lowerBoundPos;
-        /// <summary>
-        /// The right/up-most position of the box
-        /// </summary>
-        private float _upperBoundPos;
-        /// <summary>
-        /// The lower boundary where the box will be moved to the other end
-        /// </summary>
-        private float _changeSideLowerBoundPos;
-        /// <summary>
-        /// The upper boundary where the box will be moved to the other end
-        /// </summary>
-        private float _changeSideUpperBoundPos;
+        private IBoxTransformCtrl _boxTransformCtrl;
 
         #endregion
 
@@ -95,16 +70,6 @@ namespace AirFishLab.ScrollingList
             _listBoxes = listBoxes;
             this.listBoxID = listBoxID;
 
-            switch (_listSetting.direction) {
-                case CircularScrollingList.Direction.Vertical:
-                    UpdatePosition = MoveVertically;
-                    break;
-                case CircularScrollingList.Direction.Horizontal:
-                    UpdatePosition = MoveHorizontally;
-                    break;
-            }
-
-            InitializePositionVars();
             InitializePosition();
             InitializeBoxDependency();
             InitializeContent();
@@ -112,59 +77,18 @@ namespace AirFishLab.ScrollingList
         }
 
         /// <summary>
-        /// Initialize the position variables
-        /// </summary>
-        private void InitializePositionVars()
-        {
-            _unitPos = _positionCtrl.unitPos;
-            _lowerBoundPos = _positionCtrl.lowerBoundPos;
-            _upperBoundPos = _positionCtrl.upperBoundPos;
-            _changeSideLowerBoundPos = _lowerBoundPos + _unitPos * 0.5f;
-            _changeSideUpperBoundPos = _upperBoundPos - _unitPos * 0.5f;
-
-            _positionCurve =
-                new RangeMappingCurve(
-                    _listSetting.boxPositionCurve,
-                    _changeSideLowerBoundPos,
-                    _changeSideUpperBoundPos);
-            _scaleCurve =
-                new RangeMappingCurve(
-                    _listSetting.boxScaleCurve,
-                    _changeSideLowerBoundPos,
-                    _changeSideUpperBoundPos);
-        }
-
-        /// <summary>
         /// Initialize the local position of the list box according to its ID
         /// </summary>
         private void InitializePosition()
         {
-            var numOfBoxes = _listBoxes.Count;
-            var majorPosition = _unitPos * (listBoxID * -1 + numOfBoxes / 2);
-            var passivePosition = 0f;
-
-            // If there are even number of boxes, adjust the position one half unitPos down.
-            if ((numOfBoxes & 0x1) == 0) {
-                majorPosition =
-                    _unitPos * (listBoxID * -1 + numOfBoxes / 2) - _unitPos / 2;
-            }
-
-            passivePosition = GetPassivePosition(majorPosition);
-
-            switch (_listSetting.direction) {
-                case CircularScrollingList.Direction.Vertical:
-                    transform.localPosition =
-                        new Vector3(
-                            passivePosition, majorPosition, transform.localPosition.z);
-                    break;
-                case CircularScrollingList.Direction.Horizontal:
-                    transform.localPosition =
-                        new Vector3(
-                            majorPosition, passivePosition, transform.localPosition.z);
-                    break;
-            }
-
-            UpdateScale(majorPosition);
+            _boxTransformCtrl =
+                new LinearBoxTransformCtrl(
+                    _positionCtrl,
+                    _listSetting.boxPositionCurve,
+                    _listSetting.boxScaleCurve,
+                    _listSetting.direction);
+            _boxTransformCtrl.SetInitialTransform(
+                transform, listBoxID, _listBoxes.Count);
         }
 
         /// <summary>
@@ -195,103 +119,20 @@ namespace AirFishLab.ScrollingList
         #region Position Controlling
 
         /// <summary>
-        /// Move the box vertically and adjust its final position and size
+        /// Update the position of the box
         /// </summary>
-        /// <param name="delta">The moving distance</param>
-        private void MoveVertically(float delta)
+        /// <param name="delta">The delta distance in the major direction</param>
+        public void UpdatePosition(float delta)
         {
-            var needToUpdateToLastContent = false;
-            var needToUpdateToNextContent = false;
-            var majorPosition = GetMajorPosition(transform.localPosition.y + delta,
-                ref needToUpdateToLastContent, ref needToUpdateToNextContent);
-            var passivePosition = GetPassivePosition(majorPosition);
-
-            transform.localPosition =
-                new Vector3(
-                    passivePosition, majorPosition, transform.localPosition.z);
-            UpdateScale(majorPosition);
+            _boxTransformCtrl.SetLocalTransform(
+                transform, delta,
+                out var needToUpdateToLastContent,
+                out var needToUpdateToNextContent);
 
             if (needToUpdateToLastContent)
                 UpdateToLastContent();
             else if (needToUpdateToNextContent)
                 UpdateToNextContent();
-        }
-
-        /// <summary>
-        /// Move the box horizontally and adjust its final position and size
-        /// </summary>
-        /// <param name="delta">The moving distance</param>
-        private void MoveHorizontally(float delta)
-        {
-            var needToUpdateToLastContent = false;
-            var needToUpdateToNextContent = false;
-            var majorPosition = GetMajorPosition(transform.localPosition.x + delta,
-                ref needToUpdateToLastContent, ref needToUpdateToNextContent);
-            var passivePosition = GetPassivePosition(majorPosition);
-
-            transform.localPosition =
-                new Vector3(
-                    majorPosition, passivePosition, transform.localPosition.z);
-            UpdateScale(majorPosition);
-
-            if (needToUpdateToLastContent)
-                UpdateToLastContent();
-            else if (needToUpdateToNextContent)
-                UpdateToNextContent();
-        }
-
-        /// <summary>
-        /// Get the major position according to the requested position
-        /// If the box exceeds the boundary, one of the passed flags will be set
-        /// to indicate that the content needs to be updated.
-        /// </summary>
-        /// <param name="positionValue">The requested position</param>
-        /// <param name="needToUpdateToLastContent">
-        /// Does it need to update to the last content?
-        /// </param>
-        /// <param name="needToUpdateToNextContent">
-        /// Does it need to update to the next content?
-        /// </param>
-        /// <returns>The final major position</returns>
-        private float GetMajorPosition(
-            float positionValue,
-            ref bool needToUpdateToLastContent, ref bool needToUpdateToNextContent)
-        {
-            var beyondPos = 0.0f;
-            var majorPos = positionValue;
-
-            if (positionValue < _changeSideLowerBoundPos) {
-                beyondPos = positionValue - _lowerBoundPos;
-                majorPos = _upperBoundPos - _unitPos + beyondPos;
-                needToUpdateToLastContent = true;
-            } else if (positionValue > _changeSideUpperBoundPos) {
-                beyondPos = positionValue - _upperBoundPos;
-                majorPos = _lowerBoundPos + _unitPos + beyondPos;
-                needToUpdateToNextContent = true;
-            }
-
-            return majorPos;
-        }
-
-        /// <summary>
-        /// Get the passive position according to the major position
-        /// </summary>
-        /// <param name="majorPosition">The major position</param>
-        /// <returns>The passive position</returns>
-        private float GetPassivePosition(float majorPosition)
-        {
-            var passivePosFactor = _positionCurve.Evaluate(majorPosition);
-            return _upperBoundPos * passivePosFactor;
-        }
-
-        /// <summary>
-        /// Scale the listBox according to the major position
-        /// </summary>
-        private void UpdateScale(float majorPosition)
-        {
-            var scaleValue = _scaleCurve.Evaluate(majorPosition);
-            transform.localScale =
-                new Vector3(scaleValue, scaleValue, transform.localScale.z);
         }
 
         #endregion
