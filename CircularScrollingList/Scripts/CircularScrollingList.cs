@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEditor;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -191,12 +189,15 @@ namespace AirFishLab.ScrollingList
         }
 
         /// <summary>
-        /// Select the specified content ID and make it be aligned to the center
+        /// Select the specified content ID and make it be aligned at the center
         /// </summary>
         /// <param name="contentID">The target content ID</param>
         public void SelectContentID(int contentID)
         {
-            Debug.Log(contentID);
+            var centeredBox = _listPositionCtrl.GetCenteredBox();
+            var centeredContentID = centeredBox.contentID;
+            _listPositionCtrl.SetSelectionMovement(
+                _listContentManager.GetShortestDiff(centeredContentID, contentID));
         }
 
         #endregion

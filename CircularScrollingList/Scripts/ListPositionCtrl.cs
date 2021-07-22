@@ -79,6 +79,7 @@ namespace AirFishLab.ScrollingList
         private float _deltaDistanceToCenter;
         private PositionState _positionState = PositionState.Middle;
         private readonly int _maxNumOfDisabledBoxes;
+        private int _selectionDistanceFactor;
         private int _scrollFactor;
 
         #endregion
@@ -196,6 +197,8 @@ namespace AirFishLab.ScrollingList
                     _scrollDirectionHandler = ScrollHorizontally;
                     break;
             }
+
+            _selectionDistanceFactor = _listSetting.reverseOrder ? -1 : 1;
         }
 
         #endregion
@@ -220,6 +223,17 @@ namespace AirFishLab.ScrollingList
         public void ScrollHandler(PointerEventData eventData)
         {
             _scrollHandler(eventData.scrollDelta);
+            _toRunLateUpdate = true;
+        }
+
+        /// <summary>
+        /// Set the movement that makes the list align the selected box at the center
+        /// </summary>
+        /// <param name="idDiff">The difference between two ids</param>
+        public void SetSelectionMovement(int idDiff)
+        {
+            _movementCtrl.SetSelectionMovement(
+                _selectionDistanceFactor * idDiff * unitPos);
             _toRunLateUpdate = true;
         }
 
