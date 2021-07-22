@@ -128,6 +128,9 @@ namespace AirFishLab.ScrollingList
                 new ListContentManager(
                     _setting, _listBank, _listBoxes.Count);
 
+            if (_setting.centerSelectedBox)
+                _setting.onBoxClick.AddListener(SelectContentID);
+
             for (var i = 0; i < _listBoxes.Count; ++i)
                 _listBoxes[i].Initialize(
                     _setting, _listPositionCtrl, _listContentManager,
@@ -185,6 +188,15 @@ namespace AirFishLab.ScrollingList
                 Mathf.Min(centeredBox.contentID, _listBank.GetListLength() - 1);
             foreach (var listBox in _listBoxes)
                 listBox.Refresh(centeredBox.listBoxID, centeredContentID);
+        }
+
+        /// <summary>
+        /// Select the specified content ID and make it be aligned to the center
+        /// </summary>
+        /// <param name="contentID">The target content ID</param>
+        public void SelectContentID(int contentID)
+        {
+            Debug.Log(contentID);
         }
 
         #endregion

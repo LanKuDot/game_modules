@@ -77,6 +77,7 @@ namespace AirFishLab.ScrollingList.Editor
             }
             DrawSettingProperty("_direction");
             DrawSettingProperty("_centeredContentID");
+            DrawSettingProperty("_centerSelectedBox");
             DrawSettingProperty("_reverseOrder");
         }
 

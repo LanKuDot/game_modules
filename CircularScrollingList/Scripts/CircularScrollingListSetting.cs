@@ -30,6 +30,9 @@ namespace AirFishLab.ScrollingList
         [Tooltip("Specify the initial content ID for the centered box.")]
         private int _centeredContentID = 0;
         [SerializeField]
+        [Tooltip("Whether to center the selected box or not")]
+        private bool _centerSelectedBox;
+        [SerializeField]
         [Tooltip("To show the list in the reverse order")]
         private bool _reverseOrder;
 
@@ -94,8 +97,9 @@ namespace AirFishLab.ScrollingList
         public bool alignMiddle => _alignMiddle;
         public bool reverseDirection => _reverseDirection;
         public CircularScrollingList.Direction direction => _direction;
-        public bool reverseOrder => _reverseOrder;
         public int centeredContentID => _centeredContentID;
+        public bool centerSelectedBox => _centerSelectedBox;
+        public bool reverseOrder => _reverseOrder;
 
         public float boxDensity => _boxDensity;
         public AnimationCurve boxPositionCurve => _boxPositionCurve;
