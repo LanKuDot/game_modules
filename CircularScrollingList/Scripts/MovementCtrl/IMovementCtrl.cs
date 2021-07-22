@@ -14,6 +14,12 @@
         /// <param name="flag">The additional flag for this movement</param>
         void SetMovement(float baseValue, bool flag);
         /// <summary>
+        /// Set the movement for certain distance
+        /// for aligning the selected box to the center
+        /// </summary>
+        /// <param name="distance">The specified distance</param>
+        void SetSelectionMovement(float distance);
+        /// <summary>
         /// Is this movement ended?
         /// </summary>
         bool IsMovementEnded();

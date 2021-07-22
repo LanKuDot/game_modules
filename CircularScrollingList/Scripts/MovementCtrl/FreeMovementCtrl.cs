@@ -120,6 +120,10 @@ namespace AirFishLab.ScrollingList.MovementCtrl
             }
         }
 
+        public void SetSelectionMovement(float distance)
+        {
+        }
+
         /// <summary>
         /// Is the movement ended?
         /// </summary>
