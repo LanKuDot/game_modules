@@ -100,6 +100,7 @@ namespace AirFishLab.ScrollingList.MovementCtrl
         /// <param name="distance">The specified distance</param>
         public void SetSelectionMovement(float distance)
         {
+            _unitMovementCurve.SetMovement(distance);
         }
 
         /// <summary>
