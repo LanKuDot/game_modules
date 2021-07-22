@@ -144,5 +144,27 @@ namespace AirFishLab.ScrollingList
         {
             return id >= 0 && id < _listBank.GetListLength();
         }
+
+        /// <summary>
+        /// Get the shortest ID difference between two IDs
+        /// </summary>
+        /// <param name="fromID">The starting point</param>
+        /// <param name="toID">The goal</param>
+        /// <returns>The shortest ID difference</returns>
+        public int GetShortestDiff(int fromID, int toID)
+        {
+            var difference = toID - fromID;
+
+            if (_listSetting.listType == CircularScrollingList.ListType.Linear)
+                return difference;
+
+            var numOfContent = _listBank.GetListLength();
+            var halfNumOfContent = numOfContent / 2;
+
+            if (Mathf.Abs(difference) > halfNumOfContent)
+                difference -= (int) Mathf.Sign(difference) * numOfContent;
+
+            return difference;
+        }
     }
 }
