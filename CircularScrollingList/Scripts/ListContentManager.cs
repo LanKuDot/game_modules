@@ -153,6 +153,11 @@ namespace AirFishLab.ScrollingList
         /// <returns>The shortest ID difference</returns>
         public int GetShortestDiff(int fromID, int toID)
         {
+            if (!IsIDValid(fromID))
+                throw new IndexOutOfRangeException(nameof(fromID));
+            if (!IsIDValid(toID))
+                throw new IndexOutOfRangeException(nameof(toID));
+
             var difference = toID - fromID;
 
             if (_listSetting.listType == CircularScrollingList.ListType.Linear)
