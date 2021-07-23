@@ -233,7 +233,8 @@ namespace AirFishLab.ScrollingList
         public void SetSelectionMovement(int idDiff)
         {
             _movementCtrl.SetSelectionMovement(
-                _selectionDistanceFactor * idDiff * unitPos);
+                _selectionDistanceFactor * idDiff * unitPos
+                + _deltaDistanceToCenter);
             _toRunLateUpdate = true;
         }
 
