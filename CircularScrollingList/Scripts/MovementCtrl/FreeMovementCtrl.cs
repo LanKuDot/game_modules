@@ -114,9 +114,9 @@ namespace AirFishLab.ScrollingList.MovementCtrl
                 _isDragging = true;
                 _draggingDistance = value;
 
-                // End the last releasing movement when start dragging
-                if (!_releasingMovementCurve.IsMovementEnded())
-                    _releasingMovementCurve.EndMovement();
+                // End the last movement when start dragging
+                _aligningMovementCurve.EndMovement();
+                _releasingMovementCurve.EndMovement();
             } else if (_getPositionState() != ListPositionCtrl.PositionState.Middle) {
                 _aligningMovementCurve.SetMovement(_getAligningDistance());
             } else {
@@ -124,8 +124,15 @@ namespace AirFishLab.ScrollingList.MovementCtrl
             }
         }
 
+        /// <summary>
+        /// Set the movement for certain distance
+        /// for aligning the selected box to the center
+        /// </summary>
+        /// <param name="distance">The specified distance</param>
         public void SetSelectionMovement(float distance)
         {
+            _aligningMovementCurve.SetMovement(distance);
+            _releasingMovementCurve.EndMovement();
         }
 
         /// <summary>
