@@ -75,6 +75,7 @@ namespace AirFishLab.ScrollingList
 
         private IMovementCtrl _movementCtrl;
         private Vector2 _lastInputLocalPos;
+        private float _lastDraggingTime;
         private float _deltaInputDistance;
         private float _deltaDistanceToCenter;
         private PositionState _positionState = PositionState.Middle;
@@ -262,9 +263,12 @@ namespace AirFishLab.ScrollingList
                     break;
 
                 case TouchPhase.Ended:
-                    _movementCtrl.SetMovement(_deltaInputDistance / Time.deltaTime, false);
+                    var deltaTime = Time.realtimeSinceStartup - _lastDraggingTime;
+                    _movementCtrl.SetMovement(_deltaInputDistance / deltaTime, false);
                     break;
             }
+
+            _lastDraggingTime = Time.realtimeSinceStartup;
         }
 
         /// <summary>
