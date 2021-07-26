@@ -1,12 +1,15 @@
 ﻿using UnityEngine;
 
-public class FPSLimiter : MonoBehaviour
+namespace AirFishLab.ScrollingList.Demo
 {
-    [SerializeField]
-    private int _targetFPS = 60;
-
-    private void Start()
+    public class FPSLimiter : MonoBehaviour
     {
-        Application.targetFrameRate = _targetFPS;
+        [SerializeField]
+        private int _targetFPS = 60;
+
+        private void Start()
+        {
+            Application.targetFrameRate = _targetFPS;
+        }
     }
 }

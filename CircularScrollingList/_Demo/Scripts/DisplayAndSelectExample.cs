@@ -1,32 +1,35 @@
-﻿using AirFishLab.ScrollingList;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class DisplayAndSelectExample : MonoBehaviour
+namespace AirFishLab.ScrollingList.Demo
 {
-    [SerializeField]
-    private CircularScrollingList _list;
-    [SerializeField]
-    private Text _displayText;
-    [SerializeField]
-    private Text _centeredContentText;
-
-    public void DisplayCenteredContent()
+    public class DisplayAndSelectExample : MonoBehaviour
     {
-        var contentID = _list.GetCenteredContentID();
-        var centeredContent = (int) _list.listBank.GetListContent(contentID);
-        _displayText.text = "Centered content: " + centeredContent;
-    }
+        [SerializeField]
+        private CircularScrollingList _list;
+        [SerializeField]
+        private Text _displayText;
+        [SerializeField]
+        private Text _centeredContentText;
 
-    public void GetSelectedContentID(int selectedContentID)
-    {
-        Debug.Log("Selected content ID: " + selectedContentID +
-                  ", Content: " + (int) _list.listBank.GetListContent(selectedContentID));
-    }
+        public void DisplayCenteredContent()
+        {
+            var contentID = _list.GetCenteredContentID();
+            var centeredContent = (int) _list.listBank.GetListContent(contentID);
+            _displayText.text = "Centered content: " + centeredContent;
+        }
 
-    public void OnListCenteredContentChanged(int centeredContentID)
-    {
-        var content = (int) _list.listBank.GetListContent(centeredContentID);
-        _centeredContentText.text = "(Auto updated)\nCentered content: " + content;
+        public void GetSelectedContentID(int selectedContentID)
+        {
+            Debug.Log("Selected content ID: " + selectedContentID +
+                      ", Content: " +
+                      (int) _list.listBank.GetListContent(selectedContentID));
+        }
+
+        public void OnListCenteredContentChanged(int centeredContentID)
+        {
+            var content = (int) _list.listBank.GetListContent(centeredContentID);
+            _centeredContentText.text = "(Auto updated)\nCentered content: " + content;
+        }
     }
 }

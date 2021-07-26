@@ -2,13 +2,16 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class IntListBox : ListBox
+namespace AirFishLab.ScrollingList.Demo
 {
-    [SerializeField]
-    private Text _contentText;
-
-    protected override void UpdateDisplayContent(object content)
+    public class IntListBox : ListBox
     {
-        _contentText.text = ((int) content).ToString();
+        [SerializeField]
+        private Text _contentText;
+
+        protected override void UpdateDisplayContent(object content)
+        {
+            _contentText.text = ((int) content).ToString();
+        }
     }
 }
