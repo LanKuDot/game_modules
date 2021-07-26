@@ -89,7 +89,11 @@ namespace AirFishLab.ScrollingList.MovementCtrl
         {
             _releasingMovementCurve = new VelocityMovementCurve(releasingCurve);
             _aligningMovementCurve =
-                new DistanceMovementCurve(AnimationCurve.EaseInOut(0.0f, 0.0f, 0.25f, 1.0f));
+                new DistanceMovementCurve(
+                    new AnimationCurve(
+                        new Keyframe(0.0f, 0.0f, 0.0f, 8.0f),
+                        new Keyframe(0.25f, 1.0f, 0.0f, 0.0f)
+                    ));
             _toAlign = toAlign;
             _overGoingDistanceThreshold = overGoingDistanceThreshold;
             _getAligningDistance = getAligningDistance;
