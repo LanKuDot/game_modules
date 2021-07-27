@@ -133,7 +133,7 @@ namespace AirFishLab.ScrollingList
 
             var numOfBoxes = _listBoxes.Count;
 
-            unitPos = rectLength / (numOfBoxes - 1);
+            unitPos = rectLength / (numOfBoxes - 1) / _listSetting.boxDensity;
 
             // If there are even number of ListBoxes, narrow the boundary for 1 unitPos.
             var boundPosAdjust =

@@ -580,7 +580,7 @@ MonoBehaviour:
     _centeredContentID: 0
     _centerSelectedBox: 1
     _reverseOrder: 0
-    _boxDensity: 2
+    _boxDensity: 1
     _boxPositionCurve:
       serializedVersion: 2
       m_Curve:
@@ -1157,7 +1157,7 @@ MonoBehaviour:
     _centeredContentID: 0
     _centerSelectedBox: 1
     _reverseOrder: 0
-    _boxDensity: 2
+    _boxDensity: 1
     _boxPositionCurve:
       serializedVersion: 2
       m_Curve:
@@ -1694,7 +1694,7 @@ MonoBehaviour:
     _centeredContentID: 0
     _centerSelectedBox: 1
     _reverseOrder: 0
-    _boxDensity: 2
+    _boxDensity: 1
     _boxPositionCurve:
       serializedVersion: 2
       m_Curve:
@@ -3240,7 +3240,7 @@ MonoBehaviour:
     _centeredContentID: 0
     _centerSelectedBox: 1
     _reverseOrder: 0
-    _boxDensity: 2
+    _boxDensity: 1
     _boxPositionCurve:
       serializedVersion: 2
       m_Curve:

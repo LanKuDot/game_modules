@@ -698,8 +698,9 @@ MonoBehaviour:
     _reverseDirection: 0
     _direction: 0
     _centeredContentID: 0
+    _centerSelectedBox: 0
     _reverseOrder: 1
-    _boxDensity: 2
+    _boxDensity: 1
     _boxPositionCurve:
       serializedVersion: 2
       m_Curve:

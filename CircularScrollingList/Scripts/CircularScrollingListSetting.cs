@@ -43,7 +43,7 @@ namespace AirFishLab.ScrollingList
         [SerializeField]
         [Tooltip("The factor that adjusting the distance between boxes. " +
                  "The larger, the closer.")]
-        private float _boxDensity = 2.0f;
+        private float _boxDensity = 1.0f;
         [SerializeField]
         [Tooltip("The curve specifying the passive position of the box. " +
                  "The x axis is the major position of the box, which is mapped to [0, 1]. " +

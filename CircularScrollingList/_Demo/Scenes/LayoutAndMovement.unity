@@ -1536,8 +1536,9 @@ MonoBehaviour:
     _reverseDirection: 0
     _direction: 0
     _centeredContentID: 0
+    _centerSelectedBox: 0
     _reverseOrder: 0
-    _boxDensity: 2
+    _boxDensity: 1
     _boxPositionCurve:
       serializedVersion: 2
       m_Curve:
@@ -1644,6 +1645,9 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     _onBoxClick:
+      m_PersistentCalls:
+        m_Calls: []
+    _onCenteredContentChanged:
       m_PersistentCalls:
         m_Calls: []
 --- !u!114 &988049582
@@ -1955,8 +1959,9 @@ MonoBehaviour:
     _reverseDirection: 0
     _direction: 0
     _centeredContentID: 0
+    _centerSelectedBox: 0
     _reverseOrder: 0
-    _boxDensity: 2
+    _boxDensity: 1
     _boxPositionCurve:
       serializedVersion: 2
       m_Curve:
@@ -2056,6 +2061,9 @@ MonoBehaviour:
     _onBoxClick:
       m_PersistentCalls:
         m_Calls: []
+    _onCenteredContentChanged:
+      m_PersistentCalls:
+        m_Calls: []
 --- !u!114 &1150057913
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2153,8 +2161,9 @@ MonoBehaviour:
     _reverseDirection: 0
     _direction: 0
     _centeredContentID: 0
+    _centerSelectedBox: 0
     _reverseOrder: 0
-    _boxDensity: 2
+    _boxDensity: 1
     _boxPositionCurve:
       serializedVersion: 2
       m_Curve:
@@ -2279,6 +2288,9 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     _onBoxClick:
+      m_PersistentCalls:
+        m_Calls: []
+    _onCenteredContentChanged:
       m_PersistentCalls:
         m_Calls: []
 --- !u!114 &1188397709
