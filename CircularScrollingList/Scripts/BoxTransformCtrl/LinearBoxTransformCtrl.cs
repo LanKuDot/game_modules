@@ -77,11 +77,13 @@ namespace AirFishLab.ScrollingList.BoxTransformCtrl
             _positionCurve =
                 new RangeMappingCurve(
                     boxPositionCurve,
+                    -1, 1,
                     _changeSideLowerBoundPos,
                     _changeSideUpperBoundPos);
             _scaleCurve =
                 new RangeMappingCurve(
                     boxScaleCurve,
+                    -1, 1,
                     _changeSideLowerBoundPos,
                     _changeSideUpperBoundPos);
 

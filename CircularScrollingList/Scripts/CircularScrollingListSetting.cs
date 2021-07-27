@@ -46,17 +46,18 @@ namespace AirFishLab.ScrollingList
         private float _boxDensity = 1.0f;
         [SerializeField]
         [Tooltip("The curve specifying the passive position of the box. " +
-                 "The x axis is the major position of the box, which is mapped to [0, 1]. " +
+                 "The x axis is the major position of the box, which is mapped to [-1, 1]. " +
                  "The y axis defines the factor of the passive position of the box. " +
-                 "Point (0.5, 0) is the center of the list layout.")]
+                 "Point (0, 0) is the center of the list layout.")]
         private AnimationCurve _boxPositionCurve =
-            AnimationCurve.Constant(0.0f, 1.0f, 0.0f);
+            AnimationCurve.Constant(-1.0f, 1.0f, 0.0f);
         [SerializeField]
         [Tooltip("The curve specifying the box scale. " +
-                 "The x axis is the major position of the box, which is mapped to [0, 1]. " +
+                 "The x axis is the major position of the box, which is mapped to [-1, 1]. " +
                  "The y axis specifies the value of 'localScale' of the box at the " +
                  "corresponding position.")]
-        private AnimationCurve _boxScaleCurve = AnimationCurve.Constant(0.0f, 1.0f, 1.0f);
+        private AnimationCurve _boxScaleCurve =
+            AnimationCurve.Constant(-1.0f, 1.0f, 1.0f);
         [SerializeField]
         [Tooltip("The curve specifying the velocity factor of the box after releasing. " +
                  "The x axis is the the moving duration in seconds, which starts from 0. " +
