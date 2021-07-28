@@ -1,4 +1,5 @@
 ﻿using UnityEditor;
+using UnityEngine;
 
 namespace AirFishLab.ScrollingList.Editor
 {
@@ -6,6 +7,16 @@ namespace AirFishLab.ScrollingList.Editor
     [CanEditMultipleObjects]
     public class CircularScrollingListEditor : UnityEditor.Editor
     {
+        private GUIStyle _boldFoldout;
+
+        private void OnEnable()
+        {
+            _boldFoldout =
+                new GUIStyle(EditorStyles.foldout) {
+                    fontStyle = FontStyle.Bold
+                };
+        }
+
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
@@ -95,12 +106,22 @@ namespace AirFishLab.ScrollingList.Editor
                     : "_boxMovementCurve");
         }
 
+        private bool _toUnfoldEvents;
+
         private void DrawEvents()
         {
-            EditorGUILayout.LabelField("Events", EditorStyles.boldLabel);
+            _toUnfoldEvents =
+                EditorGUILayout.Foldout(
+                    _toUnfoldEvents, "List Events", true, _boldFoldout);
+
+            if (!_toUnfoldEvents)
+                return;
+
+            ++EditorGUI.indentLevel;
             DrawSettingProperty("_onBoxClick");
             DrawSettingProperty("_onCenteredContentChanged");
             DrawSettingProperty("_onMovementEnd");
+            --EditorGUI.indentLevel;
         }
 
         #endregion
