@@ -35,6 +35,10 @@ namespace AirFishLab.ScrollingList
         [SerializeField]
         [Tooltip("To show the list in the reverse order")]
         private bool _reverseOrder;
+        [SerializeField]
+        [Tooltip("Whether to initialize the list on Start or not. " +
+                 "If set to false, manually call Initialize() to initialize the list.")]
+        private bool _initializeOnStart = true;
 
         #endregion
 
@@ -101,6 +105,7 @@ namespace AirFishLab.ScrollingList
         public int centeredContentID => _centeredContentID;
         public bool centerSelectedBox => _centerSelectedBox;
         public bool reverseOrder => _reverseOrder;
+        public bool initializeOnStart => _initializeOnStart;
 
         public float boxDensity => _boxDensity;
         public AnimationCurve boxPositionCurve => _boxPositionCurve;

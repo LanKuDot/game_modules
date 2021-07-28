@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -98,12 +99,25 @@ namespace AirFishLab.ScrollingList
         private void Awake()
         {
             GetComponentReference();
+        }
+
+        private void Start()
+        {
+            if (_setting.initializeOnStart)
+                Initialize();
+        }
+
+        #region Initialization
+
+        /// <summary>
+        /// Initialize the list
+        /// </summary>
+        public void Initialize()
+        {
             InitializeListComponents();
             // Make the list position ctrl initialize its position state
             _listPositionCtrl.LateUpdate();
         }
-
-        #region Initialization
 
         /// <summary>
         /// Get the reference of the used component
