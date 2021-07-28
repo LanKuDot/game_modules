@@ -57,10 +57,27 @@ namespace AirFishLab.ScrollingList
 
         #region Private Members
 
+        /// <summary>
+        /// The box that is closet to the center
+        /// </summary>
         private ListBox _centeredBox;
+        /// <summary>
+        /// The delegate that returns the x or y value of a vector2 value
+        /// </summary>
         private Func<Vector2, float> _getFactor;
+        /// <summary>
+        /// The delegate for handling the input position of the pointer
+        /// </summary>
+        /// It is available in the mode of Drag.
         private Action<PointerEventData, TouchPhase> _inputPositionHandler;
+        /// <summary>
+        /// The delegate for handling the scrolling of the mouse wheel
+        /// </summary>
+        /// It is available in the mode of Mouse Wheel.
         private Action<Vector2> _scrollHandler;
+        /// <summary>
+        /// The delegate for handling the scrolling direction
+        /// </summary>
         private Action<float> _scrollDirectionHandler;
         /// <summary>
         /// Whether to run LateUpdate
@@ -73,14 +90,43 @@ namespace AirFishLab.ScrollingList
 
         #region Movement Variables
 
+        /// <summary>
+        /// The controller for handling the input action and returning the moving distance
+        /// </summary>
         private IMovementCtrl _movementCtrl;
+        /// <summary>
+        /// The local position of the pointer in the last handler call
+        /// </summary>
         private Vector2 _lastInputLocalPos;
+        /// <summary>
+        /// The timestamp of the last valid dragging action
+        /// </summary>
         private float _lastDraggingTime;
+        /// <summary>
+        /// The delta distance of the pointer between last two handler calls
+        /// </summary>
         private float _deltaInputDistance;
+        /// <summary>
+        /// The distance that makes the box which is closest to the center
+        /// move to the center
+        /// </summary>
         private float _deltaDistanceToCenter;
+        /// <summary>
+        /// The position state of the list
+        /// </summary>
+        /// It indicates whether the list reaches the end or not.
         private PositionState _positionState = PositionState.Middle;
+        /// <summary>
+        /// The allowed number of the disabled boxes for the linear list
+        /// </summary>
         private readonly int _maxNumOfDisabledBoxes;
+        /// <summary>
+        /// The factor for reversing the selection distance
+        /// </summary>
         private int _selectionDistanceFactor;
+        /// <summary>
+        /// The factor for reversing the scrolling direction
+        /// </summary>
         private int _scrollFactor;
         /// <summary>
         /// Is the current movement the ending movement?
@@ -92,10 +138,25 @@ namespace AirFishLab.ScrollingList
 
         #region Exposed Movement Variables
 
+        /// <summary>
+        /// The distance of a unit
+        /// </summary>
         public float unitPos { get; private set; }
+        /// <summary>
+        /// The lower bound of the position to move the box to the other end
+        /// </summary>
         public float lowerBoundPos { get; private set; }
+        /// <summary>
+        /// The upper bound of the position to move the box to the other end
+        /// </summary>
         public float upperBoundPos { get; private set; }
+        /// <summary>
+        /// The number of the disabled boxes at the upper side of the list
+        /// </summary>
         public int numOfUpperDisabledBoxes { set; get; }
+        /// <summary>
+        /// The number of the disabled boxes at the lower side of the list
+        /// </summary>
         public int numOfLowerDisabledBoxes { set; get; }
 
         #endregion
