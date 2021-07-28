@@ -100,6 +100,7 @@ namespace AirFishLab.ScrollingList.Editor
             EditorGUILayout.LabelField("Events", EditorStyles.boldLabel);
             DrawSettingProperty("_onBoxClick");
             DrawSettingProperty("_onCenteredContentChanged");
+            DrawSettingProperty("_onMovementEnd");
         }
 
         #endregion

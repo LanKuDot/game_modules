@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace AirFishLab.ScrollingList
 {
@@ -92,6 +93,9 @@ namespace AirFishLab.ScrollingList
         [Tooltip("The callback to be invoked when the centered content is changed. " +
                  "The int parameter is the new content ID.")]
         private ListBoxIntEvent _onCenteredContentChanged;
+        [SerializeField]
+        [Tooltip("The callback to be invoked when the movement is ended")]
+        private UnityEvent _onMovementEnd;
 
         #endregion
 
@@ -115,6 +119,7 @@ namespace AirFishLab.ScrollingList
 
         public ListBoxIntEvent onBoxClick => _onBoxClick;
         public ListBoxIntEvent onCenteredContentChanged => _onCenteredContentChanged;
+        public UnityEvent onMovementEnd => _onMovementEnd;
 
         #endregion
     }

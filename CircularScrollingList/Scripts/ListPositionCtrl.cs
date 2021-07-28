@@ -82,6 +82,11 @@ namespace AirFishLab.ScrollingList
         private readonly int _maxNumOfDisabledBoxes;
         private int _selectionDistanceFactor;
         private int _scrollFactor;
+        /// <summary>
+        /// Is the current movement the ending movement?
+        /// </summary>
+        /// Mainly for indicating the movement status in the dragging mode
+        private bool _isEndingMovement;
 
         #endregion
 
@@ -225,6 +230,7 @@ namespace AirFishLab.ScrollingList
         {
             _scrollHandler(eventData.scrollDelta);
             _toRunLateUpdate = true;
+            _isEndingMovement = true;
         }
 
         /// <summary>
@@ -237,6 +243,7 @@ namespace AirFishLab.ScrollingList
                 _selectionDistanceFactor * idDiff * unitPos
                 + _deltaDistanceToCenter);
             _toRunLateUpdate = true;
+            _isEndingMovement = true;
         }
 
         #endregion
@@ -265,6 +272,7 @@ namespace AirFishLab.ScrollingList
                 case TouchPhase.Ended:
                     var deltaTime = Time.realtimeSinceStartup - _lastDraggingTime;
                     _movementCtrl.SetMovement(_deltaInputDistance / deltaTime, false);
+                    _isEndingMovement = true;
                     break;
             }
 
@@ -358,9 +366,17 @@ namespace AirFishLab.ScrollingList
             if (_listSetting.listType == CircularScrollingList.ListType.Linear)
                 UpdatePositionState();
 
+            if (!_movementCtrl.IsMovementEnded())
+                return;
+
             // Not to update the state of box after the last frame of movement
-            if (_movementCtrl.IsMovementEnded())
-                _toRunLateUpdate = false;
+            _toRunLateUpdate = false;
+
+            if (!_isEndingMovement)
+                return;
+
+            _isEndingMovement = false;
+            _listSetting.onMovementEnd?.Invoke();
         }
 
         #endregion
