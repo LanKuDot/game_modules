@@ -7,16 +7,6 @@ namespace AirFishLab.ScrollingList.Editor
     [CanEditMultipleObjects]
     public class CircularScrollingListEditor : UnityEditor.Editor
     {
-        private GUIStyle _boldFoldout;
-
-        private void OnEnable()
-        {
-            _boldFoldout =
-                new GUIStyle(EditorStyles.foldout) {
-                    fontStyle = FontStyle.Bold
-                };
-        }
-
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
@@ -110,9 +100,14 @@ namespace AirFishLab.ScrollingList.Editor
 
         private void DrawEvents()
         {
+            var boldFoldout =
+                new GUIStyle(EditorStyles.foldout) {
+                    fontStyle = FontStyle.Bold
+                };
+
             _toUnfoldEvents =
                 EditorGUILayout.Foldout(
-                    _toUnfoldEvents, "List Events", true, _boldFoldout);
+                    _toUnfoldEvents, "List Events", true, boldFoldout);
 
             if (!_toUnfoldEvents)
                 return;
