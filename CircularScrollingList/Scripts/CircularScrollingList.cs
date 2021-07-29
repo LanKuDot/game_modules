@@ -189,17 +189,31 @@ namespace AirFishLab.ScrollingList
 
         /// <summary>
         /// Make the boxes recalculate their content ID and
-        /// reacquire the contents from bank
+        /// reacquire the contents from the bank
         /// </summary>
-        public void Refresh()
+        /// If the specified <c cref="centeredContentID">centeredContentID</c> is negative,
+        /// it will take the current centered content ID. <para />
+        /// If the current centered content ID is larger than the number of contents,
+        /// it will be the ID of the last content.
+        /// <param name="centeredContentID">
+        /// The centered content ID after the list is refreshed
+        /// </param>
+        public void Refresh(int centeredContentID = -1)
         {
+            var centeredBox = _listPositionCtrl.GetCenteredBox();
+            var numOfContents = _listBank.GetListLength();
+
+            if (centeredContentID < 0)
+                // Make sure that the content ID will not exceed the number of content
+                centeredContentID =
+                    Mathf.Min(centeredBox.contentID, numOfContents - 1);
+            else if (centeredContentID >= numOfContents)
+                throw new IndexOutOfRangeException(
+                    $"{nameof(centeredContentID)} is larger than the number of contents");
+
             _listPositionCtrl.numOfLowerDisabledBoxes = 0;
             _listPositionCtrl.numOfUpperDisabledBoxes = 0;
 
-            var centeredBox = _listPositionCtrl.GetCenteredBox();
-            // Make sure that the content ID will not exceed the number of content
-            var centeredContentID =
-                Mathf.Min(centeredBox.contentID, _listBank.GetListLength() - 1);
             foreach (var listBox in _listBoxes)
                 listBox.Refresh(centeredBox.listBoxID, centeredContentID);
         }
