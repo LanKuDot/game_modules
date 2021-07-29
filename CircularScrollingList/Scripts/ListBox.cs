@@ -156,6 +156,11 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private void CheckToBeDisabled()
         {
+            if (contentID == int.MinValue) {
+                gameObject.SetActive(false);
+                return;
+            }
+
             if (_listSetting.listType != CircularScrollingList.ListType.Linear)
                 return;
 

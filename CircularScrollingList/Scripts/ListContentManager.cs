@@ -70,9 +70,14 @@ namespace AirFishLab.ScrollingList
         /// because the value will be used for considering that the box
         /// should be inactivated or not.
         /// <param name="listBoxID">The ID of requested list box</param>
-        /// <returns>The content ID</returns>
+        /// <returns>The content ID<para />
+        /// If there is no content in the bank, return int.MinValue
+        /// </returns>
         public int GetInitialContentID(int listBoxID)
         {
+            if (_listBank.GetListLength() == 0)
+                return int.MinValue;
+
             var contentID = _listSetting.centeredContentID;
 
             // Adjust the contentID according to its initial order
@@ -95,8 +100,14 @@ namespace AirFishLab.ScrollingList
         /// <param name="centerContentID">
         /// The content ID of the centered box
         /// </param>
+        /// <returns>The content ID<para />
+        /// If there is no content in the bank, return int.MinValue
+        /// </returns>
         public int GetContentID(int boxIDOffset, int centerContentID)
         {
+            if (_listBank.GetListLength() == 0)
+                return int.MinValue;
+
             var contentID =
                 _listSetting.reverseOrder
                     ? centerContentID - boxIDOffset
