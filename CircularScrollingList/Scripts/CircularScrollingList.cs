@@ -93,6 +93,11 @@ namespace AirFishLab.ScrollingList
         /// The component that controlling the content for each box
         /// </summary>
         private ListContentManager _listContentManager;
+        /// <summary>
+        /// Does the list bank has no content?
+        /// </summary>
+        /// It is used for blocking any input if the list has nothing to display.
+        private bool _hasNoContent;
 
         #endregion
 
@@ -149,6 +154,8 @@ namespace AirFishLab.ScrollingList
                 _listBoxes[i].Initialize(
                     _setting, _listPositionCtrl, _listContentManager,
                     _listBoxes, i);
+
+            _hasNoContent = _listBank.GetListLength() == 0;
         }
 
         #endregion
@@ -176,6 +183,9 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         public void MoveOneUnitUp()
         {
+            if (_hasNoContent)
+                return;
+
             _listPositionCtrl.SetUnitMove(1);
         }
 
@@ -184,6 +194,9 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         public void MoveOneUnitDown()
         {
+            if (_hasNoContent)
+                return;
+
             _listPositionCtrl.SetUnitMove(-1);
         }
 
@@ -216,6 +229,8 @@ namespace AirFishLab.ScrollingList
 
             foreach (var listBox in _listBoxes)
                 listBox.Refresh(centeredBox.listBoxID, centeredContentID);
+
+            _hasNoContent = numOfContents == 0;
         }
 
         /// <summary>
@@ -224,6 +239,9 @@ namespace AirFishLab.ScrollingList
         /// <param name="contentID">The target content ID</param>
         public void SelectContentID(int contentID)
         {
+            if (_hasNoContent)
+                return;
+
             var centeredBox = _listPositionCtrl.GetCenteredBox();
             var centeredContentID = centeredBox.contentID;
             _listPositionCtrl.SetSelectionMovement(
@@ -236,21 +254,33 @@ namespace AirFishLab.ScrollingList
 
         public void OnBeginDrag(PointerEventData eventData)
         {
+            if (_hasNoContent)
+                return;
+
             _listPositionCtrl.InputPositionHandler(eventData, TouchPhase.Began);
         }
 
         public void OnDrag(PointerEventData eventData)
         {
+            if (_hasNoContent)
+                return;
+
             _listPositionCtrl.InputPositionHandler(eventData, TouchPhase.Moved);
         }
 
         public void OnEndDrag(PointerEventData eventData)
         {
+            if (_hasNoContent)
+                return;
+
             _listPositionCtrl.InputPositionHandler(eventData, TouchPhase.Ended);
         }
 
         public void OnScroll(PointerEventData eventData)
         {
+            if (_hasNoContent)
+                return;
+
             _listPositionCtrl.ScrollHandler(eventData);
         }
 
