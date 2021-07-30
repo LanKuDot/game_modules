@@ -283,9 +283,12 @@ namespace AirFishLab.ScrollingList
             contentID =
                 _contentManager.GetContentID(tempBoxID - centerBoxID, centerContentID);
 
-            CheckToBeDisabled();
-            if (gameObject.activeSelf)
+            if (_contentManager.IsIDValid(contentID)) {
+                // Activate the previous inactivated box
+                gameObject.SetActive(true);
                 UpdateDisplayContentPrivate();
+            } else
+                CheckToBeDisabled();
         }
 
         #endregion
