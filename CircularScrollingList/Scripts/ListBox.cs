@@ -135,6 +135,22 @@ namespace AirFishLab.ScrollingList
                 UpdateToNextContent();
         }
 
+        /// <summary>
+        /// Pop to the to the front of the image sorting
+        /// </summary>
+        public void PopToFront()
+        {
+            transform.SetAsLastSibling();
+        }
+
+        /// <summary>
+        /// Push the box to the back of the image sorting
+        /// </summary>
+        public void PushToBack()
+        {
+            transform.SetAsFirstSibling();
+        }
+
         #endregion
 
         #region Content Handling
@@ -213,6 +229,7 @@ namespace AirFishLab.ScrollingList
             }
 
             UpdateDisplayContentPrivate();
+            PushToBack();
         }
 
         /// <summary>
@@ -241,6 +258,7 @@ namespace AirFishLab.ScrollingList
             }
 
             UpdateDisplayContentPrivate();
+            PushToBack();
         }
 
         /// <summary>

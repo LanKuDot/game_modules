@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using AirFishLab.ScrollingList.MovementCtrl;
@@ -273,6 +274,19 @@ namespace AirFishLab.ScrollingList
         #region Public Functions
 
         /// <summary>
+        /// Sort the image order according to the position of the boxes
+        /// </summary>
+        public void InitialImageSorting()
+        {
+            var index = _listBoxes.FindIndex(box => box == _centeredBox);
+
+            for (var i = index - 1; i >= 0; --i)
+                _listBoxes[i].PushToBack();
+            for (var i = index + 1; i < _listBoxes.Count; ++i)
+                _listBoxes[i].PushToBack();
+        }
+
+        /// <summary>
         /// Handle the input position event
         /// </summary>
         /// <param name="eventData">The data of the event</param>
@@ -470,8 +484,10 @@ namespace AirFishLab.ScrollingList
 
             _deltaDistanceToCenter = minDeltaDistance;
 
-            if (_centeredBox != candidateBox)
+            if (_centeredBox != candidateBox) {
                 _listSetting.onCenteredContentChanged?.Invoke(candidateBox.contentID);
+                candidateBox.PopToFront();
+            }
 
             _centeredBox = candidateBox;
         }
