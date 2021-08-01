@@ -2,6 +2,24 @@
 
 <img src="https://i.imgur.com/MdOcobs.gif" width=350px />
 
+## Outline
+
+* [Features](#features)
+* [Properties](#properties)
+  * [List Mode](#list-mode)
+  * [List Appearance](#list-appearance)
+  * [List Events](#list-events)
+* [How to Use](#how-to-use)
+  * [Set up the List](#set-up-the-list)
+  * [Set the Control Mode](#set-the-control-mode)
+  * [Appearance Curves](#appearance-curves)
+    * [Curve Presets](#curve-presets)
+* [`ListBank` and `ListBox`](#listbank-and-listbox)
+  * [Custom `ListBank`](#custom-listbank)
+  * [Custom `ListBox`](#custom-listbox)
+  * [Use Them in the List](#use-them-in-the-list)
+  * [Avoid Boxing/Unboxing Problem](#avoid-boxingunboxing-problem)
+
 ## Features
 
 * Use finite list boxes to display infinite list items
@@ -17,29 +35,53 @@
 
 ## Properties
 
-<img src="./ReadmeData~/circular_scrolling_list_panel.png" width=400px />
+<img src="./ReadmeData~/circular_scrolling_list_panel_general.png" width=400px />
 
 |Property|Description|
 |:--------|:--------|
 |**List Bank**|The game object that stores the contents for the list to display|
 |**List Boxes**|The game objects that used for displaying the content|
-|**Setting**|The setting of the list|
-|[List Mode]||
-|-- **List Type**|The type of the list. Could be **Circular** or **Linear**|
-|-- **Control Mode**|The controlling mode. Could be **Drag**, **Function**, or **Mouse Wheel**<br>See [Set the Control Mode](#set-the-control-mode) for more information|
-|---- **Align Middle**|Whether to align a box in the middle after sliding or not.<br>Available if the control mode is **Drag**.|
-|---- **Reverse Direction**|Whether to reverse the scrolling direction or not.<br>Available if the control mode is **Mouse Wheel**.|
-|-- **Direction**|The major scrolling direction. Could be **Vertical** or **Horizontal**|
-|-- **Centered**<br>**Content ID**|The initial content ID to be displayed in the centered box|
-|-- **Reverse Order**|Whether to reverse the content displaying order or not|
-|[List Appearance]||
-|-- **Box Density**|The factor for adjusting the distance between boxes.<br>The larger, the closer|
-|-- **Box Position Curve**|The curve specifying the passive position of the box<br>See [Appearance Curves](#appearance-curves) for more information|
-|-- **Box Scale Curve**|The curve specifying the box scale|
-|-- **Box Velocity Curve**|The curve specifying the velocity factor of the box after releasing.<br>Available if the control mode is **Drag**.|
-|-- **Box Movement Curve**|The curve specifying the movement factor of the box.<br>Available if the control mode is **Function** or **Mouse Wheel**.|
-|[List Event]||
-|-- **On Box Click**|The callback to be invoked when a box is clicked.<br>The int parameter is the content ID of the clicked box.|
+|**Setting**|The setting of the list. See below.|
+
+### List Mode
+
+<img src="./ReadmeData~/circular_scrolling_list_panel_list_mode.png" width=400px />
+
+|Property|Description|
+|:-------|:----------|
+|**List Type**|The type of the list. Could be **Circular** or **Linear**|
+|**Control Mode**|The controlling mode. Could be **Drag**, **Function**, or **Mouse Wheel**<br>See [Set the Control Mode](#set-the-control-mode) for more information|
+|-- **Align Middle**|Whether to align a box in the middle after sliding or not.<br>Available if the control mode is **Drag**.|
+|-- **Reverse Direction**|Whether to reverse the scrolling direction or not.<br>Available if the control mode is **Mouse Wheel**.|
+|**Direction**|The major scrolling direction. Could be **Vertical** or **Horizontal**|
+|**Centered Content ID**|The initial content ID to be displayed in the centered box|
+|**Center Selected Box**|Whether to move the selected box to the center or not<br>The list box must be a button to make this function take effect.|
+|**Reverse Order**|Whether to reverse the content displaying order or not|
+|**Initialize On Start**|Whether to initialize the list in the `Start()` or not<br>If it is false, manually initialize the list by invoking `CircularScrollingList.Initialize()`|
+
+### List Appearance
+
+<img src="./ReadmeData~/circular_scrolling_list_panel_list_appearance.png" width=400px />
+
+|Property|Description|
+|:-------|:----------|
+|**Box Density**|The factor for adjusting the distance between boxes.<br>The larger, the closer|
+|**Box Position Curve**|The curve specifying the passive position of the box|
+|**Box Scale Curve**|The curve specifying the box scale|
+|**Box Velocity Curve**|The curve specifying the velocity factor of the box after releasing.<br>Available if the control mode is **Drag**.|
+|**Box Movement Curve**|The curve specifying the movement factor of the box.<br>Available if the control mode is **Function** or **Mouse Wheel**.|
+
+For the detailed information of the curves, see [Appearance Curves](#appearance-curves).
+
+### List Events
+
+<img src="./ReadmeData~/circular_scrolling_list_panel_list_events.png" width=400px />
+
+|Property|Description|
+|:-------|:----------|
+|**On Box Click**|The callback to be invoked when a box is clicked.<br>The int parameter is the content ID of the clicked box.|
+|**On Centered<br>Content Changed**|The callback to be invoked when the centered content is changed.<br>The int parameter is the content ID of the centered box.|
+|**On Movement End**|The callback to be invoked when the list movement is ended|
 
 ## How to Use
 
@@ -49,7 +91,7 @@
     <img src="./ReadmeData~/step_a_1.PNG" width=400px />
 2. Create an empty gameobject as the child of the canvas plane, rename it to "CircularScrollingList" (or another name you like), and attach the script `ListPositionCtrl.cs` to it. \
     <img src="./ReadmeData~/step_a_2.PNG" width=650px />
-3. Create a Button gameobject as the child of the "CircularList", rename it to "ListBox", change the sprite and the font size if needed. \
+3. Create a Button gameobject as the child of the "CircularScrollingList", rename it to "ListBox", change the sprite and the font size if needed. \
     <img src="./ReadmeData~/step_a_3.PNG" width=650px />
 4. Create a new script `IntListBox.cs` and add the following code. For more information, see [ListBank and ListBox](#listbank-and-listbox) section.
 
@@ -78,7 +120,8 @@
 
 5. Attach the script `IntListBox.cs` to it, assign the gameobject "Text" of the Button to the "Content Text" of the `ListBox.cs`, and then create a prefab of it .\
     <img src="./ReadmeData~/step_a_5.PNG" width=650px/>
-6. Duplicate the gameobject `ListBox` or create gameobjects from the prefab as many times as you want (4 times here, for exmaple)
+6. Duplicate the gameobject `ListBox` or create gameobjects from the prefab as many times as you want (4 times here, for exmaple) \
+    <img src="./ReadmeData~/step_a_6.PNG" width=260px/>
 7. Click the menu of the `CircularScrollingList` and select "Assign References of Bank and Boxes" to automatically add the reference of boxes to it (The list boxes must be the children of `CircularScrollingList`), or maually assign them to the property "List Boxes". \
     <img src="./ReadmeData~/step_a_7-1.PNG" width=400px />
     <img src="./ReadmeData~/step_a_7-2.PNG" width=650px />
@@ -114,7 +157,8 @@
 9. Attach the script `IntListBank.cs` to the gameobject "CircularScrollingList" (or another gameobejct you like)
 10. Again click the menu of the `CircularScrollingList` and select "Assign References of Bank and Boxes" to automatically add the reference of `IntListBank` to it (The script must be in the same gameobject of the `CircularScrollingList`), or manually assign it to the property "List Bank". \
     <img src="./ReadmeData~/step_a_10.PNG" width=400px />
-11. Adjust the height or width of the rect transform of the gameobject "CircularScrollingList". When running, the list boxes will be evenly distributed in the range of height (for **Vertically** scrolling list) or width (fot **Horizontally** scrolling list). \
+11. Adjust the height or width of the rect transform of the gameobject "CircularScrollingList". When the game is running, the list boxes will be evenly distributed in the range of height (for **Vertically** scrolling list) or width (for **Horizontally** scrolling list). \
+    The distance between the boxes can be adjusted by the property "Box Density". \
     <img src="./ReadmeData~/step_a_11.PNG" width=800px />
 12. Click "Play" to see the result
 
@@ -132,13 +176,14 @@ There are 3 control mode for the list:
 ### Appearance Curves
 
 * **Box Position Curve**: The curve specifying the passive position of the box
-  * X axis: The major position of the box, which is mapped to [0, 1] (from the smallest value to the largest value).
+  * X axis: The major position of the box, which is mapped to [-1, 1] (from the smallest value to the largest value).
   * Y axis: The factor of the passive position. One unit equals to an half of moving range.
 
   For example, in the vertical mode, the major position is the y position and the passive position is the x position: \
-  <img src="https://i.imgur.com/JqPRBTy.png" width=700px /> \
+  <img src="./ReadmeData~/list_position_vertical_curve_explain.png" width=700px /> \
   It is intuitive in the horizontal mode: \
-  <img src="https://i.imgur.com/RxOLC3S.png" width=700px />
+  <img src="./ReadmeData~/list_position_horizontal_curve_explain.png" width=700px /> \
+  Note that "1" in the curve equals to (number of boxes / 2) * unitPos, where unitPos equals to (width/length of rect / (number of boxes - 1)).
 * **Box Scale Curve**: The curve specifying the box scale
   * X axis: Same as the box position curve
   * Y axis: The scale value of the box at that major position
@@ -339,3 +384,15 @@ public class MyApplication: MonoBehaviour
 
 It will be like: \
 <img src="https://i.imgur.com/zgxpO3M.gif" width=300px />
+
+### On Centered Content Changed
+
+[TBD]
+
+## Select the Content from Script
+
+[TBD]
+
+## Refresh the List
+
+[TBD]
