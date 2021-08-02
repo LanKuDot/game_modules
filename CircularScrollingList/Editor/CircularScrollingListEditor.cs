@@ -96,8 +96,6 @@ namespace AirFishLab.ScrollingList.Editor
                     : "_boxMovementCurve");
         }
 
-        private bool _toUnfoldEvents;
-
         private void DrawEvents()
         {
             var boldFoldout =
@@ -105,11 +103,12 @@ namespace AirFishLab.ScrollingList.Editor
                     fontStyle = FontStyle.Bold
                 };
 
-            _toUnfoldEvents =
+            var onBoxClick = GetSettingProperty("_onBoxClick");
+            onBoxClick.isExpanded =
                 EditorGUILayout.Foldout(
-                    _toUnfoldEvents, "List Events", true, boldFoldout);
+                    onBoxClick.isExpanded, "List Events", true, boldFoldout);
 
-            if (!_toUnfoldEvents)
+            if (!onBoxClick.isExpanded)
                 return;
 
             ++EditorGUI.indentLevel;
