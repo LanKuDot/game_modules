@@ -19,6 +19,12 @@
   * [Custom `ListBox`](#custom-listbox)
   * [Use Them in the List](#use-them-in-the-list)
   * [Avoid Boxing/Unboxing Problem](#avoid-boxingunboxing-problem)
+* [Get the ID of the Selected Content](#get-the-id-of-the-selected-content)
+  * [`OnBoxClick` Event](#onboxclick-event)
+  * [`OnCenteredContentChanged` Event](#oncenteredcontentchanged-event)
+  * [Manually Get the Centered Content ID](#manually-get-the-centered-content-id)
+* [Select the Content from Script](#select-the-content-from-script)
+* [Refresh the List](#refresh-the-list)
 
 ## Features
 
@@ -26,9 +32,13 @@
 * 2 list types: Circular or Linear mode
 * 3 Control modes: Drag, Function, or Mouse wheel
 * Support both vertical and horizontal scrolling
-* Custom layout and movement
-* Custom displaying contents
 * Support all three render modes of the canvas plane
+* Custom layout and movement
+* Custom displaying content
+* Select the item from the script
+* Support dynamic list items
+* Image sorting - The centered list item is in the front of others
+* Callback events
 * Support Unity 5+ (Tested in Unity 5.6.7f1)
 
 [Demo video](https://youtu.be/k63eqwfj-1c)
@@ -335,59 +345,92 @@ public class IntListBox : ListBox
 
 ## Get the ID of the Selected Content
 
-There are two ways to get ID of the selected content.
+There are three ways to get ID of the selected content.
 
-1. Create callback function
-2. Get the centered content ID
+1. `OnBoxClicked` event
+2. `OnCenteredContentChanged` event
+3. Manually get the centered content ID
 
-### Create Callback Function
+### `OnBoxClick` Event
 
-When a box is clicked, the `ListPositionCtrl` will launch the event `OnBoxClick` (actually launch from the `Button.onClick` event). The callback function (or the listener) for the event must have 1 parameter for receiving the ID of the selected content.
+When a box is clicked, the `CircularScrollingList` will launch the event `OnBoxClick` (actually launch from the `Button.onClick` event). The callback function (or the listener) for the event must have 1 parameter for receiving the ID of the selected content.
 
-For example, add a function `GetSelectedContentID` as the callback function to the class `MyListBank`.
+Here is an example of the callback function:
 
 ```csharp
-public void GetSelectedContentID(int contentID)
+public class DisplayAndSelectExample : MonoBehaviour
 {
-    Debug.Log("Selected content ID: " + contentID.ToString() +
-        ", Content: " + GetListContent(contentID));
+    [SerializeField]
+    private CircularScrollingList _list;
+
+    public void GetSelectedContentID(int selectedContentID)
+    {
+        var content = (int) _list.listBank.GetListContent(selectedContentID);
+        Debug.Log("Selected content ID: " + selectedContentID +
+                ", Content: " + content);
+    }
 }
 ```
 
-Then, add it to the "On Box Click (Int 32)" of the script `ListPositionCtrl.cs` in the inspector. (Note that select the function in the "dynamic int" section)\
-![Imgur](https://i.imgur.com/EmzRYr2.png) \
-![Imgur](https://i.imgur.com/4UPloXz.png)
+Then, assign it to the property "On Box Click (Int 32)". (Note that select the function in the "dynamic int" section) \
+<img src="./ReadmeData~/on_box_clicked_assignment.PNG" width=500px>
 
 It will be like: \
 <img src="https://i.imgur.com/mNhwjRQ.gif" width=400px />
 
-### Get the Centered Content ID
+### `OnCenteredContentChanged` Event
 
-The other way is to invoke the function `ListPositionCtrl.GetCenteredContentID()` which will find the list box closest to the center and return the content ID of it.
+The `OnCenteredContentChanged` event will be invoked when the centered content is changed. The callbacks for this event are similar to the `OnBoxClicked` event.
+
+Here is an example of the callback function:
+
+```csharp
+public class DisplayAndSelectExample : MonoBehaviour
+{
+    [SerializeField]
+    private CircularScrollingList _list;
+    [SerializeField]
+    private Text _centeredContentText;
+
+    public void OnListCenteredContentChanged(int centeredContentID)
+    {
+        var content = (int) _list.listBank.GetListContent(centeredContentID);
+        _centeredContentText.text = "(Auto updated)\nCentered content: " + content;
+    }
+}
+```
+
+Assign it to the property "On Centered Content Changed (Int 32)" \
+<img src="./ReadmeData~/on_centered_content_changed_assignment.PNG" width=500px>
+
+It will be like: \
+<img src="./ReadmeData~/on_centered_content_changed_demo.gif" width=350px>
+
+### Manually Get the Centered Content ID
+
+The other way is to invoke the function `CircularScrollingList.GetCenteredContentID()` to manually get the centered content ID.
 
 For example, create a function which will update the content of the centered box to the Text, and use a Button to invoke it.
 
 ```csharp
-public class MyApplication: MonoBehaviour
+public class DisplayAndSelectExample : MonoBehaviour
 {
-    public ListPositionCtrl list;
-    public Text displayText;
+    [SerializeField]
+    private CircularScrollingList _list;
+    [SerializeField]
+    private Text _displayText;
 
     public void DisplayCenteredContent()
     {
-        int contentID = list.GetCenteredContentID();
-        string centeredContent = list.listBank.GetListContent(contentID);
-        displayText.text = "Centered content: " + centeredContent;
+        var contentID = _list.GetCenteredContentID();
+        var centeredContent = (int) _list.listBank.GetListContent(contentID);
+        _displayText.text = "Centered content: " + centeredContent;
     }
 }
 ```
 
 It will be like: \
 <img src="https://i.imgur.com/zgxpO3M.gif" width=300px />
-
-### On Centered Content Changed
-
-[TBD]
 
 ## Select the Content from Script
 
