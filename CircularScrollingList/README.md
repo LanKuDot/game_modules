@@ -434,8 +434,88 @@ It will be like: \
 
 ## Select the Content from Script
 
-[TBD]
+The list content could be selected from the script by invoking:
+
+```csharp
+CircularScrollingList.SelectContentID(int contentID)
+```
+
+Whether the "Centered Selected Box" is on or off, the selected content will always be centered. \
+If the specified `contentID` is not valid, it will raise `IndexOutOfRangeException`. It the list has no content to display, this function has no effect, no matter what the value of `contentID` is.
+
+Here is an example for iteration through the list contents by selecting each content:
+
+```csharp
+public class ListIteration : MonoBehaviour
+{
+    [SerializeField]
+    private CircularScrollingList _list;
+    [SerializeField]
+    private float _stepInterval = 0.1f;
+
+    private int _currentID;
+
+    private void Start()
+    {
+        StartCoroutine(IterationLoop());
+    }
+
+    private IEnumerator IterationLoop()
+    {
+        while (true) {
+            _list.SelectContentID(_currentID);
+            _currentID =
+                (int) Mathf.Repeat(_currentID + 1, _list.listBank.GetListLength());
+            yield return new WaitForSeconds(_stepInterval);
+        }
+    }
+}
+```
 
 ## Refresh the List
 
-[TBD]
+When any content in the list bank is changed, make the list refresh its displaying contents by invoking:
+
+```csharp
+CircularScrollingList.Refresh(int centeredContentID = -1)
+```
+
+The boxes in the list will recalculate their content ID and reacquire the content from the list bank. \
+The `centeredContentID` specifies the ID of the centered content after the list is refreshed. If it's value is invalid, the function will raise `IndexOutOfRangeException`. \
+If the `centeredContentID` is negative, whose defalut value is -1, the list will use the current centered content ID as the content ID of the centered box (Note that it uses ID, not content). If the current centered content ID is larger than the number of contents, it will be the ID of the last item of them. If there is no content to be displayed before calling `Refresh()`, the ID of the centered content will be 0.
+
+Here is an example for extracting new contents and refresh the list:
+
+```csharp
+public class VariableStringListBank : BaseListBank
+{
+    [SerializeField]
+    private InputField _contentInputField;
+    [SerializeField]
+    private string[] _contents = {"a", "b", "c", "d", "e"};
+    [SerializeField]
+    private CircularScrollingList _list;
+
+    /// <summary>
+    /// Extract the contents from the input field and refresh the list
+    /// </summary>
+    /// This function is assigned to a button.
+    public void ChangeContents()
+    {
+        _contents =
+            _contentInputField.text.Split(
+                new[] {',', ' '}, StringSplitOptions.RemoveEmptyEntries);
+        _list.Refresh();
+    }
+
+    public override object GetListContent(int index)
+    {
+        return _contents[index];
+    }
+
+    public override int GetListLength()
+    {
+        return _contents.Length;
+    }
+}
+```
