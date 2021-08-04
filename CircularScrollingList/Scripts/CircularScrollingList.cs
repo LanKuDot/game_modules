@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -244,6 +245,10 @@ namespace AirFishLab.ScrollingList
         {
             if (_hasNoContent)
                 return;
+
+            if (!_listContentManager.IsIDValid(contentID))
+                throw new IndexOutOfRangeException(
+                    $"{nameof(contentID)} is larger than the number of contents");
 
             var centeredBox = _listPositionCtrl.GetCenteredBox();
             var centeredContentID = centeredBox.contentID;
