@@ -18,7 +18,7 @@ namespace AirFishLab.ScrollingList.Demo
         private readonly DataWrapper _dataWrapper = new DataWrapper();
 
         /// <summary>
-        /// Change the content to a new set of content
+        /// Extract the contents from the input field and refresh the list
         /// </summary>
         public void ChangeContents()
         {
