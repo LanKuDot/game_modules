@@ -39,7 +39,7 @@
 * Support dynamic list contents
 * Image sorting - The centered list item is in the front of the others
 * Callback events
-* Support Unity 5+ (Tested in Unity 5.6.7f1)
+* Support Unity 2018.4+ (Tested in Unity 2018.4.15f1. The demo scenes in the project are made in Unity 2019.4.16f1)
 
 [Demo video](https://youtu.be/k63eqwfj-1c)
 

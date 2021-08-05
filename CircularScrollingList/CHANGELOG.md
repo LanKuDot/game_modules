@@ -25,6 +25,7 @@
 - The layout of the list is decided by the width/height of the rect transform.
 - Improve the calculation of the dragging velocity
 - Code refactoring
+- The supported Unity version is 2018.4+ (C# 6.0+)
 
 ### [CircularList_v4] - 2020.09.01
 
