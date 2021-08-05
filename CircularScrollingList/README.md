@@ -28,16 +28,16 @@
 
 ## Features
 
-* Use finite list boxes to display infinite list items
+* Use finite list boxes to display infinite contents
 * 2 list types: Circular or Linear mode
 * 3 Control modes: Drag, Function, or Mouse wheel
 * Support both vertical and horizontal scrolling
 * Support all three render modes of the canvas plane
 * Custom layout and movement
 * Custom displaying content
-* Select the item from the script
-* Support dynamic list items
-* Image sorting - The centered list item is in the front of others
+* Select the content from the script
+* Support dynamic list contents
+* Image sorting - The centered list item is in the front of the others
 * Callback events
 * Support Unity 5+ (Tested in Unity 5.6.7f1)
 
@@ -67,7 +67,7 @@
 |**Centered Content ID**|The initial content ID to be displayed in the centered box|
 |**Center Selected Box**|Whether to move the selected box to the center or not<br>The list box must be a button to make this function take effect.|
 |**Reverse Order**|Whether to reverse the content displaying order or not|
-|**Initialize On Start**|Whether to initialize the list in the `Start()` or not<br>If it is false, manually initialize the list by invoking `CircularScrollingList.Initialize()`|
+|**Initialize On Start**|Whether to initialize the list in its `Start()` or not<br>If it is false, manually initialize the list by invoking `CircularScrollingList.Initialize()`|
 
 ### List Appearance
 
@@ -187,7 +187,7 @@ There are 3 control mode for the list:
 
 * **Box Position Curve**: The curve specifying the passive position of the box
   * X axis: The major position of the box, which is mapped to [-1, 1] (from the smallest value to the largest value).
-  * Y axis: The factor of the passive position. One unit equals to an half of moving range.
+  * Y axis: The factor of the passive position.
 
   For example, in the vertical mode, the major position is the y position and the passive position is the x position: \
   <img src="./ReadmeData~/list_position_vertical_curve_explain.png" width=700px /> \
@@ -300,6 +300,8 @@ According to [this C# programming guide](https://docs.microsoft.com/en-us/dotnet
 The modified version of `IntListBank`:
 
 ```csharp
+using AirFishLab.ScrollingList;
+
 public class IntListBank : BaseListBank
 {
     private readonly int[] _contents = {
@@ -330,6 +332,8 @@ public class DataWrapper
 The modified version of `IntListBox`:
 
 ```csharp
+using AirFishLab.ScrollingList;
+
 public class IntListBox : ListBox
 {
     [SerializeField]
@@ -358,6 +362,8 @@ When a box is clicked, the `CircularScrollingList` will launch the event `OnBoxC
 Here is an example of the callback function:
 
 ```csharp
+using AirFishLab.ScrollingList;
+
 public class DisplayAndSelectExample : MonoBehaviour
 {
     [SerializeField]
@@ -385,6 +391,8 @@ The `OnCenteredContentChanged` event will be invoked when the centered content i
 Here is an example of the callback function:
 
 ```csharp
+using AirFishLab.ScrollingList;
+
 public class DisplayAndSelectExample : MonoBehaviour
 {
     [SerializeField]
@@ -413,6 +421,8 @@ The other way is to invoke the function `CircularScrollingList.GetCenteredConten
 For example, create a function which will update the content of the centered box to the Text, and use a Button to invoke it.
 
 ```csharp
+using AirFishLab.ScrollingList;
+
 public class DisplayAndSelectExample : MonoBehaviour
 {
     [SerializeField]
@@ -446,6 +456,8 @@ If the specified `contentID` is not valid, it will raise `IndexOutOfRangeExcepti
 Here is an example for iteration through the list contents by selecting each content:
 
 ```csharp
+using AirFishLab.ScrollingList;
+
 public class ListIteration : MonoBehaviour
 {
     [SerializeField]
@@ -472,6 +484,9 @@ public class ListIteration : MonoBehaviour
 }
 ```
 
+It will be like: \
+<img src="./ReadmeData~/list_selection_demo.gif" width=300px />
+
 ## Refresh the List
 
 When any content in the list bank is changed, make the list refresh its displaying contents by invoking:
@@ -487,6 +502,8 @@ If the `centeredContentID` is negative, whose defalut value is -1, the list will
 Here is an example for extracting new contents and refresh the list:
 
 ```csharp
+using AirFishLab.ScrollingList;
+
 public class VariableStringListBank : BaseListBank
 {
     [SerializeField]
@@ -519,3 +536,6 @@ public class VariableStringListBank : BaseListBank
     }
 }
 ```
+
+It will be like:
+<img src="./ReadmeData~/list_refreshing_demo.gif" width=600px />
