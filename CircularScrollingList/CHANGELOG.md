@@ -1,8 +1,32 @@
 # Change Log
 
-### [1.4.0] - 2020.09.01
+### [CircularList_v5] - 2021.08.05
 
-Update the circular scrolling list to version 4
+**Added**
+
+- Support custom type of the list box and list bank
+- Support dynamic list contents, also 0 content
+- Add new options
+  - Reverse scrolling direction
+  - Reverse order
+  - Center selected box
+  - Initialize on start
+- Add new events
+  - `OnCenteredContentChanged`
+  - `OnMovementEnd`
+- Select the list content from the script
+- Image sorting - The centered box will be in front of the others.
+
+**Changed**
+
+- All the related classes are in the namespace `AirFishLab.ScrollingList`.
+- Change setup class from `ListPositionCtrl` to `CircularScrollingList`
+- Change the x range of the list position curve and list scale curve from [0, 1] to [-1, 1]
+- The layout of the list is decided by the width/height of the rect transform.
+- Improve the calculation of the dragging velocity
+- Code refactoring
+
+### [1.4.0] - 2020.09.01
 
 **Changed**
 
