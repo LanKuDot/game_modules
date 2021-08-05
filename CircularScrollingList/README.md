@@ -1,6 +1,6 @@
 # Circular Scrolling List
 
-<img src="https://i.imgur.com/MdOcobs.gif" width=350px />
+<img src="./ReadmeData~/list_outline_demo.gif" width=350px />
 
 ## Outline
 
