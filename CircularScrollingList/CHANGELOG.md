@@ -26,11 +26,14 @@
 - Improve the calculation of the dragging velocity
 - Code refactoring
 
-### [1.4.0] - 2020.09.01
+### [CircularList_v4] - 2020.09.01
+
+**Added**
+
+- Use `AnimationCurve` to define the layout and the movement of the list
 
 **Changed**
 
-- Use `AnimationCurve` to define the layout and the movement of the list
 - Improve the movement
 - Improve the inspector view for the list
 - Rename mode "Button" to "Function"
