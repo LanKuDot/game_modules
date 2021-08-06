@@ -22,6 +22,7 @@
 - All the related classes are in the namespace `AirFishLab.ScrollingList`.
 - Change setup class from `ListPositionCtrl` to `CircularScrollingList`
 - Change the x range of the list position curve and list scale curve from [0, 1] to [-1, 1]
+- Separate the curve used for list velocity and list movement
 - The layout of the list is decided by the width/height of the rect transform.
 - Improve the calculation of the dragging velocity
 - Code refactoring
