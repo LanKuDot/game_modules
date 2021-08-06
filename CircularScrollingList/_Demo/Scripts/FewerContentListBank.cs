@@ -1,18 +1,19 @@
-﻿using UnityEngine;
-
-public class FewerContentListBank : BaseListBank
+﻿namespace AirFishLab.ScrollingList.Demo
 {
-	private int[] contents = {
-		1, 2, 3,
-	};
+    public class FewerContentListBank : BaseListBank
+    {
+        private int[] contents = {
+            1, 2, 3,
+        };
 
-	public override string GetListContent(int index)
-	{
-		return contents[index].ToString();
-	}
+        public override object GetListContent(int index)
+        {
+            return contents[index];
+        }
 
-	public override int GetListLength()
-	{
-		return contents.Length;
-	}
+        public override int GetListLength()
+        {
+            return contents.Length;
+        }
+    }
 }
