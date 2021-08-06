@@ -95,6 +95,10 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private ListContentManager _listContentManager;
         /// <summary>
+        /// Is the list initialized?
+        /// </summary>
+        private bool _isInitialized;
+        /// <summary>
         /// Does the list bank has no content?
         /// </summary>
         /// It is used for blocking any input if the list has nothing to display.
@@ -120,10 +124,14 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         public void Initialize()
         {
+            if (_isInitialized)
+                return;
+
             InitializeListComponents();
             // Make the list position ctrl initialize its position state
             _listPositionCtrl.LateUpdate();
             _listPositionCtrl.InitialImageSorting();
+            _isInitialized = true;
         }
 
         /// <summary>
@@ -296,11 +304,17 @@ namespace AirFishLab.ScrollingList
 
         private void Update()
         {
+            if (!_isInitialized)
+                return;
+
             _listPositionCtrl.Update();
         }
 
         private void LateUpdate()
         {
+            if (!_isInitialized)
+                return;
+
             _listPositionCtrl.LateUpdate();
         }
 
