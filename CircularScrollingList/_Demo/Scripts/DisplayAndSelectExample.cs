@@ -31,5 +31,10 @@ namespace AirFishLab.ScrollingList.Demo
             var content = (int) _list.listBank.GetListContent(centeredContentID);
             _centeredContentText.text = "(Auto updated)\nCentered content: " + content;
         }
+
+        public void OnMovementEnd()
+        {
+            Debug.Log("Movement Ends");
+        }
     }
 }
