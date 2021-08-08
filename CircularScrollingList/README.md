@@ -2,6 +2,8 @@
 
 <img src="./ReadmeData~/list_outline_demo.gif" width=350px />
 
+The quick overview of version 5 - [Demo video](https://youtu.be/6lFR4xGdmQ4)
+
 ## Outline
 
 * [Features](#features)
@@ -40,8 +42,6 @@
 * Image sorting - The centered list item is in the front of the others
 * Callback events
 * Support Unity 2018.4+ (Tested in Unity 2018.4.15f1. The demo scenes in the project are made in Unity 2019.4.16f1)
-
-[Demo video](https://youtu.be/k63eqwfj-1c)
 
 ## Properties
 
@@ -537,5 +537,5 @@ public class VariableStringListBank : BaseListBank
 }
 ```
 
-It will be like:
+It will be like: \
 <img src="./ReadmeData~/list_refreshing_demo.gif" width=600px />
