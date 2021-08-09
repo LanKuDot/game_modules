@@ -36,7 +36,8 @@ The quick overview of version 5 - [Demo video](https://youtu.be/6lFR4xGdmQ4)
 * Support both vertical and horizontal scrolling
 * Support all three render modes of the canvas plane
 * Custom layout and movement
-* Custom displaying content
+* Custom displaying contents
+* Reverse order and scrolling direction
 * Select the content from the script
 * Support dynamic list contents
 * Image sorting - The centered list item is in the front of the others
