@@ -313,6 +313,7 @@ MonoBehaviour:
     _centeredContentID: 0
     _centerSelectedBox: 0
     _reverseOrder: 0
+    _initializeOnStart: 1
     _boxDensity: 1
     _boxPositionCurve:
       serializedVersion: 2
@@ -414,6 +415,9 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
     _onCenteredContentChanged:
+      m_PersistentCalls:
+        m_Calls: []
+    _onMovementEnd:
       m_PersistentCalls:
         m_Calls: []
 --- !u!114 &96940623
@@ -1634,6 +1638,7 @@ MonoBehaviour:
     _centeredContentID: 0
     _centerSelectedBox: 0
     _reverseOrder: 0
+    _initializeOnStart: 1
     _boxDensity: 1
     _boxPositionCurve:
       serializedVersion: 2
@@ -1735,6 +1740,9 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
     _onCenteredContentChanged:
+      m_PersistentCalls:
+        m_Calls: []
+    _onMovementEnd:
       m_PersistentCalls:
         m_Calls: []
 --- !u!114 &951430201
@@ -2407,6 +2415,7 @@ MonoBehaviour:
     _centeredContentID: 0
     _centerSelectedBox: 0
     _reverseOrder: 0
+    _initializeOnStart: 1
     _boxDensity: 1
     _boxPositionCurve:
       serializedVersion: 2
@@ -2508,6 +2517,9 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
     _onCenteredContentChanged:
+      m_PersistentCalls:
+        m_Calls: []
+    _onMovementEnd:
       m_PersistentCalls:
         m_Calls: []
 --- !u!114 &1124026714
@@ -2593,6 +2605,7 @@ MonoBehaviour:
     _centeredContentID: 0
     _centerSelectedBox: 0
     _reverseOrder: 0
+    _initializeOnStart: 1
     _boxDensity: 1
     _boxPositionCurve:
       serializedVersion: 2
@@ -2694,6 +2707,9 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
     _onCenteredContentChanged:
+      m_PersistentCalls:
+        m_Calls: []
+    _onMovementEnd:
       m_PersistentCalls:
         m_Calls: []
 --- !u!114 &1188397709
@@ -3660,7 +3676,6 @@ GameObject:
   - component: {fileID: 2014843332}
   - component: {fileID: 2014843331}
   - component: {fileID: 2014843330}
-  - component: {fileID: 2014843333}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -3733,19 +3748,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2014843333
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2014843329}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 845f7d1b53348bc48936f1772afd76c7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _targetFPS: 60
 --- !u!114 &2107686488 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4573319423886367905, guid: 57888038a43e53e41bdc2668a35586d0,
