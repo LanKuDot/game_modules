@@ -499,6 +499,7 @@ namespace AirFishLab.ScrollingList
         public void SetUnitMove(int unit)
         {
             _movementCtrl.SetMovement(unit * unitPos, false);
+            _toRunLateUpdate = true;
         }
 
         /// <summary>
