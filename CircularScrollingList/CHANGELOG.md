@@ -1,5 +1,11 @@
 # Change Log
 
+### [CircularList_v5.1] - 2021.11.11
+
+**Fixed**
+
+- Fix the incorrect behaviour of the linear-function mode
+
 ### [CircularList_v5] - 2021.08.05
 
 **Added**
