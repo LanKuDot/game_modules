@@ -436,8 +436,15 @@ namespace AirFishLab.ScrollingList
             if (!_toRunLateUpdate)
                 return;
 
+            // Find the delta distance to the center
+            _deltaDistanceToCenter = FindDeltaDistanceToCenter(out var candidateBox);
+            if (candidateBox != _centeredBox) {
+                candidateBox.PopToFront();
+                _listSetting.onCenteredContentChanged?.Invoke(candidateBox.contentID);
+                _centeredBox = candidateBox;
+            }
+
             // Update the state of the boxes
-            FindDeltaDistanceToCenter();
             if (_listSetting.listType == CircularScrollingList.ListType.Linear)
                 UpdatePositionState();
 
@@ -462,10 +469,13 @@ namespace AirFishLab.ScrollingList
         /// Find the listBox which is the closest to the center position,
         /// and calculate the delta x or y position between it and the center position.
         /// </summary>
-        private void FindDeltaDistanceToCenter()
+        /// <param name="candidateBox">
+        /// The candidate box which is closest to the center
+        /// </param>
+        private float FindDeltaDistanceToCenter(out ListBox candidateBox)
         {
             var minDeltaDistance = Mathf.Infinity;
-            ListBox candidateBox = null;
+            candidateBox = null;
 
             foreach (var listBox in _listBoxes) {
                 // Skip the disabled box in linear mode
@@ -482,14 +492,7 @@ namespace AirFishLab.ScrollingList
                 candidateBox = listBox;
             }
 
-            _deltaDistanceToCenter = minDeltaDistance;
-
-            if (_centeredBox != candidateBox) {
-                _listSetting.onCenteredContentChanged?.Invoke(candidateBox.contentID);
-                candidateBox.PopToFront();
-            }
-
-            _centeredBox = candidateBox;
+            return minDeltaDistance;
         }
 
         /// <summary>
