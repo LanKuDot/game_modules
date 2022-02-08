@@ -106,11 +106,6 @@ namespace AirFishLab.ScrollingList
 
         #endregion
 
-        private void Awake()
-        {
-            GetComponentReference();
-        }
-
         private void Start()
         {
             if (_setting.initializeOnStart)
@@ -127,6 +122,7 @@ namespace AirFishLab.ScrollingList
             if (_isInitialized)
                 return;
 
+            GetComponentReference();
             InitializeListComponents();
             // Make the list position ctrl initialize its position state
             _listPositionCtrl.LateUpdate();
