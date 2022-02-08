@@ -9,6 +9,12 @@ namespace AirFishLab.ScrollingList
     /// </summary>
     [Serializable]
     public class ListBoxIntEvent : UnityEvent<int>
-    {
-    }
+    {}
+
+    /// <summary>
+    /// This event is used for passing the two list boxes
+    /// </summary>
+    [Serializable]
+    public class ListTwoBoxesEvent : UnityEvent<ListBox, ListBox>
+    {}
 }

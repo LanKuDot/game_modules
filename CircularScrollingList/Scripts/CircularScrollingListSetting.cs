@@ -90,9 +90,15 @@ namespace AirFishLab.ScrollingList
                  "therefore, boxes should be 'Button's.")]
         private ListBoxIntEvent _onBoxClick;
         [SerializeField]
+        [Obsolete("It will be replaced by _onCenteredBoxChanged event")]
         [Tooltip("The callback to be invoked when the centered content is changed. " +
                  "The int parameter is the new content ID.")]
         private ListBoxIntEvent _onCenteredContentChanged;
+        [SerializeField]
+        [Tooltip("The callback to be invoked when the centered box is changed. " +
+                 "The first argument is previous centered box, " +
+                 "and the second one is current centered box.")]
+        private ListTwoBoxesEvent _onCenteredBoxChanged;
         [SerializeField]
         [Tooltip("The callback to be invoked when the movement is ended")]
         private UnityEvent _onMovementEnd;
@@ -119,6 +125,7 @@ namespace AirFishLab.ScrollingList
 
         public ListBoxIntEvent onBoxClick => _onBoxClick;
         public ListBoxIntEvent onCenteredContentChanged => _onCenteredContentChanged;
+        public ListTwoBoxesEvent onCenteredBoxChanged => _onCenteredBoxChanged;
         public UnityEvent onMovementEnd => _onMovementEnd;
 
         #endregion

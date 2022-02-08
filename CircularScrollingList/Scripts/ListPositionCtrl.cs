@@ -441,6 +441,7 @@ namespace AirFishLab.ScrollingList
             if (candidateBox != _centeredBox) {
                 candidateBox.PopToFront();
                 _listSetting.onCenteredContentChanged?.Invoke(candidateBox.contentID);
+                _listSetting.onCenteredBoxChanged?.Invoke(_centeredBox, candidateBox);
                 _centeredBox = candidateBox;
             }
 

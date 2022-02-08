@@ -9,9 +9,12 @@ namespace AirFishLab.ScrollingList.Demo
         [SerializeField]
         private Text _contentText;
 
+        public int content { get; private set; }
+
         protected override void UpdateDisplayContent(object content)
         {
-            _contentText.text = ((int) content).ToString();
+            this.content = (int) content;
+            _contentText.text = this.content.ToString();
         }
     }
 }

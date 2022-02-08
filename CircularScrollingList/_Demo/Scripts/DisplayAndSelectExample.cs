@@ -26,10 +26,12 @@ namespace AirFishLab.ScrollingList.Demo
                       (int) _list.listBank.GetListContent(selectedContentID));
         }
 
-        public void OnListCenteredContentChanged(int centeredContentID)
+        public void OnCenteredBoxChanged(
+            ListBox prevCenteredBox, ListBox curCenteredBox)
         {
-            var content = (int) _list.listBank.GetListContent(centeredContentID);
-            _centeredContentText.text = "(Auto updated)\nCentered content: " + content;
+            _centeredContentText.text =
+                "(Auto updated)\nCentered content: "
+                + ((IntListBox) curCenteredBox).content;
         }
 
         public void OnMovementEnd()
