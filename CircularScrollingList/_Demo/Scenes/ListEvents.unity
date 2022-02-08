@@ -800,9 +800,12 @@ MonoBehaviour:
           m_CallState: 2
     _onCenteredContentChanged:
       m_PersistentCalls:
+        m_Calls: []
+    _onCenteredBoxChanged:
+      m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 1328845008}
-          m_MethodName: OnListCenteredContentChanged
+          m_MethodName: OnCenteredBoxChanged
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
