@@ -137,6 +137,12 @@ namespace AirFishLab.ScrollingList.MovementCtrl
             return _bouncingMovementCurve.GetDistance(deltaTime);
         }
 
+        public void EndMovement()
+        {
+            _unitMovementCurve.EndMovement();
+            _bouncingMovementCurve.EndMovement();
+        }
+
         /// <summary>
         /// Check whether it needs to switch to the aligning mode
         /// </summary>

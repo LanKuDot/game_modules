@@ -187,6 +187,12 @@ namespace AirFishLab.ScrollingList.MovementCtrl
             return distance;
         }
 
+        public void EndMovement()
+        {
+            _releasingMovementCurve.EndMovement();
+            _aligningMovementCurve.EndMovement();
+        }
+
         /// <summary>
         /// Check whether it needs to switch to the aligning movement or not
         /// </summary>

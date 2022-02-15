@@ -29,5 +29,9 @@
         /// <param name="deltaTime">The delta time passed</param>
         /// <returns>The moving distance during the period</returns>
         float GetDistance(float deltaTime);
+        /// <summary>
+        /// Discard the current movement
+        /// </summary>
+        void EndMovement();
     }
 }
