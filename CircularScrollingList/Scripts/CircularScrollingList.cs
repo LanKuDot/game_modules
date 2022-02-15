@@ -159,8 +159,7 @@ namespace AirFishLab.ScrollingList
 
             for (var i = 0; i < _listBoxes.Count; ++i)
                 _listBoxes[i].Initialize(
-                    _setting, _listPositionCtrl, _listContentManager,
-                    _listBoxes, i);
+                    this, _listPositionCtrl, _listContentManager, i);
 
             _hasNoContent = _listBank.GetListLength() == 0;
         }

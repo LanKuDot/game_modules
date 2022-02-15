@@ -14,6 +14,10 @@ namespace AirFishLab.ScrollingList
         #region Exposed Properties
 
         /// <summary>
+        /// The list which this box belongs to
+        /// </summary>
+        public CircularScrollingList scrollingList { get; private set; }
+        /// <summary>
         /// The ID of this box in the registered boxes
         /// </summary>
         public int listBoxID { get; private set; }
@@ -37,7 +41,7 @@ namespace AirFishLab.ScrollingList
         private CircularScrollingListSetting _listSetting;
         private ListPositionCtrl _positionCtrl;
         private ListContentManager _contentManager;
-        private List<ListBox> _listBoxes;
+        private ListBox[] _listBoxes;
 
         #endregion
 
@@ -52,23 +56,23 @@ namespace AirFishLab.ScrollingList
         /// <summary>
         /// Initialize the box
         /// </summary>
-        /// <param name="setting">The setting of the list</param>
+        /// <param name="scrollingList">The list which this box belongs to</param>
         /// <param name="listPositionCtrl">The position controller of this box</param>
         /// <param name="listContentManager">The content controller</param>
-        /// <param name="listBoxes">The boxes that belongs to the list</param>
         /// <param name="listBoxID">The ID of this box</param>
         public void Initialize(
-            CircularScrollingListSetting setting,
+            CircularScrollingList scrollingList,
             ListPositionCtrl listPositionCtrl,
             ListContentManager listContentManager,
-            List<ListBox> listBoxes,
             int listBoxID)
         {
-            _listSetting = setting;
+            this.scrollingList = scrollingList;
+            this.listBoxID = listBoxID;
+
+            _listSetting = scrollingList.setting;
             _positionCtrl = listPositionCtrl;
             _contentManager = listContentManager;
-            _listBoxes = listBoxes;
-            this.listBoxID = listBoxID;
+            _listBoxes = scrollingList.listBoxes;
 
             InitializePosition();
             InitializeBoxDependency();
@@ -88,7 +92,7 @@ namespace AirFishLab.ScrollingList
                     _listSetting.boxScaleCurve,
                     _listSetting.direction);
             _boxTransformCtrl.SetInitialTransform(
-                transform, listBoxID, _listBoxes.Count);
+                transform, listBoxID, _listBoxes.Length);
         }
 
         /// <summary>
@@ -96,7 +100,7 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private void InitializeBoxDependency()
         {
-            var numOfBoxes = _listBoxes.Count;
+            var numOfBoxes = _listBoxes.Length;
 
             lastListBox = _listBoxes[(int) Mathf.Repeat(listBoxID - 1, numOfBoxes)];
             nextListBox = _listBoxes[(int) Mathf.Repeat(listBoxID + 1, numOfBoxes)];
@@ -294,9 +298,9 @@ namespace AirFishLab.ScrollingList
 
             // Make the box ID be "in order"
             if (listBoxID > centerBoxID && posFactor > 0)
-                tempBoxID -= _listBoxes.Count;
+                tempBoxID -= _listBoxes.Length;
             else if (listBoxID < centerBoxID && posFactor < 0)
-                tempBoxID += _listBoxes.Count;
+                tempBoxID += _listBoxes.Length;
 
             contentID =
                 _contentManager.GetContentID(tempBoxID - centerBoxID, centerContentID);
