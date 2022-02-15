@@ -7,7 +7,7 @@ namespace AirFishLab.ScrollingList.MovementCtrl
     /// Evaluate the moving distance within the given delta time
     /// according to the total moving distance
     /// </summary>
-    internal class DistanceMovementCurve
+    internal class DistanceMovementCurve : IMovementCurve
     {
         /// <summary>
         /// The curve that evaluating the distance factor at the accumulated delta time
@@ -42,6 +42,8 @@ namespace AirFishLab.ScrollingList.MovementCtrl
             _distanceFactorCurve = new DeltaTimeCurve(factorCurve);
         }
 
+        #region IMovementCurve
+
         /// <summary>
         /// Set the moving distance for this new movement
         /// </summary>
@@ -53,17 +55,11 @@ namespace AirFishLab.ScrollingList.MovementCtrl
             _lastDistance = 0.0f;
         }
 
-        /// <summary>
-        /// Is the movement ended?
-        /// </summary>
         public bool IsMovementEnded()
         {
             return _distanceFactorCurve.IsTimeOut();
         }
 
-        /// <summary>
-        /// Force the movement to be ended
-        /// </summary>
         public void EndMovement()
         {
             _distanceFactorCurve.Evaluate(_distanceFactorCurve.timeTotal);
@@ -71,11 +67,6 @@ namespace AirFishLab.ScrollingList.MovementCtrl
             _lastDistance = _distanceTotal;
         }
 
-        /// <summary>
-        /// Get the moving distance in the next delta time
-        /// </summary>
-        /// <param name="deltaTime">The next delta time</param>
-        /// <returns>The moving distance for this period</returns>
         public float GetDistance(float deltaTime)
         {
             var nextDistance = _distanceTotal * _distanceFactorCurve.Evaluate(deltaTime);
@@ -84,5 +75,7 @@ namespace AirFishLab.ScrollingList.MovementCtrl
             _lastDistance = nextDistance;
             return deltaDistance;
         }
+
+        #endregion
     }
 }

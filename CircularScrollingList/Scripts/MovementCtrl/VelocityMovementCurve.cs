@@ -7,7 +7,7 @@ namespace AirFishLab.ScrollingList.MovementCtrl
     /// Evaluate the moving distance within the given delta time
     /// according to the velocity factor curve
     /// </summary>
-    internal class VelocityMovementCurve
+    internal class VelocityMovementCurve : IMovementCurve
     {
         /// <summary>
         /// The curve that evaluating the velocity factor at the accumulated delta time
@@ -38,6 +38,8 @@ namespace AirFishLab.ScrollingList.MovementCtrl
             _velocityFactorCurve = new DeltaTimeCurve(factorCurve);
         }
 
+        #region IMovementCurve
+
         /// <summary>
         /// Set the base velocity for this new movement
         /// </summary>
@@ -48,31 +50,22 @@ namespace AirFishLab.ScrollingList.MovementCtrl
             lastVelocity = _velocityFactorCurve.CurrentEvaluate() * _baseVelocity;
         }
 
-        /// <summary>
-        /// Is the movement ended?
-        /// </summary>
         public bool IsMovementEnded()
         {
             return _velocityFactorCurve.IsTimeOut();
         }
 
-        /// <summary>
-        /// Force the movement to be ended
-        /// </summary>
         public void EndMovement()
         {
             _velocityFactorCurve.Evaluate(_velocityFactorCurve.timeTotal);
         }
 
-        /// <summary>
-        /// Get moving distance for the next delta time
-        /// </summary>
-        /// <param name="deltaTime">The next time interval</param>
-        /// <returns>The moving distance</returns>
         public float GetDistance(float deltaTime)
         {
             lastVelocity = _velocityFactorCurve.Evaluate(deltaTime) * _baseVelocity;
             return lastVelocity * deltaTime;
         }
+
+        #endregion
     }
 }
