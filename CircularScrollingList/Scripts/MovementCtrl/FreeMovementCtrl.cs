@@ -189,6 +189,7 @@ namespace AirFishLab.ScrollingList.MovementCtrl
 
         public void EndMovement()
         {
+            _isDragging = false;
             _releasingMovementCurve.EndMovement();
             _aligningMovementCurve.EndMovement();
         }
