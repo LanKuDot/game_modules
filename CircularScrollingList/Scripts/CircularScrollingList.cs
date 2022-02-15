@@ -72,6 +72,7 @@ namespace AirFishLab.ScrollingList
         #region Exposed Properties
 
         public BaseListBank listBank => _listBank;
+        public ListBox[] listBoxes => _listBoxes.ToArray();
         public CircularScrollingListSetting setting => _setting;
 
         #endregion
