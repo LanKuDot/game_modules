@@ -3,6 +3,8 @@ using UnityEngine;
 
 namespace AirFishLab.ScrollingList.MovementCtrl
 {
+    using PositionState = ListPositionCtrl.PositionState;
+
     /// <summary>
     /// Control the movement for the unit movement
     /// </summary>
@@ -30,7 +32,7 @@ namespace AirFishLab.ScrollingList.MovementCtrl
         /// <summary>
         /// The function that returns the state of the list position
         /// </summary>
-        private readonly Func<ListPositionCtrl.PositionState> _getPositionState;
+        private readonly Func<PositionState> _getPositionState;
 
         /// <summary>
         /// Create a movement control for the unit distance moving
@@ -52,7 +54,7 @@ namespace AirFishLab.ScrollingList.MovementCtrl
             AnimationCurve movementCurve,
             float bouncingDeltaPos,
             Func<float> getAligningDistance,
-            Func<ListPositionCtrl.PositionState> getPositionState)
+            Func<PositionState> getPositionState)
         {
             var bouncingCurve = new AnimationCurve(
                 new Keyframe(0.0f, 0.0f, 0.0f, 5.0f),
@@ -84,8 +86,8 @@ namespace AirFishLab.ScrollingList.MovementCtrl
             var state = _getPositionState();
             var movingDirection = Mathf.Sign(distanceAdded);
 
-            if ((state == ListPositionCtrl.PositionState.Top && movingDirection < 0) ||
-                (state == ListPositionCtrl.PositionState.Bottom && movingDirection > 0)) {
+            if ((state == PositionState.Top && movingDirection < 0) ||
+                (state == PositionState.Bottom && movingDirection > 0)) {
                 _bouncingMovementCurve.SetMovement(movingDirection * _bouncingDeltaPos);
                 _unitMovementCurve.EndMovement();
             } else {
@@ -154,7 +156,7 @@ namespace AirFishLab.ScrollingList.MovementCtrl
         /// </returns>
         private bool NeedToBounceBack(float deltaDistance)
         {
-            if (_getPositionState() == ListPositionCtrl.PositionState.Middle)
+            if (_getPositionState() == PositionState.Middle)
                 return false;
 
             var exceedingDistance =

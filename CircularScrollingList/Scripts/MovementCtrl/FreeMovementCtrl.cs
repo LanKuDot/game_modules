@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace AirFishLab.ScrollingList.MovementCtrl
 {
+    using PositionState = ListPositionCtrl.PositionState;
 
     /// <summary>
     /// Control the movement for the free movement
@@ -55,7 +56,7 @@ namespace AirFishLab.ScrollingList.MovementCtrl
         /// <summary>
         /// The function that getting the state of the list position
         /// </summary>
-        private readonly Func<ListPositionCtrl.PositionState> _getPositionState;
+        private readonly Func<PositionState> _getPositionState;
 
         #endregion
 
@@ -81,7 +82,7 @@ namespace AirFishLab.ScrollingList.MovementCtrl
             bool toAlign,
             float exceedingDistanceLimit,
             Func<float> getAligningDistance,
-            Func<ListPositionCtrl.PositionState> getPositionState)
+            Func<PositionState> getPositionState)
         {
             _releasingMovementCurve = new VelocityMovementCurve(releasingCurve);
             _aligningMovementCurve =
@@ -113,7 +114,7 @@ namespace AirFishLab.ScrollingList.MovementCtrl
                 // End the last movement when start dragging
                 _aligningMovementCurve.EndMovement();
                 _releasingMovementCurve.EndMovement();
-            } else if (_getPositionState() != ListPositionCtrl.PositionState.Middle) {
+            } else if (_getPositionState() != PositionState.Middle) {
                 _aligningMovementCurve.SetMovement(_getAligningDistance());
             } else {
                 _releasingMovementCurve.SetMovement(value);
@@ -211,7 +212,7 @@ namespace AirFishLab.ScrollingList.MovementCtrl
         private bool IsGoingTooFar(float nextDistance)
         {
             return
-                (_getPositionState() != ListPositionCtrl.PositionState.Middle)
+                (_getPositionState() != PositionState.Middle)
                 && Mathf.Abs(_getAligningDistance() * -1 + nextDistance)
                     > _exceedingDistanceLimit;
         }
