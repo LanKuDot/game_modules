@@ -132,6 +132,9 @@ namespace AirFishLab.ScrollingList.MovementCtrl
             _aligningMovementCurve.SetMovement(distance);
         }
 
+        public void SetUnitMovement(float distance)
+        {}
+
         /// <summary>
         /// Is the movement ended?
         /// </summary>

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using AirFishLab.ScrollingList.MovementCtrl;
@@ -502,7 +501,7 @@ namespace AirFishLab.ScrollingList
         /// <param name="unit">The number of units</param>
         public void SetUnitMove(int unit)
         {
-            _movementCtrl.SetMovement(unit * unitPos, false);
+            _movementCtrl.SetUnitMovement(unit * unitPos);
             _toRunLateUpdate = true;
         }
 

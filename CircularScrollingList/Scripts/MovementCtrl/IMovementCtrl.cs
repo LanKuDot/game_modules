@@ -20,6 +20,11 @@
         /// <param name="distance">The specified distance</param>
         void SetSelectionMovement(float distance);
         /// <summary>
+        /// Set the movement for moving some units of distance
+        /// </summary>
+        /// <param name="distance">The next unit distance</param>
+        void SetUnitMovement(float distance);
+        /// <summary>
         /// Is this movement ended?
         /// </summary>
         bool IsMovementEnded();
