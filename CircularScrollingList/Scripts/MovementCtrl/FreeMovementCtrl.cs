@@ -40,13 +40,9 @@ namespace AirFishLab.ScrollingList.MovementCtrl
         /// </summary>
         private readonly bool _toAlign;
         /// <summary>
-        /// How far does the list exceed the end
-        /// </summary>
-        private float _overGoingDistance;
-        /// <summary>
         /// How far could the 1ist exceed the end?
         /// </summary>
-        private readonly float _overGoingDistanceThreshold;
+        private readonly float _exceedingDistanceLimit;
         /// <summary>
         /// The velocity threshold that stops the list to align it
         /// </summary>
@@ -71,7 +67,7 @@ namespace AirFishLab.ScrollingList.MovementCtrl
         /// The x axis is the moving duration, and the y axis is the factor.
         /// </param>
         /// <param name="toAlign">Is it need to aligning after a movement?</param>
-        /// <param name="overGoingDistanceThreshold">
+        /// <param name="exceedingDistanceLimit">
         /// How far could the list exceed the end?
         /// </param>
         /// <param name="getAligningDistance">
@@ -83,7 +79,7 @@ namespace AirFishLab.ScrollingList.MovementCtrl
         public FreeMovementCtrl(
             AnimationCurve releasingCurve,
             bool toAlign,
-            float overGoingDistanceThreshold,
+            float exceedingDistanceLimit,
             Func<float> getAligningDistance,
             Func<ListPositionCtrl.PositionState> getPositionState)
         {
@@ -95,7 +91,7 @@ namespace AirFishLab.ScrollingList.MovementCtrl
                         new Keyframe(0.25f, 1.0f, 0.0f, 0.0f)
                     ));
             _toAlign = toAlign;
-            _overGoingDistanceThreshold = overGoingDistanceThreshold;
+            _exceedingDistanceLimit = exceedingDistanceLimit;
             _getAligningDistance = getAligningDistance;
             _getPositionState = getPositionState;
         }
@@ -160,10 +156,10 @@ namespace AirFishLab.ScrollingList.MovementCtrl
                 if (!IsGoingTooFar(distance))
                     return distance;
 
-                var threshold =
-                    _overGoingDistanceThreshold * Mathf.Sign(_overGoingDistance);
-                // Cut the exceeded distance
-                distance -= _overGoingDistance - threshold;
+                var exceedingDistance = _getAligningDistance() * -1;
+                var limit =
+                    _exceedingDistanceLimit * Mathf.Sign(exceedingDistance);
+                distance = limit - exceedingDistance;
             }
             /* Aligning */
             else if (!_aligningMovementCurve.IsMovementEnded()) {
@@ -211,15 +207,13 @@ namespace AirFishLab.ScrollingList.MovementCtrl
         /// <summary>
         /// Check if the moving distance of list exceeds the over-going threshold or not
         /// </summary>
-        /// <param name="distance">The next moving distance</param>
-        private bool IsGoingTooFar(float distance)
+        /// <param name="nextDistance">The next moving distance</param>
+        private bool IsGoingTooFar(float nextDistance)
         {
-            if (_getPositionState() == ListPositionCtrl.PositionState.Middle)
-                return false;
-
-            _overGoingDistance = -1 * _getAligningDistance();
             return
-                Mathf.Abs(_overGoingDistance += distance) > _overGoingDistanceThreshold;
+                (_getPositionState() != ListPositionCtrl.PositionState.Middle)
+                && Mathf.Abs(_getAligningDistance() * -1 + nextDistance)
+                    > _exceedingDistanceLimit;
         }
     }
 }
