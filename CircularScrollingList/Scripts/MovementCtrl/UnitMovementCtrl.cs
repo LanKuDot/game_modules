@@ -87,6 +87,7 @@ namespace AirFishLab.ScrollingList.MovementCtrl
             if ((state == ListPositionCtrl.PositionState.Top && movingDirection < 0) ||
                 (state == ListPositionCtrl.PositionState.Bottom && movingDirection > 0)) {
                 _bouncingMovementCurve.SetMovement(movingDirection * _bouncingDeltaPos);
+                _unitMovementCurve.EndMovement();
             } else {
                 distanceAdded += _unitMovementCurve.distanceRemaining;
                 _unitMovementCurve.SetMovement(distanceAdded);
