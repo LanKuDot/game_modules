@@ -173,7 +173,7 @@ namespace AirFishLab.ScrollingList.MovementCtrl
             else if (!_releasingMovementCurve.IsMovementEnded()) {
                 distance = _releasingMovementCurve.GetDistance(deltaTime);
 
-                if (!NeedToAlign(distance))
+                if (!IsGoingTooFar(distance) && !IsTooSlow())
                     return distance;
 
                 // Make the releasing movement end
@@ -195,19 +195,17 @@ namespace AirFishLab.ScrollingList.MovementCtrl
         }
 
         /// <summary>
-        /// Check whether it needs to switch to the aligning movement or not
+        /// Check if the movement is too slow
         /// </summary>
-        /// <param name="distance"></param>
         /// <returns>
-        /// Return true if the list reaches the end and it exceeds the end for a distance,
-        /// or if the list moves too slow when the `_toAlign` is true.
+        /// Return true if the last movement speed is too slow
+        /// when the <c>_toAlign</c> is set.
         /// </returns>
-        private bool NeedToAlign(float distance)
+        private bool IsTooSlow()
         {
             return
-                IsGoingTooFar(distance)
-                || (_toAlign &&
-                    Mathf.Abs(_releasingMovementCurve.lastVelocity) < _stopVelocityThreshold);
+                _toAlign &&
+                Mathf.Abs(_releasingMovementCurve.lastVelocity) < _stopVelocityThreshold;
         }
 
         /// <summary>
