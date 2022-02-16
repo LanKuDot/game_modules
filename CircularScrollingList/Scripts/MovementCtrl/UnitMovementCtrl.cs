@@ -126,7 +126,7 @@ namespace AirFishLab.ScrollingList.MovementCtrl
 
             var distance = _unitMovementCurve.GetDistance(deltaTime);
 
-            if (!NeedToAlign(distance))
+            if (!NeedToBounceBack(distance))
                 return distance;
 
             // Make the unit movement end
@@ -145,21 +145,23 @@ namespace AirFishLab.ScrollingList.MovementCtrl
         }
 
         /// <summary>
-        /// Check whether it needs to switch to the aligning mode
+        /// Check whether the list needs to bounce back
         /// </summary>
         /// <param name="deltaDistance">The next delta distance</param>
         /// <returns>
         /// Return true if the list exceeds the end for a distance or
         /// the unit movement is ended.
         /// </returns>
-        private bool NeedToAlign(float deltaDistance)
+        private bool NeedToBounceBack(float deltaDistance)
         {
             if (_getPositionState() == ListPositionCtrl.PositionState.Middle)
                 return false;
 
+            var exceedingDistance =
+                Mathf.Abs(_getAligningDistance() * -1 + deltaDistance);
+
             return
-                Mathf.Abs(_getAligningDistance() * -1 + deltaDistance)
-                > _bouncingDeltaPos
+                exceedingDistance > _bouncingDeltaPos
                 || _unitMovementCurve.IsMovementEnded();
         }
     }
