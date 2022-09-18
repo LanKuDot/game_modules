@@ -88,6 +88,10 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private Camera _canvasRefCamera;
         /// <summary>
+        /// The component for handing the user input
+        /// </summary>
+        private InputProcessor _inputProcessor;
+        /// <summary>
         /// The component that controlling the position of each box
         /// </summary>
         private ListPositionCtrl _listPositionCtrl;
@@ -147,6 +151,9 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private void InitializeListComponents()
         {
+            _inputProcessor =
+                new InputProcessor(
+                    _rectTransform, _canvasRefCamera);
             _listPositionCtrl =
                 new ListPositionCtrl(
                     _setting, _rectTransform, _canvasRefCamera, _listBoxes);
@@ -269,6 +276,7 @@ namespace AirFishLab.ScrollingList
             if (_hasNoContent)
                 return;
 
+            Debug.Log(_inputProcessor.GetInputInfo(eventData, InputPhase.Began));
             _listPositionCtrl.InputPositionHandler(eventData, TouchPhase.Began);
         }
 
@@ -277,6 +285,7 @@ namespace AirFishLab.ScrollingList
             if (_hasNoContent)
                 return;
 
+            Debug.Log(_inputProcessor.GetInputInfo(eventData, InputPhase.Moved));
             _listPositionCtrl.InputPositionHandler(eventData, TouchPhase.Moved);
         }
 
@@ -284,7 +293,7 @@ namespace AirFishLab.ScrollingList
         {
             if (_hasNoContent)
                 return;
-
+            Debug.Log(_inputProcessor.GetInputInfo(eventData, InputPhase.Ended));
             _listPositionCtrl.InputPositionHandler(eventData, TouchPhase.Ended);
         }
 
@@ -293,6 +302,7 @@ namespace AirFishLab.ScrollingList
             if (_hasNoContent)
                 return;
 
+            Debug.Log(_inputProcessor.GetInputInfo(eventData, InputPhase.Scrolled));
             _listPositionCtrl.ScrollHandler(eventData);
         }
 
