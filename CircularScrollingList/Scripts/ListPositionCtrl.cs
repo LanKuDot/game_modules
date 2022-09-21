@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using AirFishLab.ScrollingList.MovementCtrl;
+using AirFishLab.ScrollingList.Util;
 
 namespace AirFishLab.ScrollingList
 {

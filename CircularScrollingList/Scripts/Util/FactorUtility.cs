@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace AirFishLab.ScrollingList
+namespace AirFishLab.ScrollingList.Util
 {
     public static class FactorUtility
     {
