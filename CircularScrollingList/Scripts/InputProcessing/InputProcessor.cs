@@ -23,6 +23,10 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private readonly Camera _canvasRefCamera;
         /// <summary>
+        /// The time of the last input event
+        /// </summary>
+        private float _lastInputTime;
+        /// <summary>
         /// The last input position in the space of the target rect transform
         /// </summary>
         private Vector2 _lastLocalInputPos;
@@ -51,10 +55,17 @@ namespace AirFishLab.ScrollingList
                     deltaPos.x / _maxRectPos.x,
                     deltaPos.y / _maxRectPos.y);
 
+            var curTime = Time.realtimeSinceStartup;
+            if (phase == InputPhase.Began || phase == InputPhase.Scrolled)
+                _lastInputTime = curTime;
+            var deltaTime = curTime - _lastInputTime;
+            _lastInputTime = curTime;
+
             return new InputInfo {
                 Phase = phase,
                 DeltaLocalPos = deltaPos,
-                DeltaLocalPosNormalized = deltaPosNormalized
+                DeltaLocalPosNormalized = deltaPosNormalized,
+                DeltaTime = deltaTime
             };
         }
 
