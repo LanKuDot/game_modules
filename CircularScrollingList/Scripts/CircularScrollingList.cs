@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using AirFishLab.ScrollingList.ListBoxManagement;
+using AirFishLab.ScrollingList.ListStateProcessing;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -91,6 +93,14 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private InputProcessor _inputProcessor;
         /// <summary>
+        /// The component for processing the state of the list
+        /// </summary>
+        private IListStateProcessor _listStateProcessor;
+        /// <summary>
+        /// The component for managing the list boxes
+        /// </summary>
+        private IListBoxManager _listBoxManager;
+        /// <summary>
         /// The component that controlling the position of each box
         /// </summary>
         private ListPositionCtrl _listPositionCtrl;
@@ -153,6 +163,12 @@ namespace AirFishLab.ScrollingList
             _inputProcessor =
                 new InputProcessor(
                     _rectTransform, _canvasRefCamera);
+            _listStateProcessor = new LineListStateProcessor();
+            _listStateProcessor.Initialize(
+                new ListSetupData(_setting, _rectTransform, _canvasRefCamera));
+            _listBoxManager = new ListBoxManager();
+            _listBoxes.AddRange(_listBoxes);
+
             _listPositionCtrl =
                 new ListPositionCtrl(
                     _setting, _rectTransform, _canvasRefCamera, _listBoxes);
@@ -275,7 +291,8 @@ namespace AirFishLab.ScrollingList
             if (_hasNoContent)
                 return;
 
-            Debug.Log(_inputProcessor.GetInputInfo(eventData, InputPhase.Began));
+            SetMovement(eventData, InputPhase.Began);
+
             _listPositionCtrl.InputPositionHandler(eventData, TouchPhase.Began);
         }
 
@@ -284,7 +301,8 @@ namespace AirFishLab.ScrollingList
             if (_hasNoContent)
                 return;
 
-            Debug.Log(_inputProcessor.GetInputInfo(eventData, InputPhase.Moved));
+            SetMovement(eventData, InputPhase.Moved);
+
             _listPositionCtrl.InputPositionHandler(eventData, TouchPhase.Moved);
         }
 
@@ -292,7 +310,9 @@ namespace AirFishLab.ScrollingList
         {
             if (_hasNoContent)
                 return;
-            Debug.Log(_inputProcessor.GetInputInfo(eventData, InputPhase.Ended));
+
+            SetMovement(eventData, InputPhase.Ended);
+
             _listPositionCtrl.InputPositionHandler(eventData, TouchPhase.Ended);
         }
 
@@ -301,7 +321,8 @@ namespace AirFishLab.ScrollingList
             if (_hasNoContent)
                 return;
 
-            Debug.Log(_inputProcessor.GetInputInfo(eventData, InputPhase.Scrolled));
+            SetMovement(eventData, InputPhase.Scrolled);
+
             _listPositionCtrl.ScrollHandler(eventData);
         }
 
@@ -322,6 +343,19 @@ namespace AirFishLab.ScrollingList
 
             _listPositionCtrl.LateUpdate();
         }
+
+        #region Operation Functions
+
+        /// <summary>
+        /// Set the movement to the list state processor
+        /// </summary>
+        private void SetMovement(PointerEventData eventData, InputPhase phase)
+        {
+            var inputInfo = _inputProcessor.GetInputInfo(eventData, phase);
+            _listStateProcessor.SetMovement(inputInfo);
+        }
+
+        #endregion
 
 #if UNITY_EDITOR
 
