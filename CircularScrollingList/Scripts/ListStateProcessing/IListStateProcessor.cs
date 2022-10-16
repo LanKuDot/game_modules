@@ -18,10 +18,11 @@
         void SetMovement(InputInfo inputInfo);
 
         /// <summary>
-        /// Get the current movement state for the boxes
+        /// Get the current movement for the boxes
         /// </summary>
         /// <param name="detailTime">The time passed in seconds in this call</param>
-        void GetMovement(float detailTime);
+        /// <returns>The value for moving the boxes</returns>
+        float GetMovement(float detailTime);
 
         /// <summary>
         /// Is the movement ended?

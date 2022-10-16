@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 {
@@ -24,9 +25,9 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             _boxes.AddRange(boxes);
         }
 
-        public void UpdateBoxes()
+        public void UpdateBoxes(float movementValue)
         {
-            throw new System.NotImplementedException();
+            Debug.Log(movementValue);
         }
     }
 }

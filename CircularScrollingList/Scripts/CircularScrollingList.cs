@@ -335,6 +335,12 @@ namespace AirFishLab.ScrollingList
                 return;
 
             _listPositionCtrl.Update();
+
+            if (_listStateProcessor.IsMovementEnded())
+                return;
+
+            var movementValue = _listStateProcessor.GetMovement(Time.deltaTime);
+            _listBoxManager.UpdateBoxes(movementValue);
         }
 
         private void LateUpdate()

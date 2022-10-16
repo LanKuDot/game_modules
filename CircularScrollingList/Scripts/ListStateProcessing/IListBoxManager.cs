@@ -16,6 +16,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing
         /// <summary>
         /// Update the state of the boxes
         /// </summary>
-        void UpdateBoxes();
+        /// <param name="movementValue">The value for moving the boxes</param>
+        void UpdateBoxes(float movementValue);
     }
 }

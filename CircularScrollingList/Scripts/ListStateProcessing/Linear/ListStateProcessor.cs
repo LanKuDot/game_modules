@@ -79,12 +79,14 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             }
         }
 
-        public void GetMovement(float detailTime)
+        public float GetMovement(float detailTime)
         {
             if (!_freeMovementCtrl.IsMovementEnded())
-                _freeMovementCtrl.GetDistance(detailTime);
-            else if (!_unitMovementCtrl.IsMovementEnded())
-                _unitMovementCtrl.GetDistance(detailTime);
+                return _freeMovementCtrl.GetDistance(detailTime);
+            if (!_unitMovementCtrl.IsMovementEnded())
+                return _unitMovementCtrl.GetDistance(detailTime);
+
+            return 0;
         }
 
         public bool IsMovementEnded() =>
