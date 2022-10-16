@@ -2,7 +2,7 @@
 
 namespace AirFishLab.ScrollingList.ListBoxManagement
 {
-    public class ListBoxManager : IListBoxManager
+    public class LineListBoxManager : IListBoxManager
     {
         #region Private Members
 
@@ -18,7 +18,7 @@ namespace AirFishLab.ScrollingList.ListBoxManagement
 
         #endregion
 
-        public void SetBoxes(IEnumerable<ListBox> boxes)
+        public void Initialize(IEnumerable<ListBox> boxes)
         {
             _boxes.Clear();
             _boxes.AddRange(boxes);

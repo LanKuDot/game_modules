@@ -11,7 +11,7 @@ namespace AirFishLab.ScrollingList.ListBoxManagement
         /// Set the boxes to the manager
         /// </summary>
         /// <param name="boxes">The boxes</param>
-        void SetBoxes(IEnumerable<ListBox> boxes);
+        void Initialize(IEnumerable<ListBox> boxes);
 
         /// <summary>
         /// Update the state of the boxes
