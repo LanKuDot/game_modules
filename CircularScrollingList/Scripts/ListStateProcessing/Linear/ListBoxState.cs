@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace AirFishLab.ScrollingList.ListBoxManagement
+namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 {
     /// <summary>
     /// The data of the state of the list box

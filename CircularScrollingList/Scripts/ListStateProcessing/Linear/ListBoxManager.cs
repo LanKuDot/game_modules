@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace AirFishLab.ScrollingList.ListBoxManagement
+namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 {
-    public class LineListBoxManager : IListBoxManager
+    public class ListBoxManager : IListBoxManager
     {
         #region Private Members
 

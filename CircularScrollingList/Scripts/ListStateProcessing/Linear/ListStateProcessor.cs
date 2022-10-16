@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using AirFishLab.ScrollingList.ListBoxManagement;
 using AirFishLab.ScrollingList.MovementCtrl;
 using AirFishLab.ScrollingList.Util;
 using UnityEngine;
 
-namespace AirFishLab.ScrollingList.ListStateProcessing
+namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 {
     /// <summary>
     /// The processor for moving the list along a line
     /// </summary>
-    public class LineListStateProcessor : IListStateProcessor
+    public class ListStateProcessor : IListStateProcessor
     {
         #region Enums
 
@@ -82,17 +81,20 @@ namespace AirFishLab.ScrollingList.ListStateProcessing
 
         public void GetMovement(float detailTime)
         {
-            throw new System.NotImplementedException();
+            if (!_freeMovementCtrl.IsMovementEnded())
+                _freeMovementCtrl.GetDistance(detailTime);
+            else if (!_unitMovementCtrl.IsMovementEnded())
+                _unitMovementCtrl.GetDistance(detailTime);
         }
 
-        public bool IsMovementEnded()
-        {
-            throw new System.NotImplementedException();
-        }
+        public bool IsMovementEnded() =>
+            _freeMovementCtrl.IsMovementEnded()
+            && _unitMovementCtrl.IsMovementEnded();
 
         public void EndMovement()
         {
-            throw new System.NotImplementedException();
+            _freeMovementCtrl.EndMovement();
+            _unitMovementCtrl.EndMovement();
         }
 
         #endregion

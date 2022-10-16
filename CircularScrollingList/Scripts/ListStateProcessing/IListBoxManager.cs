@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace AirFishLab.ScrollingList.ListBoxManagement
+namespace AirFishLab.ScrollingList.ListStateProcessing
 {
     /// <summary>
     /// The interface for managing the list boxes

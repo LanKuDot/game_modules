@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using AirFishLab.ScrollingList.ListBoxManagement;
 using AirFishLab.ScrollingList.ListStateProcessing;
 using UnityEngine;
 using UnityEngine.EventSystems;
+
+using Linear = AirFishLab.ScrollingList.ListStateProcessing.Linear;
 
 namespace AirFishLab.ScrollingList
 {
@@ -161,13 +162,13 @@ namespace AirFishLab.ScrollingList
         private void InitializeListComponents()
         {
             _inputProcessor =
-                new InputProcessor(
-                    _rectTransform, _canvasRefCamera);
-            _listStateProcessor = new LineListStateProcessor();
+                new InputProcessor(_rectTransform, _canvasRefCamera);
+            _listBoxManager = new Linear.ListBoxManager();
+            _listBoxManager.Initialize(_listBoxes);
+            _listStateProcessor = new Linear.ListStateProcessor();
             _listStateProcessor.Initialize(
-                new ListSetupData(_setting, _rectTransform, _canvasRefCamera));
-            _listBoxManager = new ListBoxManager();
-            _listBoxes.AddRange(_listBoxes);
+                new ListSetupData(
+                    _setting, _rectTransform, _canvasRefCamera, _listBoxManager));
 
             _listPositionCtrl =
                 new ListPositionCtrl(
