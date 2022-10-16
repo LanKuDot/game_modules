@@ -27,19 +27,18 @@ namespace AirFishLab.ScrollingList
         public Vector2 DeltaLocalPosNormalized;
 
         /// <summary>
-        /// The delta time between two input event
+        /// The delta time between two input events
         /// </summary>
         /// <remarks>
         /// If the <c>Phase</c> is Began or Scrolled, it will be 0.
         /// </remarks>
         public float DeltaTime;
 
-        public override string ToString()
-        {
-            return $"Phase: {Phase}, " +
-                   $"DeltaLocalPos: {DeltaLocalPos}, " +
-                   $"DeltaLocalPosNormalized: {DeltaLocalPosNormalized}";
-        }
+        public override string ToString() =>
+            $"Phase: {Phase}, "
+            + $"DeltaLocalPos: {DeltaLocalPos}, "
+            + $"DeltaLocalPosNormalized: {DeltaLocalPosNormalized}, "
+            + $"DeltaTime: {DeltaTime}";
     }
 
     /// <summary>
