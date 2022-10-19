@@ -1,4 +1,4 @@
-﻿using AirFishLab.ScrollingList.ListStateProcessing;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace AirFishLab.ScrollingList
@@ -27,20 +27,20 @@ namespace AirFishLab.ScrollingList
         public readonly Camera CanvasRefCamera;
 
         /// <summary>
-        /// The component for managing the boxes
+        /// The boxes in the list
         /// </summary>
-        public readonly IListBoxManager ListBoxManager;
+        public readonly List<ListBox> ListBoxes;
 
         #endregion
 
         public ListSetupData(
             CircularScrollingListSetting setting, RectTransform rectTransform,
-            Camera canvasRefCamera, IListBoxManager listBoxManager)
+            Camera canvasRefCamera, List<ListBox> listBoxes)
         {
             Setting = setting;
             RectTransform = rectTransform;
             CanvasRefCamera = canvasRefCamera;
-            ListBoxManager = listBoxManager;
+            ListBoxes = listBoxes;
         }
     }
 }

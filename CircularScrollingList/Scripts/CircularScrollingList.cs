@@ -96,7 +96,7 @@ namespace AirFishLab.ScrollingList
         /// <summary>
         /// The component for processing the state of the list
         /// </summary>
-        private IListStateProcessor _listStateProcessor;
+        private IListMovementProcessor _listMovementProcessor;
         /// <summary>
         /// The component for managing the list boxes
         /// </summary>
@@ -161,14 +161,16 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private void InitializeListComponents()
         {
+            var setupData =
+                new ListSetupData(
+                    _setting, _rectTransform, _canvasRefCamera, _listBoxes);
+
             _inputProcessor =
                 new InputProcessor(_rectTransform, _canvasRefCamera);
             _listBoxManager = new Linear.ListBoxManager();
-            _listBoxManager.Initialize(_listBoxes);
-            _listStateProcessor = new Linear.ListStateProcessor();
-            _listStateProcessor.Initialize(
-                new ListSetupData(
-                    _setting, _rectTransform, _canvasRefCamera, _listBoxManager));
+            _listBoxManager.Initialize(setupData);
+            _listMovementProcessor = new Linear.ListMovementProcessor();
+            _listMovementProcessor.Initialize(setupData);
 
             _listPositionCtrl =
                 new ListPositionCtrl(
@@ -336,10 +338,10 @@ namespace AirFishLab.ScrollingList
 
             _listPositionCtrl.Update();
 
-            if (_listStateProcessor.IsMovementEnded())
+            if (_listMovementProcessor.IsMovementEnded())
                 return;
 
-            var movementValue = _listStateProcessor.GetMovement(Time.deltaTime);
+            var movementValue = _listMovementProcessor.GetMovement(Time.deltaTime);
             _listBoxManager.UpdateBoxes(movementValue);
         }
 
@@ -359,7 +361,7 @@ namespace AirFishLab.ScrollingList
         private void SetMovement(PointerEventData eventData, InputPhase phase)
         {
             var inputInfo = _inputProcessor.GetInputInfo(eventData, phase);
-            _listStateProcessor.SetMovement(inputInfo);
+            _listMovementProcessor.SetMovement(inputInfo);
         }
 
         #endregion

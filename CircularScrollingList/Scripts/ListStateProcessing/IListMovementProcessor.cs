@@ -1,9 +1,9 @@
 ﻿namespace AirFishLab.ScrollingList.ListStateProcessing
 {
     /// <summary>
-    /// The interface of the processor for controlling the list behaviour
+    /// The interface of the processor for controlling the list movement
     /// </summary>
-    public interface IListStateProcessor
+    public interface IListMovementProcessor
     {
         /// <summary>
         /// Initialize the controller

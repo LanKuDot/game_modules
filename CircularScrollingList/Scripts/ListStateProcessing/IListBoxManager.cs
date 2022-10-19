@@ -10,8 +10,8 @@ namespace AirFishLab.ScrollingList.ListStateProcessing
         /// <summary>
         /// Set the boxes to the manager
         /// </summary>
-        /// <param name="boxes">The boxes</param>
-        void Initialize(IEnumerable<ListBox> boxes);
+        /// <param name="setupData">The setup data of the list</param>
+        void Initialize(ListSetupData setupData);
 
         /// <summary>
         /// Update the state of the boxes
