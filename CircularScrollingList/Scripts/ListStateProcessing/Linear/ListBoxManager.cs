@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using AirFishLab.ScrollingList.Util;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
@@ -17,15 +15,10 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// The number of boxes
         /// </summary>
         private int _numOfBoxes;
-
-        #endregion
-
-        #region Position Variables
-
-        private Func<Vector2, float> _getFactorFunc;
-        private float _unitPos;
-        private float _minPos;
-        private float _maxPos;
+        /// <summary>
+        /// The controller for setting the transform of the boxes
+        /// </summary>
+        private BoxTransformController _transformController;
 
         #endregion
 
@@ -37,45 +30,21 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             _boxes.AddRange(setupData.ListBoxes);
             _numOfBoxes = _boxes.Count;
 
-            InitializePositionVars(
-                setupData.RectTransform, setupData.Setting, _numOfBoxes);
+            _transformController = new BoxTransformController(setupData);
+        }
+
+        public void InitializeBoxes()
+        {
+            for (var i = 0; i < _numOfBoxes; ++i)
+                _transformController.SetInitialLocalTransform(
+                    _boxes[i].transform, i);
         }
 
         public void UpdateBoxes(float movementValue)
         {
-            Debug.Log(movementValue);
-        }
-
-        #endregion
-
-        #region Initialization
-
-        /// <summary>
-        /// Initialize the position related controlling variables
-        /// </summary>
-        private void InitializePositionVars(
-            RectTransform rectTransform, CircularScrollingListSetting listSetting,
-            int numOfBoxes)
-        {
-            var rect = rectTransform.rect;
-            var rectDistance =
-                listSetting.direction == CircularScrollingList.Direction.Vertical
-                    ? rect.height
-                    : rect.width;
-
-            _unitPos = rectDistance / (numOfBoxes - 1) / listSetting.boxDensity;
-
-            // If there are event number of boxes, narrow the boundary for 1 unit pos.
-            var boundPosAdjust =
-                (numOfBoxes & 0x1) == 0 ? _unitPos / 2 : 0;
-
-            _minPos = _unitPos * (-1 * numOfBoxes / 2 - 1) + boundPosAdjust;
-            _maxPos = _unitPos * (numOfBoxes / 2 + 1) - boundPosAdjust;
-
-            if (listSetting.direction == CircularScrollingList.Direction.Vertical)
-                _getFactorFunc = FactorUtility.GetVector2Y;
-            else
-                _getFactorFunc = FactorUtility.GetVector2X;
+            for (var i = 0; i< _numOfBoxes; ++i)
+                _transformController.SetLocalTransform(
+                    _boxes[i].transform, movementValue);
         }
 
         #endregion

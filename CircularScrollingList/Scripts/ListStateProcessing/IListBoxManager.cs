@@ -14,6 +14,11 @@ namespace AirFishLab.ScrollingList.ListStateProcessing
         void Initialize(ListSetupData setupData);
 
         /// <summary>
+        /// Initialize the layout of the boxes
+        /// </summary>
+        void InitializeBoxes();
+
+        /// <summary>
         /// Update the state of the boxes
         /// </summary>
         /// <param name="movementValue">The value for moving the boxes</param>

@@ -167,10 +167,11 @@ namespace AirFishLab.ScrollingList
 
             _inputProcessor =
                 new InputProcessor(_rectTransform, _canvasRefCamera);
-            _listBoxManager = new Linear.ListBoxManager();
-            _listBoxManager.Initialize(setupData);
             _listMovementProcessor = new Linear.ListMovementProcessor();
             _listMovementProcessor.Initialize(setupData);
+            _listBoxManager = new Linear.ListBoxManager();
+            _listBoxManager.Initialize(setupData);
+            _listBoxManager.InitializeBoxes();
 
             _listPositionCtrl =
                 new ListPositionCtrl(
@@ -181,10 +182,6 @@ namespace AirFishLab.ScrollingList
 
             if (_setting.centerSelectedBox)
                 _setting.onBoxClick.AddListener(SelectContentID);
-
-            for (var i = 0; i < _listBoxes.Count; ++i)
-                _listBoxes[i].Initialize(
-                    this, _listPositionCtrl, _listContentManager, i);
 
             _hasNoContent = _listBank.GetListLength() == 0;
         }
@@ -335,8 +332,6 @@ namespace AirFishLab.ScrollingList
         {
             if (!_isInitialized)
                 return;
-
-            _listPositionCtrl.Update();
 
             if (_listMovementProcessor.IsMovementEnded())
                 return;
