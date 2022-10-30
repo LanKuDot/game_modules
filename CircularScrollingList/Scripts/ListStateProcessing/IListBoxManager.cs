@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace AirFishLab.ScrollingList.ListStateProcessing
+﻿namespace AirFishLab.ScrollingList.ListStateProcessing
 {
     /// <summary>
     /// The interface for managing the list boxes
@@ -12,11 +10,6 @@ namespace AirFishLab.ScrollingList.ListStateProcessing
         /// </summary>
         /// <param name="setupData">The setup data of the list</param>
         void Initialize(ListSetupData setupData);
-
-        /// <summary>
-        /// Initialize the layout of the boxes
-        /// </summary>
-        void InitializeBoxes();
 
         /// <summary>
         /// Update the state of the boxes

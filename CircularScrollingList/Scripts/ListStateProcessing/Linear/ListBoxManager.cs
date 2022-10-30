@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
 
 namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 {
@@ -31,13 +30,8 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             _numOfBoxes = _boxes.Count;
 
             _transformController = new BoxTransformController(setupData);
-        }
 
-        public void InitializeBoxes()
-        {
-            for (var i = 0; i < _numOfBoxes; ++i)
-                _transformController.SetInitialLocalTransform(
-                    _boxes[i].transform, i);
+            InitializeBoxes();
         }
 
         public void UpdateBoxes(float movementValue)
@@ -45,6 +39,17 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             for (var i = 0; i< _numOfBoxes; ++i)
                 _transformController.SetLocalTransform(
                     _boxes[i].transform, movementValue);
+        }
+
+        #endregion
+
+        #region Initialization
+
+        private void InitializeBoxes()
+        {
+            for (var i = 0; i < _numOfBoxes; ++i)
+                _transformController.SetInitialLocalTransform(
+                    _boxes[i].transform, i);
         }
 
         #endregion

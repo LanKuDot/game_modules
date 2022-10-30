@@ -171,7 +171,6 @@ namespace AirFishLab.ScrollingList
             _listMovementProcessor.Initialize(setupData);
             _listBoxManager = new Linear.ListBoxManager();
             _listBoxManager.Initialize(setupData);
-            _listBoxManager.InitializeBoxes();
 
             _listPositionCtrl =
                 new ListPositionCtrl(
