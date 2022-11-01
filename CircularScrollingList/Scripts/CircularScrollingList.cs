@@ -163,7 +163,8 @@ namespace AirFishLab.ScrollingList
         {
             var setupData =
                 new ListSetupData(
-                    _setting, _rectTransform, _canvasRefCamera, _listBoxes);
+                    _setting, _rectTransform, _canvasRefCamera,
+                    new List<IListBox>(_listBoxes));
 
             _inputProcessor =
                 new InputProcessor(_rectTransform, _canvasRefCamera);

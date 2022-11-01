@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using AirFishLab.ScrollingList.BoxTransformCtrl;
+﻿using AirFishLab.ScrollingList.BoxTransformCtrl;
 using AirFishLab.ScrollingList.Util;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,8 +9,16 @@ namespace AirFishLab.ScrollingList
     /// The basic component of the scrolling list.
     /// Control the position and update the content of the list element.
     /// </summary>
-    public class ListBox : MonoBehaviour
+    public class ListBox : MonoBehaviour, IListBox
     {
+        #region Properties of IListBox
+
+        public Transform Transform => transform;
+        public int ListBoxID { get; private set; }
+        public int ContentID { get; private set; }
+
+        #endregion
+
         #region Exposed Properties
 
         /// <summary>
@@ -49,6 +56,20 @@ namespace AirFishLab.ScrollingList
         #region Private Memebers
 
         private IBoxTransformCtrl _boxTransformCtrl;
+
+        #endregion
+
+        #region IListBox
+
+        public void Initialize(ListSetupData setupData, int listBoxID)
+        {
+            ListBoxID = listBoxID;
+        }
+
+        public void SetContent(int contentID, object content)
+        {
+            ContentID = contentID;
+        }
 
         #endregion
 

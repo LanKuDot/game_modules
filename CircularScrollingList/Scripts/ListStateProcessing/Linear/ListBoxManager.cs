@@ -9,7 +9,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <summary>
         /// The managed boxes
         /// </summary>
-        private readonly List<ListBox> _boxes = new List<ListBox>();
+        private readonly List<IListBox> _boxes = new List<IListBox>();
         /// <summary>
         /// The number of boxes
         /// </summary>
@@ -38,18 +38,22 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         {
             for (var i = 0; i< _numOfBoxes; ++i)
                 _transformController.SetLocalTransform(
-                    _boxes[i].transform, movementValue);
+                    _boxes[i].Transform, movementValue);
         }
 
         #endregion
 
         #region Initialization
 
+        /// <summary>
+        /// Initialized the boxes
+        /// </summary>
         private void InitializeBoxes()
         {
-            for (var i = 0; i < _numOfBoxes; ++i)
+            for (var i = 0; i < _numOfBoxes; ++i) {
                 _transformController.SetInitialLocalTransform(
-                    _boxes[i].transform, i);
+                    _boxes[i].Transform, i);
+            }
         }
 
         #endregion

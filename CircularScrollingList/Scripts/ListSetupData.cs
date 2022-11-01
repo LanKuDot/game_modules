@@ -29,13 +29,13 @@ namespace AirFishLab.ScrollingList
         /// <summary>
         /// The boxes in the list
         /// </summary>
-        public readonly List<ListBox> ListBoxes;
+        public readonly List<IListBox> ListBoxes;
 
         #endregion
 
         public ListSetupData(
             CircularScrollingListSetting setting, RectTransform rectTransform,
-            Camera canvasRefCamera, List<ListBox> listBoxes)
+            Camera canvasRefCamera, List<IListBox> listBoxes)
         {
             Setting = setting;
             RectTransform = rectTransform;
