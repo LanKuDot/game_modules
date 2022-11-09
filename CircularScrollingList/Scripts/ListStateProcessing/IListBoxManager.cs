@@ -1,4 +1,6 @@
-﻿namespace AirFishLab.ScrollingList.ListStateProcessing
+﻿using AirFishLab.ScrollingList.ContentManagement;
+
+namespace AirFishLab.ScrollingList.ListStateProcessing
 {
     /// <summary>
     /// The interface for managing the list boxes
@@ -9,7 +11,10 @@
         /// Set the boxes to the manager
         /// </summary>
         /// <param name="setupData">The setup data of the list</param>
-        void Initialize(ListSetupData setupData);
+        /// <param name="contentProvider">
+        /// The component for getting the list content
+        /// </param>
+        void Initialize(ListSetupData setupData, IListContentProvider contentProvider);
 
         /// <summary>
         /// Update the state of the boxes

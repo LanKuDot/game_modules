@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using AirFishLab.ScrollingList.ContentManagement;
 
 namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 {
@@ -10,6 +11,10 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// The managed boxes
         /// </summary>
         private readonly List<IListBox> _boxes = new List<IListBox>();
+        /// <summary>
+        /// The component fot getting the list contents
+        /// </summary>
+        private IListContentProvider _contentProvider;
         /// <summary>
         /// The number of boxes
         /// </summary>
@@ -23,20 +28,22 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
         #region IListBoxManager
 
-        public void Initialize(ListSetupData setupData)
+        public void Initialize(
+            ListSetupData setupData, IListContentProvider contentProvider)
         {
             _boxes.Clear();
             _boxes.AddRange(setupData.ListBoxes);
             _numOfBoxes = _boxes.Count;
+            _contentProvider = contentProvider;
 
             _transformController = new BoxTransformController(setupData);
 
-            InitializeBoxes();
+            InitializeBoxes(setupData);
         }
 
         public void UpdateBoxes(float movementValue)
         {
-            for (var i = 0; i< _numOfBoxes; ++i)
+            for (var i = 0; i < _numOfBoxes; ++i)
                 _transformController.SetLocalTransform(
                     _boxes[i].Transform, movementValue);
         }
@@ -48,11 +55,21 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <summary>
         /// Initialized the boxes
         /// </summary>
-        private void InitializeBoxes()
+        private void InitializeBoxes(ListSetupData setupData)
         {
             for (var i = 0; i < _numOfBoxes; ++i) {
-                _transformController.SetInitialLocalTransform(
-                    _boxes[i].Transform, i);
+                var box = _boxes[i];
+                box.Initialize(setupData, i);
+                var boxId = box.ListBoxID;
+
+                _transformController.SetInitialLocalTransform(box.Transform, boxId);
+
+                var contentID = _contentProvider.GetInitialContentID(boxId);
+                var content =
+                    _contentProvider.TryGetContent(contentID, out var contentReturned)
+                        ? contentReturned
+                        : null;
+                box.SetContent(contentID, content);
             }
         }
 

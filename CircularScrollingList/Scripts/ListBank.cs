@@ -1,5 +1,7 @@
 ﻿/* Store the contents for ListBoxes to display.
  */
+
+using AirFishLab.ScrollingList.ContentManagement;
 using UnityEngine;
 
 namespace AirFishLab.ScrollingList
@@ -8,10 +10,11 @@ namespace AirFishLab.ScrollingList
  *
  * Create the individual ListBank by inheriting this class
  */
-    public abstract class BaseListBank : MonoBehaviour
+    public abstract class BaseListBank : MonoBehaviour, IListBank
     {
         public abstract object GetListContent(int index);
         public abstract int GetListLength();
+        public int GetContentCount() => GetListLength();
     }
 
 /* The example of the ListBank

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using AirFishLab.ScrollingList.ContentManagement;
 using AirFishLab.ScrollingList.ListStateProcessing;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -102,6 +103,10 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private IListBoxManager _listBoxManager;
         /// <summary>
+        /// The component for providing the content for the boxes
+        /// </summary>
+        private IListContentProvider _listContentProvider;
+        /// <summary>
         /// The component that controlling the position of each box
         /// </summary>
         private ListPositionCtrl _listPositionCtrl;
@@ -139,6 +144,7 @@ namespace AirFishLab.ScrollingList
 
             GetComponentReference();
             InitializeListComponents();
+            InitializeComponentsForLinearList();
             // Make the list position ctrl initialize its position state
             _listPositionCtrl.LateUpdate();
             _listPositionCtrl.InitialImageSorting();
@@ -161,18 +167,6 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private void InitializeListComponents()
         {
-            var setupData =
-                new ListSetupData(
-                    _setting, _rectTransform, _canvasRefCamera,
-                    new List<IListBox>(_listBoxes));
-
-            _inputProcessor =
-                new InputProcessor(_rectTransform, _canvasRefCamera);
-            _listMovementProcessor = new Linear.ListMovementProcessor();
-            _listMovementProcessor.Initialize(setupData);
-            _listBoxManager = new Linear.ListBoxManager();
-            _listBoxManager.Initialize(setupData);
-
             _listPositionCtrl =
                 new ListPositionCtrl(
                     _setting, _rectTransform, _canvasRefCamera, _listBoxes);
@@ -184,6 +178,27 @@ namespace AirFishLab.ScrollingList
                 _setting.onBoxClick.AddListener(SelectContentID);
 
             _hasNoContent = _listBank.GetListLength() == 0;
+        }
+
+        /// <summary>
+        /// Initialize the components for controlling the linear list
+        /// </summary>
+        // TODO Move the function to list controller builder
+        private void InitializeComponentsForLinearList()
+        {
+            var setupData =
+                new ListSetupData(
+                    _setting, _rectTransform, _canvasRefCamera,
+                    new List<IListBox>(_listBoxes), _listBank);
+
+            _inputProcessor =
+                new InputProcessor(_rectTransform, _canvasRefCamera);
+            _listMovementProcessor = new Linear.ListMovementProcessor();
+            _listMovementProcessor.Initialize(setupData);
+            _listContentProvider = new ListContentProvider();
+            _listContentProvider.Initialize(setupData);
+            _listBoxManager = new Linear.ListBoxManager();
+            _listBoxManager.Initialize(setupData, _listContentProvider);
         }
 
         #endregion
