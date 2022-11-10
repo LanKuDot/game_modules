@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using AirFishLab.ScrollingList.ContentManagement;
+using UnityEngine;
 
 namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 {
@@ -57,14 +58,17 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// </summary>
         private void InitializeBoxes(ListSetupData setupData)
         {
-            for (var i = 0; i < _numOfBoxes; ++i) {
-                var box = _boxes[i];
-                box.Initialize(setupData, i);
-                var boxId = box.ListBoxID;
+            for (var boxID = 0; boxID < _numOfBoxes; ++boxID) {
+                var box = _boxes[boxID];
+                var lastListBox =
+                    _boxes[(int)Mathf.Repeat(boxID - 1, _numOfBoxes)];
+                var nextListBox =
+                    _boxes[(int)Mathf.Repeat(boxID + 1, _numOfBoxes)];
+                box.Initialize(boxID, lastListBox, nextListBox);
 
-                _transformController.SetInitialLocalTransform(box.Transform, boxId);
+                _transformController.SetInitialLocalTransform(box.Transform, boxID);
 
-                var contentID = _contentProvider.GetInitialContentID(boxId);
+                var contentID = _contentProvider.GetInitialContentID(boxID);
                 var content =
                     _contentProvider.TryGetContent(contentID, out var contentReturned)
                         ? contentReturned

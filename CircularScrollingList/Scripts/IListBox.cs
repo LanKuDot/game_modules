@@ -18,6 +18,16 @@ namespace AirFishLab.ScrollingList
         int ContentID { get; }
 
         /// <summary>
+        /// The last list box
+        /// </summary>
+        IListBox LastListBox { get; }
+
+        /// <summary>
+        /// The next list box
+        /// </summary>
+        IListBox NextListBox { get; }
+
+        /// <summary>
         /// The transform of the box
         /// </summary>
         Transform Transform { get; }
@@ -25,9 +35,10 @@ namespace AirFishLab.ScrollingList
         /// <summary>
         /// Initialize the list box
         /// </summary>
-        /// <param name="setupData">The setup data of the list</param>
         /// <param name="listBoxID">The id of the box</param>
-        void Initialize(ListSetupData setupData, int listBoxID);
+        /// <param name="lastListBox">The last box</param>
+        /// <param name="nextListBox">The next box</param>
+        void Initialize(int listBoxID, IListBox lastListBox, IListBox nextListBox);
 
         /// <summary>
         /// Set the content for the box

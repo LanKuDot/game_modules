@@ -16,6 +16,8 @@ namespace AirFishLab.ScrollingList
         public Transform Transform => transform;
         public int ListBoxID { get; private set; }
         public int ContentID { get; private set; }
+        public IListBox LastListBox { get; private set; }
+        public IListBox NextListBox { get; private set; }
 
         #endregion
 
@@ -61,9 +63,12 @@ namespace AirFishLab.ScrollingList
 
         #region IListBox
 
-        public void Initialize(ListSetupData setupData, int listBoxID)
+        public void Initialize(
+            int listBoxID, IListBox lastListBox, IListBox nextListBox)
         {
             ListBoxID = listBoxID;
+            LastListBox = lastListBox;
+            NextListBox = nextListBox;
         }
 
         public void SetContent(int contentID, object content)
