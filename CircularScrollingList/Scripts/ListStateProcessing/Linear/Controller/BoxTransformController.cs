@@ -7,6 +7,20 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 {
     public class BoxTransformController
     {
+        #region Enum
+
+        /// <summary>
+        /// The status of the transform position
+        /// </summary>
+        public enum PositionStatus
+        {
+            Nothing,
+            JumpToTop,
+            JumpToBottom,
+        }
+
+        #endregion
+
         #region Position Variables
 
         /// <summary>
@@ -164,15 +178,17 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// </summary>
         /// <param name="boxTransform">The transform of the box</param>
         /// <param name="deltaPos">The moving distance</param>
-        public void SetLocalTransform(Transform boxTransform, float deltaPos)
+        /// <returns>The final status of the transform position</returns>
+        public PositionStatus SetLocalTransform(
+            Transform boxTransform, float deltaPos)
         {
             var localPosition = boxTransform.localPosition;
             var majorFactor = _getMajorFactorFunc(localPosition);
             var majorPosition =
                 GetMajorPosition(
                     majorFactor + deltaPos,
-                    out var needToUpdateToLastContent,
-                    out var needToUpdateToNextContent);
+                    out var isJumpingToTop,
+                    out var isJumpingToBottom);
             var minorPosition = GetMinorPosition(majorPosition);
 
             var localScale = boxTransform.localScale;
@@ -182,6 +198,11 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 _getLocalPositionFunc(majorPosition, minorPosition, localPosition.z);
             boxTransform.localScale =
                 new Vector3(scaleValue, scaleValue, localScale.z);
+
+            return
+                isJumpingToTop ? PositionStatus.JumpToTop :
+                isJumpingToBottom ? PositionStatus.JumpToBottom :
+                PositionStatus.Nothing;
         }
 
         #endregion
@@ -194,19 +215,19 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// to indicate that the content needs to be updated.
         /// </summary>
         /// <param name="positionValue">The requested position</param>
-        /// <param name="needToUpdateToLastContent">
-        /// Does it need to update to the last content?
+        /// <param name="isJumpingToTop">
+        /// Will the final position make the box jump to the top of the list?
         /// </param>
-        /// <param name="needToUpdateToNextContent">
-        /// Does it need to update to the next content?
+        /// <param name="isJumpingToBottom">
+        /// Will the final position make the box jump to the bottom of the list?
         /// </param>
         /// <returns>The final major position</returns>
         private float GetMajorPosition(
             float positionValue,
-            out bool needToUpdateToLastContent, out bool needToUpdateToNextContent)
+            out bool isJumpingToTop, out bool isJumpingToBottom)
         {
-            needToUpdateToLastContent = false;
-            needToUpdateToNextContent = false;
+            isJumpingToTop = false;
+            isJumpingToBottom = false;
 
             var beyondPos = 0.0f;
             var majorPos = positionValue;
@@ -214,11 +235,11 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             if (positionValue < _sideChangingMinPos) {
                 beyondPos = positionValue - _minPos;
                 majorPos = _maxPos - _unitPos + beyondPos;
-                needToUpdateToLastContent = true;
+                isJumpingToTop = true;
             } else if (positionValue > _sideChangingMaxPos) {
                 beyondPos = positionValue - _maxPos;
                 majorPos = _minPos + _unitPos + beyondPos;
-                needToUpdateToNextContent = true;
+                isJumpingToBottom = true;
             }
 
             return majorPos;
