@@ -39,7 +39,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
             _transformController = new BoxTransformController(setupData);
 
-            InitializeBoxes(setupData);
+            InitializeBoxes();
         }
 
         public void UpdateBoxes(float movementValue)
@@ -56,7 +56,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <summary>
         /// Initialized the boxes
         /// </summary>
-        private void InitializeBoxes(ListSetupData setupData)
+        private void InitializeBoxes()
         {
             for (var boxID = 0; boxID < _numOfBoxes; ++boxID) {
                 var box = _boxes[boxID];
