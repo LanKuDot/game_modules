@@ -4,6 +4,8 @@ using UnityEngine;
 
 namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 {
+    using PositionStatus = BoxTransformController.PositionStatus;
+
     public class ListBoxManager : IListBoxManager
     {
         #region Private Components
@@ -44,9 +46,14 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
         public void UpdateBoxes(float movementValue)
         {
-            for (var i = 0; i < _numOfBoxes; ++i)
-                _transformController.SetLocalTransform(
-                    _boxes[i].Transform, movementValue);
+            for (var i = 0; i < _numOfBoxes; ++i) {
+                var box = _boxes[i];
+
+                var positionStatus =
+                    _transformController.SetLocalTransform(
+                        box.Transform, movementValue);
+                UpdateBoxContent(box, positionStatus);
+            }
         }
 
         #endregion
@@ -69,12 +76,49 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 _transformController.SetInitialLocalTransform(box.Transform, boxID);
 
                 var contentID = _contentProvider.GetInitialContentID(boxID);
-                var content =
-                    _contentProvider.TryGetContent(contentID, out var contentReturned)
-                        ? contentReturned
-                        : null;
-                box.SetContent(contentID, content);
+                SetBoxContent(box, contentID);
             }
+        }
+
+        #endregion
+
+        #region Content Management
+
+        /// <summary>
+        /// Update the box content according to the position status
+        /// </summary>
+        private void UpdateBoxContent(IListBox box, PositionStatus positionStatus)
+        {
+            if (positionStatus == PositionStatus.Nothing)
+                return;
+
+            var contentID = 0;
+            switch (positionStatus) {
+                case PositionStatus.JumpToTop:
+                    contentID =
+                        _contentProvider.GetContentIDByNextBox(
+                            box.NextListBox.ContentID);
+                    break;
+                case PositionStatus.JumpToBottom:
+                    contentID =
+                        _contentProvider.GetContentIDByLastBox(
+                            box.LastListBox.ContentID);
+                    break;
+            }
+
+            SetBoxContent(box, contentID);
+        }
+
+        /// <summary>
+        /// Set the content of the box
+        /// </summary>
+        private void SetBoxContent(IListBox box, int contentID)
+        {
+            var content =
+                _contentProvider.TryGetContent(contentID, out var contentReturned)
+                    ? contentReturned
+                    : null;
+            box.SetContent(contentID, content);
         }
 
         #endregion
