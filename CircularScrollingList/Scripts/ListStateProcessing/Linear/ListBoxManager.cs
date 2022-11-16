@@ -19,10 +19,6 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// </summary>
         private IListContentProvider _contentProvider;
         /// <summary>
-        /// The number of boxes
-        /// </summary>
-        private int _numOfBoxes;
-        /// <summary>
         /// The controller for setting the transform of the boxes
         /// </summary>
         private BoxTransformController _transformController;
@@ -36,9 +32,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         {
             _boxes.Clear();
             _boxes.AddRange(setupData.ListBoxes);
-            _numOfBoxes = _boxes.Count;
             _contentProvider = contentProvider;
-
             _transformController = new BoxTransformController(setupData);
 
             InitializeBoxes();
@@ -46,9 +40,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
         public void UpdateBoxes(float movementValue)
         {
-            for (var i = 0; i < _numOfBoxes; ++i) {
-                var box = _boxes[i];
-
+            foreach (var box in _boxes) {
                 var positionStatus =
                     _transformController.SetLocalTransform(
                         box.Transform, movementValue);
@@ -60,17 +52,26 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
         #region Initialization
 
+        private void InitializeFactorFunc(CircularScrollingList.Direction direction)
+        {
+            if (direction == CircularScrollingList.Direction.Horizontal)
+                _getMajorFactorFunc = FactorUtility.GetVector2X;
+            else
+                _getMajorFactorFunc = FactorUtility.GetVector2Y;
+        }
+
         /// <summary>
         /// Initialized the boxes
         /// </summary>
         private void InitializeBoxes()
         {
-            for (var boxID = 0; boxID < _numOfBoxes; ++boxID) {
+            var numOfBoxes = _boxes.Count;
+            for (var boxID = 0; boxID < numOfBoxes; ++boxID) {
                 var box = _boxes[boxID];
                 var lastListBox =
-                    _boxes[(int)Mathf.Repeat(boxID - 1, _numOfBoxes)];
+                    _boxes[(int)Mathf.Repeat(boxID - 1, numOfBoxes)];
                 var nextListBox =
-                    _boxes[(int)Mathf.Repeat(boxID + 1, _numOfBoxes)];
+                    _boxes[(int)Mathf.Repeat(boxID + 1, numOfBoxes)];
                 box.Initialize(boxID, lastListBox, nextListBox);
 
                 _transformController.SetInitialLocalTransform(box.Transform, boxID);
