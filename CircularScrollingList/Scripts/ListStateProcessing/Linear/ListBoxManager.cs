@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using AirFishLab.ScrollingList.ContentManagement;
+using AirFishLab.ScrollingList.Util;
 using UnityEngine;
 
 namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
@@ -11,9 +13,21 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         #region Private Components
 
         /// <summary>
+        /// The setting of the list
+        /// </summary>
+        private CircularScrollingListSetting _setting;
+        /// <summary>
         /// The managed boxes
         /// </summary>
         private readonly List<IListBox> _boxes = new List<IListBox>();
+        /// <summary>
+        /// The box which is closest to the center position
+        /// </summary>
+        private IListBox _centeredBox;
+        /// <summary>
+        /// The shortest distance to make a box at the center position of the list
+        /// </summary>
+        private float _shortestDistanceToCenter;
         /// <summary>
         /// The component fot getting the list contents
         /// </summary>
@@ -22,6 +36,10 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// The controller for setting the transform of the boxes
         /// </summary>
         private BoxTransformController _transformController;
+        /// <summary>
+        /// The function for getting the major factor from the vector2
+        /// </summary>
+        private Func<Vector2, float> _getMajorFactorFunc;
 
         #endregion
 
@@ -30,11 +48,13 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         public void Initialize(
             ListSetupData setupData, IListContentProvider contentProvider)
         {
+            _setting = setupData.Setting;
             _boxes.Clear();
             _boxes.AddRange(setupData.ListBoxes);
             _contentProvider = contentProvider;
             _transformController = new BoxTransformController(setupData);
 
+            InitializeFactorFunc(_setting.direction);
             InitializeBoxes();
         }
 
@@ -46,6 +66,8 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                         box.Transform, movementValue);
                 UpdateBoxContent(box, positionStatus);
             }
+
+            UpdateListState();
         }
 
         #endregion
@@ -79,6 +101,78 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 var contentID = _contentProvider.GetInitialContentID(boxID);
                 SetBoxContent(box, contentID);
             }
+
+            FindShortestDistanceToCenter(out _centeredBox);
+            InitializeBoxLayerSorting();
+        }
+
+        /// <summary>
+        /// Initialize the sorting of the image of the boxes
+        /// </summary>
+        private void InitializeBoxLayerSorting()
+        {
+            var centeredBoxIndex = 0;
+            var numOfBoxes = _boxes.Count;
+            for (; centeredBoxIndex < numOfBoxes; ++centeredBoxIndex)
+                if (_boxes[centeredBoxIndex] == _centeredBox)
+                    break;
+
+            for (var i = centeredBoxIndex - 1; i >= 0; --i)
+                _boxes[i].PushToBack();
+            for (var i = centeredBoxIndex + 1; i < numOfBoxes; ++i)
+                _boxes[i].PushToBack();
+        }
+
+        #endregion
+
+        #region List Status
+
+        /// <summary>
+        /// Find the shortest distance to make a box at the center of the list
+        /// </summary>
+        /// <param name="candidateBox">
+        /// The candidate box which is closest to the center
+        /// </param>
+        /// <returns>
+        /// The distance to make the candidate box at the center of the list
+        /// </returns>
+        private float FindShortestDistanceToCenter(out IListBox candidateBox)
+        {
+            var shortestDistance = Mathf.Infinity;
+            candidateBox = null;
+
+            foreach (var listBox in _boxes) {
+                // Skip the inactivated box
+                if (!listBox.IsActivated)
+                    continue;
+
+                var localPos = listBox.Transform.localPosition;
+                var deltaDistance = -_getMajorFactorFunc(localPos);
+
+                if (Mathf.Abs(deltaDistance) >= Mathf.Abs(shortestDistance))
+                    continue;
+
+                shortestDistance = deltaDistance;
+                candidateBox = listBox;
+            }
+
+            return shortestDistance;
+        }
+
+        /// <summary>
+        /// Update the state of the list
+        /// </summary>
+        private void UpdateListState()
+        {
+            _shortestDistanceToCenter =
+                FindShortestDistanceToCenter(out var candidateBox);
+
+            if (candidateBox != _centeredBox) {
+                candidateBox.PopToFront();
+                _setting.onCenteredContentChanged.Invoke(candidateBox.ContentID);
+                // TODO _setting.onCenteredBoxChanged.Invoke(_centeredBox, candidateBox);
+                _centeredBox = candidateBox;
+            }
         }
 
         #endregion
@@ -99,11 +193,13 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                     contentID =
                         _contentProvider.GetContentIDByNextBox(
                             box.NextListBox.ContentID);
+                    box.PushToBack();
                     break;
                 case PositionStatus.JumpToBottom:
                     contentID =
                         _contentProvider.GetContentIDByLastBox(
                             box.LastListBox.ContentID);
+                    box.PushToBack();
                     break;
             }
 

@@ -33,6 +33,11 @@ namespace AirFishLab.ScrollingList
         Transform Transform { get; }
 
         /// <summary>
+        /// Is the box activated?
+        /// </summary>
+        bool IsActivated { get; }
+
+        /// <summary>
         /// Initialize the list box
         /// </summary>
         /// <param name="listBoxID">The id of the box</param>
@@ -48,5 +53,15 @@ namespace AirFishLab.ScrollingList
         /// The content. If the content ID is invalid, it will be null.
         /// </param>
         void SetContent(int contentID, object content);
+
+        /// <summary>
+        /// Pop the box to the front
+        /// </summary>
+        void PopToFront();
+
+        /// <summary>
+        /// Push the box to the back
+        /// </summary>
+        void PushToBack();
     }
 }

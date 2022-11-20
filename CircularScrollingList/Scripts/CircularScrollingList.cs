@@ -355,14 +355,6 @@ namespace AirFishLab.ScrollingList
             _listBoxManager.UpdateBoxes(movementValue);
         }
 
-        private void LateUpdate()
-        {
-            if (!_isInitialized)
-                return;
-
-            _listPositionCtrl.LateUpdate();
-        }
-
         #region Operation Functions
 
         /// <summary>
