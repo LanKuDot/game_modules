@@ -72,7 +72,7 @@ namespace AirFishLab.ScrollingList.ContentManagement
         }
 
         public bool IsIDValid(int contentID) =>
-            contentID >= 0 || contentID < _listBank.GetContentCount();
+            contentID >= 0 && contentID < _listBank.GetContentCount();
 
         public int GetShortestLength(int fromContentID, int toContentID)
         {
