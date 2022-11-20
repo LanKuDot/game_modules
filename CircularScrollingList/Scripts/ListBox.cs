@@ -75,7 +75,7 @@ namespace AirFishLab.ScrollingList
         public void SetContent(int contentID, object content)
         {
             ContentID = contentID;
-            Debug.Log(contentID);
+            UpdateDisplayContent(contentID);
         }
 
         #endregion
