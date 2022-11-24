@@ -35,7 +35,7 @@ namespace AirFishLab.ScrollingList
         /// <summary>
         /// Is the box activated?
         /// </summary>
-        bool IsActivated { get; }
+        bool IsActivated { get; set; }
 
         /// <summary>
         /// Initialize the list box

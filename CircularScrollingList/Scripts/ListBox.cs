@@ -18,7 +18,11 @@ namespace AirFishLab.ScrollingList
         public int ContentID { get; private set; }
         public IListBox LastListBox { get; private set; }
         public IListBox NextListBox { get; private set; }
-        public bool IsActivated => gameObject.activeSelf;
+        public bool IsActivated
+        {
+            get => gameObject.activeSelf;
+            set => gameObject.SetActive(value);
+        }
 
         #endregion
 
