@@ -71,6 +71,13 @@ namespace AirFishLab.ScrollingList.ContentManagement
             return isIDValid;
         }
 
+        public ContentIDState GetIDState(int contentID) =>
+            contentID < 0
+                ? ContentIDState.Underflow
+                : contentID >= _listBank.GetContentCount()
+                    ? ContentIDState.Overflow
+                    : ContentIDState.Valid;
+
         public bool IsIDValid(int contentID) =>
             contentID >= 0 && contentID < _listBank.GetContentCount();
 

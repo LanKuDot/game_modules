@@ -43,6 +43,13 @@
         bool TryGetContent(int contentID, out object content);
 
         /// <summary>
+        /// Check the state of the specified id
+        /// </summary>
+        /// <param name="contentID">The content id</param>
+        /// <returns>The state of the id</returns>
+        ContentIDState GetIDState(int contentID);
+
+        /// <summary>
         /// Is the content id valid for getting the list content?
         /// </summary>
         /// <param name="contentID">The content id</param>
