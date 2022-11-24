@@ -10,6 +10,15 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
     public class ListBoxManager : IListBoxManager
     {
+        #region Public Properties
+
+        /// <summary>
+        /// The state of the list
+        /// </summary>
+        public ListState ListState { get; private set; }
+
+        #endregion
+
         #region Private Components
 
         /// <summary>
@@ -21,6 +30,19 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// </summary>
         private readonly List<IListBox> _boxes = new List<IListBox>();
         /// <summary>
+        /// The component fot getting the list contents
+        /// </summary>
+        private IListContentProvider _contentProvider;
+        /// <summary>
+        /// The controller for setting the transform of the boxes
+        /// </summary>
+        private BoxTransformController _transformController;
+
+        #endregion
+
+        #region Private Fields
+
+        /// <summary>
         /// The box which is closest to the center position
         /// </summary>
         private IListBox _centeredBox;
@@ -29,17 +51,14 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// </summary>
         private float _shortestDistanceToCenter;
         /// <summary>
-        /// The component fot getting the list contents
-        /// </summary>
-        private IListContentProvider _contentProvider;
-        /// <summary>
-        /// The controller for setting the transform of the boxes
-        /// </summary>
-        private BoxTransformController _transformController;
-        /// <summary>
         /// The function for getting the major factor from the vector2
         /// </summary>
         private Func<Vector2, float> _getMajorFactorFunc;
+        /// <summary>
+        /// The number of the inactivated boxes
+        /// </summary>
+        private readonly NumOfInactivatedBoxes _inactivatedBoxes =
+            new NumOfInactivatedBoxes();
 
         #endregion
 
@@ -100,6 +119,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
                 var contentID = _contentProvider.GetInitialContentID(boxID);
                 SetBoxContent(box, contentID);
+                CheckToBeInactivated(box, PositionStatus.Nothing);
             }
 
             FindShortestDistanceToCenter(out _centeredBox);
@@ -204,6 +224,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             }
 
             SetBoxContent(box, contentID);
+            CheckToBeInactivated(box, positionStatus);
         }
 
         /// <summary>
@@ -216,6 +237,86 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                     ? contentReturned
                     : null;
             box.SetContent(contentID, content);
+        }
+
+        #endregion
+
+        #region Box Activation
+
+        /// <summary>
+        /// Check if it needs to inactivate the box
+        /// </summary>
+        /// <param name="box">The target box</param>
+        /// <param name="positionStatus">The position status of the box</param>
+        private void CheckToBeInactivated(IListBox box, PositionStatus positionStatus)
+        {
+            var contentID = box.ContentID;
+
+            if (contentID == int.MinValue) {
+                box.IsActivated = false;
+                return;
+            }
+
+            if (_setting.listType != CircularScrollingList.ListType.Linear)
+                return;
+
+            var idState = _contentProvider.GetIDState(contentID);
+            if (idState != ContentIDState.Valid)
+                HandleInvalidID(box, positionStatus, idState);
+        }
+
+        private void HandleInvalidID(
+            IListBox box, PositionStatus positionStatus, ContentIDState idState)
+        {
+            var isReverseOrder = _setting.reverseOrder;
+            var isPreviouslyActivated = box.IsActivated;
+
+            switch (positionStatus) {
+                case PositionStatus.Nothing:
+                    if ((!isReverseOrder && idState == ContentIDState.Underflow)
+                        || (isReverseOrder && idState == ContentIDState.Overflow)) {
+                        ++_inactivatedBoxes.AtTop;
+                        break;
+                    }
+
+                    if ((!isReverseOrder && idState == ContentIDState.Overflow)
+                        || (isReverseOrder && idState == ContentIDState.Underflow)) {
+                        ++_inactivatedBoxes.AtBottom;
+                    }
+                    break;
+                case PositionStatus.JumpToTop:
+                    ++_inactivatedBoxes.AtTop;
+                    if (!isPreviouslyActivated)
+                        --_inactivatedBoxes.AtBottom;
+                    break;
+                case PositionStatus.JumpToBottom:
+                    ++_inactivatedBoxes.AtBottom;
+                    if (!isPreviouslyActivated)
+                        --_inactivatedBoxes.AtTop;
+                    break;
+            }
+
+            if (isPreviouslyActivated)
+                box.IsActivated = false;
+        }
+
+        #endregion
+
+        #region Sub Data
+
+        /// <summary>
+        /// The data class for storing the number of inactivated boxes
+        /// </summary>
+        private class NumOfInactivatedBoxes
+        {
+            /// <summary>
+            /// The number of inactivated boxes at the top
+            /// </summary>
+            public int AtTop;
+            /// <summary>
+            /// The number of inactivated boxes at the bottom
+            /// </summary>
+            public int AtBottom;
         }
 
         #endregion
