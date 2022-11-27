@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 {
-    using PositionStatus = BoxTransformController.PositionStatus;
+    using PositionState = BoxTransformController.PositionState;
 
     public class ListBoxManager : IListBoxManager
     {
@@ -120,7 +120,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
                 var contentID = _contentProvider.GetInitialContentID(boxID);
                 SetBoxContent(box, contentID);
-                ToggleBoxActivation(box, PositionStatus.Nothing);
+                ToggleBoxActivation(box, PositionState.Nothing);
             }
 
             FindShortestDistanceToCenter(out _centeredBox);
@@ -203,20 +203,20 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <summary>
         /// Update the box content according to the position status
         /// </summary>
-        private void UpdateBoxContent(IListBox box, PositionStatus positionStatus)
+        private void UpdateBoxContent(IListBox box, PositionState positionState)
         {
-            if (positionStatus == PositionStatus.Nothing)
+            if (positionState == PositionState.Nothing)
                 return;
 
             var contentID = 0;
-            switch (positionStatus) {
-                case PositionStatus.JumpToTop:
+            switch (positionState) {
+                case PositionState.JumpToTop:
                     contentID =
                         _contentProvider.GetContentIDByNextBox(
                             box.NextListBox.ContentID);
                     box.PushToBack();
                     break;
-                case PositionStatus.JumpToBottom:
+                case PositionState.JumpToBottom:
                     contentID =
                         _contentProvider.GetContentIDByLastBox(
                             box.LastListBox.ContentID);
@@ -225,7 +225,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             }
 
             SetBoxContent(box, contentID);
-            ToggleBoxActivation(box, positionStatus);
+            ToggleBoxActivation(box, positionState);
         }
 
         /// <summary>
@@ -248,8 +248,8 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// Check if it needs to activate/inactivate the box
         /// </summary>
         /// <param name="box">The target box</param>
-        /// <param name="positionStatus">The position status of the box</param>
-        private void ToggleBoxActivation(IListBox box, PositionStatus positionStatus)
+        /// <param name="positionState">The position status of the box</param>
+        private void ToggleBoxActivation(IListBox box, PositionState positionState)
         {
             var contentID = box.ContentID;
 
@@ -270,26 +270,26 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             else if (isIdValid && !isPreviouslyActivated)
                 box.IsActivated = true;
 
-            UpdateNumOfInactivatedBoxes(positionStatus, idState, !isPreviouslyActivated);
+            UpdateNumOfInactivatedBoxes(positionState, idState, !isPreviouslyActivated);
         }
 
         /// <summary>
         /// Update the number of the inactivated boxes
         /// </summary>
-        /// <param name="positionStatus">The position state of the box</param>
+        /// <param name="positionState">The position state of the box</param>
         /// <param name="idState">The id state of the box</param>
         /// <param name="isPreviouslyInactivated">
         /// Is the box previously inactivated?
         /// </param>
         private void UpdateNumOfInactivatedBoxes(
-            PositionStatus positionStatus, ContentIDState idState,
+            PositionState positionState, ContentIDState idState,
             bool isPreviouslyInactivated)
         {
             var isReverseOrder = _setting.reverseOrder;
             var isIdValid = idState == ContentIDState.Valid;
 
-            switch (positionStatus) {
-                case PositionStatus.Nothing:
+            switch (positionState) {
+                case PositionState.Nothing:
                     if (isIdValid)
                         break;
 
@@ -305,14 +305,14 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                     }
                     break;
 
-                case PositionStatus.JumpToTop:
+                case PositionState.JumpToTop:
                     if (!isIdValid)
                         ++_inactivatedBoxes.AtTop;
                     if (isPreviouslyInactivated)
                         --_inactivatedBoxes.AtBottom;
                     break;
 
-                case PositionStatus.JumpToBottom:
+                case PositionState.JumpToBottom:
                     if (!isIdValid)
                         ++_inactivatedBoxes.AtBottom;
                     if (isPreviouslyInactivated)

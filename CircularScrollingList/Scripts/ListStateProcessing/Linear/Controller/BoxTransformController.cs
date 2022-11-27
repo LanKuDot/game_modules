@@ -10,9 +10,9 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         #region Enum
 
         /// <summary>
-        /// The status of the transform position
+        /// The state of the transform position
         /// </summary>
-        public enum PositionStatus
+        public enum PositionState
         {
             Nothing,
             JumpToTop,
@@ -179,7 +179,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <param name="boxTransform">The transform of the box</param>
         /// <param name="deltaPos">The moving distance</param>
         /// <returns>The final status of the transform position</returns>
-        public PositionStatus SetLocalTransform(
+        public PositionState SetLocalTransform(
             Transform boxTransform, float deltaPos)
         {
             var localPosition = boxTransform.localPosition;
@@ -200,9 +200,9 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 new Vector3(scaleValue, scaleValue, localScale.z);
 
             return
-                isJumpingToTop ? PositionStatus.JumpToTop :
-                isJumpingToBottom ? PositionStatus.JumpToBottom :
-                PositionStatus.Nothing;
+                isJumpingToTop ? PositionState.JumpToTop :
+                isJumpingToBottom ? PositionState.JumpToBottom :
+                PositionState.Nothing;
         }
 
         #endregion
