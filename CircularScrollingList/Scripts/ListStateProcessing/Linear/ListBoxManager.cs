@@ -16,7 +16,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <summary>
         /// The state of the list
         /// </summary>
-        public ListState ListState { get; private set; }
+        public ListState ListState { get; private set; } = ListState.Middle;
 
         #endregion
 
@@ -58,8 +58,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <summary>
         /// The number of the inactivated boxes
         /// </summary>
-        private readonly NumOfInactivatedBoxes _inactivatedBoxes =
-            new NumOfInactivatedBoxes();
+        private NumOfInactivatedBoxes _inactivatedBoxes;
 
         #endregion
 
@@ -73,6 +72,8 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             _boxes.AddRange(setupData.ListBoxes);
             _contentProvider = contentProvider;
             _transformController = new BoxTransformController(setupData);
+            _inactivatedBoxes =
+                new NumOfInactivatedBoxes(_boxes.Count / 2);
 
             InitializeFactorFunc(_setting.direction);
             InitializeBoxes();
@@ -87,6 +88,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 UpdateBoxContent(box, positionStatus);
             }
 
+            UpdateCenteredBox();
             UpdateListState();
         }
 
@@ -103,7 +105,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         }
 
         /// <summary>
-        /// Initialized the boxes
+        /// Initialize the boxes
         /// </summary>
         private void InitializeBoxes()
         {
@@ -125,6 +127,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
             FindShortestDistanceToCenter(out _centeredBox);
             InitializeBoxLayerSorting();
+            UpdateListState();
         }
 
         /// <summary>
@@ -146,7 +149,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
         #endregion
 
-        #region List Status
+        #region Centered Box
 
         /// <summary>
         /// Find the shortest distance to make a box at the center of the list
@@ -157,6 +160,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <returns>
         /// The distance to make the candidate box at the center of the list
         /// </returns>
+        // TODO Swap the return value and out value
         private float FindShortestDistanceToCenter(out IListBox candidateBox)
         {
             var shortestDistance = Mathf.Infinity;
@@ -181,19 +185,20 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         }
 
         /// <summary>
-        /// Update the state of the list
+        /// Update the centered box
         /// </summary>
-        private void UpdateListState()
+        private void UpdateCenteredBox()
         {
             _shortestDistanceToCenter =
                 FindShortestDistanceToCenter(out var candidateBox);
 
-            if (candidateBox != _centeredBox) {
-                candidateBox.PopToFront();
-                _setting.onCenteredContentChanged.Invoke(candidateBox.ContentID);
-                // TODO _setting.onCenteredBoxChanged.Invoke(_centeredBox, candidateBox);
-                _centeredBox = candidateBox;
-            }
+            if (candidateBox == _centeredBox)
+                return;
+
+            candidateBox.PopToFront();
+            _setting.onCenteredContentChanged.Invoke(candidateBox.ContentID);
+            // TODO _setting.onCenteredBoxChanged.Invoke(_centeredBox, candidateBox);
+            _centeredBox = candidateBox;
         }
 
         #endregion
@@ -323,6 +328,32 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
         #endregion
 
+        #region List State
+
+        /// <summary>
+        /// Update the state of the list
+        /// </summary>
+        private void UpdateListState()
+        {
+            if (_setting.listType != CircularScrollingList.ListType.Linear)
+                return;
+
+            const float tolerance = 1e-4f;
+
+            if (_inactivatedBoxes.AtTop >= _inactivatedBoxes.MaxNum
+                && _shortestDistanceToCenter > -tolerance)
+                ListState = ListState.Top;
+            else if (_inactivatedBoxes.AtBottom >= _inactivatedBoxes.MaxNum
+                     && _shortestDistanceToCenter < tolerance)
+                ListState = ListState.Bottom;
+            else
+                ListState = ListState.Middle;
+
+            Debug.Log(ListState);
+        }
+
+        #endregion
+
         #region Sub Data
 
         /// <summary>
@@ -331,6 +362,10 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         private class NumOfInactivatedBoxes
         {
             /// <summary>
+            /// The max number of inactivated boxes
+            /// </summary>
+            public readonly int MaxNum;
+            /// <summary>
             /// The number of inactivated boxes at the top
             /// </summary>
             public int AtTop;
@@ -338,6 +373,11 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             /// The number of inactivated boxes at the bottom
             /// </summary>
             public int AtBottom;
+
+            public NumOfInactivatedBoxes(int maxNum)
+            {
+                MaxNum = maxNum;
+            }
         }
 
         #endregion
