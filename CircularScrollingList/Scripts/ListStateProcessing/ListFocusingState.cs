@@ -3,7 +3,7 @@
     /// <summary>
     /// The state of the list
     /// </summary>
-    public enum ListState
+    public enum ListFocusingState
     {
         /// <summary>
         /// The list reaches the top

@@ -16,7 +16,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <summary>
         /// The state of the list
         /// </summary>
-        public ListState ListState { get; private set; } = ListState.Middle;
+        public ListFocusingState ListFocusingState { get; private set; } = ListFocusingState.Middle;
 
         #endregion
 
@@ -89,7 +89,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             }
 
             UpdateCenteredBox();
-            UpdateListState();
+            UpdateListFocusingState();
         }
 
         #endregion
@@ -125,9 +125,9 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 ToggleBoxActivation(box, PositionState.Nothing);
             }
 
-            FindShortestDistanceToCenter(out _centeredBox);
             InitializeBoxLayerSorting();
-            UpdateListState();
+            FindShortestDistanceToCenter(out _centeredBox);
+            UpdateListFocusingState();
         }
 
         /// <summary>
@@ -145,6 +145,32 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 _boxes[i].PushToBack();
             for (var i = centeredBoxIndex + 1; i < numOfBoxes; ++i)
                 _boxes[i].PushToBack();
+        }
+
+        #endregion
+
+        #region List State
+
+        /// <summary>
+        /// Update the focusing state of the list
+        /// </summary>
+        private void UpdateListFocusingState()
+        {
+            if (_setting.listType != CircularScrollingList.ListType.Linear)
+                return;
+
+            const float tolerance = 1e-4f;
+
+            if (_inactivatedBoxes.AtTop >= _inactivatedBoxes.MaxNum
+                && _shortestDistanceToCenter > -tolerance)
+                ListFocusingState = ListFocusingState.Top;
+            else if (_inactivatedBoxes.AtBottom >= _inactivatedBoxes.MaxNum
+                     && _shortestDistanceToCenter < tolerance)
+                ListFocusingState = ListFocusingState.Bottom;
+            else
+                ListFocusingState = ListFocusingState.Middle;
+
+            Debug.Log(ListFocusingState);
         }
 
         #endregion
@@ -324,32 +350,6 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                         --_inactivatedBoxes.AtTop;
                     break;
             }
-        }
-
-        #endregion
-
-        #region List State
-
-        /// <summary>
-        /// Update the state of the list
-        /// </summary>
-        private void UpdateListState()
-        {
-            if (_setting.listType != CircularScrollingList.ListType.Linear)
-                return;
-
-            const float tolerance = 1e-4f;
-
-            if (_inactivatedBoxes.AtTop >= _inactivatedBoxes.MaxNum
-                && _shortestDistanceToCenter > -tolerance)
-                ListState = ListState.Top;
-            else if (_inactivatedBoxes.AtBottom >= _inactivatedBoxes.MaxNum
-                     && _shortestDistanceToCenter < tolerance)
-                ListState = ListState.Bottom;
-            else
-                ListState = ListState.Middle;
-
-            Debug.Log(ListState);
         }
 
         #endregion
