@@ -183,19 +183,16 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         #region Centered Box
 
         /// <summary>
-        /// Find the shortest distance to make a box at the center of the list
+        /// Find the box which is closet to the center
         /// </summary>
-        /// <param name="candidateBox">
-        /// The candidate box which is closest to the center
+        /// <param name="distance">
+        /// The distance for moving this box to the center
         /// </param>
-        /// <returns>
-        /// The distance to make the candidate box at the center of the list
-        /// </returns>
-        // TODO Swap the return value and out value
-        private float FindShortestDistanceToCenter(out IListBox candidateBox)
+        /// <returns>The box</returns>
+        private IListBox FindBoxClosestToCenter(out float distance)
         {
-            var shortestDistance = Mathf.Infinity;
-            candidateBox = null;
+            distance = Mathf.Infinity;
+            IListBox candidateBox = null;
 
             foreach (var listBox in _boxes) {
                 // Skip the inactivated box
@@ -205,14 +202,14 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 var localPos = listBox.Transform.localPosition;
                 var deltaDistance = -_getMajorFactorFunc(localPos);
 
-                if (Mathf.Abs(deltaDistance) >= Mathf.Abs(shortestDistance))
+                if (Mathf.Abs(deltaDistance) >= Mathf.Abs(distance))
                     continue;
 
-                shortestDistance = deltaDistance;
+                distance = deltaDistance;
                 candidateBox = listBox;
             }
 
-            return shortestDistance;
+            return candidateBox;
         }
 
         /// <summary>
@@ -220,8 +217,8 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// </summary>
         private void UpdateCenteredBox()
         {
-            _shortestDistanceToCenter =
-                FindShortestDistanceToCenter(out var candidateBox);
+            var candidateBox =
+                FindBoxClosestToCenter(out _shortestDistanceToCenter);
 
             if (candidateBox == _centeredBox)
                 return;
