@@ -88,8 +88,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 UpdateBoxContent(box, positionStatus);
             }
 
-            UpdateCenteredBox();
-            UpdateListFocusingState();
+            UpdateListState();
         }
 
         #endregion
@@ -126,8 +125,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             }
 
             InitializeBoxLayerSorting();
-            FindShortestDistanceToCenter(out _centeredBox);
-            UpdateListFocusingState();
+            UpdateListState();
         }
 
         /// <summary>
@@ -152,6 +150,15 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         #region List State
 
         /// <summary>
+        /// Update the list state
+        /// </summary>
+        private void UpdateListState()
+        {
+            UpdateCenteredBox();
+            UpdateListFocusingState();
+        }
+
+        /// <summary>
         /// Update the focusing state of the list
         /// </summary>
         private void UpdateListFocusingState()
@@ -169,8 +176,6 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 ListFocusingState = ListFocusingState.Bottom;
             else
                 ListFocusingState = ListFocusingState.Middle;
-
-            Debug.Log(ListFocusingState);
         }
 
         #endregion
