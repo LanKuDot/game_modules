@@ -266,11 +266,8 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// </summary>
         private void SetBoxContent(IListBox box, int contentID)
         {
-            var content =
-                _contentProvider.TryGetContent(contentID, out var contentReturned)
-                    ? contentReturned
-                    : null;
-            box.SetContent(contentID, content);
+            _contentProvider.TryGetContent(contentID, out var contentReturned);
+            box.SetContent(contentID, contentReturned);
         }
 
         #endregion

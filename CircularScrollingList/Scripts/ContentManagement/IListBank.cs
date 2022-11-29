@@ -10,7 +10,7 @@
         /// </summary>
         /// <param name="index">The index of the content</param>
         /// <returns>The content</returns>
-        object GetListContent(int index);
+        IListContent GetListContentNew(int index);
 
         /// <summary>
         /// Get the number of the contents

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using AirFishLab.ScrollingList.ContentManagement;
+using UnityEngine;
 
 namespace AirFishLab.ScrollingList
 {
@@ -52,7 +53,7 @@ namespace AirFishLab.ScrollingList
         /// <param name="content">
         /// The content. If the content ID is invalid, it will be null.
         /// </param>
-        void SetContent(int contentID, object content);
+        void SetContent(int contentID, IListContent content);
 
         /// <summary>
         /// Pop the box to the front

@@ -40,7 +40,7 @@
         /// The content. If the content is not available, it will be null.
         /// </param>
         /// <returns>It the content available?</returns>
-        bool TryGetContent(int contentID, out object content);
+        bool TryGetContent(int contentID, out IListContent content);
 
         /// <summary>
         /// Check the state of the specified id

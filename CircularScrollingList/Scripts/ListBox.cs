@@ -1,4 +1,5 @@
 ﻿using AirFishLab.ScrollingList.BoxTransformCtrl;
+using AirFishLab.ScrollingList.ContentManagement;
 using AirFishLab.ScrollingList.Util;
 using UnityEngine;
 using UnityEngine.UI;
@@ -76,7 +77,7 @@ namespace AirFishLab.ScrollingList
             NextListBox = nextListBox;
         }
 
-        public void SetContent(int contentID, object content)
+        public void SetContent(int contentID, IListContent content)
         {
             ContentID = contentID;
             UpdateDisplayContent(contentID);

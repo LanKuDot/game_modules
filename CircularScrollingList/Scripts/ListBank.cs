@@ -13,6 +13,11 @@ namespace AirFishLab.ScrollingList
     public abstract class BaseListBank : MonoBehaviour, IListBank
     {
         public abstract object GetListContent(int index);
+        // TODO Replace the GetListContent
+        public virtual IListContent GetListContentNew(int index)
+        {
+            return null;
+        }
         public abstract int GetListLength();
         public int GetContentCount() => GetListLength();
     }
@@ -30,9 +35,21 @@ namespace AirFishLab.ScrollingList
             return contents[index].ToString();
         }
 
+        public override IListContent GetListContentNew(int index)
+        {
+            return new Content {
+                Value = contents[index]
+            };
+        }
+
         public override int GetListLength()
         {
             return contents.Length;
+        }
+
+        public class Content : IListContent
+        {
+            public int Value;
         }
     }
 }
