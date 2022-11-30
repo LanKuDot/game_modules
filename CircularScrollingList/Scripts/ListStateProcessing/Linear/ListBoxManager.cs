@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using AirFishLab.ScrollingList.ContentManagement;
 using AirFishLab.ScrollingList.Util;
-using UnityEditor;
 using UnityEngine;
 
 namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
@@ -124,8 +123,8 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 ToggleBoxActivation(box, PositionState.Nothing);
             }
 
-            InitializeBoxLayerSorting();
             UpdateListState();
+            InitializeBoxLayerSorting();
         }
 
         /// <summary>
