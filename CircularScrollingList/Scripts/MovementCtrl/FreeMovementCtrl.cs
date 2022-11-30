@@ -107,8 +107,9 @@ namespace AirFishLab.ScrollingList.MovementCtrl
         /// <param name="isDragging">Is the list being dragged?</param>
         public void SetMovement(float value, bool isDragging)
         {
+            _isDragging = isDragging;
+
             if (isDragging) {
-                _isDragging = true;
                 _draggingDistance = value;
 
                 // End the last movement when start dragging
@@ -151,8 +152,9 @@ namespace AirFishLab.ScrollingList.MovementCtrl
 
             /* If it's dragging, return the dragging distance set from `SetMovement()` */
             if (_isDragging) {
-                _isDragging = false;
                 distance = _draggingDistance;
+                // The dragging distance is only valid for one frame
+                _draggingDistance = 0;
 
                 if (!IsGoingTooFar(distance))
                     return distance;
