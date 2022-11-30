@@ -80,6 +80,9 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
         public void UpdateBoxes(float movementValue)
         {
+            if (Mathf.Approximately(movementValue, 0f))
+                return;
+
             foreach (var box in _boxes) {
                 var positionStatus =
                     _transformController.SetLocalTransform(

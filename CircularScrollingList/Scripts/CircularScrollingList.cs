@@ -123,6 +123,10 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         /// It is used for blocking any input if the list has nothing to display.
         private bool _hasNoContent;
+        /// <summary>
+        /// Is the list moving?
+        /// </summary>
+        private bool _isMoving;
 
         #endregion
 
@@ -342,14 +346,17 @@ namespace AirFishLab.ScrollingList
 
         private void Update()
         {
-            if (!_isInitialized)
-                return;
-
-            if (_listMovementProcessor.IsMovementEnded())
+            if (!_isInitialized || !_isMoving)
                 return;
 
             var movementValue = _listMovementProcessor.GetMovement(Time.deltaTime);
             _listBoxManager.UpdateBoxes(movementValue);
+
+            if (!_listMovementProcessor.IsMovementEnded())
+                return;
+
+            _setting.onMovementEnd.Invoke();
+            _isMoving = false;
         }
 
         #region Operation Functions
@@ -361,6 +368,7 @@ namespace AirFishLab.ScrollingList
         {
             var inputInfo = _inputProcessor.GetInputInfo(eventData, phase);
             _listMovementProcessor.SetMovement(inputInfo);
+            _isMoving = true;
         }
 
         #endregion
