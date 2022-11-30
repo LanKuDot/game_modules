@@ -145,9 +145,6 @@ namespace AirFishLab.ScrollingList
             GetComponentReference();
             InitializeListComponents();
             InitializeComponentsForLinearList();
-            // Make the list position ctrl initialize its position state
-            _listPositionCtrl.LateUpdate();
-            _listPositionCtrl.InitialImageSorting();
             _isInitialized = true;
         }
 
