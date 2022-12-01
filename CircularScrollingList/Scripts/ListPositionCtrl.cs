@@ -415,19 +415,6 @@ namespace AirFishLab.ScrollingList
         #region Update Functions
 
         /// <summary>
-        /// Update the position of the boxes
-        /// </summary>
-        public void Update()
-        {
-            if (_movementCtrl.IsMovementEnded())
-                return;
-
-            var distance = _movementCtrl.GetDistance(Time.deltaTime);
-            foreach (var listBox in _listBoxes)
-                listBox.UpdatePosition(distance);
-        }
-
-        /// <summary>
         /// Update the position state and find the distance for aligning a box
         /// to the center
         /// </summary>

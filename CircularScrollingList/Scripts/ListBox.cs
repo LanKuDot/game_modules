@@ -38,14 +38,6 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         public int listBoxID { get; private set; }
         /// <summary>
-        /// The previous box of this box
-        /// </summary>
-        public ListBox lastListBox { get; private set; }
-        /// <summary>
-        /// The next box of this box
-        /// </summary>
-        public ListBox nextListBox { get; private set; }
-        /// <summary>
         /// The ID of the content that the box references
         /// </summary>
         public int contentID { get; private set; }
@@ -125,24 +117,7 @@ namespace AirFishLab.ScrollingList
 
         #endregion
 
-        #region Position Controlling
-
-        /// <summary>
-        /// Update the position of the box
-        /// </summary>
-        /// <param name="delta">The delta distance in the major direction</param>
-        public void UpdatePosition(float delta)
-        {
-            _boxTransformCtrl.SetLocalTransform(
-                transform, delta,
-                out var needToUpdateToLastContent,
-                out var needToUpdateToNextContent);
-
-            if (needToUpdateToLastContent)
-                UpdateToLastContent();
-            else if (needToUpdateToNextContent)
-                UpdateToNextContent();
-        }
+        #region Image Sorting
 
         /// <summary>
         /// Pop to the to the front of the image sorting
@@ -195,67 +170,6 @@ namespace AirFishLab.ScrollingList
                     _positionCtrl.numOfLowerDisabledBoxes += 1;
                 gameObject.SetActive(false);
             }
-        }
-
-        /// <summary>
-        /// Update the content to the last content of the next ListBox
-        /// </summary>
-        private void UpdateToLastContent()
-        {
-            contentID = _contentManager.GetIDFromNextBox(nextListBox.contentID);
-
-            if (_listSetting.listType == CircularScrollingList.ListType.Linear) {
-                if (!_contentManager.IsIDValid(contentID)) {
-                    // If the box has been disabled at the other side,
-                    // decrease the counter of the other side.
-                    if (!isActiveAndEnabled)
-                        --_positionCtrl.numOfLowerDisabledBoxes;
-
-                    // In linear mode, don't display the content of the other end
-                    gameObject.SetActive(false);
-                    ++_positionCtrl.numOfUpperDisabledBoxes;
-
-                    return;
-                }
-
-                // The disabled boxes from the other end will be enabled again
-                if (!isActiveAndEnabled) {
-                    gameObject.SetActive(true);
-                    --_positionCtrl.numOfLowerDisabledBoxes;
-                }
-            }
-
-            UpdateDisplayContentPrivate();
-            PushToBack();
-        }
-
-        /// <summary>
-        /// Update the content to the next content of the last ListBox
-        /// </summary>
-        private void UpdateToNextContent()
-        {
-            contentID = _contentManager.GetIDFromLastBox(lastListBox.contentID);
-
-            if (_listSetting.listType == CircularScrollingList.ListType.Linear) {
-                if (!_contentManager.IsIDValid(contentID)) {
-                    if (!isActiveAndEnabled)
-                        --_positionCtrl.numOfUpperDisabledBoxes;
-
-                    // In linear mode, don't display the content of the other end
-                    gameObject.SetActive(false);
-                    ++_positionCtrl.numOfLowerDisabledBoxes;
-
-                    return;
-                }
-
-                if (!isActiveAndEnabled) {
-                    gameObject.SetActive(true);
-                    --_positionCtrl.numOfUpperDisabledBoxes;
-                }
-            }
-
-            UpdateDisplayContentPrivate();
-            PushToBack();
         }
 
         /// <summary>
