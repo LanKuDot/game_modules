@@ -108,36 +108,7 @@ namespace AirFishLab.ScrollingList
             _contentManager = listContentManager;
             _listBoxes = scrollingList.listBoxes;
 
-            InitializePosition();
-            InitializeBoxDependency();
-            InitializeContent();
             AddClickEvent();
-        }
-
-        /// <summary>
-        /// Initialize the local position of the list box according to its ID
-        /// </summary>
-        private void InitializePosition()
-        {
-            _boxTransformCtrl =
-                new LinearBoxTransformCtrl(
-                    _positionCtrl,
-                    _listSetting.boxPositionCurve,
-                    _listSetting.boxScaleCurve,
-                    _listSetting.direction);
-            _boxTransformCtrl.SetInitialTransform(
-                transform, listBoxID, _listBoxes.Length);
-        }
-
-        /// <summary>
-        /// Initialize the box dependency
-        /// </summary>
-        private void InitializeBoxDependency()
-        {
-            var numOfBoxes = _listBoxes.Length;
-
-            lastListBox = _listBoxes[(int) Mathf.Repeat(listBoxID - 1, numOfBoxes)];
-            nextListBox = _listBoxes[(int) Mathf.Repeat(listBoxID + 1, numOfBoxes)];
         }
 
         /// <summary>
@@ -192,18 +163,6 @@ namespace AirFishLab.ScrollingList
         #endregion
 
         #region Content Handling
-
-        /// <summary>
-        /// Initialize the content of ListBox.
-        /// </summary>
-        private void InitializeContent()
-        {
-            contentID = _contentManager.GetInitialContentID(listBoxID);
-
-            CheckToBeDisabled();
-            if (gameObject.activeSelf)
-                UpdateDisplayContentPrivate();
-        }
 
         /// <summary>
         /// Disable the box if needed in the linear mode
