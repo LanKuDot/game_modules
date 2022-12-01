@@ -19,6 +19,7 @@ namespace AirFishLab.ScrollingList
         public int ContentID { get; private set; }
         public IListBox LastListBox { get; private set; }
         public IListBox NextListBox { get; private set; }
+        public ListBoxIntEvent OnBoxClick { get; } = new ListBoxIntEvent();
         public bool IsActivated
         {
             get => gameObject.activeSelf;
@@ -67,12 +68,23 @@ namespace AirFishLab.ScrollingList
             ListBoxID = listBoxID;
             LastListBox = lastListBox;
             NextListBox = nextListBox;
+            RegisterClickEvent();
         }
 
         public void SetContent(int contentID, IListContent content)
         {
             ContentID = contentID;
             UpdateDisplayContent(contentID);
+        }
+
+        public void PopToFront()
+        {
+            transform.SetAsLastSibling();
+        }
+
+        public void PushToBack()
+        {
+            transform.SetAsFirstSibling();
         }
 
         #endregion
@@ -99,40 +111,21 @@ namespace AirFishLab.ScrollingList
             _positionCtrl = listPositionCtrl;
             _contentManager = listContentManager;
             _listBoxes = scrollingList.listBoxes;
-
-            AddClickEvent();
         }
 
         /// <summary>
-        /// Add an additional listener to Button.onClick event for passing click
-        /// event to target <c>ListPositionCtrl</c>
+        /// Register the callback to the button clicking event
         /// </summary>
-        private void AddClickEvent()
+        private void RegisterClickEvent()
         {
-            var button = transform.GetComponent<Button>();
-            if (button != null)
-                button.onClick.AddListener(
-                    () => _listSetting.onBoxClick.Invoke(contentID));
+            if (TryGetComponent<Button>(out var button)) {
+                button.onClick.AddListener(OnButtonClick);
+            }
         }
 
-        #endregion
-
-        #region Image Sorting
-
-        /// <summary>
-        /// Pop to the to the front of the image sorting
-        /// </summary>
-        public void PopToFront()
+        private void OnButtonClick()
         {
-            transform.SetAsLastSibling();
-        }
-
-        /// <summary>
-        /// Push the box to the back of the image sorting
-        /// </summary>
-        public void PushToBack()
-        {
-            transform.SetAsFirstSibling();
+            OnBoxClick?.Invoke(ContentID);
         }
 
         #endregion

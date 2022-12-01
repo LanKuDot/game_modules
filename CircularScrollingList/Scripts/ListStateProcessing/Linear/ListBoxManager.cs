@@ -118,6 +118,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 var nextListBox =
                     _boxes[(int)Mathf.Repeat(boxID + 1, numOfBoxes)];
                 box.Initialize(boxID, lastListBox, nextListBox);
+                box.OnBoxClick.AddListener(_setting.onBoxClick.Invoke);
 
                 _transformController.SetInitialLocalTransform(box.Transform, boxID);
 

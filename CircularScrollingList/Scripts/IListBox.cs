@@ -29,6 +29,11 @@ namespace AirFishLab.ScrollingList
         IListBox NextListBox { get; }
 
         /// <summary>
+        /// The event to be invoked when the box is clicked
+        /// </summary>
+        ListBoxIntEvent OnBoxClick { get; }
+
+        /// <summary>
         /// The transform of the box
         /// </summary>
         Transform Transform { get; }
