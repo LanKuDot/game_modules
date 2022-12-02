@@ -150,6 +150,8 @@ namespace AirFishLab.ScrollingList.MovementCtrl
             if (!_releasingMovementCurve.IsMovementEnded())
                 _releasingMovementCurve.EndMovement();
 
+            if (_unitMovementCtrl.IsMovementEnded())
+                distance += _getAligningDistance();
             _unitMovementCtrl.SetMovement(distance, false);
         }
 
