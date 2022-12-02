@@ -230,7 +230,7 @@ namespace AirFishLab.ScrollingList
                         overGoingThreshold,
                         GetAligningDistance, GetPositionState);
                     _inputPositionHandler = DragPositionHandler;
-                    _scrollHandler = v => { };
+                    _scrollHandler = ScrollDeltaHandler;
                     break;
 
                 case CircularScrollingList.ControlMode.Function:
@@ -249,7 +249,6 @@ namespace AirFishLab.ScrollingList
                         GetAligningDistance, GetPositionState);
                     _inputPositionHandler = (pointer, phase) => { };
                     _scrollHandler = ScrollDeltaHandler;
-                    _scrollFactor = _listSetting.reverseDirection ? -1 : 1;
                     break;
             }
 
@@ -265,7 +264,7 @@ namespace AirFishLab.ScrollingList
                     _scrollDirectionHandler = ScrollHorizontally;
                     break;
             }
-
+            _scrollFactor = _listSetting.reverseDirection ? -1 : 1;
             _selectionDistanceFactor = _listSetting.reverseOrder ? -1 : 1;
         }
 
