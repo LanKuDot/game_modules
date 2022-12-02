@@ -480,7 +480,8 @@ namespace AirFishLab.ScrollingList
 
             foreach (var listBox in _listBoxes) {
                 // Skip the disabled box in linear mode
-                if (!listBox.isActiveAndEnabled)
+                if (_listSetting.listType ==  CircularScrollingList.ListType.Linear
+                    && !listBox.isActiveAndEnabled)
                     continue;
 
                 var localPos = listBox.transform.localPosition;
