@@ -238,6 +238,7 @@ namespace AirFishLab.ScrollingList
             foreach (var listBox in _listBoxes)
                 listBox.Refresh(centeredBox.listBoxID, centeredContentID);
 
+            _setting.onCenteredContentChanged.Invoke(centeredContentID);
             _hasNoContent = numOfContents == 0;
         }
 
