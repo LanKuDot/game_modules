@@ -225,6 +225,7 @@ namespace AirFishLab.ScrollingList
                 case CircularScrollingList.ControlMode.Drag:
                     _movementCtrl = new FreeMovementCtrl(
                         _listSetting.boxVelocityCurve,
+                        _listSetting.boxMovementCurve,
                         _listSetting.alignMiddle,
                         overGoingThreshold,
                         GetAligningDistance, GetPositionState);

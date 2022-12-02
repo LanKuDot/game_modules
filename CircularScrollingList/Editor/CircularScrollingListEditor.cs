@@ -89,11 +89,8 @@ namespace AirFishLab.ScrollingList.Editor
             DrawSettingProperty("_boxDensity");
             DrawSettingProperty("_boxPositionCurve");
             DrawSettingProperty("_boxScaleCurve");
-            DrawSettingProperty(
-                _controlMode.enumValueIndex
-                == (int) CircularScrollingList.ControlMode.Drag
-                    ? "_boxVelocityCurve"
-                    : "_boxMovementCurve");
+            DrawSettingProperty("_boxVelocityCurve");
+            DrawSettingProperty("_boxMovementCurve");
         }
 
         private void DrawEvents()

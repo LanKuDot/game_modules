@@ -21,6 +21,10 @@ namespace AirFishLab.ScrollingList.MovementCtrl
         #region Private Variables
 
         /// <summary>
+        /// The movement control for the unit movement
+        /// </summary>
+        private readonly UnitMovementCtrl _unitMovementCtrl;
+        /// <summary>
         /// The curve for evaluating the free movement after releasing
         /// </summary>
         private readonly VelocityMovementCurve _releasingMovementCurve;
@@ -67,6 +71,9 @@ namespace AirFishLab.ScrollingList.MovementCtrl
         /// The curve that defines the velocity factor for the releasing movement.
         /// The x axis is the moving duration, and the y axis is the factor.
         /// </param>
+        /// <param name="unitMovementCurve">
+        /// The curve that defines the unit movement
+        /// </param>
         /// <param name="toAlign">Is it need to aligning after a movement?</param>
         /// <param name="exceedingDistanceLimit">
         /// How far could the list exceed the end?
@@ -79,6 +86,7 @@ namespace AirFishLab.ScrollingList.MovementCtrl
         /// </param>
         public FreeMovementCtrl(
             AnimationCurve releasingCurve,
+            AnimationCurve unitMovementCurve,
             bool toAlign,
             float exceedingDistanceLimit,
             Func<float> getAligningDistance,
@@ -91,6 +99,10 @@ namespace AirFishLab.ScrollingList.MovementCtrl
                         new Keyframe(0.0f, 0.0f, 0.0f, 8.0f),
                         new Keyframe(0.25f, 1.0f, 0.0f, 0.0f)
                     ));
+            _unitMovementCtrl = new UnitMovementCtrl(
+                unitMovementCurve,
+                exceedingDistanceLimit, getAligningDistance, getPositionState
+            );
             _toAlign = toAlign;
             _exceedingDistanceLimit = exceedingDistanceLimit;
             _getAligningDistance = getAligningDistance;
@@ -114,6 +126,7 @@ namespace AirFishLab.ScrollingList.MovementCtrl
                 // End the last movement when start dragging
                 _aligningMovementCurve.EndMovement();
                 _releasingMovementCurve.EndMovement();
+                _unitMovementCtrl.EndMovement();
             } else if (_getPositionState() != PositionState.Middle) {
                 _aligningMovementCurve.SetMovement(_getAligningDistance());
             } else {
@@ -133,7 +146,12 @@ namespace AirFishLab.ScrollingList.MovementCtrl
         }
 
         public void SetUnitMovement(float distance)
-        {}
+        {
+            if (!_releasingMovementCurve.IsMovementEnded())
+                _releasingMovementCurve.EndMovement();
+
+            _unitMovementCtrl.SetMovement(distance, false);
+        }
 
         /// <summary>
         /// Is the movement ended?
@@ -142,7 +160,8 @@ namespace AirFishLab.ScrollingList.MovementCtrl
         {
             return !_isDragging &&
                    _aligningMovementCurve.IsMovementEnded() &&
-                   _releasingMovementCurve.IsMovementEnded();
+                   _releasingMovementCurve.IsMovementEnded() &&
+                   _unitMovementCtrl.IsMovementEnded();
         }
 
         /// <summary>
@@ -183,6 +202,8 @@ namespace AirFishLab.ScrollingList.MovementCtrl
                 _aligningMovementCurve.SetMovement(_getAligningDistance());
                 distance = _aligningMovementCurve.GetDistance(deltaTime);
             }
+            else if (!_unitMovementCtrl.IsMovementEnded())
+                distance = _unitMovementCtrl.GetDistance(deltaTime);
 
             return distance;
         }
@@ -192,6 +213,7 @@ namespace AirFishLab.ScrollingList.MovementCtrl
             _isDragging = false;
             _releasingMovementCurve.EndMovement();
             _aligningMovementCurve.EndMovement();
+            _unitMovementCtrl.EndMovement();
         }
 
         /// <summary>
