@@ -194,12 +194,18 @@ namespace AirFishLab.ScrollingList
 
             _inputProcessor =
                 new InputProcessor(_rectTransform, _canvasRefCamera);
-            _listMovementProcessor = new Linear.ListMovementProcessor();
-            _listMovementProcessor.Initialize(setupData);
             _listContentProvider = new ListContentProvider();
             _listContentProvider.Initialize(setupData);
-            _listBoxManager = new Linear.ListBoxManager();
-            _listBoxManager.Initialize(setupData, _listContentProvider);
+
+            var movementProcessor = new Linear.ListMovementProcessor();
+            movementProcessor.Initialize(setupData);
+            var listBoxManager = new Linear.ListBoxManager();
+            listBoxManager.Initialize(setupData, _listContentProvider);
+
+            movementProcessor.SetListBoxManager(listBoxManager);
+
+            _listMovementProcessor = movementProcessor;
+            _listBoxManager = listBoxManager;
         }
 
         #endregion

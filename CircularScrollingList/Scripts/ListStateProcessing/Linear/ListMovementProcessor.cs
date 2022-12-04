@@ -20,6 +20,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         private float _unitPos;
         private FreeMovementCtrl _freeMovementCtrl;
         private UnitMovementCtrl _unitMovementCtrl;
+        private ListBoxManager _listBoxManager;
 
         #endregion
 
@@ -121,14 +122,32 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 setting.boxVelocityCurve,
                 setting.alignMiddle,
                 exceedingLimit,
-                () => 0.0f,
-                () => ListPositionCtrl.PositionState.Middle);
+                GetAligningDistance,
+                GetListFocusingState);
             _unitMovementCtrl = new UnitMovementCtrl(
                 setting.boxMovementCurve,
                 exceedingLimit,
-                () => 0.0f,
-                () => ListPositionCtrl.PositionState.Middle);
+                GetAligningDistance,
+                GetListFocusingState);
         }
+
+        #endregion
+
+        #region ListBoxManager
+
+        /// <summary>
+        /// Set the list box manager for the processor
+        /// </summary>
+        public void SetListBoxManager(ListBoxManager listBoxManager)
+        {
+            _listBoxManager = listBoxManager;
+        }
+
+        private ListFocusingState GetListFocusingState() =>
+            _listBoxManager.ListFocusingState;
+
+        private float GetAligningDistance() =>
+            _listBoxManager.ShortestDistanceToCenter;
 
         #endregion
     }
