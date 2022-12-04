@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using AirFishLab.ScrollingList.ListStateProcessing;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using AirFishLab.ScrollingList.MovementCtrl;
@@ -12,29 +13,6 @@ namespace AirFishLab.ScrollingList
     /// </summary>
     public class ListPositionCtrl
     {
-        #region Enums
-
-        /// <summary>
-        /// The state of the position of the list
-        /// </summary>
-        public enum PositionState
-        {
-            /// <summary>
-            /// The list reaches the top
-            /// </summary>
-            Top,
-            /// <summary>
-            /// The list doesn't reach either end
-            /// </summary>
-            Middle,
-            /// <summary>
-            /// The list reaches the bottom
-            /// </summary>
-            Bottom
-        };
-
-        #endregion
-
         #region Referenced Components
 
         /// <summary>
@@ -113,10 +91,10 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private float _deltaDistanceToCenter;
         /// <summary>
-        /// The position state of the list
+        /// The focusing state of the list
         /// </summary>
         /// It indicates whether the list reaches the end or not.
-        private PositionState _positionState = PositionState.Middle;
+        private ListFocusingState _focusingState = ListFocusingState.Middle;
         /// <summary>
         /// The allowed number of the disabled boxes for the linear list
         /// </summary>
@@ -218,7 +196,7 @@ namespace AirFishLab.ScrollingList
         private void InitializeInputFunction()
         {
             float GetAligningDistance() => _deltaDistanceToCenter;
-            PositionState GetPositionState() => _positionState;
+            ListFocusingState GetFocusingState() => _focusingState;
 
             var overGoingThreshold = unitPos * 0.3f;
 
@@ -228,7 +206,7 @@ namespace AirFishLab.ScrollingList
                         _listSetting.boxVelocityCurve,
                         _listSetting.alignMiddle,
                         overGoingThreshold,
-                        GetAligningDistance, GetPositionState);
+                        GetAligningDistance, GetFocusingState);
                     _inputPositionHandler = DragPositionHandler;
                     _scrollHandler = v => { };
                     break;
@@ -237,7 +215,7 @@ namespace AirFishLab.ScrollingList
                     _movementCtrl = new UnitMovementCtrl(
                         _listSetting.boxMovementCurve,
                         overGoingThreshold,
-                        GetAligningDistance, GetPositionState);
+                        GetAligningDistance, GetFocusingState);
                     _inputPositionHandler = (pointer, phase) => { };
                     _scrollHandler = v => { };
                     break;
@@ -246,7 +224,7 @@ namespace AirFishLab.ScrollingList
                     _movementCtrl = new UnitMovementCtrl(
                         _listSetting.boxMovementCurve,
                         overGoingThreshold,
-                        GetAligningDistance, GetPositionState);
+                        GetAligningDistance, GetFocusingState);
                     _inputPositionHandler = (pointer, phase) => { };
                     _scrollHandler = ScrollDeltaHandler;
                     _scrollFactor = _listSetting.reverseDirection ? -1 : 1;
@@ -500,12 +478,12 @@ namespace AirFishLab.ScrollingList
         {
             if (numOfUpperDisabledBoxes >= _maxNumOfDisabledBoxes &&
                 _deltaDistanceToCenter > -1e-4)
-                _positionState = PositionState.Top;
+                _focusingState = ListFocusingState.Top;
             else if (numOfLowerDisabledBoxes >= _maxNumOfDisabledBoxes &&
                      _deltaDistanceToCenter < 1e-4)
-                _positionState = PositionState.Bottom;
+                _focusingState = ListFocusingState.Bottom;
             else
-                _positionState = PositionState.Middle;
+                _focusingState = ListFocusingState.Middle;
         }
 
         #endregion

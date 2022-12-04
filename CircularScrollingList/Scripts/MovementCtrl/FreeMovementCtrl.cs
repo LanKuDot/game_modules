@@ -1,10 +1,9 @@
 ﻿using System;
+using AirFishLab.ScrollingList.ListStateProcessing;
 using UnityEngine;
 
 namespace AirFishLab.ScrollingList.MovementCtrl
 {
-    using PositionState = ListPositionCtrl.PositionState;
-
     /// <summary>
     /// Control the movement for the free movement
     /// </summary>
@@ -54,9 +53,9 @@ namespace AirFishLab.ScrollingList.MovementCtrl
         /// </summary>
         private readonly Func<float> _getAligningDistance;
         /// <summary>
-        /// The function that getting the state of the list position
+        /// The function that getting the focusing state of the list
         /// </summary>
-        private readonly Func<PositionState> _getPositionState;
+        private readonly Func<ListFocusingState> _getFocusingStateFunc;
 
         #endregion
 
@@ -74,15 +73,15 @@ namespace AirFishLab.ScrollingList.MovementCtrl
         /// <param name="getAligningDistance">
         /// The function that evaluates the distance for aligning
         /// </param>
-        /// <param name="getPositionState">
-        /// The function that returns the state of the list position
+        /// <param name="getFocusingStateFunc">
+        /// The function that returns the focusing state of the list
         /// </param>
         public FreeMovementCtrl(
             AnimationCurve releasingCurve,
             bool toAlign,
             float exceedingDistanceLimit,
             Func<float> getAligningDistance,
-            Func<PositionState> getPositionState)
+            Func<ListFocusingState> getFocusingStateFunc)
         {
             _releasingMovementCurve = new VelocityMovementCurve(releasingCurve);
             _aligningMovementCurve =
@@ -94,7 +93,7 @@ namespace AirFishLab.ScrollingList.MovementCtrl
             _toAlign = toAlign;
             _exceedingDistanceLimit = exceedingDistanceLimit;
             _getAligningDistance = getAligningDistance;
-            _getPositionState = getPositionState;
+            _getFocusingStateFunc = getFocusingStateFunc;
         }
 
         /// <summary>
@@ -115,7 +114,7 @@ namespace AirFishLab.ScrollingList.MovementCtrl
                 // End the last movement when start dragging
                 _aligningMovementCurve.EndMovement();
                 _releasingMovementCurve.EndMovement();
-            } else if (_getPositionState() != PositionState.Middle) {
+            } else if (_getFocusingStateFunc() != ListFocusingState.Middle) {
                 _aligningMovementCurve.SetMovement(_getAligningDistance());
             } else {
                 _releasingMovementCurve.SetMovement(value);
@@ -214,7 +213,7 @@ namespace AirFishLab.ScrollingList.MovementCtrl
         private bool IsGoingTooFar(float nextDistance)
         {
             return
-                (_getPositionState() != PositionState.Middle)
+                (_getFocusingStateFunc() != ListFocusingState.Middle)
                 && Mathf.Abs(_getAligningDistance() * -1 + nextDistance)
                     > _exceedingDistanceLimit;
         }

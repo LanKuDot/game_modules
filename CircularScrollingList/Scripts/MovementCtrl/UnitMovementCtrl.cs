@@ -1,10 +1,9 @@
 ﻿using System;
+using AirFishLab.ScrollingList.ListStateProcessing;
 using UnityEngine;
 
 namespace AirFishLab.ScrollingList.MovementCtrl
 {
-    using PositionState = ListPositionCtrl.PositionState;
-
     /// <summary>
     /// Control the movement for the unit movement
     /// </summary>
@@ -30,9 +29,9 @@ namespace AirFishLab.ScrollingList.MovementCtrl
         /// </summary>
         private readonly Func<float> _getAligningDistance;
         /// <summary>
-        /// The function that returns the state of the list position
+        /// The function that returns the focusing state of the list
         /// </summary>
-        private readonly Func<PositionState> _getPositionState;
+        private readonly Func<ListFocusingState> _getFocusingStateFunc;
 
         /// <summary>
         /// Create a movement control for the unit distance moving
@@ -47,14 +46,14 @@ namespace AirFishLab.ScrollingList.MovementCtrl
         /// <param name="getAligningDistance">
         /// The function that evaluates the distance for aligning
         /// </param>
-        /// <param name="getPositionState">
-        /// The function that returns the state of the list position
+        /// <param name="getFocusingStateFunc">
+        /// The function that returns the focusing state of the list
         /// </param>
         public UnitMovementCtrl(
             AnimationCurve movementCurve,
             float bouncingDeltaPos,
             Func<float> getAligningDistance,
-            Func<PositionState> getPositionState)
+            Func<ListFocusingState> getFocusingStateFunc)
         {
             var bouncingCurve = new AnimationCurve(
                 new Keyframe(0.0f, 0.0f, 0.0f, 5.0f),
@@ -65,7 +64,7 @@ namespace AirFishLab.ScrollingList.MovementCtrl
             _bouncingMovementCurve = new DistanceMovementCurve(bouncingCurve);
             _bouncingDeltaPos = bouncingDeltaPos;
             _getAligningDistance = getAligningDistance;
-            _getPositionState = getPositionState;
+            _getFocusingStateFunc = getFocusingStateFunc;
         }
 
         /// <summary>
@@ -83,11 +82,11 @@ namespace AirFishLab.ScrollingList.MovementCtrl
             if (!_bouncingMovementCurve.IsMovementEnded())
                 return;
 
-            var state = _getPositionState();
+            var state = _getFocusingStateFunc();
             var movingDirection = Mathf.Sign(distanceAdded);
 
-            if ((state == PositionState.Top && movingDirection < 0) ||
-                (state == PositionState.Bottom && movingDirection > 0)) {
+            if ((state == ListFocusingState.Top && movingDirection < 0) ||
+                (state == ListFocusingState.Bottom && movingDirection > 0)) {
                 _bouncingMovementCurve.SetMovement(movingDirection * _bouncingDeltaPos);
                 _unitMovementCurve.EndMovement();
             } else {
@@ -157,7 +156,7 @@ namespace AirFishLab.ScrollingList.MovementCtrl
         /// </returns>
         private bool NeedToBounceBack(float deltaDistance)
         {
-            if (_getPositionState() == PositionState.Middle)
+            if (_getFocusingStateFunc() == ListFocusingState.Middle)
                 return false;
 
             var exceedingDistance =
