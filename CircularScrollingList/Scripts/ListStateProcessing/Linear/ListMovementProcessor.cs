@@ -124,7 +124,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 () => 0.0f,
                 () => ListPositionCtrl.PositionState.Middle);
             _unitMovementCtrl = new UnitMovementCtrl(
-                setting.boxPositionCurve,
+                setting.boxMovementCurve,
                 exceedingLimit,
                 () => 0.0f,
                 () => ListPositionCtrl.PositionState.Middle);
