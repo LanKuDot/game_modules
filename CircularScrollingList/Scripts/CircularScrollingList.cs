@@ -314,8 +314,6 @@ namespace AirFishLab.ScrollingList
                 return;
 
             SetMovement(eventData, InputPhase.Began);
-
-            _listPositionCtrl.InputPositionHandler(eventData, TouchPhase.Began);
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -324,8 +322,6 @@ namespace AirFishLab.ScrollingList
                 return;
 
             SetMovement(eventData, InputPhase.Moved);
-
-            _listPositionCtrl.InputPositionHandler(eventData, TouchPhase.Moved);
         }
 
         public void OnEndDrag(PointerEventData eventData)
@@ -334,8 +330,6 @@ namespace AirFishLab.ScrollingList
                 return;
 
             SetMovement(eventData, InputPhase.Ended);
-
-            _listPositionCtrl.InputPositionHandler(eventData, TouchPhase.Ended);
         }
 
         public void OnScroll(PointerEventData eventData)
@@ -344,8 +338,6 @@ namespace AirFishLab.ScrollingList
                 return;
 
             SetMovement(eventData, InputPhase.Scrolled);
-
-            _listPositionCtrl.ScrollHandler(eventData);
         }
 
         #endregion
