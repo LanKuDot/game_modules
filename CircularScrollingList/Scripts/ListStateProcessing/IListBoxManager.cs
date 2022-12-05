@@ -21,5 +21,11 @@ namespace AirFishLab.ScrollingList.ListStateProcessing
         /// </summary>
         /// <param name="movementValue">The value for moving the boxes</param>
         void UpdateBoxes(float movementValue);
+
+        /// <summary>
+        /// Get the box which is closet to the center
+        /// </summary>
+        /// <returns>The box which is closet to the center</returns>
+        IListBox GetCenteredBox();
     }
 }

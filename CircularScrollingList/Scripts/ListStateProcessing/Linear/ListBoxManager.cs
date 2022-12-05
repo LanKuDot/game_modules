@@ -94,6 +94,8 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             UpdateListState();
         }
 
+        public IListBox GetCenteredBox() => _centeredBox;
+
         #endregion
 
         #region Initialization
