@@ -236,7 +236,7 @@ namespace AirFishLab.ScrollingList
             if (_hasNoContent)
                 return;
 
-            _listPositionCtrl.SetUnitMove(1);
+            SetUnitMovement(1);
         }
 
         /// <summary>
@@ -247,7 +247,7 @@ namespace AirFishLab.ScrollingList
             if (_hasNoContent)
                 return;
 
-            _listPositionCtrl.SetUnitMove(-1);
+            SetUnitMovement(-1);
         }
 
         /// <summary>
@@ -368,12 +368,22 @@ namespace AirFishLab.ScrollingList
         #region Operation Functions
 
         /// <summary>
-        /// Set the movement to the list state processor
+        /// Set the movement to the list movement processor
         /// </summary>
         private void SetMovement(PointerEventData eventData, InputPhase phase)
         {
             var inputInfo = _inputProcessor.GetInputInfo(eventData, phase);
             _listMovementProcessor.SetMovement(inputInfo);
+            _isMoving = true;
+        }
+
+        /// <summary>
+        /// Set the unit movement to the list movement processor
+        /// </summary>
+        /// <param name="unit">The units to be moved</param>
+        private void SetUnitMovement(int unit)
+        {
+            _listMovementProcessor.SetUnitMovement(unit);
             _isMoving = true;
         }
 

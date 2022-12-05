@@ -21,6 +21,10 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         private FreeMovementCtrl _freeMovementCtrl;
         private UnitMovementCtrl _unitMovementCtrl;
         private ListBoxManager _listBoxManager;
+        /// <summary>
+        /// The factor for reversing the scrolling direction or not
+        /// </summary>
+        private int _scrollingFactor;
 
         #endregion
 
@@ -58,13 +62,18 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                     break;
 
                 case InputPhase.Scrolled:
-                    if (!_freeMovementCtrl.IsMovementEnded())
-                        _freeMovementCtrl.EndMovement();
-
-                    deltaDistance = inputInfo.DeltaLocalPos.y * _unitPos;
-                    _unitMovementCtrl.SetMovement(deltaDistance, false);
+                    SetUnitMovement((int)inputInfo.DeltaLocalPos.y);
                     break;
             }
+        }
+
+        public void SetUnitMovement(int unit)
+        {
+            if (!_freeMovementCtrl.IsMovementEnded())
+                _freeMovementCtrl.EndMovement();
+
+            var deltaDistance = unit * _unitPos * _scrollingFactor;
+            _unitMovementCtrl.SetMovement(deltaDistance, false);
         }
 
         public float GetMovement(float detailTime)
@@ -129,6 +138,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 exceedingLimit,
                 GetAligningDistance,
                 GetListFocusingState);
+            _scrollingFactor = setting.reverseDirection ? -1 : 1;
         }
 
         #endregion

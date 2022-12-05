@@ -18,6 +18,12 @@
         void SetMovement(InputInfo inputInfo);
 
         /// <summary>
+        /// Set the movement for moving several times of units
+        /// </summary>
+        /// <param name="unit">The number of units to move</param>
+        void SetUnitMovement(int unit);
+
+        /// <summary>
         /// Get the current movement for the boxes
         /// </summary>
         /// <param name="detailTime">The time passed in seconds in this call</param>
