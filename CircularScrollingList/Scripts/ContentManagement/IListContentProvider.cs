@@ -33,6 +33,11 @@
         int GetContentIDByLastBox(int lastBoxContentID);
 
         /// <summary>
+        /// Get the number of the contents
+        /// </summary>
+        int GetContentCount();
+
+        /// <summary>
         /// Try to get the content of the list
         /// </summary>
         /// <param name="contentID">The id of the content</param>

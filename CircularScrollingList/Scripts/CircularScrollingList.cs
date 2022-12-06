@@ -149,6 +149,8 @@ namespace AirFishLab.ScrollingList
             GetComponentReference();
             InitializeListComponents();
             InitializeComponentsForLinearList();
+            InitializeMembers();
+
             _isInitialized = true;
         }
 
@@ -174,11 +176,17 @@ namespace AirFishLab.ScrollingList
             _listContentManager =
                 new ListContentManager(
                     _setting, _listBank, _listBoxes.Count);
+        }
 
+        /// <summary>
+        /// Initialize the private members
+        /// </summary>
+        private void InitializeMembers()
+        {
             if (_setting.centerSelectedBox)
                 _setting.onBoxClick.AddListener(SelectContentID);
 
-            _hasNoContent = _listBank.GetListLength() == 0;
+            _hasNoContent = _listContentProvider.GetContentCount() == 0;
         }
 
         /// <summary>

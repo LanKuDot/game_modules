@@ -64,6 +64,8 @@ namespace AirFishLab.ScrollingList.ContentManagement
         public int GetContentIDByLastBox(int lastBoxContentID) =>
             _idCalculationFunc(lastBoxContentID + _idFactor);
 
+        public int GetContentCount() => _listBank.GetContentCount();
+
         public bool TryGetContent(int contentID, out IListContent content)
         {
             var isIDValid = IsIDValid(contentID);
