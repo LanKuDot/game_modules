@@ -66,17 +66,18 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                     break;
 
                 case InputPhase.Scrolled:
-                    SetUnitMovement((int)inputInfo.DeltaLocalPos.y);
+                    SetUnitMovement((int)inputInfo.DeltaLocalPos.y * _scrollingFactor);
                     break;
             }
         }
 
         public void SetUnitMovement(int unit)
         {
+            // TODO Fix the problem of not aligned when started from free movement
             if (!_freeMovementCtrl.IsMovementEnded())
                 _freeMovementCtrl.EndMovement();
 
-            var deltaDistance = unit * _unitPos * _scrollingFactor;
+            var deltaDistance = unit * _unitPos;
             _unitMovementCtrl.SetMovement(deltaDistance, false);
         }
 
