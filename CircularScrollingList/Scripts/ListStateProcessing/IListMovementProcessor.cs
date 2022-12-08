@@ -24,6 +24,12 @@
         void SetUnitMovement(int unit);
 
         /// <summary>
+        /// Set the movement for centering the selected box
+        /// </summary>
+        /// <param name="units">The number of units to move</param>
+        void SetSelectionMovement(int units);
+
+        /// <summary>
         /// Get the current movement for the boxes
         /// </summary>
         /// <param name="detailTime">The time passed in seconds in this call</param>

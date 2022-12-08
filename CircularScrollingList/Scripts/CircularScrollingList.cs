@@ -298,14 +298,14 @@ namespace AirFishLab.ScrollingList
             if (_hasNoContent)
                 return;
 
-            if (!_listContentManager.IsIDValid(contentID))
+            if (!_listContentProvider.IsIDValid(contentID))
                 throw new IndexOutOfRangeException(
-                    $"{nameof(contentID)} is larger than the number of contents");
+                    $"{nameof(contentID)} is invalid");
 
-            var centeredBox = _listPositionCtrl.GetCenteredBox();
-            var centeredContentID = centeredBox.contentID;
-            _listPositionCtrl.SetSelectionMovement(
-                _listContentManager.GetShortestDiff(centeredContentID, contentID));
+            var centeredContentID = GetCenteredContentID();
+            SetSelectionMovement(
+                _listContentProvider.GetShortestIDDiff(
+                    centeredContentID, contentID));
         }
 
         #endregion
@@ -380,6 +380,18 @@ namespace AirFishLab.ScrollingList
         private void SetUnitMovement(int unit)
         {
             _listMovementProcessor.SetUnitMovement(unit);
+            _isMoving = true;
+        }
+
+        /// <summary>
+        /// Set the selection movement to the list movement processor
+        /// </summary>
+        /// <param name="shortestIDDiff">
+        /// The shortest id difference between centered content and the selected content
+        /// </param>
+        private void SetSelectionMovement(int shortestIDDiff)
+        {
+            _listMovementProcessor.SetSelectionMovement(shortestIDDiff);
             _isMoving = true;
         }
 

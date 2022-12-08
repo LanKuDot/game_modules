@@ -67,6 +67,6 @@
         /// <param name="fromContentID">The starting content id</param>
         /// <param name="toContentID">The target content id</param>
         /// <returns>The shortest length</returns>
-        int GetShortestLength(int fromContentID, int toContentID);
+        int GetShortestIDDiff(int fromContentID, int toContentID);
     }
 }

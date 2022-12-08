@@ -83,7 +83,7 @@ namespace AirFishLab.ScrollingList.ContentManagement
         public bool IsIDValid(int contentID) =>
             contentID >= 0 && contentID < _listBank.GetContentCount();
 
-        public int GetShortestLength(int fromContentID, int toContentID)
+        public int GetShortestIDDiff(int fromContentID, int toContentID)
         {
             if (!IsIDValid(fromContentID))
                 throw new IndexOutOfRangeException(nameof(fromContentID));
