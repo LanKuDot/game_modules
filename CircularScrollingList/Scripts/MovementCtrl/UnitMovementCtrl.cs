@@ -96,17 +96,6 @@ namespace AirFishLab.ScrollingList.MovementCtrl
         }
 
         /// <summary>
-        /// Set the movement for certain distance
-        /// for aligning the selected box to the center
-        /// </summary>
-        /// <param name="distance">The specified distance</param>
-        public void SetSelectionMovement(float distance)
-        {
-            EndMovement();
-            _unitMovementCurve.SetMovement(distance);
-        }
-
-        /// <summary>
         /// Is the movement ended?
         /// </summary>
         public bool IsMovementEnded()
