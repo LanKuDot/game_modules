@@ -73,11 +73,16 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
         public void SetUnitMovement(int unit)
         {
-            // TODO Fix the problem of not aligned when started from free movement
             if (!_freeMovementCtrl.IsMovementEnded())
                 _freeMovementCtrl.EndMovement();
 
             var deltaDistance = unit * _unitPos;
+
+            // If the unit movement is not started yet,
+            // countervail the position difference
+            if (_unitMovementCtrl.IsMovementEnded())
+                deltaDistance += _listBoxManager.ShortestDistanceToCenter;
+
             _unitMovementCtrl.SetMovement(deltaDistance, false);
         }
 
