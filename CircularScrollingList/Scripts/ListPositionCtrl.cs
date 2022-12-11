@@ -249,58 +249,6 @@ namespace AirFishLab.ScrollingList
 
         #endregion
 
-        #region Public Functions
-
-        /// <summary>
-        /// Sort the image order according to the position of the boxes
-        /// </summary>
-        public void InitialImageSorting()
-        {
-            var index = _listBoxes.FindIndex(box => box == _centeredBox);
-
-            for (var i = index - 1; i >= 0; --i)
-                _listBoxes[i].PushToBack();
-            for (var i = index + 1; i < _listBoxes.Count; ++i)
-                _listBoxes[i].PushToBack();
-        }
-
-        /// <summary>
-        /// Handle the input position event
-        /// </summary>
-        /// <param name="eventData">The data of the event</param>
-        /// <param name="phase">The phase of the input action</param>
-        public void InputPositionHandler(PointerEventData eventData, TouchPhase phase)
-        {
-            _inputPositionHandler(eventData, phase);
-            _toRunLateUpdate = true;
-        }
-
-        /// <summary>
-        /// Handle the scrolling event
-        /// </summary>
-        /// <param name="eventData">The data of the event</param>
-        public void ScrollHandler(PointerEventData eventData)
-        {
-            _scrollHandler(eventData.scrollDelta);
-            _toRunLateUpdate = true;
-            _isEndingMovement = true;
-        }
-
-        /// <summary>
-        /// Set the movement that makes the list align the selected box at the center
-        /// </summary>
-        /// <param name="idDiff">The difference between two ids</param>
-        public void SetSelectionMovement(int idDiff)
-        {
-            _movementCtrl.SetSelectionMovement(
-                _selectionDistanceFactor * idDiff * unitPos
-                + _deltaDistanceToCenter);
-            _toRunLateUpdate = true;
-            _isEndingMovement = true;
-        }
-
-        #endregion
-
         #region Input Value Handlers
 
         /// <summary>
