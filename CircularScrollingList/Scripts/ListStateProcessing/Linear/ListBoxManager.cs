@@ -88,7 +88,24 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 var positionStatus =
                     _transformController.SetLocalTransform(
                         box.Transform, movementValue);
-                UpdateBoxContent(box, positionStatus);
+
+                var contentID = box.ContentID;
+                switch (positionStatus) {
+                    case PositionState.Nothing:
+                        continue;
+                    case PositionState.JumpToTop:
+                        contentID =
+                            _contentProvider.GetContentIDByNextBox(
+                                box.NextListBox.ContentID);
+                        break;
+                    case PositionState.JumpToBottom:
+                        contentID =
+                            _contentProvider.GetContentIDByLastBox(
+                                box.LastListBox.ContentID);
+                        break;
+                }
+
+                UpdateBoxContent(box, contentID, positionStatus);
             }
 
             UpdateListState();
@@ -126,8 +143,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 _transformController.SetInitialLocalTransform(box.Transform, boxID);
 
                 var contentID = _contentProvider.GetInitialContentID(boxID);
-                SetBoxContent(box, contentID);
-                ToggleBoxActivation(box, PositionState.Nothing);
+                UpdateBoxContent(box, contentID, PositionState.Nothing);
             }
 
             UpdateListState();
@@ -242,26 +258,14 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <summary>
         /// Update the box content according to the position status
         /// </summary>
-        private void UpdateBoxContent(IListBox box, PositionState positionState)
+        /// <param name="box">The target box</param>
+        /// <param name="contentID">The target content ID</param>
+        /// <param name="positionState">The current position state of the box</param>
+        private void UpdateBoxContent(
+            IListBox box, int contentID, PositionState positionState)
         {
-            if (positionState == PositionState.Nothing)
-                return;
-
-            var contentID = 0;
-            switch (positionState) {
-                case PositionState.JumpToTop:
-                    contentID =
-                        _contentProvider.GetContentIDByNextBox(
-                            box.NextListBox.ContentID);
-                    box.PushToBack();
-                    break;
-                case PositionState.JumpToBottom:
-                    contentID =
-                        _contentProvider.GetContentIDByLastBox(
-                            box.LastListBox.ContentID);
-                    box.PushToBack();
-                    break;
-            }
+            if (positionState != PositionState.Nothing)
+                box.PushToBack();
 
             SetBoxContent(box, contentID);
             ToggleBoxActivation(box, positionState);
