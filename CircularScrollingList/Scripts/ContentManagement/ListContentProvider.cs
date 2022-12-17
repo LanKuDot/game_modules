@@ -58,6 +58,9 @@ namespace AirFishLab.ScrollingList.ContentManagement
             return _idCalculationFunc(contentID);
         }
 
+        public int GetContentID(int contentID) =>
+            _idCalculationFunc(contentID);
+
         public int GetContentIDByNextBox(int nextBoxContentID) =>
             _idCalculationFunc(nextBoxContentID - _idFactor);
 
