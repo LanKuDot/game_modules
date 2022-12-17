@@ -255,38 +255,15 @@ namespace AirFishLab.ScrollingList
         }
 
         /// <summary>
-        /// Make the boxes recalculate their content ID and
-        /// reacquire the contents from the bank
+        /// Make the boxes recalculate their content ID and reacquire the contents
         /// </summary>
-        /// If the specified <c cref="centeredContentID">centeredContentID</c> is negative,
-        /// it will take current centered content ID. <para />
-        /// If current centered content ID is int.MinValue, it will be 0. <para />
-        /// If current centered content ID is larger than the number of contents,
-        /// it will be the ID of the last content.
         /// <param name="centeredContentID">
         /// The centered content ID after the list is refreshed
         /// </param>
         public void Refresh(int centeredContentID = -1)
         {
-            var centeredBox = _listPositionCtrl.GetCenteredBox();
-            var numOfContents = _listBank.GetListLength();
-
-            if (centeredContentID < 0)
-                centeredContentID =
-                    centeredBox.contentID == int.MinValue
-                        ? 0
-                        : Mathf.Min(centeredBox.contentID, numOfContents - 1);
-            else if (centeredContentID >= numOfContents)
-                throw new IndexOutOfRangeException(
-                    $"{nameof(centeredContentID)} is larger than the number of contents");
-
-            _listPositionCtrl.numOfLowerDisabledBoxes = 0;
-            _listPositionCtrl.numOfUpperDisabledBoxes = 0;
-
-            foreach (var listBox in _listBoxes)
-                listBox.Refresh(centeredBox.listBoxID, centeredContentID);
-
-            _hasNoContent = numOfContents == 0;
+            _listBoxManager.RefreshBoxes(centeredContentID);
+            _hasNoContent = _listContentProvider.GetContentCount() == 0;
         }
 
         /// <summary>

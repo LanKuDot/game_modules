@@ -111,6 +111,23 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             UpdateListState();
         }
 
+        public void RefreshBoxes(int centeredContentID = -1)
+        {
+            var curCenteredContentID = _centeredBox.ContentID;
+            var numOfContents = _contentProvider.GetContentCount();
+
+            if (centeredContentID < 0)
+                centeredContentID =
+                    curCenteredContentID == int.MinValue
+                        ? 0
+                        : Mathf.Min(curCenteredContentID, numOfContents - 1);
+            else if (centeredContentID >= numOfContents)
+                throw new IndexOutOfRangeException(
+                    $"{nameof(centeredContentID)} is larger than the number of contents");
+
+            RecalculateAllBoxContent(centeredContentID);
+        }
+
         public IListBox GetCenteredBox() => _centeredBox;
 
         #endregion
@@ -256,6 +273,41 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         #region Content Management
 
         /// <summary>
+        /// Recalculate all the box contents
+        /// </summary>
+        /// <param name="newCenteredContentID">The new centered content ID</param>
+        private void RecalculateAllBoxContent(int newCenteredContentID)
+        {
+            ResetNumOfInactivatedBoxes();
+
+            var numOfBoxes = _boxes.Count;
+            var centeredBoxID = _centeredBox.ListBoxID;
+            var reverseFactor = _setting.reverseOrder ? -1 : 1;
+            // TODO Store the pos factor in the boxes
+            var factorFunc =
+                _setting.direction == CircularScrollingList.Direction.Horizontal
+                    ? (Func<Vector2, float>)FactorUtility.GetVector2X
+                    : FactorUtility.GetVector2Y;
+
+            foreach (var box in _boxes) {
+                var posFactor = factorFunc(box.Transform.localPosition);
+                var tempBoxID = box.ListBoxID;
+
+                if (tempBoxID > centeredBoxID && posFactor > 0)
+                    tempBoxID -= numOfBoxes;
+                else if (tempBoxID < centeredBoxID && posFactor < 0)
+                    tempBoxID += numOfBoxes;
+
+                var contentID =
+                    newCenteredContentID + (tempBoxID - centeredBoxID) * reverseFactor;
+                contentID = _contentProvider.GetContentID(contentID);
+                UpdateBoxContent(box, contentID, PositionState.Nothing);
+            }
+
+            UpdateListState();
+        }
+
+        /// <summary>
         /// Update the box content according to the position status
         /// </summary>
         /// <param name="box">The target box</param>
@@ -359,6 +411,15 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                         --_inactivatedBoxes.AtTop;
                     break;
             }
+        }
+
+        /// <summary>
+        /// Reset the number of the inactivated boxes
+        /// </summary>
+        private void ResetNumOfInactivatedBoxes()
+        {
+            _inactivatedBoxes.AtBottom = 0;
+            _inactivatedBoxes.AtTop = 0;
         }
 
         #endregion
