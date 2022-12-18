@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using AirFishLab.ScrollingList.ContentManagement;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace AirFishLab.ScrollingList.Demo
@@ -8,10 +9,10 @@ namespace AirFishLab.ScrollingList.Demo
         [SerializeField]
         private Text _text;
 
-        protected override void UpdateDisplayContent(object content)
+        protected override void UpdateDisplayContent(IListContent content)
         {
             var dataWrapper = (VariableStringListBank.DataWrapper) content;
-            _text.text = dataWrapper.data;
+            _text.text = dataWrapper.Data;
         }
     }
 }

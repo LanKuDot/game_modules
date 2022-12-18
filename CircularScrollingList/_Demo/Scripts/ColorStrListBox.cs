@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using AirFishLab.ScrollingList.ContentManagement;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace AirFishLab.ScrollingList.Demo
@@ -10,7 +11,7 @@ namespace AirFishLab.ScrollingList.Demo
         [SerializeField]
         private Text _contentText;
 
-        protected override void UpdateDisplayContent(object content)
+        protected override void UpdateDisplayContent(IListContent content)
         {
             var colorString = (ColorString) content;
             _contentImage.color = colorString.color;

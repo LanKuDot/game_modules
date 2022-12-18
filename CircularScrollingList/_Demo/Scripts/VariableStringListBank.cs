@@ -1,4 +1,5 @@
 ﻿using System;
+using AirFishLab.ScrollingList.ContentManagement;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -29,13 +30,13 @@ namespace AirFishLab.ScrollingList.Demo
             _linearList.Refresh();
         }
 
-        public override object GetListContent(int index)
+        public override IListContent GetListContent(int index)
         {
-            _dataWrapper.data = _contents[index];
+            _dataWrapper.Data = _contents[index];
             return _dataWrapper;
         }
 
-        public override int GetListLength()
+        public override int GetContentCount()
         {
             return _contents.Length;
         }
@@ -43,9 +44,9 @@ namespace AirFishLab.ScrollingList.Demo
         /// <summary>
         /// Used for carry the data of value type to avoid boxing/unboxing
         /// </summary>
-        public class DataWrapper
+        public class DataWrapper : IListContent
         {
-            public string data;
+            public string Data;
         }
     }
 }

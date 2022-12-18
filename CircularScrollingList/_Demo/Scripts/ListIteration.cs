@@ -25,7 +25,7 @@ namespace AirFishLab.ScrollingList.Demo
                 _list.SelectContentID(_currentID);
                 _currentID =
                     (int) Mathf.Repeat(
-                        _currentID + _step, _list.listBank.GetListLength());
+                        _currentID + _step, _list.listBank.GetContentCount());
                 yield return new WaitForSeconds(_stepInterval);
             }
         }

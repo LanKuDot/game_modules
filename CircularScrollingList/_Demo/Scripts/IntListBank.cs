@@ -1,4 +1,6 @@
-﻿namespace AirFishLab.ScrollingList.Demo
+﻿using AirFishLab.ScrollingList.ContentManagement;
+
+namespace AirFishLab.ScrollingList.Demo
 {
     public class IntListBank : BaseListBank
     {
@@ -6,14 +8,22 @@
             1, 2, 3, 4, 5, 6, 7, 8, 9, 10
         };
 
-        public override object GetListContent(int index)
+        private readonly Content _contentWrapper = new Content();
+
+        public override IListContent GetListContent(int index)
         {
-            return _contents[index];
+            _contentWrapper.Value = index;
+            return _contentWrapper;
         }
 
-        public override int GetListLength()
+        public override int GetContentCount()
         {
             return _contents.Length;
+        }
+
+        public class Content : IListContent
+        {
+            public int Value;
         }
     }
 }

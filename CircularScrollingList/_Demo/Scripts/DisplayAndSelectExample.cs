@@ -15,15 +15,17 @@ namespace AirFishLab.ScrollingList.Demo
         public void DisplayCenteredContent()
         {
             var contentID = _list.GetCenteredContentID();
-            var centeredContent = (int) _list.listBank.GetListContent(contentID);
-            _displayText.text = "Centered content: " + centeredContent;
+            var centeredContent =
+                (ListBank.Content)_list.listBank.GetListContent(contentID);
+            _displayText.text = "Centered content: " + centeredContent.Value;
         }
 
         public void GetSelectedContentID(int selectedContentID)
         {
-            Debug.Log("Selected content ID: " + selectedContentID +
-                      ", Content: " +
-                      (int) _list.listBank.GetListContent(selectedContentID));
+            var content =
+                (ListBank.Content)_list.listBank.GetListContent(selectedContentID);
+            Debug.Log($"Selected content ID: {selectedContentID}, "
+                      + $"Content: {content.Value}");
         }
 
         public void OnCenteredBoxChanged(

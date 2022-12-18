@@ -1,4 +1,5 @@
 ﻿using System;
+using AirFishLab.ScrollingList.ContentManagement;
 using UnityEngine;
 
 namespace AirFishLab.ScrollingList.Demo
@@ -8,19 +9,19 @@ namespace AirFishLab.ScrollingList.Demo
         [SerializeField]
         private SpriteStringData[] _datas;
 
-        public override object GetListContent(int index)
+        public override IListContent GetListContent(int index)
         {
             return _datas[index];
         }
 
-        public override int GetListLength()
+        public override int GetContentCount()
         {
             return _datas.Length;
         }
     }
 
     [Serializable]
-    public class SpriteStringData
+    public class SpriteStringData : IListContent
     {
         [SerializeField]
         private Sprite _sprite;

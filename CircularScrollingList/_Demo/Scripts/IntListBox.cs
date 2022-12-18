@@ -1,4 +1,4 @@
-﻿using AirFishLab.ScrollingList;
+﻿using AirFishLab.ScrollingList.ContentManagement;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,10 +11,10 @@ namespace AirFishLab.ScrollingList.Demo
 
         public int content { get; private set; }
 
-        protected override void UpdateDisplayContent(object content)
+        protected override void UpdateDisplayContent(IListContent listContent)
         {
-            this.content = (int) content;
-            _contentText.text = this.content.ToString();
+            content = ((IntListBank.Content)listContent).Value;
+            _contentText.text = content.ToString();
         }
     }
 }

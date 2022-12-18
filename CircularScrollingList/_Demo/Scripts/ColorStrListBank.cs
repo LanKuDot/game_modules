@@ -1,4 +1,5 @@
 ﻿using System;
+using AirFishLab.ScrollingList.ContentManagement;
 using UnityEngine;
 
 namespace AirFishLab.ScrollingList.Demo
@@ -8,19 +9,19 @@ namespace AirFishLab.ScrollingList.Demo
         [SerializeField]
         private ColorString[] _contents;
 
-        public override object GetListContent(int index)
+        public override IListContent GetListContent(int index)
         {
             return _contents[index];
         }
 
-        public override int GetListLength()
+        public override int GetContentCount()
         {
             return _contents.Length;
         }
     }
 
     [Serializable]
-    public class ColorString
+    public class ColorString : IListContent
     {
         public Color color;
         public string name;

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using AirFishLab.ScrollingList.ContentManagement;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace AirFishLab.ScrollingList.Demo
@@ -10,12 +11,12 @@ namespace AirFishLab.ScrollingList.Demo
         [SerializeField]
         private GameObject[] _stars;
 
-        protected override void UpdateDisplayContent(object content)
+        protected override void UpdateDisplayContent(IListContent content)
         {
             var stringStarData = (StringStarData) content;
-            _text.text = stringStarData.title;
+            _text.text = stringStarData.Title;
             for (var i = 0; i < _stars.Length; ++i)
-                _stars[i].SetActive(i < stringStarData.numOfStars);
+                _stars[i].SetActive(i < stringStarData.NumOfStars);
         }
     }
 }
