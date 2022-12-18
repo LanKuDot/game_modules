@@ -32,22 +32,16 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         public readonly List<IListBox> ListBoxes;
 
-        /// <summary>
-        /// The component which holds the contents for the boxes
-        /// </summary>
-        public readonly IListBank ListBank;
-
         #endregion
 
         public ListSetupData(
             CircularScrollingListSetting setting, RectTransform rectTransform,
-            Camera canvasRefCamera, List<IListBox> listBoxes, IListBank listBank)
+            Camera canvasRefCamera, List<IListBox> listBoxes)
         {
             Setting = setting;
             RectTransform = rectTransform;
             CanvasRefCamera = canvasRefCamera;
             ListBoxes = listBoxes;
-            ListBank = listBank;
         }
     }
 }

@@ -111,10 +111,6 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private ListPositionCtrl _listPositionCtrl;
         /// <summary>
-        /// The component that controlling the content for each box
-        /// </summary>
-        private ListContentManager _listContentManager;
-        /// <summary>
         /// Is the list initialized?
         /// </summary>
         private bool _isInitialized;
@@ -147,9 +143,14 @@ namespace AirFishLab.ScrollingList
                 return;
 
             GetComponentReference();
-            InitializeListComponents();
-            InitializeComponentsForLinearList();
-            InitializeMembers();
+
+            var setupData =
+                new ListSetupData(
+                    _setting, _rectTransform, _canvasRefCamera,
+                    new List<IListBox>(_listBoxes));
+
+            InitializeListComponents(setupData);
+            InitializeComponentsForLinearList(setupData);
 
             _isInitialized = true;
         }
@@ -168,24 +169,19 @@ namespace AirFishLab.ScrollingList
         /// <summary>
         /// Initialize the related list components
         /// </summary>
-        private void InitializeListComponents()
-        {
-            _listPositionCtrl =
-                new ListPositionCtrl(
-                    _setting, _rectTransform, _canvasRefCamera, _listBoxes);
-            _listContentManager =
-                new ListContentManager(
-                    _setting, _listBank, _listBoxes.Count);
-        }
-
-        /// <summary>
-        /// Initialize the private members
-        /// </summary>
-        private void InitializeMembers()
+        private void InitializeListComponents(ListSetupData setupData)
         {
             if (_setting.centerSelectedBox)
                 _setting.onBoxClick.AddListener(SelectContentID);
 
+            _listPositionCtrl =
+                new ListPositionCtrl(
+                    _setting, _rectTransform, _canvasRefCamera, _listBoxes);
+            _inputProcessor =
+                new InputProcessor(_rectTransform, _canvasRefCamera);
+
+            _listContentProvider = _listBank;
+            _listContentProvider.Initialize(setupData);
             _hasNoContent = _listContentProvider.GetContentCount() == 0;
         }
 
@@ -193,18 +189,8 @@ namespace AirFishLab.ScrollingList
         /// Initialize the components for controlling the linear list
         /// </summary>
         // TODO Move the function to list controller builder
-        private void InitializeComponentsForLinearList()
+        private void InitializeComponentsForLinearList(ListSetupData setupData)
         {
-            var setupData =
-                new ListSetupData(
-                    _setting, _rectTransform, _canvasRefCamera,
-                    new List<IListBox>(_listBoxes), _listBank);
-
-            _inputProcessor =
-                new InputProcessor(_rectTransform, _canvasRefCamera);
-            _listContentProvider = new ListContentProvider();
-            _listContentProvider.Initialize(setupData);
-
             var movementProcessor = new Linear.ListMovementProcessor();
             movementProcessor.Initialize(setupData);
             var listBoxManager = new Linear.ListBoxManager();
