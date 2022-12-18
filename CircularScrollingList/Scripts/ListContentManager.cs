@@ -13,7 +13,7 @@ namespace AirFishLab.ScrollingList
         /// <summary>
         /// The number of contents in the list bank
         /// </summary>
-        public int ContentCount => _listBank.GetListLength();
+        public int ContentCount => _listBank.GetContentCount();
 
         #endregion
 
@@ -59,7 +59,7 @@ namespace AirFishLab.ScrollingList
             _idHandler =
                 setting.listType == CircularScrollingList.ListType.Circular
                     ? (Func<int, int>) (x =>
-                        (int) Mathf.Repeat(x, _listBank.GetListLength()))
+                        (int) Mathf.Repeat(x, _listBank.GetContentCount()))
                     : x => x;
         }
 
@@ -75,7 +75,7 @@ namespace AirFishLab.ScrollingList
         /// </returns>
         public int GetInitialContentID(int listBoxID)
         {
-            if (_listBank.GetListLength() == 0)
+            if (_listBank.GetContentCount() == 0)
                 return int.MinValue;
 
             var contentID = _listSetting.centeredContentID;
@@ -105,7 +105,7 @@ namespace AirFishLab.ScrollingList
         /// </returns>
         public int GetContentID(int boxIDOffset, int centerContentID)
         {
-            if (_listBank.GetListLength() == 0)
+            if (_listBank.GetContentCount() == 0)
                 return int.MinValue;
 
             var contentID =
@@ -153,7 +153,7 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         public bool IsIDValid(int id)
         {
-            return id >= 0 && id < _listBank.GetListLength();
+            return id >= 0 && id < _listBank.GetContentCount();
         }
 
         /// <summary>
@@ -174,7 +174,7 @@ namespace AirFishLab.ScrollingList
             if (_listSetting.listType == CircularScrollingList.ListType.Linear)
                 return difference;
 
-            var numOfContent = _listBank.GetListLength();
+            var numOfContent = _listBank.GetContentCount();
             var halfNumOfContent = numOfContent / 2;
 
             if (Mathf.Abs(difference) > halfNumOfContent)

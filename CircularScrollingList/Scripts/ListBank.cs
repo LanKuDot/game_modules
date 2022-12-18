@@ -1,25 +1,15 @@
-﻿/* Store the contents for ListBoxes to display.
- */
-
-using AirFishLab.ScrollingList.ContentManagement;
+﻿using AirFishLab.ScrollingList.ContentManagement;
 using UnityEngine;
 
 namespace AirFishLab.ScrollingList
 {
-/* The base class of the list content container
- *
- * Create the individual ListBank by inheriting this class
- */
+    /// <summary>
+    /// Store the contents for the list boxes to display
+    /// </summary>
     public abstract class BaseListBank : MonoBehaviour, IListBank
     {
-        public abstract object GetListContent(int index);
-        // TODO Replace the GetListContent
-        public virtual IListContent GetListContentNew(int index)
-        {
-            return null;
-        }
-        public abstract int GetListLength();
-        public int GetContentCount() => GetListLength();
+        public abstract IListContent GetListContent(int index);
+        public abstract int GetContentCount();
     }
 
 /* The example of the ListBank
@@ -30,19 +20,15 @@ namespace AirFishLab.ScrollingList
             1, 2, 3, 4, 5, 6, 7, 8, 9, 10
         };
 
-        public override object GetListContent(int index)
+        private readonly Content _contentWrapper = new Content();
+
+        public override IListContent GetListContent(int index)
         {
-            return contents[index].ToString();
+            _contentWrapper.Value = contents[index];
+            return _contentWrapper;
         }
 
-        public override IListContent GetListContentNew(int index)
-        {
-            return new Content {
-                Value = contents[index]
-            };
-        }
-
-        public override int GetListLength()
+        public override int GetContentCount()
         {
             return contents.Length;
         }

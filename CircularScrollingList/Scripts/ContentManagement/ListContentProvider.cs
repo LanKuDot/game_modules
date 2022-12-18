@@ -72,7 +72,7 @@ namespace AirFishLab.ScrollingList.ContentManagement
         public bool TryGetContent(int contentID, out IListContent content)
         {
             var isIDValid = IsIDValid(contentID);
-            content = isIDValid ? _listBank.GetListContentNew(contentID) : null;
+            content = isIDValid ? _listBank.GetListContent(contentID) : null;
             return isIDValid;
         }
 

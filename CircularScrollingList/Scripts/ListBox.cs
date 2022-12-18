@@ -70,7 +70,7 @@ namespace AirFishLab.ScrollingList
 
         public void SetContent(IListContent content)
         {
-            UpdateDisplayContent(ContentID);
+            UpdateDisplayContent(content);
         }
 
         public void PopToFront()
@@ -110,17 +110,9 @@ namespace AirFishLab.ScrollingList
         /// Update the displaying content on the ListBox
         /// </summary>
         /// <param name="content">The content to be displayed</param>
-        protected virtual void UpdateDisplayContent(object content)
+        protected virtual void UpdateDisplayContent(IListContent content)
         {
             Debug.Log(content);
-        }
-
-        /// <summary>
-        /// The wrapper for invoking the custom UpdateDisplayContent
-        /// </summary>
-        private void UpdateDisplayContentPrivate()
-        {
-            UpdateDisplayContent(_contentManager.GetListContent(contentID));
         }
 
         #endregion
