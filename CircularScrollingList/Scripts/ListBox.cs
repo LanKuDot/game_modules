@@ -63,10 +63,14 @@ namespace AirFishLab.ScrollingList
             RegisterClickEvent();
         }
 
-        public void SetContent(int contentID, IListContent content)
+        public void SetContentID(int contentID)
         {
             ContentID = contentID;
-            UpdateDisplayContent(contentID);
+        }
+
+        public void SetContent(IListContent content)
+        {
+            UpdateDisplayContent(ContentID);
         }
 
         public void PopToFront()

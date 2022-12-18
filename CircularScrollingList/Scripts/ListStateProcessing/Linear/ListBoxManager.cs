@@ -319,17 +319,11 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             if (positionState != PositionState.Nothing)
                 box.PushToBack();
 
-            SetBoxContent(box, contentID);
-            ToggleBoxActivation(box, positionState);
-        }
-
-        /// <summary>
-        /// Set the content of the box
-        /// </summary>
-        private void SetBoxContent(IListBox box, int contentID)
-        {
-            _contentProvider.TryGetContent(contentID, out var contentReturned);
-            box.SetContent(contentID, contentReturned);
+            box.SetContentID(contentID);
+            if (_contentProvider.TryGetContent(contentID, out var content))
+                box.SetContent(content);
+            var idState = _contentProvider.GetIDState(contentID);
+            ToggleBoxActivation(box, idState, positionState);
         }
 
         #endregion
@@ -340,11 +334,15 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// Check if it needs to activate/inactivate the box
         /// </summary>
         /// <param name="box">The target box</param>
-        /// <param name="positionState">The position status of the box</param>
-        private void ToggleBoxActivation(IListBox box, PositionState positionState)
+        /// <param name="idState">The content id state of the box</param>
+        /// <param name="positionState">The position state of the box</param>
+        private void ToggleBoxActivation(
+            IListBox box, ContentIDState idState, PositionState positionState)
         {
             var contentID = box.ContentID;
 
+            // If there has no content in the content provider,
+            // just inactivate the box.
             if (contentID == int.MinValue) {
                 box.IsActivated = false;
                 return;
@@ -354,7 +352,6 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 return;
 
             var isPreviouslyActivated = box.IsActivated;
-            var idState = _contentProvider.GetIDState(contentID);
             var isIdValid = idState == ContentIDState.Valid;
 
             if (!isIdValid && isPreviouslyActivated)
@@ -362,7 +359,8 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             else if (isIdValid && !isPreviouslyActivated)
                 box.IsActivated = true;
 
-            UpdateNumOfInactivatedBoxes(positionState, idState, !isPreviouslyActivated);
+            UpdateNumOfInactivatedBoxes(
+                positionState, idState, box.IsActivated, !isPreviouslyActivated);
         }
 
         /// <summary>
@@ -370,19 +368,19 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// </summary>
         /// <param name="positionState">The position state of the box</param>
         /// <param name="idState">The id state of the box</param>
+        /// <param name="isActivated">Is the box now activated?</param>
         /// <param name="isPreviouslyInactivated">
-        /// Is the box previously inactivated?
+        /// Was the box previously inactivated?
         /// </param>
         private void UpdateNumOfInactivatedBoxes(
             PositionState positionState, ContentIDState idState,
-            bool isPreviouslyInactivated)
+            bool isActivated, bool isPreviouslyInactivated)
         {
             var isReverseOrder = _setting.reverseOrder;
-            var isIdValid = idState == ContentIDState.Valid;
 
             switch (positionState) {
                 case PositionState.Nothing:
-                    if (isIdValid)
+                    if (isActivated)
                         break;
 
                     if ((!isReverseOrder && idState == ContentIDState.Underflow)
@@ -398,14 +396,14 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                     break;
 
                 case PositionState.JumpToTop:
-                    if (!isIdValid)
+                    if (!isActivated)
                         ++_inactivatedBoxes.AtTop;
                     if (isPreviouslyInactivated)
                         --_inactivatedBoxes.AtBottom;
                     break;
 
                 case PositionState.JumpToBottom:
-                    if (!isIdValid)
+                    if (!isActivated)
                         ++_inactivatedBoxes.AtBottom;
                     if (isPreviouslyInactivated)
                         --_inactivatedBoxes.AtTop;

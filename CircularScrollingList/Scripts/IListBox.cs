@@ -52,13 +52,16 @@ namespace AirFishLab.ScrollingList
         void Initialize(int listBoxID, IListBox lastListBox, IListBox nextListBox);
 
         /// <summary>
+        /// Set the content id of the box
+        /// </summary>
+        /// <param name="contentID">The content id</param>
+        void SetContentID(int contentID);
+
+        /// <summary>
         /// Set the content for the box
         /// </summary>
-        /// <param name="contentID">The content ID</param>
-        /// <param name="content">
-        /// The content. If the content ID is invalid, it will be null.
-        /// </param>
-        void SetContent(int contentID, IListContent content);
+        /// <param name="content">The content</param>
+        void SetContent(IListContent content);
 
         /// <summary>
         /// Pop the box to the front
