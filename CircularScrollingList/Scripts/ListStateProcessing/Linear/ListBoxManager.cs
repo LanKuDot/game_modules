@@ -116,14 +116,15 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             var curCenteredContentID = _centeredBox.ContentID;
             var numOfContents = _contentProvider.GetContentCount();
 
+            if (centeredContentID >= numOfContents)
+                throw new IndexOutOfRangeException(
+                    $"{nameof(centeredContentID)} is larger than the number of contents");
+
             if (centeredContentID < 0)
                 centeredContentID =
                     curCenteredContentID == BaseListBank.NO_CONTENT_ID
                         ? 0
                         : Mathf.Min(curCenteredContentID, numOfContents - 1);
-            else if (centeredContentID >= numOfContents)
-                throw new IndexOutOfRangeException(
-                    $"{nameof(centeredContentID)} is larger than the number of contents");
 
             RecalculateAllBoxContent(centeredContentID);
         }
@@ -233,19 +234,22 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             distance = Mathf.Infinity;
             IListBox candidateBox = null;
 
-            foreach (var listBox in _boxes) {
+            foreach (var box in _boxes) {
                 // Skip the inactivated box
-                if (!listBox.IsActivated)
+                // But if there has no content to display,
+                // it is still need to find the centered box,
+                // cause all the boxes are inactivated.
+                if (!box.IsActivated && box.ContentID != BaseListBank.NO_CONTENT_ID)
                     continue;
 
-                var localPos = listBox.Transform.localPosition;
+                var localPos = box.Transform.localPosition;
                 var deltaDistance = -_getMajorFactorFunc(localPos);
 
                 if (Mathf.Abs(deltaDistance) >= Mathf.Abs(distance))
                     continue;
 
                 distance = deltaDistance;
-                candidateBox = listBox;
+                candidateBox = box;
             }
 
             return candidateBox;
@@ -300,8 +304,8 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
                 var contentID =
                     newCenteredContentID + (tempBoxID - centeredBoxID) * reverseFactor;
-                contentID = _contentProvider.GetContentID(contentID);
-                UpdateBoxContent(box, contentID, PositionState.Nothing);
+                var newContentID = _contentProvider.GetRefreshedContentID(contentID);
+                UpdateBoxContent(box, newContentID, PositionState.Nothing);
             }
 
             UpdateListState();

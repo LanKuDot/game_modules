@@ -19,11 +19,11 @@
         int GetInitialContentID(int listBoxID);
 
         /// <summary>
-        /// Get the converted content id according to the list mode
+        /// Get the content id after the list content is refreshed
         /// </summary>
         /// <param name="origContentID">The original content ID</param>
         /// <returns>The converted content ID</returns>
-        int GetContentID(int origContentID);
+        int GetRefreshedContentID(int origContentID);
 
         /// <summary>
         /// Get the content ID according to the content ID of the next box
