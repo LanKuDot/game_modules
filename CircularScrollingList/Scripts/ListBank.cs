@@ -9,6 +9,15 @@ namespace AirFishLab.ScrollingList
     /// </summary>
     public abstract class BaseListBank : MonoBehaviour, IListContentProvider
     {
+        #region Constant Value
+
+        /// <summary>
+        /// The content id that represents there has no content to display
+        /// </summary>
+        public const int NO_CONTENT_ID = int.MinValue;
+
+        #endregion
+
         #region Private Members
 
         /// <summary>
@@ -54,7 +63,7 @@ namespace AirFishLab.ScrollingList
         public int GetInitialContentID(int listBoxID)
         {
             if (GetContentCount() == 0)
-                return int.MinValue;
+                return NO_CONTENT_ID;
 
             var contentID =
                 _listSetting.reverseOrder

@@ -118,7 +118,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
             if (centeredContentID < 0)
                 centeredContentID =
-                    curCenteredContentID == int.MinValue
+                    curCenteredContentID == BaseListBank.NO_CONTENT_ID
                         ? 0
                         : Mathf.Min(curCenteredContentID, numOfContents - 1);
             else if (centeredContentID >= numOfContents)
@@ -343,7 +343,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
             // If there has no content in the content provider,
             // just inactivate the box.
-            if (contentID == int.MinValue) {
+            if (contentID == BaseListBank.NO_CONTENT_ID) {
                 box.IsActivated = false;
                 return;
             }
