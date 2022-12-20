@@ -147,7 +147,7 @@ namespace AirFishLab.ScrollingList
             var setupData =
                 new ListSetupData(
                     _setting, _rectTransform, _canvasRefCamera,
-                    new List<IListBox>(_listBoxes));
+                    new List<IListBox>(_listBoxes), listBank);
 
             InitializeListComponents(setupData);
             InitializeComponentsForLinearList(setupData);
@@ -180,7 +180,7 @@ namespace AirFishLab.ScrollingList
             _inputProcessor =
                 new InputProcessor(_rectTransform, _canvasRefCamera);
 
-            _listContentProvider = _listBank;
+            _listContentProvider = new ListContentProvider();
             _listContentProvider.Initialize(setupData);
             _hasNoContent = _listContentProvider.GetContentCount() == 0;
         }

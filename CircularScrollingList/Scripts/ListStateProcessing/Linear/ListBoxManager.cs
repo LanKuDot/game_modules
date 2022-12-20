@@ -122,7 +122,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
             if (centeredContentID < 0)
                 centeredContentID =
-                    curCenteredContentID == BaseListBank.NO_CONTENT_ID
+                    curCenteredContentID == ListContentProvider.NO_CONTENT_ID
                         ? 0
                         : Mathf.Min(curCenteredContentID, numOfContents - 1);
 
@@ -239,7 +239,8 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 // But if there has no content to display,
                 // it is still need to find the centered box,
                 // cause all the boxes are inactivated.
-                if (!box.IsActivated && box.ContentID != BaseListBank.NO_CONTENT_ID)
+                if (!box.IsActivated
+                    && box.ContentID != ListContentProvider.NO_CONTENT_ID)
                     continue;
 
                 var localPos = box.Transform.localPosition;
@@ -347,7 +348,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
             // If there has no content in the content provider,
             // just inactivate the box.
-            if (contentID == BaseListBank.NO_CONTENT_ID) {
+            if (contentID == ListContentProvider.NO_CONTENT_ID) {
                 box.IsActivated = false;
                 return;
             }
