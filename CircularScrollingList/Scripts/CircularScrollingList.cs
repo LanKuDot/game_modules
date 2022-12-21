@@ -107,10 +107,6 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private IListContentProvider _listContentProvider;
         /// <summary>
-        /// The component that controlling the position of each box
-        /// </summary>
-        private ListPositionCtrl _listPositionCtrl;
-        /// <summary>
         /// Is the list initialized?
         /// </summary>
         private bool _isInitialized;
@@ -174,12 +170,8 @@ namespace AirFishLab.ScrollingList
             if (_setting.centerSelectedBox)
                 _setting.onBoxClick.AddListener(SelectContentID);
 
-            _listPositionCtrl =
-                new ListPositionCtrl(
-                    _setting, _rectTransform, _canvasRefCamera, _listBoxes);
             _inputProcessor =
                 new InputProcessor(_rectTransform, _canvasRefCamera);
-
             _listContentProvider = new ListContentProvider();
             _listContentProvider.Initialize(setupData);
             _hasNoContent = _listContentProvider.GetContentCount() == 0;

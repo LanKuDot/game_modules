@@ -1,5 +1,4 @@
-﻿using AirFishLab.ScrollingList.BoxTransformCtrl;
-using AirFishLab.ScrollingList.ContentManagement;
+﻿using AirFishLab.ScrollingList.ContentManagement;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -33,22 +32,6 @@ namespace AirFishLab.ScrollingList
         /// The list which this box belongs to
         /// </summary>
         public CircularScrollingList scrollingList { get; private set; }
-        /// <summary>
-        /// The ID of the content that the box references
-        /// </summary>
-        public int contentID { get; private set; }
-
-        #endregion
-
-        #region Referenced Components
-
-        private ListContentManager _contentManager;
-
-        #endregion
-
-        #region Private Memebers
-
-        private IBoxTransformCtrl _boxTransformCtrl;
 
         #endregion
 
