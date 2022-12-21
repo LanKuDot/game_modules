@@ -1,4 +1,4 @@
-﻿namespace AirFishLab.ScrollingList.MovementCtrl
+﻿namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 {
     /// <summary>
     /// The movement curve for evaluating the moving status

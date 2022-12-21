@@ -1,5 +1,5 @@
 ﻿using System;
-using AirFishLab.ScrollingList.MovementCtrl;
+using AirFishLab.ScrollingList.ListStateProcessing.Linear;
 using AirFishLab.ScrollingList.Util;
 using UnityEngine;
 

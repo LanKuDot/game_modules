@@ -2,7 +2,7 @@
 using AirFishLab.ScrollingList.ListStateProcessing;
 using UnityEngine;
 
-namespace AirFishLab.ScrollingList.MovementCtrl
+namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 {
     /// <summary>
     /// Control the movement for the unit movement

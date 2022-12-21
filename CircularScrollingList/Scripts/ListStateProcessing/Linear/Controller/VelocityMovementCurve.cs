@@ -1,7 +1,7 @@
 ﻿using AirFishLab.ScrollingList.Util;
 using UnityEngine;
 
-namespace AirFishLab.ScrollingList.MovementCtrl
+namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 {
     /// <summary>
     /// Evaluate the moving distance within the given delta time

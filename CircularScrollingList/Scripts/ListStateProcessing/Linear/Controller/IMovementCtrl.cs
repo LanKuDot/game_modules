@@ -1,4 +1,4 @@
-﻿namespace AirFishLab.ScrollingList.MovementCtrl
+﻿namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 {
     /// <summary>
     /// The interface for performing a movement control
