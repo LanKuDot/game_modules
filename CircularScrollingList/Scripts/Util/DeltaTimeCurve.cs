@@ -15,21 +15,22 @@ namespace AirFishLab.ScrollingList.Util
         /// The y axis is the value to be evaluated.
         private readonly AnimationCurve _curve;
         /// <summary>
-        /// The total time period of the curve
-        /// </summary>
-        /// It is the time of the last KeyFrame of the `_curve`
-        public float timeTotal { get; }
-        /// <summary>
         /// The passed time in this evaluation period
         /// </summary>
         private float _timePassed;
 
+        /// <summary>
+        /// The total time period of the curve
+        /// </summary>
+        /// It is the time of the last KeyFrame of the `_curve`
+        public readonly float TotalTime;
+
         public DeltaTimeCurve(AnimationCurve curve)
         {
             _curve = curve;
-            timeTotal = _curve[_curve.length - 1].time;
+            TotalTime = _curve[_curve.length - 1].time;
             // Make the IsTimeOut() return true before the first Reset() call
-            _timePassed = timeTotal + 1.0f;
+            _timePassed = TotalTime + 1.0f;
         }
 
         /// <summary>
@@ -45,7 +46,7 @@ namespace AirFishLab.ScrollingList.Util
         /// </summary>
         public bool IsTimeOut()
         {
-            return _timePassed > timeTotal;
+            return _timePassed > TotalTime;
         }
 
         /// <summary>

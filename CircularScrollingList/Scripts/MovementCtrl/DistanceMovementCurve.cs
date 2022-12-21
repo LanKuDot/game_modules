@@ -62,7 +62,7 @@ namespace AirFishLab.ScrollingList.MovementCtrl
 
         public void EndMovement()
         {
-            _distanceFactorCurve.Evaluate(_distanceFactorCurve.timeTotal);
+            _distanceFactorCurve.Evaluate(_distanceFactorCurve.TotalTime);
             // Make the value of `distanceRemaining` be 0
             _lastDistance = _distanceTotal;
         }

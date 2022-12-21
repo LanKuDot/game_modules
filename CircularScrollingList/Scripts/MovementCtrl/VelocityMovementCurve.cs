@@ -57,7 +57,7 @@ namespace AirFishLab.ScrollingList.MovementCtrl
 
         public void EndMovement()
         {
-            _velocityFactorCurve.Evaluate(_velocityFactorCurve.timeTotal);
+            _velocityFactorCurve.Evaluate(_velocityFactorCurve.TotalTime);
         }
 
         public float GetDistance(float deltaTime)
