@@ -1,5 +1,4 @@
 ﻿using System;
-using AirFishLab.ScrollingList.AnimationCurveUtils;
 using AirFishLab.ScrollingList.Util;
 using UnityEngine;
 

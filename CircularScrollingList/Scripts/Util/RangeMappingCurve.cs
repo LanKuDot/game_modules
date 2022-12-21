@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace AirFishLab.ScrollingList.AnimationCurveUtils
+namespace AirFishLab.ScrollingList.Util
 {
     /// <summary>
     /// The class for mapping the custom x range to the x axis of an animation curve

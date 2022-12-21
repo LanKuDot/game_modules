@@ -1,4 +1,4 @@
-﻿using AirFishLab.ScrollingList.AnimationCurveUtils;
+﻿using AirFishLab.ScrollingList.Util;
 using UnityEngine;
 
 namespace AirFishLab.ScrollingList.MovementCtrl

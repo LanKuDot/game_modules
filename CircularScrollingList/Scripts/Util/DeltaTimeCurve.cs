@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace AirFishLab.ScrollingList.AnimationCurveUtils
+namespace AirFishLab.ScrollingList.Util
 {
     /// <summary>
     /// The curve for evaluating the value by providing the delta time
