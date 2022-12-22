@@ -47,7 +47,7 @@ namespace AirFishLab.ScrollingList.ContentManagement
             _listBank = setupData.ListBank;
             _numOfBoxes = setupData.ListBoxes.Count;
 
-            _idFactor = _listSetting.reverseOrder ? -1 : 1;
+            _idFactor = _listSetting.reverseContentOrder ? -1 : 1;
             if (_listSetting.listType == CircularScrollingList.ListType.Circular)
                 _idCalculationFunc = GetLoopedContentID;
             else
@@ -60,7 +60,7 @@ namespace AirFishLab.ScrollingList.ContentManagement
                 return NO_CONTENT_ID;
 
             var contentID =
-                _listSetting.reverseOrder
+                _listSetting.reverseContentOrder
                     ? _numOfBoxes / 2 - listBoxID
                     : listBoxID - _numOfBoxes / 2;
 

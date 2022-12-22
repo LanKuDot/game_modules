@@ -35,7 +35,7 @@ namespace AirFishLab.ScrollingList
             /// <summary>
             /// Control the list by the mouse pointer or finger
             /// </summary>
-            Drag = 1 << 0,
+            Pointer = 1 << 0,
             /// <summary>
             /// Control the list by the mouse wheel
             /// </summary>
@@ -276,7 +276,7 @@ namespace AirFishLab.ScrollingList
 
         public void OnBeginDrag(PointerEventData eventData)
         {
-            if (_hasNoContent || !_controlMode.HasFlag(ControlMode.Drag))
+            if (_hasNoContent || !_controlMode.HasFlag(ControlMode.Pointer))
                 return;
 
             SetMovement(eventData, InputPhase.Began);
@@ -284,7 +284,7 @@ namespace AirFishLab.ScrollingList
 
         public void OnDrag(PointerEventData eventData)
         {
-            if (_hasNoContent || !_controlMode.HasFlag(ControlMode.Drag))
+            if (_hasNoContent || !_controlMode.HasFlag(ControlMode.Pointer))
                 return;
 
             SetMovement(eventData, InputPhase.Moved);
@@ -292,7 +292,7 @@ namespace AirFishLab.ScrollingList
 
         public void OnEndDrag(PointerEventData eventData)
         {
-            if (_hasNoContent || !_controlMode.HasFlag(ControlMode.Drag))
+            if (_hasNoContent || !_controlMode.HasFlag(ControlMode.Pointer))
                 return;
 
             SetMovement(eventData, InputPhase.Ended);

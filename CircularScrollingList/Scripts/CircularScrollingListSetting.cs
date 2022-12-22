@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 namespace AirFishLab.ScrollingList
 {
@@ -18,24 +19,27 @@ namespace AirFishLab.ScrollingList
         private CircularScrollingList.ControlMode _controlMode =
             CircularScrollingList.ControlMode.Everything;
         [SerializeField]
-        [Tooltip("Should a box align in the middle of the list after sliding?")]
-        private bool _alignMiddle = false;
+        [Tooltip("To align a box in the center of the list after sliding")]
+        [FormerlySerializedAs("_alignMiddle")]
+        private bool _alignInCenter;
         [SerializeField]
-        [Tooltip("Whether to reverse the scrolling direction or not")]
-        private bool _reverseDirection = false;
+        [Tooltip("To reverse the scrolling direction")]
+        [FormerlySerializedAs("_reverseDirection")]
+        private bool _reverseScrollingDirection;
         [SerializeField]
         [Tooltip("The major moving direction of the list.")]
         private CircularScrollingList.Direction _direction =
             CircularScrollingList.Direction.Vertical;
         [SerializeField]
         [Tooltip("Specify the initial content ID for the centered box.")]
-        private int _centeredContentID = 0;
+        private int _centeredContentID;
         [SerializeField]
-        [Tooltip("Whether to center the selected box or not")]
+        [Tooltip("To center the selected box")]
         private bool _centerSelectedBox;
         [SerializeField]
-        [Tooltip("To show the list in the reverse order")]
-        private bool _reverseOrder;
+        [Tooltip("To show the list contents in the reversed order")]
+        [FormerlySerializedAs("_reverseOrder")]
+        private bool _reverseContentOrder;
         [SerializeField]
         [Tooltip("Whether to initialize the list on Start or not. " +
                  "If set to false, manually call Initialize() to initialize the list.")]
@@ -109,12 +113,12 @@ namespace AirFishLab.ScrollingList
 
         public CircularScrollingList.ListType listType => _listType;
         public CircularScrollingList.ControlMode controlMode => _controlMode;
-        public bool alignMiddle => _alignMiddle;
-        public bool reverseDirection => _reverseDirection;
+        public bool alignInCenter => _alignInCenter;
+        public bool reverseScrollingDirection => _reverseScrollingDirection;
         public CircularScrollingList.Direction direction => _direction;
         public int centeredContentID => _centeredContentID;
         public bool centerSelectedBox => _centerSelectedBox;
-        public bool reverseOrder => _reverseOrder;
+        public bool reverseContentOrder => _reverseContentOrder;
         public bool initializeOnStart => _initializeOnStart;
 
         public float boxDensity => _boxDensity;

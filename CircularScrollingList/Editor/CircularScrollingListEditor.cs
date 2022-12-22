@@ -68,21 +68,21 @@ namespace AirFishLab.ScrollingList.Editor
             ++EditorGUI.indentLevel;
             if (HasFlag(
                     _controlMode.intValue,
-                    (int)CircularScrollingList.ControlMode.Drag)) {
-                DrawSettingProperty("_alignMiddle");
+                    (int)CircularScrollingList.ControlMode.Pointer)) {
+                DrawSettingProperty("_alignInCenter");
             }
 
             if (HasFlag(
                     _controlMode.intValue,
                     (int)CircularScrollingList.ControlMode.MouseWheel)) {
-                DrawSettingProperty("_reverseDirection");
+                DrawSettingProperty("_reverseScrollingDirection");
             }
             --EditorGUI.indentLevel;
 
             DrawSettingProperty("_direction");
             DrawSettingProperty("_centeredContentID");
             DrawSettingProperty("_centerSelectedBox");
-            DrawSettingProperty("_reverseOrder");
+            DrawSettingProperty("_reverseContentOrder");
             DrawSettingProperty("_initializeOnStart");
         }
 
@@ -94,7 +94,7 @@ namespace AirFishLab.ScrollingList.Editor
             DrawSettingProperty("_boxScaleCurve");
             if (HasFlag(
                     _controlMode.intValue,
-                    (int)CircularScrollingList.ControlMode.Drag))
+                    (int)CircularScrollingList.ControlMode.Pointer))
                 DrawSettingProperty("_boxVelocityCurve");
             DrawSettingProperty("_boxMovementCurve");
         }

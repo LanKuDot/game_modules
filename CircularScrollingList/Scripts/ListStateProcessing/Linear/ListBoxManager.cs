@@ -287,7 +287,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
             var numOfBoxes = _boxes.Count;
             var centeredBoxID = _centeredBox.ListBoxID;
-            var reverseFactor = _setting.reverseOrder ? -1 : 1;
+            var reverseFactor = _setting.reverseContentOrder ? -1 : 1;
             // TODO Store the pos factor in the boxes
             var factorFunc =
                 _setting.direction == CircularScrollingList.Direction.Horizontal
@@ -381,7 +381,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             PositionState positionState, ContentIDState idState,
             bool isActivated, bool isPreviouslyInactivated)
         {
-            var isReverseOrder = _setting.reverseOrder;
+            var isReverseOrder = _setting.reverseContentOrder;
 
             switch (positionState) {
                 case PositionState.Nothing:

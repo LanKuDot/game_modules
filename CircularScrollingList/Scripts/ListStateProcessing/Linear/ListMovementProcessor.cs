@@ -149,7 +149,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
             _freeMovementCtrl = new FreeMovementCtrl(
                 setting.boxVelocityCurve,
-                setting.alignMiddle,
+                setting.alignInCenter,
                 exceedingLimit,
                 GetAligningDistance,
                 GetListFocusingState);
@@ -158,8 +158,8 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 exceedingLimit,
                 GetAligningDistance,
                 GetListFocusingState);
-            _scrollingFactor = setting.reverseDirection ? -1 : 1;
-            _selectionDistanceFactor = setting.reverseOrder ? -1 : 1;
+            _scrollingFactor = setting.reverseScrollingDirection ? -1 : 1;
+            _selectionDistanceFactor = setting.reverseContentOrder ? -1 : 1;
         }
 
         #endregion
