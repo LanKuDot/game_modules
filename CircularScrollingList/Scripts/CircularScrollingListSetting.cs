@@ -16,7 +16,7 @@ namespace AirFishLab.ScrollingList
         [SerializeField]
         [Tooltip("The controlling mode of the list.")]
         private CircularScrollingList.ControlMode _controlMode =
-            CircularScrollingList.ControlMode.Drag;
+            CircularScrollingList.ControlMode.Everything;
         [SerializeField]
         [Tooltip("Should a box align in the middle of the list after sliding?")]
         private bool _alignMiddle = false;

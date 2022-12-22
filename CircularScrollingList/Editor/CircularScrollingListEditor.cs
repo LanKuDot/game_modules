@@ -64,18 +64,21 @@ namespace AirFishLab.ScrollingList.Editor
             EditorGUILayout.LabelField("List Mode", EditorStyles.boldLabel);
             DrawSettingProperty("_listType");
             DrawSettingProperty("_controlMode");
-            switch (_controlMode.enumValueIndex) {
-                case (int) CircularScrollingList.ControlMode.Drag:
-                    ++EditorGUI.indentLevel;
-                    DrawSettingProperty("_alignMiddle");
-                    --EditorGUI.indentLevel;
-                    break;
-                case (int) CircularScrollingList.ControlMode.MouseWheel:
-                    ++EditorGUI.indentLevel;
-                    DrawSettingProperty("_reverseDirection");
-                    --EditorGUI.indentLevel;
-                    break;
+
+            ++EditorGUI.indentLevel;
+            if (HasFlag(
+                    _controlMode.intValue,
+                    (int)CircularScrollingList.ControlMode.Drag)) {
+                DrawSettingProperty("_alignMiddle");
             }
+
+            if (HasFlag(
+                    _controlMode.intValue,
+                    (int)CircularScrollingList.ControlMode.MouseWheel)) {
+                DrawSettingProperty("_reverseDirection");
+            }
+            --EditorGUI.indentLevel;
+
             DrawSettingProperty("_direction");
             DrawSettingProperty("_centeredContentID");
             DrawSettingProperty("_centerSelectedBox");
@@ -89,11 +92,11 @@ namespace AirFishLab.ScrollingList.Editor
             DrawSettingProperty("_boxDensity");
             DrawSettingProperty("_boxPositionCurve");
             DrawSettingProperty("_boxScaleCurve");
-            DrawSettingProperty(
-                _controlMode.enumValueIndex
-                == (int) CircularScrollingList.ControlMode.Drag
-                    ? "_boxVelocityCurve"
-                    : "_boxMovementCurve");
+            if (HasFlag(
+                    _controlMode.intValue,
+                    (int)CircularScrollingList.ControlMode.Drag))
+                DrawSettingProperty("_boxVelocityCurve");
+            DrawSettingProperty("_boxMovementCurve");
         }
 
         private void DrawEvents()
@@ -117,6 +120,15 @@ namespace AirFishLab.ScrollingList.Editor
             DrawSettingProperty("_onCenteredBoxChanged");
             DrawSettingProperty("_onMovementEnd");
             --EditorGUI.indentLevel;
+        }
+
+        #endregion
+
+        #region Utility
+
+        private bool HasFlag(int enumIntValue, int flagValue)
+        {
+            return (enumIntValue & flagValue) != 0;
         }
 
         #endregion

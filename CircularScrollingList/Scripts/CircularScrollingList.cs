@@ -29,20 +29,21 @@ namespace AirFishLab.ScrollingList
         /// <summary>
         /// The controlling mode of the list
         /// </summary>
+        [Flags]
         public enum ControlMode
         {
             /// <summary>
             /// Control the list by the mouse pointer or finger
             /// </summary>
-            Drag,
-            /// <summary>
-            /// Control the list by invoking functions
-            /// </summary>
-            Function,
+            Drag = 1 << 0,
             /// <summary>
             /// Control the list by the mouse wheel
             /// </summary>
-            MouseWheel
+            MouseWheel = 1 << 1,
+            /// <summary>
+            /// All the control modes
+            /// </summary>
+            Everything = ~(~0 << 2),
         };
 
         /// <summary>
@@ -90,6 +91,10 @@ namespace AirFishLab.ScrollingList
         /// The camera that the parent canvas is referenced
         /// </summary>
         private Camera _canvasRefCamera;
+        /// <summary>
+        /// The controlling mode of the list
+        /// </summary>
+        private ControlMode _controlMode;
         /// <summary>
         /// The component for handing the user input
         /// </summary>
@@ -145,7 +150,7 @@ namespace AirFishLab.ScrollingList
                     _setting, _rectTransform, _canvasRefCamera,
                     new List<IListBox>(_listBoxes), listBank);
 
-            InitializeListComponents(setupData);
+            InitializeMembers(setupData);
             InitializeComponentsForLinearList(setupData);
 
             _isInitialized = true;
@@ -163,12 +168,14 @@ namespace AirFishLab.ScrollingList
         }
 
         /// <summary>
-        /// Initialize the related list components
+        /// Initialize the related list members
         /// </summary>
-        private void InitializeListComponents(ListSetupData setupData)
+        private void InitializeMembers(ListSetupData setupData)
         {
-            if (_setting.centerSelectedBox)
-                _setting.onBoxClick.AddListener(SelectContentID);
+            var setting = setupData.Setting;
+            if (setting.centerSelectedBox)
+                setting.onBoxClick.AddListener(SelectContentID);
+            _controlMode = setting.controlMode;
 
             _inputProcessor =
                 new InputProcessor(_rectTransform, _canvasRefCamera);
@@ -269,7 +276,7 @@ namespace AirFishLab.ScrollingList
 
         public void OnBeginDrag(PointerEventData eventData)
         {
-            if (_hasNoContent)
+            if (_hasNoContent || !_controlMode.HasFlag(ControlMode.Drag))
                 return;
 
             SetMovement(eventData, InputPhase.Began);
@@ -277,7 +284,7 @@ namespace AirFishLab.ScrollingList
 
         public void OnDrag(PointerEventData eventData)
         {
-            if (_hasNoContent)
+            if (_hasNoContent || !_controlMode.HasFlag(ControlMode.Drag))
                 return;
 
             SetMovement(eventData, InputPhase.Moved);
@@ -285,7 +292,7 @@ namespace AirFishLab.ScrollingList
 
         public void OnEndDrag(PointerEventData eventData)
         {
-            if (_hasNoContent)
+            if (_hasNoContent || !_controlMode.HasFlag(ControlMode.Drag))
                 return;
 
             SetMovement(eventData, InputPhase.Ended);
@@ -293,7 +300,7 @@ namespace AirFishLab.ScrollingList
 
         public void OnScroll(PointerEventData eventData)
         {
-            if (_hasNoContent)
+            if (_hasNoContent || !_controlMode.HasFlag(ControlMode.MouseWheel))
                 return;
 
             SetMovement(eventData, InputPhase.Scrolled);
