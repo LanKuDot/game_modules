@@ -111,26 +111,26 @@ namespace AirFishLab.ScrollingList
 
         #region Setting Getter
 
-        public CircularScrollingList.ListType listType => _listType;
-        public CircularScrollingList.ControlMode controlMode => _controlMode;
-        public bool alignInCenter => _alignInCenter;
-        public bool reverseScrollingDirection => _reverseScrollingDirection;
-        public CircularScrollingList.Direction direction => _direction;
-        public int centeredContentID => _centeredContentID;
-        public bool centerSelectedBox => _centerSelectedBox;
-        public bool reverseContentOrder => _reverseContentOrder;
-        public bool initializeOnStart => _initializeOnStart;
+        public CircularScrollingList.ListType ListType => _listType;
+        public CircularScrollingList.ControlMode ControlMode => _controlMode;
+        public bool AlignInCenter => _alignInCenter;
+        public bool ReverseScrollingDirection => _reverseScrollingDirection;
+        public CircularScrollingList.Direction Direction => _direction;
+        public int CenteredContentID => _centeredContentID;
+        public bool CenterSelectedBox => _centerSelectedBox;
+        public bool ReverseContentOrder => _reverseContentOrder;
+        public bool InitializeOnStart => _initializeOnStart;
 
-        public float boxDensity => _boxDensity;
-        public AnimationCurve boxPositionCurve => _boxPositionCurve;
-        public AnimationCurve boxScaleCurve => _boxScaleCurve;
-        public AnimationCurve boxVelocityCurve => _boxVelocityCurve;
-        public AnimationCurve boxMovementCurve => _boxMovementCurve;
+        public float BoxDensity => _boxDensity;
+        public AnimationCurve BoxPositionCurve => _boxPositionCurve;
+        public AnimationCurve BoxScaleCurve => _boxScaleCurve;
+        public AnimationCurve BoxVelocityCurve => _boxVelocityCurve;
+        public AnimationCurve BoxMovementCurve => _boxMovementCurve;
 
-        public ListBoxIntEvent onBoxClick => _onBoxClick;
-        public ListBoxIntEvent onCenteredContentChanged => _onCenteredContentChanged;
-        public ListTwoBoxesEvent onCenteredBoxChanged => _onCenteredBoxChanged;
-        public UnityEvent onMovementEnd => _onMovementEnd;
+        public ListBoxIntEvent OnBoxClick => _onBoxClick;
+        public ListBoxIntEvent OnCenteredContentChanged => _onCenteredContentChanged;
+        public ListTwoBoxesEvent OnCenteredBoxChanged => _onCenteredBoxChanged;
+        public UnityEvent OnMovementEnd => _onMovementEnd;
 
         #endregion
     }

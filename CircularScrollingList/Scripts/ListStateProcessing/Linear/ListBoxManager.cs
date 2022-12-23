@@ -75,7 +75,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             _inactivatedBoxes =
                 new NumOfInactivatedBoxes(_boxes.Count / 2);
 
-            InitializeFactorFunc(_setting.direction);
+            InitializeFactorFunc(_setting.Direction);
             InitializeBoxes();
         }
 
@@ -156,7 +156,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 var nextListBox =
                     _boxes[(int)Mathf.Repeat(boxID + 1, numOfBoxes)];
                 box.Initialize(boxID, lastListBox, nextListBox);
-                box.OnBoxClick.AddListener(_setting.onBoxClick.Invoke);
+                box.OnBoxClick.AddListener(_setting.OnBoxClick.Invoke);
 
                 _transformController.SetInitialLocalTransform(box.Transform, boxID);
 
@@ -203,7 +203,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// </summary>
         private void UpdateListFocusingState()
         {
-            if (_setting.listType != CircularScrollingList.ListType.Linear)
+            if (_setting.ListType != CircularScrollingList.ListType.Linear)
                 return;
 
             const float tolerance = 1e-4f;
@@ -268,7 +268,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 return;
 
             candidateBox.PopToFront();
-            _setting.onCenteredContentChanged.Invoke(candidateBox.ContentID);
+            _setting.OnCenteredContentChanged.Invoke(candidateBox.ContentID);
             // TODO _setting.onCenteredBoxChanged.Invoke(_centeredBox, candidateBox);
             _centeredBox = candidateBox;
         }
@@ -287,10 +287,10 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
             var numOfBoxes = _boxes.Count;
             var centeredBoxID = _centeredBox.ListBoxID;
-            var reverseFactor = _setting.reverseContentOrder ? -1 : 1;
+            var reverseFactor = _setting.ReverseContentOrder ? -1 : 1;
             // TODO Store the pos factor in the boxes
             var factorFunc =
-                _setting.direction == CircularScrollingList.Direction.Horizontal
+                _setting.Direction == CircularScrollingList.Direction.Horizontal
                     ? (Func<Vector2, float>)FactorUtility.GetVector2X
                     : FactorUtility.GetVector2Y;
 
@@ -353,7 +353,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 return;
             }
 
-            if (_setting.listType != CircularScrollingList.ListType.Linear)
+            if (_setting.ListType != CircularScrollingList.ListType.Linear)
                 return;
 
             var isPreviouslyActivated = box.IsActivated;
@@ -381,7 +381,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             PositionState positionState, ContentIDState idState,
             bool isActivated, bool isPreviouslyInactivated)
         {
-            var isReverseOrder = _setting.reverseContentOrder;
+            var isReverseOrder = _setting.ReverseContentOrder;
 
             switch (positionState) {
                 case PositionState.Nothing:

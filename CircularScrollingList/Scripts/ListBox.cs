@@ -31,7 +31,7 @@ namespace AirFishLab.ScrollingList
         /// <summary>
         /// The list which this box belongs to
         /// </summary>
-        public CircularScrollingList scrollingList { get; private set; }
+        public CircularScrollingList ScrollingList { get; private set; }
 
         #endregion
 

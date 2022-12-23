@@ -92,11 +92,11 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         {
             var rect = rectTransform.rect;
             var rectDistance =
-                listSetting.direction == CircularScrollingList.Direction.Vertical
+                listSetting.Direction == CircularScrollingList.Direction.Vertical
                     ? rect.height
                     : rect.width;
 
-            _unitPos = rectDistance / (numOfBoxes - 1) / listSetting.boxDensity;
+            _unitPos = rectDistance / (numOfBoxes - 1) / listSetting.BoxDensity;
 
             // If there are event number of boxes, narrow the boundary for 1 unit pos.
             var boundPosAdjust =
@@ -114,7 +114,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <param name="setting">The setting of the list</param>
         private void InitializeFactorGetter(CircularScrollingListSetting setting)
         {
-            if (setting.direction == CircularScrollingList.Direction.Vertical) {
+            if (setting.Direction == CircularScrollingList.Direction.Vertical) {
                 _getMajorFactorFunc = FactorUtility.GetVector2Y;
                 _getLocalPositionFunc = GetPositionYMajor;
             } else {
@@ -131,12 +131,12 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         {
             _positionCurve =
                 new RangeMappingCurve(
-                    setting.boxPositionCurve,
+                    setting.BoxPositionCurve,
                     -1, 1,
                     _sideChangingMinPos, _sideChangingMaxPos);
             _scaleCurve =
                 new RangeMappingCurve(
-                    setting.boxScaleCurve,
+                    setting.BoxScaleCurve,
                     -1, 1,
                     _sideChangingMinPos, _sideChangingMaxPos);
         }

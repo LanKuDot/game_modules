@@ -16,14 +16,14 @@ namespace AirFishLab.ScrollingList.Demo
         {
             var contentID = _list.GetCenteredContentID();
             var centeredContent =
-                (ListBank.Content)_list.listBank.GetListContent(contentID);
+                (ListBank.Content)_list.ListBank.GetListContent(contentID);
             _displayText.text = "Centered content: " + centeredContent.Value;
         }
 
         public void GetSelectedContentID(int selectedContentID)
         {
             var content =
-                (ListBank.Content)_list.listBank.GetListContent(selectedContentID);
+                (ListBank.Content)_list.ListBank.GetListContent(selectedContentID);
             Debug.Log($"Selected content ID: {selectedContentID}, "
                       + $"Content: {content.Value}");
         }

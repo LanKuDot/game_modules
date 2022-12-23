@@ -75,9 +75,9 @@ namespace AirFishLab.ScrollingList
 
         #region Exposed Properties
 
-        public BaseListBank listBank => _listBank;
-        public ListBox[] listBoxes => _listBoxes.ToArray();
-        public CircularScrollingListSetting setting => _setting;
+        public BaseListBank ListBank => _listBank;
+        public ListBox[] ListBoxes => _listBoxes.ToArray();
+        public CircularScrollingListSetting Setting => _setting;
 
         #endregion
 
@@ -129,7 +129,7 @@ namespace AirFishLab.ScrollingList
 
         private void Start()
         {
-            if (_setting.initializeOnStart)
+            if (_setting.InitializeOnStart)
                 Initialize();
         }
 
@@ -148,7 +148,7 @@ namespace AirFishLab.ScrollingList
             var setupData =
                 new ListSetupData(
                     _setting, _rectTransform, _canvasRefCamera,
-                    new List<IListBox>(_listBoxes), listBank);
+                    new List<IListBox>(_listBoxes), ListBank);
 
             InitializeMembers(setupData);
             InitializeComponentsForLinearList(setupData);
@@ -173,9 +173,9 @@ namespace AirFishLab.ScrollingList
         private void InitializeMembers(ListSetupData setupData)
         {
             var setting = setupData.Setting;
-            if (setting.centerSelectedBox)
-                setting.onBoxClick.AddListener(SelectContentID);
-            _controlMode = setting.controlMode;
+            if (setting.CenterSelectedBox)
+                setting.OnBoxClick.AddListener(SelectContentID);
+            _controlMode = setting.ControlMode;
 
             _inputProcessor =
                 new InputProcessor(_rectTransform, _canvasRefCamera);
@@ -319,7 +319,7 @@ namespace AirFishLab.ScrollingList
             if (!_listMovementProcessor.IsMovementEnded())
                 return;
 
-            _setting.onMovementEnd.Invoke();
+            _setting.OnMovementEnd.Invoke();
             _isMoving = false;
         }
 

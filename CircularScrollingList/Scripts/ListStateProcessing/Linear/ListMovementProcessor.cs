@@ -38,8 +38,8 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         {
             InitializePositionVars(
                 setupData.RectTransform.rect,
-                setupData.Setting.direction,
-                setupData.Setting.boxDensity,
+                setupData.Setting.Direction,
+                setupData.Setting.BoxDensity,
                 setupData.ListBoxes.Count);
             InitializeComponents(setupData.Setting);
         }
@@ -148,18 +148,18 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             var exceedingLimit = _unitPos * 0.3f;
 
             _freeMovementCtrl = new FreeMovementCtrl(
-                setting.boxVelocityCurve,
-                setting.alignInCenter,
+                setting.BoxVelocityCurve,
+                setting.AlignInCenter,
                 exceedingLimit,
                 GetAligningDistance,
                 GetListFocusingState);
             _unitMovementCtrl = new UnitMovementCtrl(
-                setting.boxMovementCurve,
+                setting.BoxMovementCurve,
                 exceedingLimit,
                 GetAligningDistance,
                 GetListFocusingState);
-            _scrollingFactor = setting.reverseScrollingDirection ? -1 : 1;
-            _selectionDistanceFactor = setting.reverseContentOrder ? -1 : 1;
+            _scrollingFactor = setting.ReverseScrollingDirection ? -1 : 1;
+            _selectionDistanceFactor = setting.ReverseContentOrder ? -1 : 1;
         }
 
         #endregion
