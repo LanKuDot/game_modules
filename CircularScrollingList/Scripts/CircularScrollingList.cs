@@ -276,7 +276,7 @@ namespace AirFishLab.ScrollingList
 
         public void OnBeginDrag(PointerEventData eventData)
         {
-            if (_hasNoContent || !_controlMode.HasFlag(ControlMode.Pointer))
+            if (!_controlMode.HasFlag(ControlMode.Pointer))
                 return;
 
             SetMovement(eventData, InputPhase.Began);
@@ -284,7 +284,7 @@ namespace AirFishLab.ScrollingList
 
         public void OnDrag(PointerEventData eventData)
         {
-            if (_hasNoContent || !_controlMode.HasFlag(ControlMode.Pointer))
+            if (!_controlMode.HasFlag(ControlMode.Pointer))
                 return;
 
             SetMovement(eventData, InputPhase.Moved);
@@ -292,7 +292,7 @@ namespace AirFishLab.ScrollingList
 
         public void OnEndDrag(PointerEventData eventData)
         {
-            if (_hasNoContent || !_controlMode.HasFlag(ControlMode.Pointer))
+            if (!_controlMode.HasFlag(ControlMode.Pointer))
                 return;
 
             SetMovement(eventData, InputPhase.Ended);
@@ -300,7 +300,7 @@ namespace AirFishLab.ScrollingList
 
         public void OnScroll(PointerEventData eventData)
         {
-            if (_hasNoContent || !_controlMode.HasFlag(ControlMode.MouseWheel))
+            if (!_controlMode.HasFlag(ControlMode.MouseWheel))
                 return;
 
             SetMovement(eventData, InputPhase.Scrolled);
@@ -330,6 +330,9 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private void SetMovement(PointerEventData eventData, InputPhase phase)
         {
+            if (_hasNoContent)
+                return;
+
             var inputInfo = _inputProcessor.GetInputInfo(eventData, phase);
             _listMovementProcessor.SetMovement(inputInfo);
             _isMoving = true;
@@ -341,6 +344,9 @@ namespace AirFishLab.ScrollingList
         /// <param name="unit">The units to be moved</param>
         private void SetUnitMovement(int unit)
         {
+            if (_hasNoContent)
+                return;
+
             _listMovementProcessor.SetUnitMovement(unit);
             _isMoving = true;
         }
@@ -353,6 +359,9 @@ namespace AirFishLab.ScrollingList
         /// </param>
         private void SetSelectionMovement(int shortestIDDiff)
         {
+            if (_hasNoContent)
+                return;
+
             _listMovementProcessor.SetSelectionMovement(shortestIDDiff);
             _isMoving = true;
         }
