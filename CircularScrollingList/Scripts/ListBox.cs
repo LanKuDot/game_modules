@@ -12,7 +12,7 @@ namespace AirFishLab.ScrollingList
     {
         #region Properties of IListBox
 
-        public Transform Transform => transform;
+        public Transform Transform { get; private set; }
         public int ListBoxID { get; private set; }
         public int ContentID { get; private set; }
         public IListBox LastListBox { get; private set; }
@@ -40,6 +40,7 @@ namespace AirFishLab.ScrollingList
         public void Initialize(
             int listBoxID, IListBox lastListBox, IListBox nextListBox)
         {
+            Transform = transform;
             ListBoxID = listBoxID;
             LastListBox = lastListBox;
             NextListBox = nextListBox;
