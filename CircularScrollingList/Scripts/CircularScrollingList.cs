@@ -219,18 +219,6 @@ namespace AirFishLab.ScrollingList
         }
 
         /// <summary>
-        /// Get the box that is closest to the center
-        /// </summary>
-        public IListBox GetCenteredBox() =>
-            _listBoxManager.GetCenteredBox();
-
-        /// <summary>
-        /// Get the content ID of the box that is closest to the center
-        /// </summary>
-        public int GetCenteredContentID() =>
-            _listBoxManager.GetCenteredBox().ContentID;
-
-        /// <summary>
         /// Move the list one unit up or right
         /// </summary>
         public void MoveOneUnitUp()
@@ -251,6 +239,31 @@ namespace AirFishLab.ScrollingList
 
             SetUnitMovement(-1);
         }
+
+        /// <summary>
+        /// Stop the list immediately
+        /// </summary>
+        public void EndMovement()
+        {
+            if (_listMovementProcessor.IsMovementEnded())
+                return;
+
+            _listMovementProcessor.EndMovement();
+            _setting.OnMovementEnd.Invoke();
+            _isMoving = false;
+        }
+
+        /// <summary>
+        /// Get the box that is closest to the center
+        /// </summary>
+        public IListBox GetCenteredBox() =>
+            _listBoxManager.GetCenteredBox();
+
+        /// <summary>
+        /// Get the content ID of the box that is closest to the center
+        /// </summary>
+        public int GetCenteredContentID() =>
+            _listBoxManager.GetCenteredBox().ContentID;
 
         /// <summary>
         /// Make the boxes recalculate their content ID and reacquire the contents
