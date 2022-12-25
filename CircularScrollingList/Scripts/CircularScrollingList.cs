@@ -256,8 +256,8 @@ namespace AirFishLab.ScrollingList
         /// <summary>
         /// Get the box that is closest to the center
         /// </summary>
-        public IListBox GetCenteredBox() =>
-            _listBoxManager.GetCenteredBox();
+        public ListBox GetCenteredBox() =>
+            _listBoxManager.GetCenteredBox() as ListBox;
 
         /// <summary>
         /// Get the content ID of the box that is closest to the center
