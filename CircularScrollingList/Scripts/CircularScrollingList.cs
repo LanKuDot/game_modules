@@ -116,6 +116,10 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private bool _isInitialized;
         /// <summary>
+        /// Is the list interactable?
+        /// </summary>
+        private bool _isInteractable = true;
+        /// <summary>
         /// Does the list bank has no content?
         /// </summary>
         /// It is used for blocking any input if the list has nothing to display.
@@ -204,6 +208,15 @@ namespace AirFishLab.ScrollingList
         #endregion
 
         #region Public Functions
+
+        /// <summary>
+        /// Whether the list is interactable or not
+        /// </summary>
+        /// <param name="interactable">Is the list interactable?</param>
+        public void SetInteractable(bool interactable)
+        {
+            _isInteractable = interactable;
+        }
 
         /// <summary>
         /// Get the box that is closest to the center
@@ -326,11 +339,19 @@ namespace AirFishLab.ScrollingList
         #region Operation Functions
 
         /// <summary>
+        /// Whether to ignore the movement request or not
+        /// </summary>
+        private bool ToIgnoreMovement()
+        {
+            return _hasNoContent || !_isInteractable;
+        }
+
+        /// <summary>
         /// Set the movement to the list movement processor
         /// </summary>
         private void SetMovement(PointerEventData eventData, InputPhase phase)
         {
-            if (_hasNoContent)
+            if (ToIgnoreMovement())
                 return;
 
             var inputInfo = _inputProcessor.GetInputInfo(eventData, phase);
@@ -344,7 +365,7 @@ namespace AirFishLab.ScrollingList
         /// <param name="unit">The units to be moved</param>
         private void SetUnitMovement(int unit)
         {
-            if (_hasNoContent)
+            if (ToIgnoreMovement())
                 return;
 
             _listMovementProcessor.SetUnitMovement(unit);
@@ -359,7 +380,7 @@ namespace AirFishLab.ScrollingList
         /// </param>
         private void SetSelectionMovement(int shortestIDDiff)
         {
-            if (_hasNoContent)
+            if (ToIgnoreMovement())
                 return;
 
             _listMovementProcessor.SetSelectionMovement(shortestIDDiff);
