@@ -12,6 +12,11 @@ namespace AirFishLab.ScrollingList
         #region Public Members
 
         /// <summary>
+        /// The scrolling list
+        /// </summary>
+        public readonly CircularScrollingList ScrollingList;
+
+        /// <summary>
         /// The setting of the list
         /// </summary>
         public readonly CircularScrollingListSetting Setting;
@@ -40,9 +45,11 @@ namespace AirFishLab.ScrollingList
         #endregion
 
         public ListSetupData(
+            CircularScrollingList scrollingList,
             CircularScrollingListSetting setting, RectTransform rectTransform,
             Camera canvasRefCamera, List<IListBox> listBoxes, IListBank listBank)
         {
+            ScrollingList = scrollingList;
             Setting = setting;
             RectTransform = rectTransform;
             CanvasRefCamera = canvasRefCamera;

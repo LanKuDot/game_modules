@@ -18,6 +18,7 @@ namespace AirFishLab.ScrollingList
         public IListBox LastListBox { get; private set; }
         public IListBox NextListBox { get; private set; }
         public ListBoxIntEvent OnBoxClick { get; } = new ListBoxIntEvent();
+        public CircularScrollingList ScrollingList { get; private set; }
         public bool IsActivated
         {
             get => gameObject.activeSelf;
@@ -26,21 +27,14 @@ namespace AirFishLab.ScrollingList
 
         #endregion
 
-        #region Exposed Properties
-
-        /// <summary>
-        /// The list which this box belongs to
-        /// </summary>
-        public CircularScrollingList ScrollingList { get; private set; }
-
-        #endregion
-
         #region IListBox
 
         public void Initialize(
+            CircularScrollingList scrollingList,
             int listBoxID, IListBox lastListBox, IListBox nextListBox)
         {
             Transform = transform;
+            ScrollingList = scrollingList;
             ListBoxID = listBoxID;
             LastListBox = lastListBox;
             NextListBox = nextListBox;

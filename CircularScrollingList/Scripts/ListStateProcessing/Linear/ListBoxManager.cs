@@ -76,7 +76,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 new NumOfInactivatedBoxes(_boxes.Count / 2);
 
             InitializeFactorFunc(_setting.Direction);
-            InitializeBoxes();
+            InitializeBoxes(setupData.ScrollingList);
         }
 
         public void UpdateBoxes(float movementValue)
@@ -146,7 +146,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <summary>
         /// Initialize the boxes
         /// </summary>
-        private void InitializeBoxes()
+        private void InitializeBoxes(CircularScrollingList scrollingList)
         {
             var numOfBoxes = _boxes.Count;
             for (var boxID = 0; boxID < numOfBoxes; ++boxID) {
@@ -155,7 +155,8 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                     _boxes[(int)Mathf.Repeat(boxID - 1, numOfBoxes)];
                 var nextListBox =
                     _boxes[(int)Mathf.Repeat(boxID + 1, numOfBoxes)];
-                box.Initialize(boxID, lastListBox, nextListBox);
+                box.Initialize(
+                    scrollingList, boxID, lastListBox, nextListBox);
                 box.OnBoxClick.AddListener(_setting.OnBoxClick.Invoke);
 
                 _transformController.SetInitialLocalTransform(box.Transform, boxID);

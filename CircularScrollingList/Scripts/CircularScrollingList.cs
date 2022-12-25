@@ -151,7 +151,7 @@ namespace AirFishLab.ScrollingList
 
             var setupData =
                 new ListSetupData(
-                    _setting, _rectTransform, _canvasRefCamera,
+                    this, _setting, _rectTransform, _canvasRefCamera,
                     new List<IListBox>(_listBoxes), ListBank);
 
             InitializeMembers(setupData);

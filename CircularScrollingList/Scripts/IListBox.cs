@@ -44,12 +44,20 @@ namespace AirFishLab.ScrollingList
         bool IsActivated { get; set; }
 
         /// <summary>
+        /// The list which this box belongs to
+        /// </summary>
+        CircularScrollingList ScrollingList { get; }
+
+        /// <summary>
         /// Initialize the list box
         /// </summary>
+        /// <param name="scrollingList">The list which this box belongs to</param>
         /// <param name="listBoxID">The id of the box</param>
         /// <param name="lastListBox">The last box</param>
         /// <param name="nextListBox">The next box</param>
-        void Initialize(int listBoxID, IListBox lastListBox, IListBox nextListBox);
+        void Initialize(
+            CircularScrollingList scrollingList,
+            int listBoxID, IListBox lastListBox, IListBox nextListBox);
 
         /// <summary>
         /// Set the content id of the box
