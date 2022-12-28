@@ -169,7 +169,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
@@ -188,8 +188,8 @@ Canvas:
   m_GameObject: {fileID: 8955354}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
-  m_Camera: {fileID: 0}
+  m_RenderMode: 1
+  m_Camera: {fileID: 1858388267}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
@@ -421,13 +421,13 @@ MonoBehaviour:
   - {fileID: 370949541}
   _setting:
     _listType: 0
-    _controlMode: 0
-    _alignMiddle: 0
-    _reverseDirection: 0
+    _controlMode: -1
+    _alignInCenter: 0
+    _reverseScrollingDirection: 0
     _direction: 0
     _centeredContentID: 0
     _centerSelectedBox: 0
-    _reverseOrder: 0
+    _reverseContentOrder: 0
     _initializeOnStart: 0
     _boxDensity: 1
     _boxPositionCurve:
@@ -530,6 +530,9 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
     _onCenteredContentChanged:
+      m_PersistentCalls:
+        m_Calls: []
+    _onCenteredBoxChanged:
       m_PersistentCalls:
         m_Calls: []
     _onMovementEnd:

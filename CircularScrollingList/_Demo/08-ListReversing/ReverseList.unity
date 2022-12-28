@@ -703,7 +703,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: -80}
+  m_AnchoredPosition: {x: 0, y: -60}
   m_SizeDelta: {x: 200, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &434664211
@@ -727,10 +727,10 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 22
+    m_FontSize: 20
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 2
+    m_MinSize: 0
     m_MaxSize: 40
     m_Alignment: 4
     m_AlignByGeometry: 0
@@ -950,13 +950,13 @@ MonoBehaviour:
   - {fileID: 113992357}
   _setting:
     _listType: 0
-    _controlMode: 2
-    _alignMiddle: 0
-    _reverseDirection: 1
+    _controlMode: -1
+    _alignInCenter: 1
+    _reverseScrollingDirection: 1
     _direction: 0
     _centeredContentID: 0
     _centerSelectedBox: 0
-    _reverseOrder: 0
+    _reverseContentOrder: 0
     _initializeOnStart: 1
     _boxDensity: 1
     _boxPositionCurve:
@@ -1061,6 +1061,9 @@ MonoBehaviour:
     _onCenteredContentChanged:
       m_PersistentCalls:
         m_Calls: []
+    _onCenteredBoxChanged:
+      m_PersistentCalls:
+        m_Calls: []
     _onMovementEnd:
       m_PersistentCalls:
         m_Calls: []
@@ -1110,7 +1113,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: -80}
+  m_AnchoredPosition: {x: 0, y: -60}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &777924121
@@ -1134,10 +1137,10 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 22
+    m_FontSize: 20
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 2
+    m_MinSize: 0
     m_MaxSize: 40
     m_Alignment: 4
     m_AlignByGeometry: 0
@@ -1202,7 +1205,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
@@ -1221,8 +1224,8 @@ Canvas:
   m_GameObject: {fileID: 779370435}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
-  m_Camera: {fileID: 0}
+  m_RenderMode: 1
+  m_Camera: {fileID: 1321672840}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
@@ -1974,7 +1977,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: -80}
+  m_AnchoredPosition: {x: 0, y: -60}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1022185649
@@ -1998,10 +2001,10 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 22
+    m_FontSize: 20
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 2
+    m_MinSize: 0
     m_MaxSize: 40
     m_Alignment: 4
     m_AlignByGeometry: 0
@@ -2084,13 +2087,13 @@ MonoBehaviour:
   - {fileID: 426742378}
   _setting:
     _listType: 0
-    _controlMode: 0
-    _alignMiddle: 1
-    _reverseDirection: 0
+    _controlMode: -1
+    _alignInCenter: 1
+    _reverseScrollingDirection: 0
     _direction: 0
     _centeredContentID: 0
     _centerSelectedBox: 0
-    _reverseOrder: 1
+    _reverseContentOrder: 1
     _initializeOnStart: 1
     _boxDensity: 1
     _boxPositionCurve:
@@ -2193,6 +2196,9 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
     _onCenteredContentChanged:
+      m_PersistentCalls:
+        m_Calls: []
+    _onCenteredBoxChanged:
       m_PersistentCalls:
         m_Calls: []
     _onMovementEnd:
@@ -3108,13 +3114,13 @@ MonoBehaviour:
   - {fileID: 430406782}
   _setting:
     _listType: 0
-    _controlMode: 0
-    _alignMiddle: 1
-    _reverseDirection: 0
+    _controlMode: -1
+    _alignInCenter: 1
+    _reverseScrollingDirection: 0
     _direction: 0
     _centeredContentID: 0
     _centerSelectedBox: 0
-    _reverseOrder: 0
+    _reverseContentOrder: 0
     _initializeOnStart: 1
     _boxDensity: 1
     _boxPositionCurve:
@@ -3217,6 +3223,9 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
     _onCenteredContentChanged:
+      m_PersistentCalls:
+        m_Calls: []
+    _onCenteredBoxChanged:
       m_PersistentCalls:
         m_Calls: []
     _onMovementEnd:

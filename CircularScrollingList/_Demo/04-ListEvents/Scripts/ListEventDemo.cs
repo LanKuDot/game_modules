@@ -3,37 +3,40 @@ using UnityEngine.UI;
 
 namespace AirFishLab.ScrollingList.Demo
 {
-    public class DisplayAndSelectExample : MonoBehaviour
+    public class ListEventDemo : MonoBehaviour
     {
         [SerializeField]
         private CircularScrollingList _list;
         [SerializeField]
-        private Text _displayText;
+        private Text _selectedContentText;
         [SerializeField]
-        private Text _centeredContentText;
+        private Text _requestedContentText;
+        [SerializeField]
+        private Text _autoUpdatedContentText;
 
         public void DisplayCenteredContent()
         {
             var contentID = _list.GetCenteredContentID();
             var centeredContent =
-                (ListBank.Content)_list.ListBank.GetListContent(contentID);
-            _displayText.text = "Centered content: " + centeredContent.Value;
+                (IntListBank.Content)_list.ListBank.GetListContent(contentID);
+            _requestedContentText.text =
+                $"Centered content: {centeredContent.Value}";
         }
 
         public void GetSelectedContentID(int selectedContentID)
         {
             var content =
-                (ListBank.Content)_list.ListBank.GetListContent(selectedContentID);
-            Debug.Log($"Selected content ID: {selectedContentID}, "
-                      + $"Content: {content.Value}");
+                (IntListBank.Content)_list.ListBank.GetListContent(selectedContentID);
+            _selectedContentText.text =
+                $"Selected content ID: {selectedContentID}, Content: {content.Value}";
         }
 
         public void OnCenteredBoxChanged(
             ListBox prevCenteredBox, ListBox curCenteredBox)
         {
-            _centeredContentText.text =
+            _autoUpdatedContentText.text =
                 "(Auto updated)\nCentered content: "
-                + ((IntListBox) curCenteredBox).content;
+                + $"{((IntListBox) curCenteredBox).Content}";
         }
 
         public void OnMovementEnd()

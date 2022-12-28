@@ -8,7 +8,7 @@ namespace AirFishLab.ScrollingList.Demo
             1, 2, 3,
         };
 
-        private readonly ListBank.Content _contentWrapper = new ListBank.Content();
+        private readonly IntListBank.Content _contentWrapper = new IntListBank.Content();
 
         public override IListContent GetListContent(int index)
         {

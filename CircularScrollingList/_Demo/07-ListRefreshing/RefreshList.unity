@@ -1230,13 +1230,13 @@ MonoBehaviour:
   - {fileID: 334773259}
   _setting:
     _listType: 1
-    _controlMode: 0
-    _alignMiddle: 1
-    _reverseDirection: 0
+    _controlMode: -1
+    _alignInCenter: 1
+    _reverseScrollingDirection: 0
     _direction: 0
     _centeredContentID: 0
     _centerSelectedBox: 0
-    _reverseOrder: 0
+    _reverseContentOrder: 0
     _initializeOnStart: 1
     _boxDensity: 1
     _boxPositionCurve:
@@ -1341,6 +1341,9 @@ MonoBehaviour:
     _onCenteredContentChanged:
       m_PersistentCalls:
         m_Calls: []
+    _onCenteredBoxChanged:
+      m_PersistentCalls:
+        m_Calls: []
     _onMovementEnd:
       m_PersistentCalls:
         m_Calls: []
@@ -1392,7 +1395,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
@@ -1590,13 +1593,13 @@ MonoBehaviour:
   - {fileID: 1508107037}
   _setting:
     _listType: 0
-    _controlMode: 0
-    _alignMiddle: 1
-    _reverseDirection: 0
+    _controlMode: -1
+    _alignInCenter: 1
+    _reverseScrollingDirection: 0
     _direction: 0
     _centeredContentID: 0
     _centerSelectedBox: 0
-    _reverseOrder: 0
+    _reverseContentOrder: 0
     _initializeOnStart: 1
     _boxDensity: 1
     _boxPositionCurve:
@@ -1699,6 +1702,9 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
     _onCenteredContentChanged:
+      m_PersistentCalls:
+        m_Calls: []
+    _onCenteredBoxChanged:
       m_PersistentCalls:
         m_Calls: []
     _onMovementEnd:
