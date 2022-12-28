@@ -270,7 +270,8 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
             candidateBox.PopToFront();
             _setting.OnCenteredContentChanged.Invoke(candidateBox.ContentID);
-            // TODO _setting.onCenteredBoxChanged.Invoke(_centeredBox, candidateBox);
+            _setting.OnCenteredBoxChanged.Invoke(
+                (ListBox)_centeredBox, (ListBox)candidateBox);
             _centeredBox = candidateBox;
         }
 
