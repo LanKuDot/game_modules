@@ -1221,7 +1221,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Function
+  m_Text: Circular List
 --- !u!222 &883495625
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2483,9 +2483,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Function
-
-    Linear'
+  m_Text: Linear List
 --- !u!222 &1849563490
 CanvasRenderer:
   m_ObjectHideFlags: 0
