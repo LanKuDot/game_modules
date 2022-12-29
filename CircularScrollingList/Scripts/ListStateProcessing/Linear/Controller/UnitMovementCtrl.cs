@@ -1,5 +1,4 @@
 ﻿using System;
-using AirFishLab.ScrollingList.ListStateProcessing;
 using UnityEngine;
 
 namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
@@ -145,15 +144,17 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// </returns>
         private bool NeedToBounceBack(float deltaDistance)
         {
-            if (_getFocusingStateFunc() == ListFocusingState.Middle)
+            var state = _getFocusingStateFunc();
+            if (state == ListFocusingState.Middle)
                 return false;
 
-            var exceedingDistance =
-                Mathf.Abs(_getAligningDistance() * -1 + deltaDistance);
+            var exceedingDistance = _getAligningDistance() * -1 + deltaDistance;
 
-            return
-                exceedingDistance > _bouncingDeltaPos
-                || _unitMovementCurve.IsMovementEnded();
+            if ((state == ListFocusingState.Bottom && exceedingDistance < 0)
+                || (state == ListFocusingState.Top && exceedingDistance > 0))
+                return false;
+
+            return Mathf.Abs(exceedingDistance) > _bouncingDeltaPos;
         }
     }
 }
