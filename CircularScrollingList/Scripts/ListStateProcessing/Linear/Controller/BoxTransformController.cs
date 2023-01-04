@@ -87,7 +87,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// Initialize the position related controlling variables
         /// </summary>
         private void InitializePositionVars(
-            RectTransform rectTransform, CircularScrollingListSetting listSetting,
+            RectTransform rectTransform, ListSetting listSetting,
             int numOfBoxes)
         {
             var rect = rectTransform.rect;
@@ -112,7 +112,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// Initialize the functions for getting the factor
         /// </summary>
         /// <param name="setting">The setting of the list</param>
-        private void InitializeFactorGetter(CircularScrollingListSetting setting)
+        private void InitializeFactorGetter(ListSetting setting)
         {
             if (setting.Direction == CircularScrollingList.Direction.Vertical) {
                 _getMajorFactorFunc = FactorUtility.GetVector2Y;
@@ -127,7 +127,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// Initialize the curves
         /// </summary>
         /// <param name="setting">The setting of the list</param>
-        private void InitializeCurves(CircularScrollingListSetting setting)
+        private void InitializeCurves(ListSetting setting)
         {
             _positionCurve =
                 new RangeMappingCurve(

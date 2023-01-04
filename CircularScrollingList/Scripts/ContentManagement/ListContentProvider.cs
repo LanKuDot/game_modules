@@ -19,7 +19,7 @@ namespace AirFishLab.ScrollingList.ContentManagement
         /// <summary>
         /// The setting of the list
         /// </summary>
-        private CircularScrollingListSetting _listSetting;
+        private ListSetting _listSetting;
         /// <summary>
         /// The components holding the list contents
         /// </summary>

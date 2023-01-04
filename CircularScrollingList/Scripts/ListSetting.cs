@@ -6,7 +6,7 @@ using UnityEngine.Serialization;
 namespace AirFishLab.ScrollingList
 {
     [Serializable]
-    public class CircularScrollingListSetting
+    public class ListSetting
     {
         #region List Mode
 

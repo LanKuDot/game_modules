@@ -143,7 +143,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <summary>
         /// Initialize the movement controllers
         /// </summary>
-        private void InitializeComponents(CircularScrollingListSetting setting)
+        private void InitializeComponents(ListSetting setting)
         {
             var exceedingLimit = _unitPos * 0.3f;
 

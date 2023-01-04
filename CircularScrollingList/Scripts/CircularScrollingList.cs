@@ -69,7 +69,7 @@ namespace AirFishLab.ScrollingList
         private List<ListBox> _listBoxes;
         [SerializeField]
         [Tooltip("The setting of this list")]
-        private CircularScrollingListSetting _setting;
+        private ListSetting _setting;
 
         #endregion
 
@@ -77,7 +77,7 @@ namespace AirFishLab.ScrollingList
 
         public BaseListBank ListBank => _listBank;
         public ListBox[] ListBoxes => _listBoxes.ToArray();
-        public CircularScrollingListSetting Setting => _setting;
+        public ListSetting Setting => _setting;
 
         #endregion
 

@@ -29,7 +29,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <summary>
         /// The setting of the list
         /// </summary>
-        private CircularScrollingListSetting _setting;
+        private ListSetting _setting;
         /// <summary>
         /// The managed boxes
         /// </summary>
