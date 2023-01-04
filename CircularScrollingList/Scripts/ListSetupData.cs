@@ -19,7 +19,7 @@ namespace AirFishLab.ScrollingList
         /// <summary>
         /// The setting of the list
         /// </summary>
-        public readonly ListSetting Setting;
+        public readonly ListSetting ListSetting;
 
         /// <summary>
         /// The root rect transform of the list
@@ -46,11 +46,11 @@ namespace AirFishLab.ScrollingList
 
         public ListSetupData(
             CircularScrollingList scrollingList,
-            ListSetting setting, RectTransform rectTransform,
+            ListSetting listSetting, RectTransform rectTransform,
             Camera canvasRefCamera, List<IListBox> listBoxes, IListBank listBank)
         {
             ScrollingList = scrollingList;
-            Setting = setting;
+            ListSetting = listSetting;
             RectTransform = rectTransform;
             CanvasRefCamera = canvasRefCamera;
             ListBoxes = listBoxes;

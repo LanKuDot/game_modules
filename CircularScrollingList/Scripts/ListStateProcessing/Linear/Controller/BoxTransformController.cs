@@ -76,9 +76,9 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             _numOfBoxes = setupData.ListBoxes.Count;
 
             InitializePositionVars(
-                setupData.RectTransform, setupData.Setting, _numOfBoxes);
-            InitializeFactorGetter(setupData.Setting);
-            InitializeCurves(setupData.Setting);
+                setupData.RectTransform, setupData.ListSetting, _numOfBoxes);
+            InitializeFactorGetter(setupData.ListSetting);
+            InitializeCurves(setupData.ListSetting);
         }
 
         #region Initialization

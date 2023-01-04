@@ -38,10 +38,10 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         {
             InitializePositionVars(
                 setupData.RectTransform.rect,
-                setupData.Setting.Direction,
-                setupData.Setting.BoxDensity,
+                setupData.ListSetting.Direction,
+                setupData.ListSetting.BoxDensity,
                 setupData.ListBoxes.Count);
-            InitializeComponents(setupData.Setting);
+            InitializeComponents(setupData.ListSetting);
         }
 
         public void SetMovement(InputInfo inputInfo)

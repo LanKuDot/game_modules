@@ -4,7 +4,7 @@ using AirFishLab.ScrollingList.ContentManagement;
 using AirFishLab.ScrollingList.ListStateProcessing;
 using UnityEngine;
 using UnityEngine.EventSystems;
-
+using UnityEngine.Serialization;
 using Linear = AirFishLab.ScrollingList.ListStateProcessing.Linear;
 
 namespace AirFishLab.ScrollingList
@@ -68,8 +68,9 @@ namespace AirFishLab.ScrollingList
                  "They should be derived from the class ListBox")]
         private List<ListBox> _listBoxes;
         [SerializeField]
+        [FormerlySerializedAs("_setting")]
         [Tooltip("The setting of this list")]
-        private ListSetting _setting;
+        private ListSetting _listSetting;
 
         #endregion
 
@@ -77,7 +78,7 @@ namespace AirFishLab.ScrollingList
 
         public BaseListBank ListBank => _listBank;
         public ListBox[] ListBoxes => _listBoxes.ToArray();
-        public ListSetting Setting => _setting;
+        public ListSetting ListSetting => _listSetting;
 
         #endregion
 
@@ -133,7 +134,7 @@ namespace AirFishLab.ScrollingList
 
         private void Start()
         {
-            if (_setting.InitializeOnStart)
+            if (_listSetting.InitializeOnStart)
                 Initialize();
         }
 
@@ -151,7 +152,7 @@ namespace AirFishLab.ScrollingList
 
             var setupData =
                 new ListSetupData(
-                    this, _setting, _rectTransform, _canvasRefCamera,
+                    this, _listSetting, _rectTransform, _canvasRefCamera,
                     new List<IListBox>(_listBoxes), ListBank);
 
             InitializeMembers(setupData);
@@ -176,7 +177,7 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private void InitializeMembers(ListSetupData setupData)
         {
-            var setting = setupData.Setting;
+            var setting = setupData.ListSetting;
             if (setting.CenterSelectedBox)
                 setting.OnBoxClick.AddListener(SelectContentID);
             _controlMode = setting.ControlMode;
@@ -249,7 +250,7 @@ namespace AirFishLab.ScrollingList
                 return;
 
             _listMovementProcessor.EndMovement();
-            _setting.OnMovementEnd.Invoke();
+            _listSetting.OnMovementEnd.Invoke();
             _isMoving = false;
         }
 
@@ -345,7 +346,7 @@ namespace AirFishLab.ScrollingList
             if (!_listMovementProcessor.IsMovementEnded())
                 return;
 
-            _setting.OnMovementEnd.Invoke();
+            _listSetting.OnMovementEnd.Invoke();
             _isMoving = false;
         }
 

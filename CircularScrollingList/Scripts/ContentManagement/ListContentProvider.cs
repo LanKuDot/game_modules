@@ -43,7 +43,7 @@ namespace AirFishLab.ScrollingList.ContentManagement
 
         public void Initialize(ListSetupData setupData)
         {
-            _listSetting = setupData.Setting;
+            _listSetting = setupData.ListSetting;
             _listBank = setupData.ListBank;
             _numOfBoxes = setupData.ListBoxes.Count;
 

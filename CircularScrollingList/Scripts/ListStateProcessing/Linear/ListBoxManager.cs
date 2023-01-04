@@ -67,7 +67,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         public void Initialize(
             ListSetupData setupData, IListContentProvider contentProvider)
         {
-            _setting = setupData.Setting;
+            _setting = setupData.ListSetting;
             _boxes.Clear();
             _boxes.AddRange(setupData.ListBoxes);
             _contentProvider = contentProvider;
