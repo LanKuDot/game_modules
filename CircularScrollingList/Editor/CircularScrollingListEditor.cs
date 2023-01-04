@@ -10,9 +10,8 @@ namespace AirFishLab.ScrollingList.Editor
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
-
             DrawPropertyField("_listBank");
-            DrawPropertyField("_listBoxes", true);
+            DrawBoxSetting();
             DrawSetting();
 
             serializedObject.ApplyModifiedProperties();
@@ -23,6 +22,40 @@ namespace AirFishLab.ScrollingList.Editor
             EditorGUILayout.PropertyField(
                 serializedObject.FindProperty(path), includeChildren);
         }
+
+        #region Box Property Drawer
+
+        private SerializedProperty _boxSettingProperty;
+
+        private SerializedProperty GetBoxSettingProperty(string path)
+        {
+            return _boxSettingProperty.FindPropertyRelative(path);
+        }
+
+        private void DrawBoxSettingProperty(string path)
+        {
+            EditorGUILayout.PropertyField(GetBoxSettingProperty(path));
+        }
+
+        private void DrawBoxSetting()
+        {
+            _boxSettingProperty = serializedObject.FindProperty("_boxSetting");
+            _boxSettingProperty.isExpanded =
+                EditorGUILayout.Foldout(_boxSettingProperty.isExpanded, "Box Setting");
+            if (!_boxSettingProperty.isExpanded)
+                return;
+
+            ++EditorGUI.indentLevel;
+
+            DrawBoxSettingProperty("_boxRootTransform");
+            DrawBoxSettingProperty("_numOfBoxes");
+            DrawBoxSettingProperty("_boxPrefab");
+            DrawBoxSettingProperty("_listBoxes");
+
+            --EditorGUI.indentLevel;
+        }
+
+        #endregion
 
         #region Setting Property Drawer
 
@@ -41,9 +74,9 @@ namespace AirFishLab.ScrollingList.Editor
 
         private void DrawSetting()
         {
-            _settingProperty = serializedObject.FindProperty("_setting");
+            _settingProperty = serializedObject.FindProperty("_listSetting");
             _settingProperty.isExpanded =
-                EditorGUILayout.Foldout(_settingProperty.isExpanded, "Setting");
+                EditorGUILayout.Foldout(_settingProperty.isExpanded, "List Setting");
             if (!_settingProperty.isExpanded)
                 return;
 

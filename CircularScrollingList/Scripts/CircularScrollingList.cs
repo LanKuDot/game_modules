@@ -60,11 +60,13 @@ namespace AirFishLab.ScrollingList
         #region Settings
 
         [SerializeField]
-        [Tooltip("The game object that stores the contents for the list to display. " +
+        [Tooltip("The object that stores the contents for the list to display. " +
                  "It should be derived from the class BaseListBank.")]
         private BaseListBank _listBank;
         [SerializeField]
-        [Tooltip("The game objects that used for displaying the content. " +
+        private ListBoxSetting _boxSetting;
+        [SerializeField]
+        [Tooltip("The objects that are used for displaying the content. " +
                  "They should be derived from the class ListBox")]
         private List<ListBox> _listBoxes;
         [SerializeField]
