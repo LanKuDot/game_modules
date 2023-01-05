@@ -11,9 +11,6 @@ namespace AirFishLab.ScrollingList
         [Tooltip("The root transform that holding the list boxes")]
         private Transform _boxRootTransform;
         [SerializeField]
-        [Tooltip("The number of boxes to be generated")]
-        private int _numOfBoxes = 5;
-        [SerializeField]
         [Tooltip("The prefab of the box")]
         private ListBox _boxPrefab;
         [SerializeField]
@@ -22,7 +19,6 @@ namespace AirFishLab.ScrollingList
         private List<ListBox> _listBoxes;
 
         public Transform BoxRootTransform => _boxRootTransform;
-        public int NumOfBoxes => _numOfBoxes;
         public ListBox BoxPrefab => _boxPrefab;
         public List<ListBox> ListBoxes => _listBoxes;
     }

@@ -48,7 +48,6 @@ namespace AirFishLab.ScrollingList.Editor
             ++EditorGUI.indentLevel;
 
             DrawBoxSettingProperty("_boxRootTransform");
-            DrawBoxSettingProperty("_numOfBoxes");
             DrawBoxSettingProperty("_boxPrefab");
             DrawBoxSettingProperty("_listBoxes");
 
