@@ -56,32 +56,32 @@ namespace AirFishLab.ScrollingList.Editor
 
         #endregion
 
-        #region Setting Property Drawer
+        #region List Setting Property Drawer
 
-        private SerializedProperty _settingProperty;
+        private SerializedProperty _listSettingProperty;
         private SerializedProperty _controlMode;
 
-        private SerializedProperty GetSettingProperty(string path)
+        private SerializedProperty GetListSettingProperty(string path)
         {
-            return _settingProperty.FindPropertyRelative(path);
+            return _listSettingProperty.FindPropertyRelative(path);
         }
 
-        private void DrawSettingProperty(string path)
+        private void DrawListSettingProperty(string path)
         {
-            EditorGUILayout.PropertyField(GetSettingProperty(path));
+            EditorGUILayout.PropertyField(GetListSettingProperty(path));
         }
 
         private void DrawSetting()
         {
-            _settingProperty = serializedObject.FindProperty("_listSetting");
-            _settingProperty.isExpanded =
-                EditorGUILayout.Foldout(_settingProperty.isExpanded, "List Setting");
-            if (!_settingProperty.isExpanded)
+            _listSettingProperty = serializedObject.FindProperty("_listSetting");
+            _listSettingProperty.isExpanded =
+                EditorGUILayout.Foldout(_listSettingProperty.isExpanded, "List Setting");
+            if (!_listSettingProperty.isExpanded)
                 return;
 
             ++EditorGUI.indentLevel;
 
-            _controlMode = GetSettingProperty("_controlMode");
+            _controlMode = GetListSettingProperty("_controlMode");
             DrawListMode();
             EditorGUILayout.Space();
             DrawListAppearance();
@@ -94,41 +94,41 @@ namespace AirFishLab.ScrollingList.Editor
         private void DrawListMode()
         {
             EditorGUILayout.LabelField("List Mode", EditorStyles.boldLabel);
-            DrawSettingProperty("_listType");
-            DrawSettingProperty("_controlMode");
+            DrawListSettingProperty("_listType");
+            DrawListSettingProperty("_controlMode");
 
             ++EditorGUI.indentLevel;
             if (HasFlag(
                     _controlMode.intValue,
                     (int)CircularScrollingList.ControlMode.Pointer)) {
-                DrawSettingProperty("_alignInCenter");
+                DrawListSettingProperty("_alignInCenter");
             }
 
             if (HasFlag(
                     _controlMode.intValue,
                     (int)CircularScrollingList.ControlMode.MouseWheel)) {
-                DrawSettingProperty("_reverseScrollingDirection");
+                DrawListSettingProperty("_reverseScrollingDirection");
             }
             --EditorGUI.indentLevel;
 
-            DrawSettingProperty("_direction");
-            DrawSettingProperty("_centeredContentID");
-            DrawSettingProperty("_centerSelectedBox");
-            DrawSettingProperty("_reverseContentOrder");
-            DrawSettingProperty("_initializeOnStart");
+            DrawListSettingProperty("_direction");
+            DrawListSettingProperty("_centeredContentID");
+            DrawListSettingProperty("_centerSelectedBox");
+            DrawListSettingProperty("_reverseContentOrder");
+            DrawListSettingProperty("_initializeOnStart");
         }
 
         private void DrawListAppearance()
         {
             EditorGUILayout.LabelField("List Appearance", EditorStyles.boldLabel);
-            DrawSettingProperty("_boxDensity");
-            DrawSettingProperty("_boxPositionCurve");
-            DrawSettingProperty("_boxScaleCurve");
+            DrawListSettingProperty("_boxDensity");
+            DrawListSettingProperty("_boxPositionCurve");
+            DrawListSettingProperty("_boxScaleCurve");
             if (HasFlag(
                     _controlMode.intValue,
                     (int)CircularScrollingList.ControlMode.Pointer))
-                DrawSettingProperty("_boxVelocityCurve");
-            DrawSettingProperty("_boxMovementCurve");
+                DrawListSettingProperty("_boxVelocityCurve");
+            DrawListSettingProperty("_boxMovementCurve");
         }
 
         private void DrawEvents()
@@ -138,7 +138,7 @@ namespace AirFishLab.ScrollingList.Editor
                     fontStyle = FontStyle.Bold
                 };
 
-            var onBoxClick = GetSettingProperty("_onBoxClick");
+            var onBoxClick = GetListSettingProperty("_onBoxClick");
             onBoxClick.isExpanded =
                 EditorGUILayout.Foldout(
                     onBoxClick.isExpanded, "List Events", true, boldFoldout);
@@ -147,10 +147,10 @@ namespace AirFishLab.ScrollingList.Editor
                 return;
 
             ++EditorGUI.indentLevel;
-            DrawSettingProperty("_onBoxClick");
-            DrawSettingProperty("_onCenteredContentChanged");
-            DrawSettingProperty("_onCenteredBoxChanged");
-            DrawSettingProperty("_onMovementEnd");
+            DrawListSettingProperty("_onBoxClick");
+            DrawListSettingProperty("_onCenteredContentChanged");
+            DrawListSettingProperty("_onCenteredBoxChanged");
+            DrawListSettingProperty("_onMovementEnd");
             --EditorGUI.indentLevel;
         }
 
