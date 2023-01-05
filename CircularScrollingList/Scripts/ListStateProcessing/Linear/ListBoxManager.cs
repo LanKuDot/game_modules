@@ -37,7 +37,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <summary>
         /// The component fot getting the list contents
         /// </summary>
-        private IListContentProvider _contentProvider;
+        private ListContentProvider _contentProvider;
         /// <summary>
         /// The controller for setting the transform of the boxes
         /// </summary>
@@ -65,7 +65,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         #region IListBoxManager
 
         public void Initialize(
-            ListSetupData setupData, IListContentProvider contentProvider)
+            ListSetupData setupData, ListContentProvider contentProvider)
         {
             _setting = setupData.ListSetting;
             _boxes.Clear();

@@ -113,7 +113,7 @@ namespace AirFishLab.ScrollingList
         /// <summary>
         /// The component for providing the content for the boxes
         /// </summary>
-        private IListContentProvider _listContentProvider;
+        private ListContentProvider _listContentProvider;
         /// <summary>
         /// Is the list initialized?
         /// </summary>

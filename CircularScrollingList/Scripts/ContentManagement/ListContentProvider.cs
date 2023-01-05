@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace AirFishLab.ScrollingList.ContentManagement
 {
-    public class ListContentProvider : IListContentProvider
+    public class ListContentProvider
     {
         #region Constant Value
 
@@ -39,8 +39,12 @@ namespace AirFishLab.ScrollingList.ContentManagement
 
         #endregion
 
-        #region IListContentProvider
+        #region Initialization
 
+        /// <summary>
+        /// Initialize the content provider
+        /// </summary>
+        /// <param name="setupData">The data for setting up the list</param>
         public void Initialize(ListSetupData setupData)
         {
             _listSetting = setupData.ListSetting;
@@ -54,6 +58,15 @@ namespace AirFishLab.ScrollingList.ContentManagement
                 _idCalculationFunc = GetNonLoopedContentID;
         }
 
+        #endregion
+
+        #region Content ID Calculation
+
+        /// <summary>
+        /// Get the initial content ID for the specified box
+        /// </summary>
+        /// <param name="listBoxID">The id of the box</param>
+        /// <returns>The content ID</returns>
         public int GetInitialContentID(int listBoxID)
         {
             if (GetContentCount() == 0)
@@ -67,26 +80,37 @@ namespace AirFishLab.ScrollingList.ContentManagement
             return _idCalculationFunc(contentID);
         }
 
-        public int GetRefreshedContentID(int contentID) =>
+        /// <summary>
+        /// Get the content id after the list content is refreshed
+        /// </summary>
+        /// <param name="origContentID">The original content ID</param>
+        /// <returns>The converted content ID</returns>
+        public int GetRefreshedContentID(int origContentID) =>
             _listBank.GetContentCount() == 0
                 ? NO_CONTENT_ID
-                : _idCalculationFunc(contentID);
+                : _idCalculationFunc(origContentID);
 
+        /// <summary>
+        /// Get the content ID according to the content ID of the next box
+        /// </summary>
+        /// <param name="nextBoxContentID">The content ID of the next box</param>
+        /// <returns>The content ID</returns>
         public int GetContentIDByNextBox(int nextBoxContentID) =>
             _idCalculationFunc(nextBoxContentID - _idFactor);
 
+        /// <summary>
+        /// Get the content ID according to the content ID of the last box
+        /// </summary>
+        /// <param name="lastBoxContentID">The content ID of the last box</param>
+        /// <returns>The content ID</returns>
         public int GetContentIDByLastBox(int lastBoxContentID) =>
             _idCalculationFunc(lastBoxContentID + _idFactor);
 
-        public int GetContentCount() => _listBank.GetContentCount();
-
-        public bool TryGetContent(int contentID, out IListContent content)
-        {
-            var isIDValid = IsIDValid(contentID);
-            content = isIDValid ? _listBank.GetListContent(contentID) : null;
-            return isIDValid;
-        }
-
+        /// <summary>
+        /// Check the state of the specified id
+        /// </summary>
+        /// <param name="contentID">The content id</param>
+        /// <returns>The state of the id</returns>
         public ContentIDState GetIDState(int contentID) =>
             contentID < 0
                 ? ContentIDState.Underflow
@@ -94,9 +118,20 @@ namespace AirFishLab.ScrollingList.ContentManagement
                     ? ContentIDState.Overflow
                     : ContentIDState.Valid;
 
+        /// <summary>
+        /// Is the content id valid for getting the list content?
+        /// </summary>
+        /// <param name="contentID">The content id</param>
+        /// <returns>The content id is valid or not</returns>
         public bool IsIDValid(int contentID) =>
             contentID >= 0 && contentID < _listBank.GetContentCount();
 
+        /// <summary>
+        /// Get the shortest length for starting from one id to another id
+        /// </summary>
+        /// <param name="fromContentID">The starting content id</param>
+        /// <param name="toContentID">The target content id</param>
+        /// <returns>The shortest length</returns>
         public int GetShortestIDDiff(int fromContentID, int toContentID)
         {
             if (!IsIDValid(fromContentID))
@@ -118,10 +153,6 @@ namespace AirFishLab.ScrollingList.ContentManagement
             return length;
         }
 
-        #endregion
-
-        #region Content ID Calculation
-
         /// <summary>
         /// Loop the input ID within the range of the indexes of the contents
         /// </summary>
@@ -132,6 +163,30 @@ namespace AirFishLab.ScrollingList.ContentManagement
         /// Just return the input ID
         /// </summary>
         private int GetNonLoopedContentID(int contentID) => contentID;
+
+        #endregion
+
+        #region Content Handling
+
+        /// <summary>
+        /// Get the number of the contents
+        /// </summary>
+        public int GetContentCount() => _listBank.GetContentCount();
+
+        /// <summary>
+        /// Try to get the content of the list
+        /// </summary>
+        /// <param name="contentID">The id of the content</param>
+        /// <param name="content">
+        /// The content. If the content is not available, it will be null.
+        /// </param>
+        /// <returns>It the content available?</returns>
+        public bool TryGetContent(int contentID, out IListContent content)
+        {
+            var isIDValid = IsIDValid(contentID);
+            content = isIDValid ? _listBank.GetListContent(contentID) : null;
+            return isIDValid;
+        }
 
         #endregion
     }
