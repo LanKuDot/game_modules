@@ -210,7 +210,7 @@ namespace AirFishLab.ScrollingList
 
         #endregion
 
-        #region Public Functions
+        #region Public Movement Operations
 
         /// <summary>
         /// Whether the list is interactable or not
@@ -255,6 +255,10 @@ namespace AirFishLab.ScrollingList
             _listSetting.OnMovementEnd.Invoke();
             _isMoving = false;
         }
+
+        #endregion
+
+        #region Public Box And Content Operations
 
         /// <summary>
         /// Get the box that is closest to the center
@@ -352,7 +356,7 @@ namespace AirFishLab.ScrollingList
             _isMoving = false;
         }
 
-        #region Operation Functions
+        #region Movement Setup Functions
 
         /// <summary>
         /// Whether to ignore the movement request or not
@@ -405,9 +409,8 @@ namespace AirFishLab.ScrollingList
 
         #endregion
 
-#if UNITY_EDITOR
-
         #region Editor Utility
+#if UNITY_EDITOR
 
         [ContextMenu("Assign References of Bank and Boxes")]
         private void AssignReferences()
@@ -424,8 +427,7 @@ namespace AirFishLab.ScrollingList
             }
         }
 
-        #endregion
-
 #endif
+        #endregion
     }
 }
