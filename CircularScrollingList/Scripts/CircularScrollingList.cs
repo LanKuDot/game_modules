@@ -134,6 +134,13 @@ namespace AirFishLab.ScrollingList
 
         #endregion
 
+        private void Reset()
+        {
+            if (_boxSetting == null)
+                _boxSetting = new ListBoxSetting();
+            _boxSetting.BoxRootTransform = transform;
+        }
+
         private void Start()
         {
             if (_listSetting.InitializeOnStart)
@@ -151,11 +158,12 @@ namespace AirFishLab.ScrollingList
                 return;
 
             GetComponentReference();
+            ValidateBoxSetting();
 
             var setupData =
                 new ListSetupData(
                     this, _listSetting, _rectTransform, _canvasRefCamera,
-                    new List<IListBox>(_listBoxes), ListBank);
+                    new List<IListBox>(_boxSetting.ListBoxes), ListBank);
 
             InitializeMembers(setupData);
             InitializeComponentsForLinearList(setupData);
@@ -206,6 +214,46 @@ namespace AirFishLab.ScrollingList
 
             _listMovementProcessor = movementProcessor;
             _listBoxManager = listBoxManager;
+        }
+
+        #endregion
+
+        #region Box Setup Functions
+
+        /// <summary>
+        /// Validate the box setting
+        /// </summary>
+        private void ValidateBoxSetting()
+        {
+            if (_boxSetting.BoxRootTransform == null)
+                _boxSetting.BoxRootTransform = transform;
+
+            if (_boxSetting.BoxPrefab == null)
+                throw new InvalidOperationException("The box prefab is not set");
+
+            var listBoxes = _boxSetting.ListBoxes;
+            var numOfBoxes = listBoxes.Count;
+            var checkedListBoxes = new HashSet<ListBox>();
+            for (var i = 0; i < numOfBoxes; ++i) {
+                var box = listBoxes[i];
+
+                if (box == null || checkedListBoxes.Contains(box)) {
+                    box = GenerateListBox();
+                    listBoxes[i] = box;
+                }
+
+                checkedListBoxes.Add(box);
+            }
+        }
+
+        /// <summary>
+        /// Generate a list box under the box root transform
+        /// </summary>
+        /// <returns>The generated box</returns>
+        private ListBox GenerateListBox()
+        {
+            var box = Instantiate(_boxSetting.BoxPrefab, _boxSetting.BoxRootTransform);
+            return box;
         }
 
         #endregion

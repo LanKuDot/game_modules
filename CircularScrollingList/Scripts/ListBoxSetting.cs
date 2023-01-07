@@ -18,7 +18,11 @@ namespace AirFishLab.ScrollingList
                  "They should be derived from the class ListBox")]
         private List<ListBox> _listBoxes;
 
-        public Transform BoxRootTransform => _boxRootTransform;
+        public Transform BoxRootTransform
+        {
+            get => _boxRootTransform;
+            set => _boxRootTransform = value;
+        }
         public ListBox BoxPrefab => _boxPrefab;
         public List<ListBox> ListBoxes => _listBoxes;
     }
