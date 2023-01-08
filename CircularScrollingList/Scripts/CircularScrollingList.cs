@@ -225,20 +225,27 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private void ValidateBoxSetting()
         {
-            if (_boxSetting.BoxRootTransform == null)
+            if (!_boxSetting.BoxRootTransform) {
+                Debug.LogWarning(
+                    $"{nameof(CircularScrollingList)} "
+                    + "The box root transform is not specified. "
+                    + "Use itself as the box root transform");
                 _boxSetting.BoxRootTransform = transform;
+            }
 
-            if (_boxSetting.BoxPrefab == null)
+            if (!_boxSetting.BoxPrefab)
                 throw new InvalidOperationException("The box prefab is not set");
 
+            var prefab = _boxSetting.BoxPrefab;
+            var rootTransform = _boxSetting.BoxRootTransform;
             var listBoxes = _boxSetting.ListBoxes;
             var numOfBoxes = listBoxes.Count;
             var checkedListBoxes = new HashSet<ListBox>();
             for (var i = 0; i < numOfBoxes; ++i) {
                 var box = listBoxes[i];
 
-                if (box == null || checkedListBoxes.Contains(box)) {
-                    box = GenerateListBox();
+                if (!box || checkedListBoxes.Contains(box)) {
+                    box = GenerateListBox(prefab, rootTransform, i);
                     listBoxes[i] = box;
                 }
 
@@ -249,10 +256,17 @@ namespace AirFishLab.ScrollingList
         /// <summary>
         /// Generate a list box under the box root transform
         /// </summary>
+        /// <param name="prefab">The prefab of the box</param>
+        /// <param name="rootTransform">
+        /// The root transform for the box to be generated at
+        /// </param>
+        /// <param name="index">The index of the box</param>
         /// <returns>The generated box</returns>
-        private ListBox GenerateListBox()
+        private static ListBox GenerateListBox(
+            ListBox prefab, Transform rootTransform, int index)
         {
-            var box = Instantiate(_boxSetting.BoxPrefab, _boxSetting.BoxRootTransform);
+            var box = Instantiate(prefab, rootTransform);
+            box.name = $"{prefab.name} ({index})";
             return box;
         }
 
