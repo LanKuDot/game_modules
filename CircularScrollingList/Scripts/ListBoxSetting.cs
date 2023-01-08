@@ -25,5 +25,28 @@ namespace AirFishLab.ScrollingList
         }
         public ListBox BoxPrefab => _boxPrefab;
         public List<ListBox> ListBoxes => _listBoxes;
+
+        /// <summary>
+        /// Validate the setting
+        /// </summary>
+        /// <param name="listObject">The game object of the scrolling list</param>
+        public void Validate(GameObject listObject)
+        {
+            if (!BoxRootTransform) {
+                Debug.LogWarning(
+                    $"{listObject.name}: "
+                    + "The box root transform is not specified. "
+                    + "Use itself as the box root transform");
+                BoxRootTransform = listObject.transform;
+            }
+
+            if (!BoxPrefab)
+                throw new InvalidOperationException(
+                    $"{listObject.name}: The box prefab is not set");
+
+            if (_listBoxes.Count == 0)
+                throw new InvalidOperationException(
+                    $"{listObject.name}: The size of list boxes is 0");
+        }
     }
 }

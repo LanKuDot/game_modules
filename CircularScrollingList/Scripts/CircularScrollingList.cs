@@ -158,7 +158,7 @@ namespace AirFishLab.ScrollingList
                 return;
 
             GetComponentReference();
-            ValidateBoxSetting();
+            SetListBoxes();
 
             var setupData =
                 new ListSetupData(
@@ -221,25 +221,16 @@ namespace AirFishLab.ScrollingList
         #region Box Setup Functions
 
         /// <summary>
-        /// Validate the box setting
+        /// Set the list boxes to be used by the list
         /// </summary>
-        private void ValidateBoxSetting()
+        private void SetListBoxes()
         {
-            if (!_boxSetting.BoxRootTransform) {
-                Debug.LogWarning(
-                    $"{nameof(CircularScrollingList)} "
-                    + "The box root transform is not specified. "
-                    + "Use itself as the box root transform");
-                _boxSetting.BoxRootTransform = transform;
-            }
+            _boxSetting.Validate(gameObject);
 
-            if (!_boxSetting.BoxPrefab)
-                throw new InvalidOperationException("The box prefab is not set");
-
-            var prefab = _boxSetting.BoxPrefab;
-            var rootTransform = _boxSetting.BoxRootTransform;
             var listBoxes = _boxSetting.ListBoxes;
             var numOfBoxes = listBoxes.Count;
+            var prefab = _boxSetting.BoxPrefab;
+            var rootTransform = _boxSetting.BoxRootTransform;
             var checkedListBoxes = new HashSet<ListBox>();
             for (var i = 0; i < numOfBoxes; ++i) {
                 var box = listBoxes[i];
