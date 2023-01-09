@@ -7,12 +7,18 @@ namespace AirFishLab.ScrollingList.Editor
     [CanEditMultipleObjects]
     public class CircularScrollingListEditor : UnityEditor.Editor
     {
+        private bool _toGenerateBoxes;
+
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
+
             DrawPropertyField("_listBank");
             DrawBoxSetting();
             DrawSetting();
+
+            if (_toGenerateBoxes)
+                GenerateBoxesAndArrange();
 
             serializedObject.ApplyModifiedProperties();
         }
@@ -50,6 +56,11 @@ namespace AirFishLab.ScrollingList.Editor
             DrawBoxSettingProperty("_boxRootTransform");
             DrawBoxSettingProperty("_boxPrefab");
             DrawBoxSettingProperty("_listBoxes");
+            _toGenerateBoxes = GUILayout.Button(
+                new GUIContent(
+                    "Generate Boxes and Arrange",
+                    "Generate the boxes under the specified box root transform and "
+                    + "arrange them according to the list setting"));
 
             --EditorGUI.indentLevel;
         }
@@ -152,6 +163,20 @@ namespace AirFishLab.ScrollingList.Editor
             DrawListSettingProperty("_onCenteredBoxChanged");
             DrawListSettingProperty("_onMovementEnd");
             --EditorGUI.indentLevel;
+        }
+
+        #endregion
+
+        #region Generate Boxes
+
+        private void GenerateBoxesAndArrange()
+        {
+            var scrollingList = target as CircularScrollingList;
+            if (!scrollingList)
+                return;
+
+            Undo.RecordObject(scrollingList, "Generate boxes");
+            scrollingList.GenerateBoxesAndArrange();
         }
 
         #endregion

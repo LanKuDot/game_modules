@@ -6,6 +6,9 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 using Linear = AirFishLab.ScrollingList.ListStateProcessing.Linear;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace AirFishLab.ScrollingList
 {
@@ -232,15 +235,51 @@ namespace AirFishLab.ScrollingList
             var prefab = _boxSetting.BoxPrefab;
             var rootTransform = _boxSetting.BoxRootTransform;
             var checkedListBoxes = new HashSet<ListBox>();
+#if UNITY_EDITOR
+            var undoGroupID = Undo.GetCurrentGroup();
+#endif
+
+            ReassignListBoxes(listBoxes, rootTransform);
+
             for (var i = 0; i < numOfBoxes; ++i) {
                 var box = listBoxes[i];
 
                 if (!box || checkedListBoxes.Contains(box)) {
                     box = GenerateListBox(prefab, rootTransform, i);
+#if UNITY_EDITOR
+                    Undo.RegisterCreatedObjectUndo(box.gameObject, "Generate boxes");
+                    Undo.CollapseUndoOperations(undoGroupID);
+#endif
                     listBoxes[i] = box;
                 }
 
                 checkedListBoxes.Add(box);
+            }
+        }
+
+        /// <summary>
+        /// Reassign the list boxes from the box root transform
+        /// </summary>
+        private void ReassignListBoxes(
+            List<ListBox> listBoxes, Transform rootTransform)
+        {
+            var desiredNumOfBoxes = listBoxes.Count;
+            var existingBoxes = new List<ListBox>();
+
+            foreach (Transform child in rootTransform) {
+                if (!child.TryGetComponent<ListBox>(out var box))
+                    continue;
+                existingBoxes.Add(box);
+            }
+
+            var numOfExistingBoxes = existingBoxes.Count;
+            if (numOfExistingBoxes > desiredNumOfBoxes)
+                Debug.LogWarning($"{name}: The number of existing boxes are"
+                                 + $"more than the number of desired boxes");
+
+            listBoxes.Clear();
+            for (var i = 0; i < desiredNumOfBoxes; ++i) {
+                listBoxes.Add(i < numOfExistingBoxes ? existingBoxes[i] : null);
             }
         }
 
@@ -478,6 +517,14 @@ namespace AirFishLab.ScrollingList
                 if (listBox)
                     _listBoxes.Add(listBox);
             }
+        }
+
+        /// <summary>
+        /// Generate the boxes and arrange them
+        /// </summary>
+        public void GenerateBoxesAndArrange()
+        {
+            SetListBoxes();
         }
 
 #endif
