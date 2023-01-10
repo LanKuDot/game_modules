@@ -166,7 +166,7 @@ namespace AirFishLab.ScrollingList
             var setupData =
                 new ListSetupData(
                     this, _listSetting, _rectTransform, _canvasRefCamera,
-                    new List<IListBox>(_boxSetting.ListBoxes), ListBank);
+                    new List<IListBox>(_listBoxes), ListBank);
 
             InitializeMembers(setupData);
             InitializeComponentsForLinearList(setupData);
@@ -230,40 +230,34 @@ namespace AirFishLab.ScrollingList
         {
             _boxSetting.Validate(gameObject);
 
-            var listBoxes = _boxSetting.ListBoxes;
-            var numOfBoxes = listBoxes.Count;
             var prefab = _boxSetting.BoxPrefab;
             var rootTransform = _boxSetting.BoxRootTransform;
-            var checkedListBoxes = new HashSet<ListBox>();
+            var numOfBoxes = _boxSetting.NumOfBoxes;
 #if UNITY_EDITOR
             var undoGroupID = Undo.GetCurrentGroup();
 #endif
 
-            ReassignListBoxes(listBoxes, rootTransform);
-
-            for (var i = 0; i < numOfBoxes; ++i) {
-                var box = listBoxes[i];
-
-                if (!box || checkedListBoxes.Contains(box)) {
-                    box = GenerateListBox(prefab, rootTransform, i);
+            var curNumOfBoxes = ReassignListBoxes(_listBoxes, rootTransform, numOfBoxes);
+            for (var i = curNumOfBoxes; i < numOfBoxes; ++i) {
+                var box = GenerateListBox(prefab, rootTransform, i);
 #if UNITY_EDITOR
-                    Undo.RegisterCreatedObjectUndo(box.gameObject, "Generate boxes");
-                    Undo.CollapseUndoOperations(undoGroupID);
+                Undo.RegisterCreatedObjectUndo(box.gameObject, "Generate boxes");
+                Undo.CollapseUndoOperations(undoGroupID);
 #endif
-                    listBoxes[i] = box;
-                }
-
-                checkedListBoxes.Add(box);
+                _listBoxes.Add(box);
             }
         }
 
         /// <summary>
         /// Reassign the list boxes from the box root transform
         /// </summary>
-        private void ReassignListBoxes(
-            List<ListBox> listBoxes, Transform rootTransform)
+        /// <param name="listBoxes">The container for holding the boxes</param>
+        /// <param name="rootTransform">The root transform for finding boxes</param>
+        /// <param name="desiredNumOfBoxes">The number of desired boxes</param>
+        /// <returns>The number of boxes added</returns>
+        private int ReassignListBoxes(
+            List<ListBox> listBoxes, Transform rootTransform, int desiredNumOfBoxes)
         {
-            var desiredNumOfBoxes = listBoxes.Count;
             var existingBoxes = new List<ListBox>();
 
             foreach (Transform child in rootTransform) {
@@ -274,13 +268,16 @@ namespace AirFishLab.ScrollingList
 
             var numOfExistingBoxes = existingBoxes.Count;
             if (numOfExistingBoxes > desiredNumOfBoxes)
-                Debug.LogWarning($"{name}: The number of existing boxes are"
+                Debug.LogWarning($"{name}: The number of existing boxes are "
                                  + $"more than the number of desired boxes");
 
+            var numOfBoxes = Mathf.Min(numOfExistingBoxes, desiredNumOfBoxes);
             listBoxes.Clear();
-            for (var i = 0; i < desiredNumOfBoxes; ++i) {
-                listBoxes.Add(i < numOfExistingBoxes ? existingBoxes[i] : null);
+            for (var i = 0; i < numOfBoxes; ++i) {
+                listBoxes.Add(existingBoxes[i]);
             }
+
+            return numOfBoxes;
         }
 
         /// <summary>

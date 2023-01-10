@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace AirFishLab.ScrollingList
@@ -14,9 +13,8 @@ namespace AirFishLab.ScrollingList
         [Tooltip("The prefab of the box")]
         private ListBox _boxPrefab;
         [SerializeField]
-        [Tooltip("The objects that are used for displaying the content. " +
-                 "They should be derived from the class ListBox")]
-        private List<ListBox> _listBoxes;
+        [Tooltip("The number of boxes to be generated")]
+        private int _numOfBoxes;
 
         public Transform BoxRootTransform
         {
@@ -24,7 +22,7 @@ namespace AirFishLab.ScrollingList
             set => _boxRootTransform = value;
         }
         public ListBox BoxPrefab => _boxPrefab;
-        public List<ListBox> ListBoxes => _listBoxes;
+        public int NumOfBoxes => _numOfBoxes;
 
         /// <summary>
         /// Validate the setting
@@ -44,9 +42,9 @@ namespace AirFishLab.ScrollingList
                 throw new InvalidOperationException(
                     $"{listObject.name}: The box prefab is not set");
 
-            if (_listBoxes.Count == 0)
+            if (NumOfBoxes <= 0)
                 throw new InvalidOperationException(
-                    $"{listObject.name}: The size of list boxes is 0");
+                    $"{listObject.name}: The number of list boxes is invalid");
         }
     }
 }

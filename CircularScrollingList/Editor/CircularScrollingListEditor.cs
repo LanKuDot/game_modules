@@ -55,7 +55,7 @@ namespace AirFishLab.ScrollingList.Editor
 
             DrawBoxSettingProperty("_boxRootTransform");
             DrawBoxSettingProperty("_boxPrefab");
-            DrawBoxSettingProperty("_listBoxes");
+            DrawBoxSettingProperty("_numOfBoxes");
             _toGenerateBoxes = GUILayout.Button(
                 new GUIContent(
                     "Generate Boxes and Arrange",
