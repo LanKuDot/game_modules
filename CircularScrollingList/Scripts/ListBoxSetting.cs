@@ -12,9 +12,9 @@ namespace AirFishLab.ScrollingList
         [SerializeField]
         [Tooltip("The prefab of the box")]
         private ListBox _boxPrefab;
-        [SerializeField]
+        [SerializeField, Min(1)]
         [Tooltip("The number of boxes to be generated")]
-        private int _numOfBoxes;
+        private int _numOfBoxes = 5;
 
         public Transform BoxRootTransform
         {
