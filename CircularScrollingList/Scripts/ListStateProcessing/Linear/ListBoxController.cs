@@ -8,7 +8,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 {
     using PositionState = BoxTransformController.PositionState;
 
-    public class ListBoxManager : IListBoxManager
+    public class ListBoxController : IListBoxController
     {
         #region Public Properties
 

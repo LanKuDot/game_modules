@@ -112,7 +112,7 @@ namespace AirFishLab.ScrollingList
         /// <summary>
         /// The component for managing the list boxes
         /// </summary>
-        private IListBoxManager _listBoxManager;
+        private IListBoxController _listBoxController;
         /// <summary>
         /// The component for providing the content for the boxes
         /// </summary>
@@ -210,13 +210,13 @@ namespace AirFishLab.ScrollingList
         {
             var movementProcessor = new Linear.ListMovementProcessor();
             movementProcessor.Initialize(setupData);
-            var listBoxManager = new Linear.ListBoxManager();
+            var listBoxManager = new Linear.ListBoxController();
             listBoxManager.Initialize(setupData, _listContentProvider);
 
             movementProcessor.SetListBoxManager(listBoxManager);
 
             _listMovementProcessor = movementProcessor;
-            _listBoxManager = listBoxManager;
+            _listBoxController = listBoxManager;
         }
 
         #endregion
@@ -353,13 +353,13 @@ namespace AirFishLab.ScrollingList
         /// Get the box that is closest to the center
         /// </summary>
         public ListBox GetCenteredBox() =>
-            _listBoxManager.GetCenteredBox() as ListBox;
+            _listBoxController.GetCenteredBox() as ListBox;
 
         /// <summary>
         /// Get the content ID of the box that is closest to the center
         /// </summary>
         public int GetCenteredContentID() =>
-            _listBoxManager.GetCenteredBox().ContentID;
+            _listBoxController.GetCenteredBox().ContentID;
 
         /// <summary>
         /// Make the boxes recalculate their content ID and reacquire the contents
@@ -369,7 +369,7 @@ namespace AirFishLab.ScrollingList
         /// </param>
         public void Refresh(int centeredContentID = -1)
         {
-            _listBoxManager.RefreshBoxes(centeredContentID);
+            _listBoxController.RefreshBoxes(centeredContentID);
             _hasNoContent = _listContentProvider.GetContentCount() == 0;
         }
 
@@ -436,7 +436,7 @@ namespace AirFishLab.ScrollingList
                 return;
 
             var movementValue = _listMovementProcessor.GetMovement(Time.deltaTime);
-            _listBoxManager.UpdateBoxes(movementValue);
+            _listBoxController.UpdateBoxes(movementValue);
 
             if (!_listMovementProcessor.IsMovementEnded())
                 return;

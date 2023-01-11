@@ -3,12 +3,12 @@
 namespace AirFishLab.ScrollingList.ListStateProcessing
 {
     /// <summary>
-    /// The interface for managing the list boxes
+    /// The interface for controlling the list boxes
     /// </summary>
-    public interface IListBoxManager
+    public interface IListBoxController
     {
         /// <summary>
-        /// Set the boxes to the manager
+        /// Set the boxes to the controller
         /// </summary>
         /// <param name="setupData">The setup data of the list</param>
         /// <param name="contentProvider">

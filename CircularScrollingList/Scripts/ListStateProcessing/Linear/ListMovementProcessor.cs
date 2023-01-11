@@ -20,7 +20,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         private float _unitPos;
         private FreeMovementCtrl _freeMovementCtrl;
         private UnitMovementCtrl _unitMovementCtrl;
-        private ListBoxManager _listBoxManager;
+        private ListBoxController _listBoxController;
         /// <summary>
         /// The factor for reversing the scrolling direction or not
         /// </summary>
@@ -81,7 +81,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             // If the unit movement is not started yet,
             // countervail the position difference
             if (_unitMovementCtrl.IsMovementEnded())
-                deltaDistance += _listBoxManager.ShortestDistanceToCenter;
+                deltaDistance += _listBoxController.ShortestDistanceToCenter;
 
             _unitMovementCtrl.SetMovement(deltaDistance, false);
         }
@@ -92,7 +92,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
             var deltaDistance =
                 units * _unitPos * _selectionDistanceFactor
-                + _listBoxManager.ShortestDistanceToCenter;
+                + _listBoxController.ShortestDistanceToCenter;
             _unitMovementCtrl.SetMovement(deltaDistance, false);
         }
 
@@ -169,16 +169,16 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <summary>
         /// Set the list box manager for the processor
         /// </summary>
-        public void SetListBoxManager(ListBoxManager listBoxManager)
+        public void SetListBoxManager(ListBoxController listBoxController)
         {
-            _listBoxManager = listBoxManager;
+            _listBoxController = listBoxController;
         }
 
         private ListFocusingState GetListFocusingState() =>
-            _listBoxManager.ListFocusingState;
+            _listBoxController.ListFocusingState;
 
         private float GetAligningDistance() =>
-            _listBoxManager.ShortestDistanceToCenter;
+            _listBoxController.ShortestDistanceToCenter;
 
         #endregion
     }
