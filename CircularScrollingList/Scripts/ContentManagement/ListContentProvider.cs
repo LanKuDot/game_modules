@@ -19,33 +19,31 @@ namespace AirFishLab.ScrollingList.ContentManagement
         /// <summary>
         /// The setting of the list
         /// </summary>
-        private ListSetting _listSetting;
+        private readonly ListSetting _listSetting;
         /// <summary>
         /// The components holding the list contents
         /// </summary>
-        private IListBank _listBank;
+        private readonly IListBank _listBank;
         /// <summary>
         /// The number of the list boxes
         /// </summary>
-        private int _numOfBoxes;
+        private readonly int _numOfBoxes;
         /// <summary>
         /// The factor for getting the next/last content ID
         /// </summary>
-        private int _idFactor;
+        private readonly int _idFactor;
         /// <summary>
         /// The function for calculating the final content ID
         /// </summary>
-        private Func<int, int> _idCalculationFunc;
+        private readonly Func<int, int> _idCalculationFunc;
 
         #endregion
 
-        #region Initialization
-
         /// <summary>
-        /// Initialize the content provider
+        /// Constructor
         /// </summary>
         /// <param name="setupData">The data for setting up the list</param>
-        public void Initialize(ListSetupData setupData)
+        public ListContentProvider(ListSetupData setupData)
         {
             _listSetting = setupData.ListSetting;
             _listBank = setupData.ListBank;
@@ -57,8 +55,6 @@ namespace AirFishLab.ScrollingList.ContentManagement
             else
                 _idCalculationFunc = GetNonLoopedContentID;
         }
-
-        #endregion
 
         #region Content ID Calculation
 

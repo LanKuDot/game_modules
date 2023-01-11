@@ -165,7 +165,7 @@ namespace AirFishLab.ScrollingList
             var setupData =
                 new ListSetupData(
                     this, _listSetting, _rectTransform, _canvasRefCamera,
-                    new List<IListBox>(_listBoxes), ListBank);
+                    new List<IListBox>(_listBoxes), _listBank);
 
             InitializeMembers(setupData);
 
@@ -195,8 +195,8 @@ namespace AirFishLab.ScrollingList
 
             _inputProcessor =
                 new InputProcessor(_rectTransform, _canvasRefCamera);
-            _listContentProvider = new ListContentProvider();
-            _listContentProvider.Initialize(setupData);
+            _listContentProvider =
+                new ListContentProvider(setupData);
             _hasNoContent = _listContentProvider.GetContentCount() == 0;
 
             ListStateProcessorManager.GetProcessors(
