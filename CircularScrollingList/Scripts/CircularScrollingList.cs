@@ -5,7 +5,6 @@ using AirFishLab.ScrollingList.ListStateProcessing;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
-using Linear = AirFishLab.ScrollingList.ListStateProcessing.Linear;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -169,7 +168,6 @@ namespace AirFishLab.ScrollingList
                     new List<IListBox>(_listBoxes), ListBank);
 
             InitializeMembers(setupData);
-            InitializeComponentsForLinearList(setupData);
 
             _isInitialized = true;
         }
@@ -200,23 +198,10 @@ namespace AirFishLab.ScrollingList
             _listContentProvider = new ListContentProvider();
             _listContentProvider.Initialize(setupData);
             _hasNoContent = _listContentProvider.GetContentCount() == 0;
-        }
 
-        /// <summary>
-        /// Initialize the components for controlling the linear list
-        /// </summary>
-        // TODO Move the function to list controller builder
-        private void InitializeComponentsForLinearList(ListSetupData setupData)
-        {
-            var movementProcessor = new Linear.ListMovementProcessor();
-            movementProcessor.Initialize(setupData);
-            var listBoxManager = new Linear.ListBoxController();
-            listBoxManager.Initialize(setupData, _listContentProvider);
-
-            movementProcessor.SetListBoxManager(listBoxManager);
-
-            _listMovementProcessor = movementProcessor;
-            _listBoxController = listBoxManager;
+            ListStateProcessorManager.GetProcessors(
+                setupData, _listContentProvider,
+                out _listMovementProcessor, out _listBoxController);
         }
 
         #endregion

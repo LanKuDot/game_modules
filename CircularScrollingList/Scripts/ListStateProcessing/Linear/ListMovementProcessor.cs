@@ -167,9 +167,9 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         #region ListBoxManager
 
         /// <summary>
-        /// Set the list box manager for the processor
+        /// Set the list box controller for the processor
         /// </summary>
-        public void SetListBoxManager(ListBoxController listBoxController)
+        public void SetListBoxController(ListBoxController listBoxController)
         {
             _listBoxController = listBoxController;
         }
