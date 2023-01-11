@@ -161,13 +161,7 @@ namespace AirFishLab.ScrollingList
 
             GetComponentReference();
             SetListBoxes();
-
-            var setupData =
-                new ListSetupData(
-                    this, _listSetting, _rectTransform, _canvasRefCamera,
-                    new List<IListBox>(_listBoxes), _listBank);
-
-            InitializeMembers(setupData);
+            InitializeMembers();
 
             _isInitialized = true;
         }
@@ -186,22 +180,24 @@ namespace AirFishLab.ScrollingList
         /// <summary>
         /// Initialize the related list members
         /// </summary>
-        private void InitializeMembers(ListSetupData setupData)
+        private void InitializeMembers()
         {
-            var setting = setupData.ListSetting;
-            if (setting.CenterSelectedBox)
-                setting.OnBoxClick.AddListener(SelectContentID);
-            _controlMode = setting.ControlMode;
+            if (_listSetting.CenterSelectedBox)
+                _listSetting.OnBoxClick.AddListener(SelectContentID);
+            _controlMode = _listSetting.ControlMode;
 
             _inputProcessor =
                 new InputProcessor(_rectTransform, _canvasRefCamera);
             _listContentProvider =
-                new ListContentProvider(setupData);
+                new ListContentProvider(_listSetting, _listBank, _listBoxes.Count);
             _hasNoContent = _listContentProvider.GetContentCount() == 0;
 
+            var setupData =
+                new ListSetupData(
+                    this, _listSetting, _rectTransform, _canvasRefCamera,
+                    new List<IListBox>(_listBoxes), _listContentProvider);
             ListStateProcessorManager.GetProcessors(
-                setupData, _listContentProvider,
-                out _listMovementProcessor, out _listBoxController);
+                setupData, out _listMovementProcessor, out _listBoxController);
         }
 
         #endregion

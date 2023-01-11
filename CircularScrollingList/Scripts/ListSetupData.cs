@@ -33,28 +33,29 @@ namespace AirFishLab.ScrollingList
         public readonly Camera CanvasRefCamera;
 
         /// <summary>
-        /// The content bank for the list
-        /// </summary>
-        public readonly IListBank ListBank;
-
-        /// <summary>
         /// The boxes in the list
         /// </summary>
         public readonly List<IListBox> ListBoxes;
+
+        /// <summary>
+        /// The components for providing the list contents
+        /// </summary>
+        public readonly ListContentProvider ListContentProvider;
 
         #endregion
 
         public ListSetupData(
             CircularScrollingList scrollingList,
             ListSetting listSetting, RectTransform rectTransform,
-            Camera canvasRefCamera, List<IListBox> listBoxes, IListBank listBank)
+            Camera canvasRefCamera, List<IListBox> listBoxes,
+            ListContentProvider listContentProvider)
         {
             ScrollingList = scrollingList;
             ListSetting = listSetting;
             RectTransform = rectTransform;
             CanvasRefCamera = canvasRefCamera;
             ListBoxes = listBoxes;
-            ListBank = listBank;
+            ListContentProvider = listContentProvider;
         }
     }
 }

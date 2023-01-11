@@ -64,13 +64,12 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
         #region IListBoxManager
 
-        public void Initialize(
-            ListSetupData setupData, ListContentProvider contentProvider)
+        public void Initialize(ListSetupData setupData)
         {
             _setting = setupData.ListSetting;
             _boxes.Clear();
             _boxes.AddRange(setupData.ListBoxes);
-            _contentProvider = contentProvider;
+            _contentProvider = setupData.ListContentProvider;
             _transformController = new BoxTransformController(setupData);
             _inactivatedBoxes =
                 new NumOfInactivatedBoxes(_boxes.Count / 2);

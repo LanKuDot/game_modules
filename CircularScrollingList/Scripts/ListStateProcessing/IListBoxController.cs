@@ -11,10 +11,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing
         /// Set the boxes to the controller
         /// </summary>
         /// <param name="setupData">The setup data of the list</param>
-        /// <param name="contentProvider">
-        /// The component for getting the list content
-        /// </param>
-        void Initialize(ListSetupData setupData, ListContentProvider contentProvider);
+        void Initialize(ListSetupData setupData);
 
         /// <summary>
         /// Update the state of the boxes

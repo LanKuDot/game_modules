@@ -42,12 +42,15 @@ namespace AirFishLab.ScrollingList.ContentManagement
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="setupData">The data for setting up the list</param>
-        public ListContentProvider(ListSetupData setupData)
+        /// <param name="listSetting">The setting of the list</param>
+        /// <param name="listBank">The list content bank</param>
+        /// <param name="numOfBoxes">The number of boxes</param>
+        public ListContentProvider(
+            ListSetting listSetting, IListBank listBank, int numOfBoxes)
         {
-            _listSetting = setupData.ListSetting;
-            _listBank = setupData.ListBank;
-            _numOfBoxes = setupData.ListBoxes.Count;
+            _listSetting = listSetting;
+            _listBank = listBank;
+            _numOfBoxes = numOfBoxes;
 
             _idFactor = _listSetting.ReverseContentOrder ? -1 : 1;
             if (_listSetting.ListType == CircularScrollingList.ListType.Circular)
