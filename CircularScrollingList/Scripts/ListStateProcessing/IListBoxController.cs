@@ -1,6 +1,4 @@
-﻿using AirFishLab.ScrollingList.ContentManagement;
-
-namespace AirFishLab.ScrollingList.ListStateProcessing
+﻿namespace AirFishLab.ScrollingList.ListStateProcessing
 {
     /// <summary>
     /// The interface for controlling the list boxes

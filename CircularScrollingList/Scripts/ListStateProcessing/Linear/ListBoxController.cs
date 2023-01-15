@@ -6,8 +6,6 @@ using UnityEngine;
 
 namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 {
-    using PositionState = BoxTransformController.PositionState;
-
     public class ListBoxController : IListBoxController
     {
         #region Public Properties
@@ -90,14 +88,14 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
                 var contentID = box.ContentID;
                 switch (positionStatus) {
-                    case PositionState.Nothing:
+                    case BoxPositionState.Nothing:
                         continue;
-                    case PositionState.JumpToTop:
+                    case BoxPositionState.JumpToTop:
                         contentID =
                             _contentProvider.GetContentIDByNextBox(
                                 box.NextListBox.ContentID);
                         break;
-                    case PositionState.JumpToBottom:
+                    case BoxPositionState.JumpToBottom:
                         contentID =
                             _contentProvider.GetContentIDByLastBox(
                                 box.LastListBox.ContentID);
@@ -161,7 +159,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 _transformController.SetInitialLocalTransform(box.Transform, boxID);
 
                 var contentID = _contentProvider.GetInitialContentID(boxID);
-                UpdateBoxContent(box, contentID, PositionState.Nothing);
+                UpdateBoxContent(box, contentID, BoxPositionState.Nothing);
             }
 
             UpdateListState();
@@ -307,7 +305,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 var contentID =
                     newCenteredContentID + (tempBoxID - centeredBoxID) * reverseFactor;
                 var newContentID = _contentProvider.GetRefreshedContentID(contentID);
-                UpdateBoxContent(box, newContentID, PositionState.Nothing);
+                UpdateBoxContent(box, newContentID, BoxPositionState.Nothing);
             }
 
             UpdateListState();
@@ -320,9 +318,9 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <param name="contentID">The target content ID</param>
         /// <param name="positionState">The current position state of the box</param>
         private void UpdateBoxContent(
-            IListBox box, int contentID, PositionState positionState)
+            IListBox box, int contentID, BoxPositionState positionState)
         {
-            if (positionState != PositionState.Nothing)
+            if (positionState != BoxPositionState.Nothing)
                 box.PushToBack();
 
             box.SetContentID(contentID);
@@ -343,7 +341,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <param name="idState">The content id state of the box</param>
         /// <param name="positionState">The position state of the box</param>
         private void ToggleBoxActivation(
-            IListBox box, ContentIDState idState, PositionState positionState)
+            IListBox box, ContentIDState idState, BoxPositionState positionState)
         {
             var contentID = box.ContentID;
 
@@ -379,13 +377,13 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// Was the box previously inactivated?
         /// </param>
         private void UpdateNumOfInactivatedBoxes(
-            PositionState positionState, ContentIDState idState,
+            BoxPositionState positionState, ContentIDState idState,
             bool isActivated, bool isPreviouslyInactivated)
         {
             var isReverseOrder = _setting.ReverseContentOrder;
 
             switch (positionState) {
-                case PositionState.Nothing:
+                case BoxPositionState.Nothing:
                     if (isActivated)
                         break;
 
@@ -401,14 +399,14 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                     }
                     break;
 
-                case PositionState.JumpToTop:
+                case BoxPositionState.JumpToTop:
                     if (!isActivated)
                         ++_inactivatedBoxes.AtTop;
                     if (isPreviouslyInactivated)
                         --_inactivatedBoxes.AtBottom;
                     break;
 
-                case PositionState.JumpToBottom:
+                case BoxPositionState.JumpToBottom:
                     if (!isActivated)
                         ++_inactivatedBoxes.AtBottom;
                     if (isPreviouslyInactivated)
