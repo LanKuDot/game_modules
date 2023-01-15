@@ -21,14 +21,15 @@ namespace AirFishLab.ScrollingList
         public CircularScrollingList ScrollingList { get; private set; }
         public bool IsActivated
         {
-            get => gameObject.activeSelf;
-            set => gameObject.SetActive(value);
+            get => _gameObject.activeSelf;
+            set => _gameObject.SetActive(value);
         }
 
         #endregion
 
         #region Private Members
 
+        private GameObject _gameObject;
         private Transform _transform;
         private IBoxTransformController _transformController;
 
@@ -46,6 +47,7 @@ namespace AirFishLab.ScrollingList
             LastListBox = lastListBox;
             NextListBox = nextListBox;
 
+            _gameObject = gameObject;
             _transform = transform;
             _transformController = transformController;
             _transformController.SetInitialLocalTransform(_transform, listBoxID);
