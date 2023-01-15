@@ -62,7 +62,25 @@ namespace AirFishLab.ScrollingList.Editor
                     "Generate the boxes under the specified box root transform and "
                     + "arrange them according to the list setting"));
 
+            DrawListBoxes();
+
             --EditorGUI.indentLevel;
+        }
+
+        private void DrawListBoxes()
+        {
+            const string showBoxesText = "Show the Boxes";
+            const string hideBoxesText = "Hide the Boxes";
+
+            var listBoxesProperty = serializedObject.FindProperty("_listBoxes");
+            var toShowBoxes = listBoxesProperty.isExpanded;
+            if (GUILayout.Button(toShowBoxes ? hideBoxesText : showBoxesText)) {
+                toShowBoxes = !toShowBoxes;
+                listBoxesProperty.isExpanded = toShowBoxes;
+            }
+
+            if (toShowBoxes)
+                DrawPropertyField("_listBoxes", true);
         }
 
         #endregion
