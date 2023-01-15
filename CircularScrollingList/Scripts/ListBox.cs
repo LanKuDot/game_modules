@@ -119,5 +119,11 @@ namespace AirFishLab.ScrollingList
 
         #endregion
 
+#if UNITY_EDITOR
+        public Transform GetTransform()
+        {
+            return transform;
+        }
+#endif
     }
 }

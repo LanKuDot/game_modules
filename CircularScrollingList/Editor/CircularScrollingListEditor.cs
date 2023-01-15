@@ -193,7 +193,7 @@ namespace AirFishLab.ScrollingList.Editor
             if (!scrollingList)
                 return;
 
-            Undo.RecordObject(scrollingList, "Generate boxes");
+            Undo.RecordObject(scrollingList, "Generate Boxes and Arrange");
             scrollingList.GenerateBoxesAndArrange();
         }
 

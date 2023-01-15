@@ -222,8 +222,10 @@ namespace AirFishLab.ScrollingList
             for (var i = curNumOfBoxes; i < numOfBoxes; ++i) {
                 var box = GenerateListBox(prefab, rootTransform, i);
 #if UNITY_EDITOR
-                Undo.RegisterCreatedObjectUndo(box.gameObject, "Generate boxes");
+                Undo.RegisterCreatedObjectUndo(
+                    box.gameObject, "Generate Boxes and Arrange");
                 Undo.CollapseUndoOperations(undoGroupID);
+                // TODO Record the change of the list boxes
 #endif
                 _listBoxes.Add(box);
             }
@@ -502,7 +504,16 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         public void GenerateBoxesAndArrange()
         {
+            if (Application.isPlaying)
+                return;
+
+            GetComponentReference();
             SetListBoxes();
+            // It's ok that the content provider is not created
+            var setupData = new ListSetupData(
+                this, _listSetting, _rectTransform, _canvasRefCamera,
+                new List<IListBox>(_listBoxes), null);
+            ListStateProcessorManager.PreviewBoxLayout(setupData);
         }
 
 #endif

@@ -93,5 +93,14 @@ namespace AirFishLab.ScrollingList
         /// Push the box to the back
         /// </summary>
         void PushToBack();
+
+#if UNITY_EDITOR
+        /// <summary>
+        /// Get the transform of the box.
+        /// This is used for previewing the box layout in the editor
+        /// </summary>
+        /// <returns>The transform of the box</returns>
+        Transform GetTransform();
+#endif
     }
 }
