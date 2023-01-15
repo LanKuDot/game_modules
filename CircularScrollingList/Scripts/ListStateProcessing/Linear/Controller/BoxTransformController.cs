@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 {
-    public class BoxTransformController
+    public class BoxTransformController : IBoxTransformController
     {
         #region Position Variables
 
@@ -129,7 +129,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
         #endregion
 
-        #region Transform Controlling
+        #region IBoxTransformController
 
         /// <summary>
         /// Set the initial local transform
@@ -159,12 +159,12 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         }
 
         /// <summary>
-        /// Set the local transform of the box according to the moving distance
+        /// Update the local transform of the box according to the moving distance
         /// </summary>
         /// <param name="boxTransform">The transform of the box</param>
         /// <param name="deltaPos">The moving distance</param>
         /// <returns>The final status of the transform position</returns>
-        public BoxPositionState SetLocalTransform(
+        public BoxPositionState UpdateLocalTransform(
             Transform boxTransform, float deltaPos)
         {
             var localPosition = boxTransform.localPosition;

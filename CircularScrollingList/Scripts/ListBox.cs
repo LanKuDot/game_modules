@@ -1,4 +1,5 @@
 ﻿using AirFishLab.ScrollingList.ContentManagement;
+using AirFishLab.ScrollingList.ListStateProcessing;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,7 +13,6 @@ namespace AirFishLab.ScrollingList
     {
         #region Properties of IListBox
 
-        public Transform Transform { get; private set; }
         public int ListBoxID { get; private set; }
         public int ContentID { get; private set; }
         public IListBox LastListBox { get; private set; }
@@ -27,18 +27,40 @@ namespace AirFishLab.ScrollingList
 
         #endregion
 
+        #region Private Members
+
+        private Transform _transform;
+        private IBoxTransformController _transformController;
+
+        #endregion
+
         #region IListBox
 
         public void Initialize(
             CircularScrollingList scrollingList,
+            IBoxTransformController transformController,
             int listBoxID, IListBox lastListBox, IListBox nextListBox)
         {
-            Transform = transform;
             ScrollingList = scrollingList;
             ListBoxID = listBoxID;
             LastListBox = lastListBox;
             NextListBox = nextListBox;
+
+            _transform = transform;
+            _transformController = transformController;
+            _transformController.SetInitialLocalTransform(_transform, listBoxID);
+
             RegisterClickEvent();
+        }
+
+        public BoxPositionState UpdateTransform(float deltaPos)
+        {
+            return _transformController.UpdateLocalTransform(_transform, deltaPos);
+        }
+
+        public Vector3 GetPosition()
+        {
+            return _transform.localPosition;
         }
 
         public void SetContentID(int contentID)

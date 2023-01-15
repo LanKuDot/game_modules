@@ -36,10 +36,6 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// The component fot getting the list contents
         /// </summary>
         private ListContentProvider _contentProvider;
-        /// <summary>
-        /// The controller for setting the transform of the boxes
-        /// </summary>
-        private BoxTransformController _transformController;
 
         #endregion
 
@@ -68,12 +64,11 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             _boxes.Clear();
             _boxes.AddRange(setupData.ListBoxes);
             _contentProvider = setupData.ListContentProvider;
-            _transformController = new BoxTransformController(setupData);
             _inactivatedBoxes =
                 new NumOfInactivatedBoxes(_boxes.Count / 2);
 
             InitializeFactorFunc(_setting.Direction);
-            InitializeBoxes(setupData.ScrollingList);
+            InitializeBoxes(setupData);
         }
 
         public void UpdateBoxes(float movementValue)
@@ -82,9 +77,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 return;
 
             foreach (var box in _boxes) {
-                var positionStatus =
-                    _transformController.SetLocalTransform(
-                        box.Transform, movementValue);
+                var positionStatus = box.UpdateTransform(movementValue);
 
                 var contentID = box.ContentID;
                 switch (positionStatus) {
@@ -143,8 +136,9 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <summary>
         /// Initialize the boxes
         /// </summary>
-        private void InitializeBoxes(CircularScrollingList scrollingList)
+        private void InitializeBoxes(ListSetupData setupData)
         {
+            var transformController = new BoxTransformController(setupData);
             var numOfBoxes = _boxes.Count;
             for (var boxID = 0; boxID < numOfBoxes; ++boxID) {
                 var box = _boxes[boxID];
@@ -153,10 +147,9 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 var nextListBox =
                     _boxes[(int)Mathf.Repeat(boxID + 1, numOfBoxes)];
                 box.Initialize(
-                    scrollingList, boxID, lastListBox, nextListBox);
+                    setupData.ScrollingList, transformController,
+                    boxID, lastListBox, nextListBox);
                 box.OnBoxClick.AddListener(_setting.OnBoxClick.Invoke);
-
-                _transformController.SetInitialLocalTransform(box.Transform, boxID);
 
                 var contentID = _contentProvider.GetInitialContentID(boxID);
                 UpdateBoxContent(box, contentID, BoxPositionState.Nothing);
@@ -241,7 +234,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                     && box.ContentID != ListContentProvider.NO_CONTENT_ID)
                     continue;
 
-                var localPos = box.Transform.localPosition;
+                var localPos = box.GetPosition();
                 var deltaDistance = -_getMajorFactorFunc(localPos);
 
                 if (Mathf.Abs(deltaDistance) >= Mathf.Abs(distance))
@@ -294,7 +287,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                     : FactorUtility.GetVector2Y;
 
             foreach (var box in _boxes) {
-                var posFactor = factorFunc(box.Transform.localPosition);
+                var posFactor = factorFunc(box.GetPosition());
                 var tempBoxID = box.ListBoxID;
 
                 if (tempBoxID > centeredBoxID && posFactor > 0)
