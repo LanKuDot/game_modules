@@ -49,10 +49,6 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// The function for getting the major factor from the vector2
         /// </summary>
         private Func<Vector2, float> _getMajorFactorFunc;
-        /// <summary>
-        /// The number of the inactivated boxes
-        /// </summary>
-        private NumOfInactivatedBoxes _inactivatedBoxes;
 
         #endregion
 
@@ -64,8 +60,6 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             _boxes.Clear();
             _boxes.AddRange(setupData.ListBoxes);
             _contentProvider = setupData.ListContentProvider;
-            _inactivatedBoxes =
-                new NumOfInactivatedBoxes(_boxes.Count / 2);
 
             InitializeFactorFunc(_setting.Direction);
             InitializeBoxes(setupData);
@@ -198,11 +192,18 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 return;
 
             const float tolerance = 1e-4f;
+            var centeredContentID = GetCenteredBox().ContentID;
+            var contentCount = _contentProvider.GetContentCount();
+            var isReversed = _setting.ReverseContentOrder;
+            var isFirstContent = centeredContentID == 0;
+            var isLastContent = centeredContentID == contentCount - 1;
 
-            if (_inactivatedBoxes.AtTop >= _inactivatedBoxes.MaxNum
-                && ShortestDistanceToCenter > -tolerance)
+            if (!(isFirstContent || isLastContent))
+                ListFocusingState = ListFocusingState.Middle;
+            else if (isReversed ^ isFirstContent
+                     && ShortestDistanceToCenter > -tolerance)
                 ListFocusingState = ListFocusingState.Top;
-            else if (_inactivatedBoxes.AtBottom >= _inactivatedBoxes.MaxNum
+            else if (isReversed ^ isLastContent
                      && ShortestDistanceToCenter < tolerance)
                 ListFocusingState = ListFocusingState.Bottom;
             else
@@ -275,8 +276,6 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <param name="newCenteredContentID">The new centered content ID</param>
         private void RecalculateAllBoxContent(int newCenteredContentID)
         {
-            ResetNumOfInactivatedBoxes();
-
             var numOfBoxes = _boxes.Count;
             var centeredBoxID = _centeredBox.ListBoxID;
             var reverseFactor = _setting.ReverseContentOrder ? -1 : 1;
@@ -320,21 +319,15 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             if (_contentProvider.TryGetContent(contentID, out var content))
                 box.SetContent(content);
             var idState = _contentProvider.GetIDState(contentID);
-            ToggleBoxActivation(box, idState, positionState);
+            ToggleBoxActivation(box, idState);
         }
-
-        #endregion
-
-        #region Box Activation
 
         /// <summary>
         /// Check if it needs to activate/inactivate the box
         /// </summary>
         /// <param name="box">The target box</param>
         /// <param name="idState">The content id state of the box</param>
-        /// <param name="positionState">The position state of the box</param>
-        private void ToggleBoxActivation(
-            IListBox box, ContentIDState idState, BoxPositionState positionState)
+        private void ToggleBoxActivation(IListBox box, ContentIDState idState)
         {
             var contentID = box.ContentID;
 
@@ -355,94 +348,6 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 box.IsActivated = false;
             else if (isIdValid && !isPreviouslyActivated)
                 box.IsActivated = true;
-
-            UpdateNumOfInactivatedBoxes(
-                positionState, idState, box.IsActivated, !isPreviouslyActivated);
-        }
-
-        /// <summary>
-        /// Update the number of the inactivated boxes
-        /// </summary>
-        /// <param name="positionState">The position state of the box</param>
-        /// <param name="idState">The id state of the box</param>
-        /// <param name="isActivated">Is the box now activated?</param>
-        /// <param name="isPreviouslyInactivated">
-        /// Was the box previously inactivated?
-        /// </param>
-        private void UpdateNumOfInactivatedBoxes(
-            BoxPositionState positionState, ContentIDState idState,
-            bool isActivated, bool isPreviouslyInactivated)
-        {
-            var isReverseOrder = _setting.ReverseContentOrder;
-
-            switch (positionState) {
-                case BoxPositionState.Nothing:
-                    if (isActivated)
-                        break;
-
-                    if ((!isReverseOrder && idState == ContentIDState.Underflow)
-                        || (isReverseOrder && idState == ContentIDState.Overflow)) {
-                        ++_inactivatedBoxes.AtTop;
-                        break;
-                    }
-
-                    if ((!isReverseOrder && idState == ContentIDState.Overflow)
-                        || (isReverseOrder && idState == ContentIDState.Underflow)) {
-                        ++_inactivatedBoxes.AtBottom;
-                    }
-                    break;
-
-                case BoxPositionState.JumpToTop:
-                    if (!isActivated)
-                        ++_inactivatedBoxes.AtTop;
-                    if (isPreviouslyInactivated)
-                        --_inactivatedBoxes.AtBottom;
-                    break;
-
-                case BoxPositionState.JumpToBottom:
-                    if (!isActivated)
-                        ++_inactivatedBoxes.AtBottom;
-                    if (isPreviouslyInactivated)
-                        --_inactivatedBoxes.AtTop;
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Reset the number of the inactivated boxes
-        /// </summary>
-        private void ResetNumOfInactivatedBoxes()
-        {
-            _inactivatedBoxes.AtBottom = 0;
-            _inactivatedBoxes.AtTop = 0;
-        }
-
-        #endregion
-
-        #region Sub Data
-
-        /// <summary>
-        /// The data class for storing the number of inactivated boxes
-        /// </summary>
-        private class NumOfInactivatedBoxes
-        {
-            /// <summary>
-            /// The max number of inactivated boxes
-            /// </summary>
-            public readonly int MaxNum;
-            /// <summary>
-            /// The number of inactivated boxes at the top
-            /// </summary>
-            public int AtTop;
-            /// <summary>
-            /// The number of inactivated boxes at the bottom
-            /// </summary>
-            public int AtBottom;
-
-            public NumOfInactivatedBoxes(int maxNum)
-            {
-                MaxNum = maxNum;
-            }
         }
 
         #endregion
