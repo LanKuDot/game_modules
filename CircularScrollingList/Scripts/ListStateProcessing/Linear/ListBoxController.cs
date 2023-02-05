@@ -180,16 +180,16 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         private void UpdateListState()
         {
             UpdateCenteredBox();
-            UpdateListFocusingState();
+            ListFocusingState = UpdateListFocusingState();
         }
 
         /// <summary>
         /// Update the focusing state of the list
         /// </summary>
-        private void UpdateListFocusingState()
+        private ListFocusingState UpdateListFocusingState()
         {
             if (_setting.ListType != CircularScrollingList.ListType.Linear)
-                return;
+                return ListFocusingState.Middle;
 
             const float tolerance = 1e-4f;
             var centeredContentID = GetCenteredBox().ContentID;
@@ -199,15 +199,15 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             var isLastContent = centeredContentID == contentCount - 1;
 
             if (!(isFirstContent || isLastContent))
-                ListFocusingState = ListFocusingState.Middle;
-            else if (isReversed ^ isFirstContent
-                     && ShortestDistanceToCenter > -tolerance)
-                ListFocusingState = ListFocusingState.Top;
-            else if (isReversed ^ isLastContent
-                     && ShortestDistanceToCenter < tolerance)
-                ListFocusingState = ListFocusingState.Bottom;
-            else
-                ListFocusingState = ListFocusingState.Middle;
+                return ListFocusingState.Middle;
+            if (isReversed ^ isFirstContent
+                && ShortestDistanceToCenter > -tolerance)
+                return ListFocusingState.Top;
+            if (isReversed ^ isLastContent
+                && ShortestDistanceToCenter < tolerance)
+                return ListFocusingState.Bottom;
+
+            return ListFocusingState.Middle;
         }
 
         #endregion
