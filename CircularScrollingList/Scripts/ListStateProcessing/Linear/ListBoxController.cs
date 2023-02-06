@@ -145,7 +145,9 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                     boxID, lastListBox, nextListBox);
                 box.OnBoxClick.AddListener(_setting.OnBoxClick.Invoke);
 
-                var contentID = _contentProvider.GetInitialContentID(boxID);
+                var contentID =
+                    _contentProvider.GetInitialContentID(
+                        boxID + setupData.ListSetting.CenteredContentID);
                 UpdateBoxContent(box, contentID, BoxPositionState.Nothing);
             }
 
