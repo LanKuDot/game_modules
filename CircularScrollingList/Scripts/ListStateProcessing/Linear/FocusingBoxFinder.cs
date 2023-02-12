@@ -50,10 +50,20 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// The function for getting the major position of the position
         /// </summary>
         private readonly Func<Vector2, float> _getMajorPosFunc;
+        /// <summary>
+        /// The baseline position at the top of the list
+        /// </summary>
+        private readonly float _topBaseline;
+        /// <summary>
+        /// The baseline position at the bottom of the list
+        /// </summary>
+        private readonly float _bottomBaseline;
 
         #endregion
 
-        public FocusingBoxFinder(List<IListBox> boxes, ListSetting setting)
+        public FocusingBoxFinder(
+            List<IListBox> boxes, ListSetting setting,
+            float topBaseline, float bottomBaseline)
         {
             _boxes = boxes;
             _setting = setting;
@@ -61,6 +71,8 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 _getMajorPosFunc = FactorUtility.GetVector2X;
             else
                 _getMajorPosFunc = FactorUtility.GetVector2Y;
+            _topBaseline = topBaseline;
+            _bottomBaseline = bottomBaseline;
         }
 
         /// <summary>

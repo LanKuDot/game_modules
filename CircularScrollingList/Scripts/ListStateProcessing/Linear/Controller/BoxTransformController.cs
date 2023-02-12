@@ -43,6 +43,19 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
         #endregion
 
+        #region Public Properties
+
+        /// <summary>
+        /// The baseline position at the top of the list
+        /// </summary>
+        public float TopBaseline { get; private set; }
+        /// <summary>
+        /// The baseline position at the bottom of the list
+        /// </summary>
+        public float BottomBaseline { get; private set; }
+
+        #endregion
+
         #region Variable Getter
 
         /// <summary>
@@ -85,11 +98,12 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             _unitPos = rectDistance / (numOfBoxes - 1) / listSetting.BoxDensity;
 
             // If there are event number of boxes, narrow the boundary for 1 unit pos.
-            var boundPosAdjust =
-                (numOfBoxes & 0x1) == 0 ? _unitPos / 2 : 0;
+            var boundAdjust = (numOfBoxes & 0x1) == 0 ? 0.5f : 0;
+            TopBaseline = _unitPos * (numOfBoxes / 2 - boundAdjust);
+            BottomBaseline = -TopBaseline;
 
-            _minPos = _unitPos * (-1 * numOfBoxes / 2 - 1) + boundPosAdjust;
-            _maxPos = _unitPos * (numOfBoxes / 2 + 1) - boundPosAdjust;
+            _maxPos = TopBaseline + _unitPos;
+            _minPos = -_maxPos;
             _sideChangingMinPos = _minPos + _unitPos * 0.5f;
             _sideChangingMaxPos = _maxPos - _unitPos * 0.5f;
         }

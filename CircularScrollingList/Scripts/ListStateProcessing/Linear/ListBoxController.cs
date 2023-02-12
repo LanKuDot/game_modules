@@ -65,7 +65,11 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             _boxes.AddRange(setupData.ListBoxes);
             _transformController = new BoxTransformController(setupData);
             _contentProvider = setupData.ListContentProvider;
-            _focusingBoxFinder = new FocusingBoxFinder(_boxes, _setting);
+            _focusingBoxFinder =
+                new FocusingBoxFinder(
+                    _boxes, _setting,
+                    _transformController.TopBaseline,
+                    _transformController.BottomBaseline);
 
             InitializeBoxes(setupData);
         }
