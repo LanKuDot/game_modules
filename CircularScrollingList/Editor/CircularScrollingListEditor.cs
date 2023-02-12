@@ -124,6 +124,7 @@ namespace AirFishLab.ScrollingList.Editor
         {
             EditorGUILayout.LabelField("List Mode", EditorStyles.boldLabel);
             DrawListSettingProperty("_listType");
+            DrawListSettingProperty("_focusingPosition");
             DrawListSettingProperty("_controlMode");
 
             ++EditorGUI.indentLevel;

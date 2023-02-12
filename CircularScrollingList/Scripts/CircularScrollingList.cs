@@ -49,6 +49,16 @@ namespace AirFishLab.ScrollingList
         };
 
         /// <summary>
+        /// The focusing position of the list
+        /// </summary>
+        public enum FocusingPosition
+        {
+            Top,
+            Center,
+            Bottom,
+        }
+
+        /// <summary>
         /// The major moving direction of the list
         /// </summary>
         public enum Direction

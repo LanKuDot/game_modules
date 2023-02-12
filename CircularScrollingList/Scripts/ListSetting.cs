@@ -15,6 +15,10 @@ namespace AirFishLab.ScrollingList
         private CircularScrollingList.ListType _listType =
             CircularScrollingList.ListType.Circular;
         [SerializeField]
+        [Tooltip("The focusing position of the list")]
+        private CircularScrollingList.FocusingPosition _focusingPosition =
+                CircularScrollingList.FocusingPosition.Center;
+        [SerializeField]
         [Tooltip("The controlling mode of the list.")]
         private CircularScrollingList.ControlMode _controlMode =
             CircularScrollingList.ControlMode.Everything;
@@ -112,6 +116,8 @@ namespace AirFishLab.ScrollingList
         #region Setting Getter
 
         public CircularScrollingList.ListType ListType => _listType;
+        public CircularScrollingList.FocusingPosition FocusingPosition =>
+            _focusingPosition;
         public CircularScrollingList.ControlMode ControlMode => _controlMode;
         public bool AlignInCenter => _alignInCenter;
         public bool ReverseScrollingDirection => _reverseScrollingDirection;
