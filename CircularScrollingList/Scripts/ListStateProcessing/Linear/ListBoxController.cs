@@ -78,18 +78,20 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                     case BoxPositionState.Nothing:
                         continue;
                     case BoxPositionState.JumpToTop:
+                        box.PushToBack();
                         contentID =
                             _contentProvider.GetContentIDByNextBox(
                                 box.NextListBox.ContentID);
                         break;
                     case BoxPositionState.JumpToBottom:
+                        box.PushToBack();
                         contentID =
                             _contentProvider.GetContentIDByLastBox(
                                 box.LastListBox.ContentID);
                         break;
                 }
 
-                UpdateBoxContent(box, contentID, positionStatus);
+                UpdateBoxContent(box, contentID);
             }
 
             UpdateListState();
@@ -140,7 +142,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 var contentID =
                     _contentProvider.GetInitialContentID(
                         boxID + setupData.ListSetting.CenteredContentID);
-                UpdateBoxContent(box, contentID, BoxPositionState.Nothing);
+                UpdateBoxContent(box, contentID);
             }
 
             UpdateListState();
@@ -258,7 +260,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 var contentID =
                     newCenteredContentID + (tempBoxID - centeredBoxID) * reverseFactor;
                 var newContentID = _contentProvider.GetRefreshedContentID(contentID);
-                UpdateBoxContent(box, newContentID, BoxPositionState.Nothing);
+                UpdateBoxContent(box, newContentID);
             }
 
             UpdateListState();
@@ -269,18 +271,14 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// </summary>
         /// <param name="box">The target box</param>
         /// <param name="contentID">The target content ID</param>
-        /// <param name="positionState">The current position state of the box</param>
-        private void UpdateBoxContent(
-            IListBox box, int contentID, BoxPositionState positionState)
+        private void UpdateBoxContent(IListBox box, int contentID)
         {
-            if (positionState != BoxPositionState.Nothing)
-                box.PushToBack();
+            var idState = _contentProvider.GetIDState(contentID);
+            ToggleBoxActivation(box, idState);
 
             box.SetContentID(contentID);
             if (_contentProvider.TryGetContent(contentID, out var content))
                 box.SetContent(content);
-            var idState = _contentProvider.GetIDState(contentID);
-            ToggleBoxActivation(box, idState);
         }
 
         /// <summary>
