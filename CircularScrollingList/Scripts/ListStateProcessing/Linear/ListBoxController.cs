@@ -33,7 +33,11 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// </summary>
         private readonly List<IListBox> _boxes = new List<IListBox>();
         /// <summary>
-        /// The component fot getting the list contents
+        /// The component for finding the focusing box
+        /// </summary>
+        private FocusingBoxFinder _focusingBoxFinder;
+        /// <summary>
+        /// The component for getting the list contents
         /// </summary>
         private ListContentProvider _contentProvider;
 
@@ -45,10 +49,6 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// The box which is closest to the center position
         /// </summary>
         private IListBox _centeredBox;
-        /// <summary>
-        /// The function for getting the major factor from the vector2
-        /// </summary>
-        private Func<Vector2, float> _getMajorFactorFunc;
 
         #endregion
 
@@ -60,8 +60,8 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             _boxes.Clear();
             _boxes.AddRange(setupData.ListBoxes);
             _contentProvider = setupData.ListContentProvider;
+            _focusingBoxFinder = new FocusingBoxFinder(_boxes, _setting);
 
-            InitializeFactorFunc(_setting.Direction);
             InitializeBoxes(setupData);
         }
 
@@ -118,14 +118,6 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         #endregion
 
         #region Initialization
-
-        private void InitializeFactorFunc(CircularScrollingList.Direction direction)
-        {
-            if (direction == CircularScrollingList.Direction.Horizontal)
-                _getMajorFactorFunc = FactorUtility.GetVector2X;
-            else
-                _getMajorFactorFunc = FactorUtility.GetVector2Y;
-        }
 
         /// <summary>
         /// Initialize the boxes
@@ -217,55 +209,22 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         #region Centered Box
 
         /// <summary>
-        /// Find the box which is closet to the center
-        /// </summary>
-        /// <param name="distance">
-        /// The distance for moving this box to the center
-        /// </param>
-        /// <returns>The box</returns>
-        private IListBox FindBoxClosestToCenter(out float distance)
-        {
-            distance = Mathf.Infinity;
-            IListBox candidateBox = null;
-
-            foreach (var box in _boxes) {
-                // Skip the inactivated box
-                // But if there has no content to display,
-                // it is still need to find the centered box,
-                // cause all the boxes are inactivated.
-                if (!box.IsActivated
-                    && box.ContentID != ListContentProvider.NO_CONTENT_ID)
-                    continue;
-
-                var localPos = box.GetPosition();
-                var deltaDistance = -_getMajorFactorFunc(localPos);
-
-                if (Mathf.Abs(deltaDistance) >= Mathf.Abs(distance))
-                    continue;
-
-                distance = deltaDistance;
-                candidateBox = box;
-            }
-
-            return candidateBox;
-        }
-
-        /// <summary>
         /// Update the centered box
         /// </summary>
         private void UpdateCenteredBox()
         {
-            var candidateBox = FindBoxClosestToCenter(out var distance);
-            ShortestDistanceToCenter = distance;
+            var result = _focusingBoxFinder.Find();
+            var (focusingBox, aligningDistance) = result;
+            ShortestDistanceToCenter = aligningDistance;
 
-            if (candidateBox == _centeredBox)
+            if (focusingBox == _centeredBox)
                 return;
 
-            candidateBox.PopToFront();
-            _setting.OnCenteredContentChanged.Invoke(candidateBox.ContentID);
+            focusingBox.PopToFront();
+            _setting.OnCenteredContentChanged.Invoke(focusingBox.ContentID);
             _setting.OnCenteredBoxChanged.Invoke(
-                (ListBox)_centeredBox, (ListBox)candidateBox);
-            _centeredBox = candidateBox;
+                (ListBox)_centeredBox, (ListBox)focusingBox);
+            _centeredBox = focusingBox;
         }
 
         #endregion
