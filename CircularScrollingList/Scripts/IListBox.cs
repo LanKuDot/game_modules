@@ -1,5 +1,4 @@
 ﻿using AirFishLab.ScrollingList.ContentManagement;
-using AirFishLab.ScrollingList.ListStateProcessing;
 using UnityEngine;
 
 namespace AirFishLab.ScrollingList
@@ -48,23 +47,18 @@ namespace AirFishLab.ScrollingList
         /// Initialize the list box
         /// </summary>
         /// <param name="scrollingList">The list which this box belongs to</param>
-        /// <param name="transformController">
-        /// The component for controlling the box transform
-        /// </param>
         /// <param name="listBoxID">The id of the box</param>
         /// <param name="lastListBox">The last box</param>
         /// <param name="nextListBox">The next box</param>
         void Initialize(
             CircularScrollingList scrollingList,
-            IBoxTransformController transformController,
             int listBoxID, IListBox lastListBox, IListBox nextListBox);
 
         /// <summary>
-        /// Update the transform of the box
+        /// Get the transform of the box
         /// </summary>
-        /// <param name="deltaPos">The delta moving position</param>
-        /// <returns>The final position state of the box</returns>
-        BoxPositionState UpdateTransform(float deltaPos);
+        /// <returns>The transform of the box</returns>
+        Transform GetTransform();
 
         /// <summary>
         /// Get the box position in the list
@@ -93,14 +87,5 @@ namespace AirFishLab.ScrollingList
         /// Push the box to the back
         /// </summary>
         void PushToBack();
-
-#if UNITY_EDITOR
-        /// <summary>
-        /// Get the transform of the box.
-        /// This is used for previewing the box layout in the editor
-        /// </summary>
-        /// <returns>The transform of the box</returns>
-        Transform GetTransform();
-#endif
     }
 }

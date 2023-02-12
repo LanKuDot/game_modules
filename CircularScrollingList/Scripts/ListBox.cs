@@ -1,5 +1,4 @@
 ﻿using AirFishLab.ScrollingList.ContentManagement;
-using AirFishLab.ScrollingList.ListStateProcessing;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -31,7 +30,6 @@ namespace AirFishLab.ScrollingList
 
         private GameObject _gameObject;
         private Transform _transform;
-        private IBoxTransformController _transformController;
 
         #endregion
 
@@ -39,7 +37,6 @@ namespace AirFishLab.ScrollingList
 
         public void Initialize(
             CircularScrollingList scrollingList,
-            IBoxTransformController transformController,
             int listBoxID, IListBox lastListBox, IListBox nextListBox)
         {
             ScrollingList = scrollingList;
@@ -49,15 +46,17 @@ namespace AirFishLab.ScrollingList
 
             _gameObject = gameObject;
             _transform = transform;
-            _transformController = transformController;
-            _transformController.SetInitialLocalTransform(_transform, listBoxID);
 
             RegisterClickEvent();
         }
 
-        public BoxPositionState UpdateTransform(float deltaPos)
+        public Transform GetTransform()
         {
-            return _transformController.UpdateLocalTransform(_transform, deltaPos);
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+                return transform;
+#endif
+            return _transform;
         }
 
         public Vector3 GetPosition()
@@ -118,12 +117,5 @@ namespace AirFishLab.ScrollingList
         }
 
         #endregion
-
-#if UNITY_EDITOR
-        public Transform GetTransform()
-        {
-            return transform;
-        }
-#endif
     }
 }

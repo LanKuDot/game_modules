@@ -33,6 +33,10 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// </summary>
         private readonly List<IListBox> _boxes = new List<IListBox>();
         /// <summary>
+        /// The component for controlling the box transform
+        /// </summary>
+        private BoxTransformController _transformController;
+        /// <summary>
         /// The component for finding the focusing box
         /// </summary>
         private FocusingBoxFinder _focusingBoxFinder;
@@ -59,6 +63,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             _setting = setupData.ListSetting;
             _boxes.Clear();
             _boxes.AddRange(setupData.ListBoxes);
+            _transformController = new BoxTransformController(setupData);
             _contentProvider = setupData.ListContentProvider;
             _focusingBoxFinder = new FocusingBoxFinder(_boxes, _setting);
 
@@ -71,8 +76,9 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 return;
 
             foreach (var box in _boxes) {
-                var positionStatus = box.UpdateTransform(movementValue);
-
+                var positionStatus =
+                    _transformController.UpdateLocalTransform(
+                        box.GetTransform(), movementValue);
                 var contentID = box.ContentID;
                 switch (positionStatus) {
                     case BoxPositionState.Nothing:
@@ -126,7 +132,6 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// </summary>
         private void InitializeBoxes(ListSetupData setupData)
         {
-            var transformController = new BoxTransformController(setupData);
             var numOfBoxes = _boxes.Count;
             for (var boxID = 0; boxID < numOfBoxes; ++boxID) {
                 var box = _boxes[boxID];
@@ -135,9 +140,11 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 var nextListBox =
                     _boxes[(int)Mathf.Repeat(boxID + 1, numOfBoxes)];
                 box.Initialize(
-                    setupData.ScrollingList, transformController,
+                    setupData.ScrollingList,
                     boxID, lastListBox, nextListBox);
                 box.OnBoxClick.AddListener(_setting.OnBoxClick.Invoke);
+
+                _transformController.SetInitialLocalTransform(box.GetTransform(), boxID);
 
                 var contentID =
                     _contentProvider.GetInitialContentID(
