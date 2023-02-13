@@ -34,6 +34,21 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             }
         }
 
+        /// <summary>
+        /// The finding result for both ends
+        /// </summary>
+        public struct BothEndsResult
+        {
+            /// <summary>
+            /// The result at the top of the list
+            /// </summary>
+            public Result Top;
+            /// <summary>
+            /// The result at the bottom of the list
+            /// </summary>
+            public Result Bottom;
+        }
+
         #endregion
 
         #region Private Members
@@ -78,10 +93,10 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <summary>
         /// Find the currently focusing box
         /// </summary>
-        /// <returns>The result of the box</returns>
+        /// <returns>The result</returns>
         public Result Find()
         {
-            var distance = Mathf.Infinity;
+            var deltaDistance = Mathf.Infinity;
             IListBox candidateBox = null;
 
             foreach (var box in _boxes) {
@@ -90,18 +105,62 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                     continue;
 
                 var boxPos = box.GetPosition();
-                var deltaDistance = -_getMajorPosFunc(boxPos);
+                var boxDeltaDistance = -_getMajorPosFunc(boxPos);
 
-                if (Mathf.Abs(deltaDistance) >= Mathf.Abs(distance))
+                if (Mathf.Abs(boxDeltaDistance) >= Mathf.Abs(deltaDistance))
                     continue;
 
-                distance = deltaDistance;
+                deltaDistance = boxDeltaDistance;
                 candidateBox = box;
             }
 
             return new Result {
                 FocusingBox = candidateBox,
-                AligningDistance = distance
+                AligningDistance = deltaDistance
+            };
+        }
+
+        /// <summary>
+        /// Find the focusing boxes at both ends
+        /// </summary>
+        /// <returns>The result</returns>
+        public BothEndsResult FindForBothEnds()
+        {
+            var topDeltaDistance = Mathf.Infinity;
+            IListBox topCandidateBox = null;
+            var bottomDeltaDistance = Mathf.NegativeInfinity;
+            IListBox bottomCandidateBox = null;
+
+            foreach (var box in _boxes) {
+                if (!box.IsActivated
+                    && box.ContentID != ListContentProvider.NO_CONTENT_ID)
+                    continue;
+
+                var boxPos = box.GetPosition();
+                var majorPos = _getMajorPosFunc(boxPos);
+                var boxTopDeltaDistance = _topBaseline - majorPos;
+                var boxBottomDeltaDistance = _bottomBaseline - majorPos;
+
+                if (Mathf.Abs(boxTopDeltaDistance) < Mathf.Abs(topDeltaDistance)) {
+                    topDeltaDistance = boxTopDeltaDistance;
+                    topCandidateBox = box;
+                }
+
+                if (Mathf.Abs(boxBottomDeltaDistance) < Mathf.Abs(bottomDeltaDistance)) {
+                    bottomDeltaDistance = boxBottomDeltaDistance;
+                    bottomCandidateBox = box;
+                }
+            }
+
+            return new BothEndsResult {
+                Top = new Result {
+                    FocusingBox = topCandidateBox,
+                    AligningDistance = topDeltaDistance
+                },
+                Bottom = new Result {
+                    FocusingBox = bottomCandidateBox,
+                    AligningDistance = bottomDeltaDistance
+                }
             };
         }
     }
