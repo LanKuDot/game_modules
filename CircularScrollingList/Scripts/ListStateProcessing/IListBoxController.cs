@@ -30,9 +30,9 @@
         void RefreshBoxes(int centeredContentID = -1);
 
         /// <summary>
-        /// Get the box which is closet to the center
+        /// Get the focusing box
         /// </summary>
-        /// <returns>The box which is closet to the center</returns>
-        IListBox GetCenteredBox();
+        /// <returns>The current focusing box</returns>
+        IListBox GetFocusingBox();
     }
 }

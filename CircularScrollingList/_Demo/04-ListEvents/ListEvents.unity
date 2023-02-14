@@ -671,20 +671,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _listBank: {fileID: 364120479}
+  _boxSetting:
+    _boxRootTransform: {fileID: 364120477}
+    _boxPrefab: {fileID: 4573319423886367905, guid: 57888038a43e53e41bdc2668a35586d0,
+      type: 3}
+    _numOfBoxes: 5
   _listBoxes:
   - {fileID: 894533171}
   - {fileID: 63716219}
   - {fileID: 850886411}
   - {fileID: 298362249}
   - {fileID: 1078715960}
-  _setting:
+  _listSetting:
     _listType: 0
+    _focusingPosition: 1
     _controlMode: -1
-    _alignInCenter: 1
+    _alignAtFocusingPosition: 1
     _reverseScrollingDirection: 0
     _direction: 0
-    _centeredContentID: 0
-    _centerSelectedBox: 0
+    _initFocusedContentID: 0
+    _focusSelectedBox: 0
     _reverseContentOrder: 1
     _initializeOnStart: 1
     _boxDensity: 1
@@ -798,14 +804,11 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-    _onCenteredContentChanged:
-      m_PersistentCalls:
-        m_Calls: []
-    _onCenteredBoxChanged:
+    _onFocusingBoxChanged:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 1328845008}
-          m_MethodName: OnCenteredBoxChanged
+          m_MethodName: OnFocusingBoxChanged
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -854,7 +857,7 @@ GameObject:
   - component: {fileID: 509614815}
   - component: {fileID: 509614814}
   m_Layer: 5
-  m_Name: GetCenteredContentButton
+  m_Name: GeFocusingContentButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -925,7 +928,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1328845008}
-        m_MethodName: DisplayCenteredContent
+        m_MethodName: DisplayFocusingContent
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1412,7 +1415,7 @@ GameObject:
   - component: {fileID: 1348290315}
   - component: {fileID: 1348290314}
   m_Layer: 5
-  m_Name: CenteredContentText
+  m_Name: FocusingContentText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1469,7 +1472,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Centered content:'
+  m_Text: 'Focusing content:'
 --- !u!222 &1348290315
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1794,7 +1797,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Get Centered Content
+  m_Text: Get Focusing Content
 --- !u!222 &1961086873
 CanvasRenderer:
   m_ObjectHideFlags: 0

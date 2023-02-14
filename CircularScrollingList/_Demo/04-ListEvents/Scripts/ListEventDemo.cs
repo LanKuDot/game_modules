@@ -14,13 +14,13 @@ namespace AirFishLab.ScrollingList.Demo
         [SerializeField]
         private Text _autoUpdatedContentText;
 
-        public void DisplayCenteredContent()
+        public void DisplayFocusingContent()
         {
-            var contentID = _list.GetCenteredContentID();
+            var contentID = _list.GetFocusingContentID();
             var centeredContent =
                 (IntListBank.Content)_list.ListBank.GetListContent(contentID);
             _requestedContentText.text =
-                $"Centered content: {centeredContent.Value}";
+                $"Focusing content: {centeredContent.Value}";
         }
 
         public void GetSelectedContentID(int selectedContentID)
@@ -31,12 +31,12 @@ namespace AirFishLab.ScrollingList.Demo
                 $"Selected content ID: {selectedContentID}, Content: {content.Value}";
         }
 
-        public void OnCenteredBoxChanged(
-            ListBox prevCenteredBox, ListBox curCenteredBox)
+        public void OnFocusingBoxChanged(
+            ListBox prevFocusingBox, ListBox curFocusingBox)
         {
             _autoUpdatedContentText.text =
-                "(Auto updated)\nCentered content: "
-                + $"{((IntListBox) curCenteredBox).Content}";
+                "(Auto updated)\nFocusing content: "
+                + $"{((IntListBox) curFocusingBox).Content}";
         }
 
         public void OnMovementEnd()

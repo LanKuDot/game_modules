@@ -343,16 +343,16 @@ namespace AirFishLab.ScrollingList
         #region Public Box And Content Operations
 
         /// <summary>
-        /// Get the box that is closest to the center
+        /// Get the focusing box
         /// </summary>
-        public ListBox GetCenteredBox() =>
-            _listBoxController.GetCenteredBox() as ListBox;
+        public ListBox GetFocusingBox() =>
+            _listBoxController.GetFocusingBox() as ListBox;
 
         /// <summary>
-        /// Get the content ID of the box that is closest to the center
+        /// Get the content ID of the focusing box
         /// </summary>
-        public int GetCenteredContentID() =>
-            _listBoxController.GetCenteredBox().ContentID;
+        public int GetFocusingContentID() =>
+            _listBoxController.GetFocusingBox().ContentID;
 
         /// <summary>
         /// Make the boxes recalculate their content ID and reacquire the contents
@@ -379,7 +379,7 @@ namespace AirFishLab.ScrollingList
                 throw new IndexOutOfRangeException(
                     $"{nameof(contentID)} is invalid");
 
-            var centeredContentID = GetCenteredContentID();
+            var centeredContentID = GetFocusingContentID();
             SetSelectionMovement(
                 _listContentProvider.GetShortestIDDiff(
                     centeredContentID, contentID));

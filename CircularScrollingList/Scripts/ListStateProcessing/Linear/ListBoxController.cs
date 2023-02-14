@@ -52,7 +52,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <summary>
         /// The box which is closest to the center position
         /// </summary>
-        private IListBox _centeredBox;
+        private IListBox _focusingBox;
 
         #endregion
 
@@ -109,7 +109,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
         public void RefreshBoxes(int centeredContentID = -1)
         {
-            var curCenteredContentID = _centeredBox.ContentID;
+            var curCenteredContentID = _focusingBox.ContentID;
             var numOfContents = _contentProvider.GetContentCount();
 
             if (centeredContentID >= numOfContents)
@@ -125,7 +125,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             RecalculateAllBoxContent(centeredContentID);
         }
 
-        public IListBox GetCenteredBox() => _centeredBox;
+        public IListBox GetFocusingBox() => _focusingBox;
 
         #endregion
 
@@ -168,7 +168,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             var centeredBoxIndex = 0;
             var numOfBoxes = _boxes.Count;
             for (; centeredBoxIndex < numOfBoxes; ++centeredBoxIndex)
-                if (_boxes[centeredBoxIndex] == _centeredBox)
+                if (_boxes[centeredBoxIndex] == _focusingBox)
                     break;
 
             for (var i = centeredBoxIndex - 1; i >= 0; --i)
@@ -186,7 +186,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// </summary>
         private void UpdateListState()
         {
-            UpdateCenteredBox();
+            UpdateFocusingBox();
             ListFocusingState = UpdateListFocusingState();
         }
 
@@ -199,7 +199,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 return ListFocusingState.Middle;
 
             const float tolerance = 1e-4f;
-            var centeredContentID = GetCenteredBox().ContentID;
+            var centeredContentID = GetFocusingBox().ContentID;
             var contentCount = _contentProvider.GetContentCount();
             var isReversed = _setting.ReverseContentOrder;
             var isFirstContent = centeredContentID == 0;
@@ -219,24 +219,24 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
         #endregion
 
-        #region Centered Box
+        #region Focused Box
 
         /// <summary>
-        /// Update the centered box
+        /// Update the focusing box
         /// </summary>
-        private void UpdateCenteredBox()
+        private void UpdateFocusingBox()
         {
             var result = _focusingBoxFinder.Find();
             var (focusingBox, aligningDistance) = result;
             ShortestDistanceToCenter = aligningDistance;
 
-            if (focusingBox == _centeredBox)
+            if (focusingBox == _focusingBox)
                 return;
 
             focusingBox.PopToFront();
-            _setting.OnFocusedBoxChanged.Invoke(
-                (ListBox)_centeredBox, (ListBox)focusingBox);
-            _centeredBox = focusingBox;
+            _setting.OnFocusingBoxChanged.Invoke(
+                (ListBox)_focusingBox, (ListBox)focusingBox);
+            _focusingBox = focusingBox;
         }
 
         #endregion
@@ -250,7 +250,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         private void RecalculateAllBoxContent(int newCenteredContentID)
         {
             var numOfBoxes = _boxes.Count;
-            var centeredBoxID = _centeredBox.ListBoxID;
+            var centeredBoxID = _focusingBox.ListBoxID;
             var reverseFactor = _setting.ReverseContentOrder ? -1 : 1;
             // TODO Store the pos factor in the boxes
             var factorFunc =

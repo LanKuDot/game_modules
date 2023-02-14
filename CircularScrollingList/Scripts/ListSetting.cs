@@ -101,11 +101,11 @@ namespace AirFishLab.ScrollingList
                  "therefore, boxes should be 'Button's.")]
         private ListBoxIntEvent _onBoxClick;
         [SerializeField]
-        [Tooltip("The callback to be invoked when the focused box is changed. " +
-                 "The first argument is previous focused box, " +
-                 "and the second one is current focused box.")]
+        [Tooltip("The callback to be invoked when the focusing box is changed. " +
+                 "The first argument is previous focusing box, " +
+                 "and the second one is current focusing box.")]
         [FormerlySerializedAs("_onCenteredBoxChanged")]
-        private ListTwoBoxesEvent _onFocusedBoxChanged;
+        private ListTwoBoxesEvent _onFocusingBoxChanged;
         [SerializeField]
         [Tooltip("The callback to be invoked when the movement is ended")]
         private UnityEvent _onMovementEnd;
@@ -133,7 +133,7 @@ namespace AirFishLab.ScrollingList
         public AnimationCurve BoxMovementCurve => _boxMovementCurve;
 
         public ListBoxIntEvent OnBoxClick => _onBoxClick;
-        public ListTwoBoxesEvent OnFocusedBoxChanged => _onFocusedBoxChanged;
+        public ListTwoBoxesEvent OnFocusingBoxChanged => _onFocusingBoxChanged;
         public UnityEvent OnMovementEnd => _onMovementEnd;
 
         #endregion
