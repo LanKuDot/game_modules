@@ -227,7 +227,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         private void UpdateFocusingBox()
         {
             var result = _focusingBoxFinder.Find();
-            var (focusingBox, aligningDistance) = result;
+            var (focusingBox, aligningDistance) = result.MiddleFocusing;
             ShortestDistanceToCenter = aligningDistance;
 
             if (focusingBox == _focusingBox)

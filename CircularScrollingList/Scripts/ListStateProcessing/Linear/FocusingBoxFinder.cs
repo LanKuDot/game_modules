@@ -14,24 +14,39 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         #region Data
 
         /// <summary>
-        /// The finding result
+        /// The current focusing box
         /// </summary>
-        public struct Result
+        public struct FocusingBox
         {
             /// <summary>
             /// The current focusing box
             /// </summary>
-            public IListBox FocusingBox;
+            public IListBox Box;
             /// <summary>
             /// The distance to align the focusing box to the baseline
             /// </summary>
             public float AligningDistance;
 
-            public void Deconstruct(out IListBox focusingBox, out float aligningDistance)
+            public void Deconstruct(out IListBox box, out float aligningDistance)
             {
-                focusingBox = FocusingBox;
+                box = Box;
                 aligningDistance = AligningDistance;
             }
+        }
+
+        /// <summary>
+        /// The finding result at the middle of the list
+        /// </summary>
+        public struct MiddleResult
+        {
+            /// <summary>
+            /// The focusing state of the list
+            /// </summary>
+            public ListFocusingState FocusingState;
+            /// <summary>
+            /// The focusing box at the middle of the list
+            /// </summary>
+            public FocusingBox MiddleFocusing;
         }
 
         /// <summary>
@@ -40,13 +55,17 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         public struct BothEndsResult
         {
             /// <summary>
-            /// The result at the top of the list
+            /// The focusing state of the list
             /// </summary>
-            public Result Top;
+            public ListFocusingState FocusingState;
             /// <summary>
-            /// The result at the bottom of the list
+            /// The focusing box at the top of the list
             /// </summary>
-            public Result Bottom;
+            public FocusingBox TopFocusing;
+            /// <summary>
+            /// The focusing box at the bottom of the list
+            /// </summary>
+            public FocusingBox BottomFocusing;
         }
 
         #endregion
@@ -94,7 +113,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// Find the currently focusing box
         /// </summary>
         /// <returns>The result</returns>
-        public Result Find()
+        public MiddleResult Find()
         {
             var deltaDistance = Mathf.Infinity;
             IListBox candidateBox = null;
@@ -114,9 +133,11 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 candidateBox = box;
             }
 
-            return new Result {
-                FocusingBox = candidateBox,
-                AligningDistance = deltaDistance
+            return new MiddleResult {
+                MiddleFocusing = {
+                    Box = candidateBox,
+                    AligningDistance = deltaDistance
+                }
             };
         }
 
@@ -153,12 +174,12 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             }
 
             return new BothEndsResult {
-                Top = new Result {
-                    FocusingBox = topCandidateBox,
+                TopFocusing = new FocusingBox {
+                    Box = topCandidateBox,
                     AligningDistance = topDeltaDistance
                 },
-                Bottom = new Result {
-                    FocusingBox = bottomCandidateBox,
+                BottomFocusing = new FocusingBox {
+                    Box = bottomCandidateBox,
                     AligningDistance = bottomDeltaDistance
                 }
             };
