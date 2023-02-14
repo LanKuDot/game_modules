@@ -42,7 +42,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             /// <summary>
             /// The focusing state of the list
             /// </summary>
-            public ListFocusingState FocusingState;
+            public ListFocusingState ListFocusingState;
             /// <summary>
             /// The focusing box at the middle of the list
             /// </summary>
@@ -57,7 +57,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             /// <summary>
             /// The focusing state of the list
             /// </summary>
-            public ListFocusingState FocusingState;
+            public ListFocusingState ListFocusingState;
             /// <summary>
             /// The focusing box at the top of the list
             /// </summary>
@@ -112,8 +112,9 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <summary>
         /// Find the currently focusing box
         /// </summary>
+        /// <param name="contentCount">The number of contents</param>
         /// <returns>The result</returns>
-        public MiddleResult Find()
+        public MiddleResult FindForMiddle(int contentCount)
         {
             var deltaDistance = Mathf.Infinity;
             IListBox candidateBox = null;
@@ -133,12 +134,43 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 candidateBox = box;
             }
 
+            var focusingState =
+                FindFocusingStateForMiddle(candidateBox, deltaDistance, contentCount);
+
             return new MiddleResult {
+                ListFocusingState = focusingState,
                 MiddleFocusing = {
                     Box = candidateBox,
                     AligningDistance = deltaDistance
                 }
             };
+        }
+
+        /// <summary>
+        /// Find the focusing state of the list
+        /// </summary>
+        private ListFocusingState FindFocusingStateForMiddle(
+            IListBox focusingBox, float aligningDistance, int contentCount)
+        {
+            if (_setting.ListType != CircularScrollingList.ListType.Linear)
+                return ListFocusingState.Middle;
+
+            const float tolerance = 1e-4f;
+            var focusingContentID = focusingBox.ContentID;
+            var isReversed = _setting.ReverseContentOrder;
+            var isFirstContent = focusingContentID == 0;
+            var isLastContent = focusingContentID == contentCount - 1;
+
+            if (!(isFirstContent || isLastContent))
+                return ListFocusingState.Middle;
+            if (isReversed ^ isFirstContent
+                && aligningDistance > -tolerance)
+                return ListFocusingState.Top;
+            if (isReversed ^ isLastContent
+                && aligningDistance < tolerance)
+                return ListFocusingState.Bottom;
+
+            return ListFocusingState.Middle;
         }
 
         /// <summary>

@@ -187,47 +187,17 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         private void UpdateListState()
         {
             UpdateFocusingBox();
-            ListFocusingState = UpdateListFocusingState();
         }
-
-        /// <summary>
-        /// Update the focusing state of the list
-        /// </summary>
-        private ListFocusingState UpdateListFocusingState()
-        {
-            if (_setting.ListType != CircularScrollingList.ListType.Linear)
-                return ListFocusingState.Middle;
-
-            const float tolerance = 1e-4f;
-            var centeredContentID = GetFocusingBox().ContentID;
-            var contentCount = _contentProvider.GetContentCount();
-            var isReversed = _setting.ReverseContentOrder;
-            var isFirstContent = centeredContentID == 0;
-            var isLastContent = centeredContentID == contentCount - 1;
-
-            if (!(isFirstContent || isLastContent))
-                return ListFocusingState.Middle;
-            if (isReversed ^ isFirstContent
-                && ShortestDistanceToCenter > -tolerance)
-                return ListFocusingState.Top;
-            if (isReversed ^ isLastContent
-                && ShortestDistanceToCenter < tolerance)
-                return ListFocusingState.Bottom;
-
-            return ListFocusingState.Middle;
-        }
-
-        #endregion
-
-        #region Focused Box
 
         /// <summary>
         /// Update the focusing box
         /// </summary>
         private void UpdateFocusingBox()
         {
-            var result = _focusingBoxFinder.Find();
+            var result =
+                _focusingBoxFinder.FindForMiddle(_contentProvider.GetContentCount());
             var (focusingBox, aligningDistance) = result.MiddleFocusing;
+            ListFocusingState = result.ListFocusingState;
             ShortestDistanceToCenter = aligningDistance;
 
             if (focusingBox == _focusingBox)
