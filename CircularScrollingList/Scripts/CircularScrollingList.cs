@@ -192,7 +192,7 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private void InitializeMembers()
         {
-            if (_listSetting.CenterSelectedBox)
+            if (_listSetting.FocusSelectedBox)
                 _listSetting.OnBoxClick.AddListener(SelectContentID);
             _controlMode = _listSetting.ControlMode;
 

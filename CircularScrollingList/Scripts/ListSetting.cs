@@ -23,9 +23,10 @@ namespace AirFishLab.ScrollingList
         private CircularScrollingList.ControlMode _controlMode =
             CircularScrollingList.ControlMode.Everything;
         [SerializeField]
-        [Tooltip("To align a box in the center of the list after sliding")]
+        [Tooltip("To align a box at the focusing position after sliding")]
         [FormerlySerializedAs("_alignMiddle")]
-        private bool _alignInCenter;
+        [FormerlySerializedAs("_alignInCenter")]
+        private bool _alignAtFocusingPosition;
         [SerializeField]
         [Tooltip("To reverse the scrolling direction")]
         [FormerlySerializedAs("_reverseDirection")]
@@ -36,10 +37,12 @@ namespace AirFishLab.ScrollingList
             CircularScrollingList.Direction.Vertical;
         [SerializeField]
         [Tooltip("Specify the initial content ID for the centered box.")]
-        private int _centeredContentID;
+        [FormerlySerializedAs(" _centeredContentID")]
+        private int _initFocusedContentID;
         [SerializeField]
-        [Tooltip("To center the selected box")]
-        private bool _centerSelectedBox;
+        [Tooltip("Move the selected box to the focusing position")]
+        [FormerlySerializedAs("_centerSelectedBox")]
+        private bool _focusSelectedBox;
         [SerializeField]
         [Tooltip("To show the list contents in the reversed order")]
         [FormerlySerializedAs("_reverseOrder")]
@@ -103,10 +106,11 @@ namespace AirFishLab.ScrollingList
                  "The int parameter is the new content ID.")]
         private ListBoxIntEvent _onCenteredContentChanged;
         [SerializeField]
-        [Tooltip("The callback to be invoked when the centered box is changed. " +
-                 "The first argument is previous centered box, " +
-                 "and the second one is current centered box.")]
-        private ListTwoBoxesEvent _onCenteredBoxChanged;
+        [Tooltip("The callback to be invoked when the focused box is changed. " +
+                 "The first argument is previous focused box, " +
+                 "and the second one is current focused box.")]
+        [FormerlySerializedAs("_onCenteredBoxChanged")]
+        private ListTwoBoxesEvent _onFocusedBoxChanged;
         [SerializeField]
         [Tooltip("The callback to be invoked when the movement is ended")]
         private UnityEvent _onMovementEnd;
@@ -119,11 +123,11 @@ namespace AirFishLab.ScrollingList
         public CircularScrollingList.FocusingPosition FocusingPosition =>
             _focusingPosition;
         public CircularScrollingList.ControlMode ControlMode => _controlMode;
-        public bool AlignInCenter => _alignInCenter;
+        public bool AlignAtFocusingPosition => _alignAtFocusingPosition;
         public bool ReverseScrollingDirection => _reverseScrollingDirection;
         public CircularScrollingList.Direction Direction => _direction;
-        public int CenteredContentID => _centeredContentID;
-        public bool CenterSelectedBox => _centerSelectedBox;
+        public int InitFocusedContentID => _initFocusedContentID;
+        public bool FocusSelectedBox => _focusSelectedBox;
         public bool ReverseContentOrder => _reverseContentOrder;
         public bool InitializeOnStart => _initializeOnStart;
 
@@ -135,7 +139,7 @@ namespace AirFishLab.ScrollingList
 
         public ListBoxIntEvent OnBoxClick => _onBoxClick;
         public ListBoxIntEvent OnCenteredContentChanged => _onCenteredContentChanged;
-        public ListTwoBoxesEvent OnCenteredBoxChanged => _onCenteredBoxChanged;
+        public ListTwoBoxesEvent OnFocusedBoxChanged => _onFocusedBoxChanged;
         public UnityEvent OnMovementEnd => _onMovementEnd;
 
         #endregion

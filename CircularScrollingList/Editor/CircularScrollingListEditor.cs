@@ -131,7 +131,7 @@ namespace AirFishLab.ScrollingList.Editor
             if (HasFlag(
                     _controlMode.intValue,
                     (int)CircularScrollingList.ControlMode.Pointer)) {
-                DrawListSettingProperty("_alignInCenter");
+                DrawListSettingProperty("_alignAtFocusingPosition");
             }
 
             if (HasFlag(
@@ -142,8 +142,8 @@ namespace AirFishLab.ScrollingList.Editor
             --EditorGUI.indentLevel;
 
             DrawListSettingProperty("_direction");
-            DrawListSettingProperty("_centeredContentID");
-            DrawListSettingProperty("_centerSelectedBox");
+            DrawListSettingProperty("_initFocusedContentID");
+            DrawListSettingProperty("_focusSelectedBox");
             DrawListSettingProperty("_reverseContentOrder");
             DrawListSettingProperty("_initializeOnStart");
         }
@@ -179,7 +179,7 @@ namespace AirFishLab.ScrollingList.Editor
             ++EditorGUI.indentLevel;
             DrawListSettingProperty("_onBoxClick");
             DrawListSettingProperty("_onCenteredContentChanged");
-            DrawListSettingProperty("_onCenteredBoxChanged");
+            DrawListSettingProperty("_onFocusedBoxChanged");
             DrawListSettingProperty("_onMovementEnd");
             --EditorGUI.indentLevel;
         }

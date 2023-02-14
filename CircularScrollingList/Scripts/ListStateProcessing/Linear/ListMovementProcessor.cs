@@ -149,7 +149,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
             _freeMovementCtrl = new FreeMovementCtrl(
                 setting.BoxVelocityCurve,
-                setting.AlignInCenter,
+                setting.AlignAtFocusingPosition,
                 exceedingLimit,
                 GetAligningDistance,
                 GetListFocusingState);

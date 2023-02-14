@@ -152,7 +152,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
                 var contentID =
                     _contentProvider.GetInitialContentID(
-                        boxID + setupData.ListSetting.CenteredContentID);
+                        boxID + setupData.ListSetting.InitFocusedContentID);
                 UpdateBoxContent(box, contentID);
             }
 
@@ -235,7 +235,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
             focusingBox.PopToFront();
             _setting.OnCenteredContentChanged.Invoke(focusingBox.ContentID);
-            _setting.OnCenteredBoxChanged.Invoke(
+            _setting.OnFocusedBoxChanged.Invoke(
                 (ListBox)_centeredBox, (ListBox)focusingBox);
             _centeredBox = focusingBox;
         }
