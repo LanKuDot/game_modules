@@ -234,7 +234,6 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 return;
 
             focusingBox.PopToFront();
-            _setting.OnCenteredContentChanged.Invoke(focusingBox.ContentID);
             _setting.OnFocusedBoxChanged.Invoke(
                 (ListBox)_centeredBox, (ListBox)focusingBox);
             _centeredBox = focusingBox;

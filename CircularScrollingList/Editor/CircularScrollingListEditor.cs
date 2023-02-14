@@ -178,7 +178,6 @@ namespace AirFishLab.ScrollingList.Editor
 
             ++EditorGUI.indentLevel;
             DrawListSettingProperty("_onBoxClick");
-            DrawListSettingProperty("_onCenteredContentChanged");
             DrawListSettingProperty("_onFocusedBoxChanged");
             DrawListSettingProperty("_onMovementEnd");
             --EditorGUI.indentLevel;
