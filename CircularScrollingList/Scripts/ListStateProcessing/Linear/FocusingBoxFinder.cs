@@ -92,6 +92,10 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// The baseline position at the bottom of the list
         /// </summary>
         private readonly float _bottomBaseline;
+        /// <summary>
+        /// The tolerance for matching the baseline
+        /// </summary>
+        private const float DISTANCE_TOLERANCE = 1e-4f;
 
         #endregion
 
@@ -155,7 +159,6 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             if (_setting.ListType != CircularScrollingList.ListType.Linear)
                 return ListFocusingState.Middle;
 
-            const float tolerance = 1e-4f;
             var focusingContentID = focusingBox.ContentID;
             var isReversed = _setting.ReverseContentOrder;
             var isFirstContent = focusingContentID == 0;
@@ -164,10 +167,10 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             if (!(isFirstContent || isLastContent))
                 return ListFocusingState.Middle;
             if (isReversed ^ isFirstContent
-                && aligningDistance > -tolerance)
+                && aligningDistance > -DISTANCE_TOLERANCE)
                 return ListFocusingState.Top;
             if (isReversed ^ isLastContent
-                && aligningDistance < tolerance)
+                && aligningDistance < DISTANCE_TOLERANCE)
                 return ListFocusingState.Bottom;
 
             return ListFocusingState.Middle;
