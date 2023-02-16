@@ -138,15 +138,15 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 candidateBox = box;
             }
 
-            var focusingState =
-                FindFocusingStateForMiddle(candidateBox, deltaDistance, contentCount);
+            var focusingBox = new FocusingBox {
+                Box = candidateBox,
+                AligningDistance = deltaDistance
+            };
+            var focusingState = FindFocusingStateForMiddle(focusingBox, contentCount);
 
             return new MiddleResult {
                 ListFocusingState = focusingState,
-                MiddleFocusing = {
-                    Box = candidateBox,
-                    AligningDistance = deltaDistance
-                }
+                MiddleFocusing = focusingBox
             };
         }
 
@@ -154,12 +154,13 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// Find the focusing state of the list
         /// </summary>
         private ListFocusingState FindFocusingStateForMiddle(
-            IListBox focusingBox, float aligningDistance, int contentCount)
+            FocusingBox focusingBox, int contentCount)
         {
             if (_setting.ListType != CircularScrollingList.ListType.Linear)
                 return ListFocusingState.Middle;
 
-            var focusingContentID = focusingBox.ContentID;
+            var (box, aligningDistance) = focusingBox;
+            var focusingContentID = box.ContentID;
             var isReversed = _setting.ReverseContentOrder;
             var isFirstContent = focusingContentID == 0;
             var isLastContent = focusingContentID == contentCount - 1;
