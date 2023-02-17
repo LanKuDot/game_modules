@@ -1,21 +1,25 @@
-﻿namespace AirFishLab.ScrollingList.ListStateProcessing
+﻿using System;
+
+namespace AirFishLab.ScrollingList.ListStateProcessing
 {
     /// <summary>
     /// The state of the list
     /// </summary>
+    [Flags]
     public enum ListFocusingState
     {
+        None = 0,
         /// <summary>
         /// The list reaches the top
         /// </summary>
-        Top,
+        Top = 1 << 0,
         /// <summary>
         /// The list doesn't reach either end
         /// </summary>
-        Middle,
+        Middle = 1 << 1,
         /// <summary>
         /// The list reaches the bottom
         /// </summary>
-        Bottom
+        Bottom = 1 << 2
     }
 }

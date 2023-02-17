@@ -44,6 +44,10 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// The component for getting the list contents
         /// </summary>
         private ListContentProvider _contentProvider;
+        /// <summary>
+        /// The function for updating the focusing box
+        /// </summary>
+        private Action _updateFocusingBoxFunc;
 
         #endregion
 
@@ -70,6 +74,18 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                     _boxes, _setting,
                     _transformController.TopBaseline,
                     _transformController.BottomBaseline);
+
+            switch (_setting.FocusingPosition) {
+                case CircularScrollingList.FocusingPosition.Top:
+                    _updateFocusingBoxFunc = UpdateTopFocusingBox;
+                    break;
+                case CircularScrollingList.FocusingPosition.Center:
+                    _updateFocusingBoxFunc = UpdateCenterFocusingBox;
+                    break;
+                case CircularScrollingList.FocusingPosition.Bottom:
+                    _updateFocusingBoxFunc = UpdateBottomFocusingBox;
+                    break;
+            }
 
             InitializeBoxes(setupData);
         }
@@ -104,7 +120,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 UpdateBoxContent(box, contentID);
             }
 
-            UpdateListState();
+            _updateFocusingBoxFunc();
         }
 
         public void RefreshBoxes(int centeredContentID = -1)
@@ -156,7 +172,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 UpdateBoxContent(box, contentID);
             }
 
-            UpdateListState();
+            _updateFocusingBoxFunc();
             InitializeBoxLayerSorting();
         }
 
@@ -182,22 +198,49 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         #region List State
 
         /// <summary>
-        /// Update the list state
+        /// Update the top focusing box
         /// </summary>
-        private void UpdateListState()
+        private void UpdateTopFocusingBox()
         {
-            UpdateFocusingBox();
+            var result =
+                _focusingBoxFinder.FindForBothEnds(_contentProvider.GetContentCount());
+            var (focusingBox, aligningDistance) = result.TopFocusing;
+            UpdateFocusingBox(
+                focusingBox, aligningDistance, result.ListFocusingState);
+        }
+
+        /// <summary>
+        /// Update the center focusing box
+        /// </summary>
+        private void UpdateCenterFocusingBox()
+        {
+            var result =
+                _focusingBoxFinder.FindForMiddle(_contentProvider.GetContentCount());
+            var (focusingBox, aligningDistance) = result.MiddleFocusing;
+            UpdateFocusingBox(
+                focusingBox, aligningDistance, result.ListFocusingState);
+        }
+
+        /// <summary>
+        /// Update the bottom focusing box
+        /// </summary>
+        private void UpdateBottomFocusingBox()
+        {
+            var result =
+                _focusingBoxFinder.FindForBothEnds(_contentProvider.GetContentCount());
+            var (focusingBox, aligningDistance) = result.BottomFocusing;
+            UpdateFocusingBox(
+                focusingBox, aligningDistance, result.ListFocusingState);
         }
 
         /// <summary>
         /// Update the focusing box
         /// </summary>
-        private void UpdateFocusingBox()
+        private void UpdateFocusingBox(
+            IListBox focusingBox, float aligningDistance,
+            ListFocusingState listFocusingState)
         {
-            var result =
-                _focusingBoxFinder.FindForMiddle(_contentProvider.GetContentCount());
-            var (focusingBox, aligningDistance) = result.MiddleFocusing;
-            ListFocusingState = result.ListFocusingState;
+            ListFocusingState = listFocusingState;
             ShortestDistanceToCenter = aligningDistance;
 
             if (focusingBox == _focusingBox)
@@ -243,7 +286,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 UpdateBoxContent(box, newContentID);
             }
 
-            UpdateListState();
+            _updateFocusingBoxFunc();
         }
 
         /// <summary>

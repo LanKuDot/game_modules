@@ -156,32 +156,17 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         private ListFocusingState FindFocusingStateForMiddle(
             FocusingBox focusingBox, int contentCount)
         {
-            if (_setting.ListType != CircularScrollingList.ListType.Linear)
-                return ListFocusingState.Middle;
-
-            var (box, aligningDistance) = focusingBox;
-            var focusingContentID = box.ContentID;
-            var isReversed = _setting.ReverseContentOrder;
-            var isFirstContent = focusingContentID == 0;
-            var isLastContent = focusingContentID == contentCount - 1;
-
-            if (!(isFirstContent || isLastContent))
-                return ListFocusingState.Middle;
-            if (isReversed ^ isFirstContent
-                && aligningDistance > -DISTANCE_TOLERANCE)
-                return ListFocusingState.Top;
-            if (isReversed ^ isLastContent
-                && aligningDistance < DISTANCE_TOLERANCE)
-                return ListFocusingState.Bottom;
-
-            return ListFocusingState.Middle;
+            return _setting.ListType != CircularScrollingList.ListType.Linear
+                ? ListFocusingState.Middle
+                : FindFocusingState(focusingBox, contentCount);
         }
 
         /// <summary>
         /// Find the focusing boxes at both ends
         /// </summary>
+        /// <param name="contentCount">The number of contents</param>
         /// <returns>The result</returns>
-        public BothEndsResult FindForBothEnds()
+        public BothEndsResult FindForBothEnds(int contentCount)
         {
             var topDeltaDistance = Mathf.Infinity;
             IListBox topCandidateBox = null;
@@ -209,16 +194,72 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 }
             }
 
-            return new BothEndsResult {
-                TopFocusing = new FocusingBox {
-                    Box = topCandidateBox,
-                    AligningDistance = topDeltaDistance
-                },
-                BottomFocusing = new FocusingBox {
-                    Box = bottomCandidateBox,
-                    AligningDistance = bottomDeltaDistance
-                }
+            var topFocusingBox = new FocusingBox {
+                Box = topCandidateBox,
+                AligningDistance = topDeltaDistance
             };
+            var bottomFocusingBox = new FocusingBox {
+                Box = bottomCandidateBox,
+                AligningDistance = bottomDeltaDistance
+            };
+            var focusingState =
+                FindFocusingStateForBothEnds(
+                    topFocusingBox, bottomFocusingBox, contentCount);
+
+            return new BothEndsResult {
+                ListFocusingState = focusingState,
+                TopFocusing = topFocusingBox,
+                BottomFocusing = bottomFocusingBox
+            };
+        }
+
+        /// <summary>
+        /// Find the focusing state of the list
+        /// </summary>
+        private ListFocusingState FindFocusingStateForBothEnds(
+            FocusingBox topFocusingBox, FocusingBox bottomFocusingBox,
+            int contentCount)
+        {
+            if (_setting.ListType == CircularScrollingList.ListType.Circular)
+                return ListFocusingState.Middle;
+
+            var topFocusingState = FindFocusingState(topFocusingBox, contentCount);
+            var bottomFocusingState = FindFocusingState(bottomFocusingBox, contentCount);
+            var focusingState = ListFocusingState.None;
+
+            // It is possible that the showing content is the whole list
+            if (topFocusingState != ListFocusingState.Middle)
+                focusingState |= topFocusingState;
+            if (bottomFocusingState != ListFocusingState.Middle)
+                focusingState |= bottomFocusingState;
+
+            return focusingState == ListFocusingState.None
+                ? ListFocusingState.Middle
+                : focusingState;
+        }
+
+        /// <summary>
+        /// Find the focusing state of the box
+        /// </summary>
+        private ListFocusingState FindFocusingState(
+            FocusingBox focusingBox, int contentCount)
+        {
+            var (box, aligningDistance) = focusingBox;
+            var focusingContentID = box.ContentID;
+            var isReversed = _setting.ReverseContentOrder;
+            var isFirstContent = focusingContentID == 0;
+            var isLastContent = focusingContentID == contentCount - 1;
+
+            if (!(isFirstContent || isLastContent))
+                return ListFocusingState.Middle;
+            if (isReversed ^ isFirstContent
+                && aligningDistance > -DISTANCE_TOLERANCE)
+                return ListFocusingState.Top;
+            if (isReversed ^ isLastContent
+                && aligningDistance < DISTANCE_TOLERANCE)
+                return ListFocusingState.Bottom;
+
+            return ListFocusingState.Middle;
         }
     }
 }
