@@ -61,10 +61,10 @@ namespace AirFishLab.ScrollingList
         Transform GetTransform();
 
         /// <summary>
-        /// Get the box position in the list
+        /// Get the box position factor in the list
         /// </summary>
-        /// <returns>The box position</returns>
-        Vector3 GetPosition();
+        /// <returns>The box position factor</returns>
+        float GetPositionFactor();
 
         /// <summary>
         /// Set the content id of the box

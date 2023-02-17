@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using AirFishLab.ScrollingList.ContentManagement;
-using AirFishLab.ScrollingList.Util;
 using UnityEngine;
 
 namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
@@ -81,10 +79,6 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// </summary>
         private readonly ListSetting _setting;
         /// <summary>
-        /// The function for getting the major position of the position
-        /// </summary>
-        private readonly Func<Vector2, float> _getMajorPosFunc;
-        /// <summary>
         /// The baseline position at the top of the list
         /// </summary>
         private readonly float _topBaseline;
@@ -105,10 +99,6 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         {
             _boxes = boxes;
             _setting = setting;
-            if (setting.Direction == CircularScrollingList.Direction.Horizontal)
-                _getMajorPosFunc = FactorUtility.GetVector2X;
-            else
-                _getMajorPosFunc = FactorUtility.GetVector2Y;
             _topBaseline = topBaseline;
             _bottomBaseline = bottomBaseline;
         }
@@ -128,9 +118,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                     && box.ContentID != ListContentProvider.NO_CONTENT_ID)
                     continue;
 
-                var boxPos = box.GetPosition();
-                var boxDeltaDistance = -_getMajorPosFunc(boxPos);
-
+                var boxDeltaDistance = -box.GetPositionFactor();
                 if (Mathf.Abs(boxDeltaDistance) >= Mathf.Abs(deltaDistance))
                     continue;
 
@@ -178,10 +166,9 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                     && box.ContentID != ListContentProvider.NO_CONTENT_ID)
                     continue;
 
-                var boxPos = box.GetPosition();
-                var majorPos = _getMajorPosFunc(boxPos);
-                var boxTopDeltaDistance = _topBaseline - majorPos;
-                var boxBottomDeltaDistance = _bottomBaseline - majorPos;
+                var positionFactor = box.GetPositionFactor();
+                var boxTopDeltaDistance = _topBaseline - positionFactor;
+                var boxBottomDeltaDistance = _bottomBaseline - positionFactor;
 
                 if (Mathf.Abs(boxTopDeltaDistance) < Mathf.Abs(topDeltaDistance)) {
                     topDeltaDistance = boxTopDeltaDistance;

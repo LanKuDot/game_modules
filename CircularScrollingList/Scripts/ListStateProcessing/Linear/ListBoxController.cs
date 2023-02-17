@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using AirFishLab.ScrollingList.ContentManagement;
-using AirFishLab.ScrollingList.Util;
 using UnityEngine;
 
 namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
@@ -265,14 +264,9 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             var numOfBoxes = _boxes.Count;
             var centeredBoxID = _focusingBox.ListBoxID;
             var reverseFactor = _setting.ReverseContentOrder ? -1 : 1;
-            // TODO Store the pos factor in the boxes
-            var factorFunc =
-                _setting.Direction == CircularScrollingList.Direction.Horizontal
-                    ? (Func<Vector2, float>)FactorUtility.GetVector2X
-                    : FactorUtility.GetVector2Y;
 
             foreach (var box in _boxes) {
-                var posFactor = factorFunc(box.GetPosition());
+                var posFactor = box.GetPositionFactor();
                 var tempBoxID = box.ListBoxID;
 
                 if (tempBoxID > centeredBoxID && posFactor > 0)

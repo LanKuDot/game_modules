@@ -1,4 +1,6 @@
-﻿using AirFishLab.ScrollingList.ContentManagement;
+﻿using System;
+using AirFishLab.ScrollingList.ContentManagement;
+using AirFishLab.ScrollingList.Util;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -30,6 +32,7 @@ namespace AirFishLab.ScrollingList
 
         private GameObject _gameObject;
         private Transform _transform;
+        private Func<Vector2, float> _factorFunc;
 
         #endregion
 
@@ -46,6 +49,11 @@ namespace AirFishLab.ScrollingList
 
             _gameObject = gameObject;
             _transform = transform;
+            if (scrollingList.ListSetting.Direction
+                == CircularScrollingList.Direction.Horizontal)
+                _factorFunc = FactorUtility.GetVector2X;
+            else
+                _factorFunc = FactorUtility.GetVector2Y;
 
             RegisterClickEvent();
         }
@@ -59,9 +67,9 @@ namespace AirFishLab.ScrollingList
             return _transform;
         }
 
-        public Vector3 GetPosition()
+        public float GetPositionFactor()
         {
-            return _transform.localPosition;
+            return _factorFunc(_transform.localPosition);
         }
 
         public void SetContentID(int contentID)
