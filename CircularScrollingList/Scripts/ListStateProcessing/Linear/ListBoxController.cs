@@ -60,7 +60,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
         #endregion
 
-        #region IListBoxManager
+        #region Initialize
 
         public void Initialize(ListSetupData setupData)
         {
@@ -89,6 +89,56 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
             InitializeBoxes(setupData);
         }
+
+        /// <summary>
+        /// Initialize the boxes
+        /// </summary>
+        private void InitializeBoxes(ListSetupData setupData)
+        {
+            var numOfBoxes = _boxes.Count;
+            for (var boxID = 0; boxID < numOfBoxes; ++boxID) {
+                var box = _boxes[boxID];
+                var lastListBox =
+                    _boxes[(int)Mathf.Repeat(boxID - 1, numOfBoxes)];
+                var nextListBox =
+                    _boxes[(int)Mathf.Repeat(boxID + 1, numOfBoxes)];
+                box.Initialize(
+                    setupData.ScrollingList,
+                    boxID, lastListBox, nextListBox);
+                box.OnBoxClick.AddListener(_setting.OnBoxClick.Invoke);
+
+                _transformController.SetInitialLocalTransform(box.GetTransform(), boxID);
+
+                var contentID =
+                    _contentProvider.GetInitialContentID(
+                        boxID + setupData.ListSetting.InitFocusedContentID);
+                UpdateBoxContent(box, contentID);
+            }
+
+            _updateFocusingBoxFunc();
+            InitializeBoxLayerSorting();
+        }
+
+        /// <summary>
+        /// Initialize the sorting of the image of the boxes
+        /// </summary>
+        private void InitializeBoxLayerSorting()
+        {
+            var centeredBoxIndex = 0;
+            var numOfBoxes = _boxes.Count;
+            for (; centeredBoxIndex < numOfBoxes; ++centeredBoxIndex)
+                if (_boxes[centeredBoxIndex] == _focusingBox)
+                    break;
+
+            for (var i = centeredBoxIndex - 1; i >= 0; --i)
+                _boxes[i].PushToBack();
+            for (var i = centeredBoxIndex + 1; i < numOfBoxes; ++i)
+                _boxes[i].PushToBack();
+        }
+
+        #endregion
+
+        #region Box Updating
 
         public void UpdateBoxes(float movementValue)
         {
@@ -142,56 +192,6 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         }
 
         public IListBox GetFocusingBox() => _focusingBox;
-
-        #endregion
-
-        #region Initialization
-
-        /// <summary>
-        /// Initialize the boxes
-        /// </summary>
-        private void InitializeBoxes(ListSetupData setupData)
-        {
-            var numOfBoxes = _boxes.Count;
-            for (var boxID = 0; boxID < numOfBoxes; ++boxID) {
-                var box = _boxes[boxID];
-                var lastListBox =
-                    _boxes[(int)Mathf.Repeat(boxID - 1, numOfBoxes)];
-                var nextListBox =
-                    _boxes[(int)Mathf.Repeat(boxID + 1, numOfBoxes)];
-                box.Initialize(
-                    setupData.ScrollingList,
-                    boxID, lastListBox, nextListBox);
-                box.OnBoxClick.AddListener(_setting.OnBoxClick.Invoke);
-
-                _transformController.SetInitialLocalTransform(box.GetTransform(), boxID);
-
-                var contentID =
-                    _contentProvider.GetInitialContentID(
-                        boxID + setupData.ListSetting.InitFocusedContentID);
-                UpdateBoxContent(box, contentID);
-            }
-
-            _updateFocusingBoxFunc();
-            InitializeBoxLayerSorting();
-        }
-
-        /// <summary>
-        /// Initialize the sorting of the image of the boxes
-        /// </summary>
-        private void InitializeBoxLayerSorting()
-        {
-            var centeredBoxIndex = 0;
-            var numOfBoxes = _boxes.Count;
-            for (; centeredBoxIndex < numOfBoxes; ++centeredBoxIndex)
-                if (_boxes[centeredBoxIndex] == _focusingBox)
-                    break;
-
-            for (var i = centeredBoxIndex - 1; i >= 0; --i)
-                _boxes[i].PushToBack();
-            for (var i = centeredBoxIndex + 1; i < numOfBoxes; ++i)
-                _boxes[i].PushToBack();
-        }
 
         #endregion
 
