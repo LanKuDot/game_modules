@@ -32,6 +32,10 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// </summary>
         private readonly List<IListBox> _boxes = new List<IListBox>();
         /// <summary>
+        /// The container for storing the boxes to be updated
+        /// </summary>
+        private readonly List<IListBox> _boxesToBeUpdated = new List<IListBox>();
+        /// <summary>
         /// The component for controlling the box transform
         /// </summary>
         private BoxTransformController _transformController;
@@ -144,30 +148,23 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             if (Mathf.Approximately(movementValue, 0f))
                 return;
 
+            var allPositionStatuses = BoxPositionState.Nothing;
             foreach (var box in _boxes) {
                 var positionStatus =
                     _transformController.UpdateLocalTransform(
                         box.GetTransform(), movementValue);
-                var contentID = box.ContentID;
-                switch (positionStatus) {
-                    case BoxPositionState.Nothing:
-                        continue;
-                    case BoxPositionState.JumpToTop:
-                        box.PushToBack();
-                        contentID =
-                            _contentProvider.GetContentIDByNextBox(
-                                box.NextListBox.ContentID);
-                        break;
-                    case BoxPositionState.JumpToBottom:
-                        box.PushToBack();
-                        contentID =
-                            _contentProvider.GetContentIDByLastBox(
-                                box.LastListBox.ContentID);
-                        break;
-                }
 
-                UpdateBoxContent(box, contentID);
+                if (positionStatus == BoxPositionState.Nothing)
+                    continue;
+
+                _boxesToBeUpdated.Add(box);
+                // The position statuses of all boxes updated in a single call
+                // are the same
+                allPositionStatuses = positionStatus;
             }
+
+            UpdateBoxesInOrder(_boxesToBeUpdated, allPositionStatuses);
+            _boxesToBeUpdated.Clear();
 
             _updateFocusingBoxFunc();
         }
@@ -191,6 +188,50 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         }
 
         public IListBox GetFocusingBox() => _focusingBox;
+
+        /// <summary>
+        /// Update the multiple boxes in their position order
+        /// </summary>
+        /// <param name="boxes">The boxes to be updated</param>
+        /// <param name="positionState">The position state of these boxes</param>
+        private void UpdateBoxesInOrder(
+            List<IListBox> boxes, BoxPositionState positionState)
+        {
+            if (positionState == BoxPositionState.Nothing)
+                return;
+
+            switch (positionState) {
+                case BoxPositionState.JumpToTop:
+                    // The lower one is updated first
+                    boxes.Sort((a, b) =>
+                        a.GetPositionFactor().CompareTo(b.GetPositionFactor()));
+
+                    foreach (var box in boxes) {
+                        var contentID =
+                            _contentProvider.GetContentIDByNextBox(
+                                box.NextListBox.ContentID);
+                        box.PushToBack();
+                        UpdateBoxContent(box, contentID);
+                    }
+
+                    break;
+
+                case BoxPositionState.JumpToBottom:
+                    // The higher one is updated first
+                    boxes.Sort((a, b) =>
+                        b.GetPositionFactor().CompareTo(a.GetPositionFactor()));
+
+                    foreach (var box in boxes) {
+                        var contentID =
+                            _contentProvider.GetContentIDByLastBox(
+                                box.LastListBox.ContentID);
+                        box.PushToBack();
+                        UpdateBoxContent(box, contentID);
+                    }
+
+                    break;
+            }
+        }
 
         #endregion
 
