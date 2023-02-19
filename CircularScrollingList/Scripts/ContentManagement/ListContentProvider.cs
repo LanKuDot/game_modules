@@ -68,14 +68,41 @@ namespace AirFishLab.ScrollingList.ContentManagement
         /// <returns>The content ID</returns>
         public int GetInitialContentID(int listBoxID)
         {
-            if (GetContentCount() == 0)
+            var contentCount = GetContentCount();
+            if (contentCount == 0)
                 return NO_CONTENT_ID;
 
-            var contentID =
-                _listSetting.ReverseContentOrder
-                    ? _numOfBoxes / 2 - listBoxID
-                    : listBoxID - _numOfBoxes / 2;
-            contentID += _listSetting.InitFocusedContentID;
+            var contentID = 0;
+            var initFocusedContentID = _listSetting.InitFocusedContentID;
+            switch (_listSetting.FocusingPosition) {
+                case CircularScrollingList.FocusingPosition.Top:
+                case CircularScrollingList.FocusingPosition.Bottom:
+                    if (contentCount <= _numOfBoxes)
+                        initFocusedContentID = 0;
+                    else {
+                        var numOfLackingContents =
+                            contentCount - initFocusedContentID - _numOfBoxes;
+                        if (numOfLackingContents < 0)
+                            initFocusedContentID += numOfLackingContents;
+                    }
+
+                    // The reverse content order will be true,
+                    // if focusing position is 'bottom'.
+                    // Otherwise, it will be false.
+                    contentID =
+                        _listSetting.ReverseContentOrder
+                            ? _numOfBoxes - 1 - listBoxID + initFocusedContentID
+                            : listBoxID + initFocusedContentID;
+                    break;
+
+                case CircularScrollingList.FocusingPosition.Center:
+                    contentID =
+                        _listSetting.ReverseContentOrder
+                            ? _numOfBoxes / 2 - listBoxID
+                            : listBoxID - _numOfBoxes / 2;
+                    contentID += initFocusedContentID;
+                    break;
+            }
 
             return _idCalculationFunc(contentID);
         }
