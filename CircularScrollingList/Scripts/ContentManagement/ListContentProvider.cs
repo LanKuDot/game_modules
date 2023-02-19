@@ -75,6 +75,7 @@ namespace AirFishLab.ScrollingList.ContentManagement
                 _listSetting.ReverseContentOrder
                     ? _numOfBoxes / 2 - listBoxID
                     : listBoxID - _numOfBoxes / 2;
+            contentID += _listSetting.InitFocusedContentID;
 
             return _idCalculationFunc(contentID);
         }

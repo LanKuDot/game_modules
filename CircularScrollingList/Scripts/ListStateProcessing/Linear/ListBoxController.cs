@@ -113,8 +113,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 _transformController.SetInitialLocalTransform(box.GetTransform(), boxID);
 
                 var contentID =
-                    _contentProvider.GetInitialContentID(
-                        boxID + setupData.ListSetting.InitFocusedContentID);
+                    _contentProvider.GetInitialContentID(boxID);
                 UpdateBoxContent(box, contentID);
             }
 
