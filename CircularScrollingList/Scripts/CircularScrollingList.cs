@@ -169,6 +169,9 @@ namespace AirFishLab.ScrollingList
             if (_isInitialized)
                 return;
 
+            _boxSetting.Validate(gameObject);
+            _listSetting.Validate();
+
             GetComponentReference();
             SetListBoxes();
             InitializeMembers();
@@ -219,8 +222,6 @@ namespace AirFishLab.ScrollingList
         /// </summary>
         private void SetListBoxes()
         {
-            _boxSetting.Validate(gameObject);
-
             var prefab = _boxSetting.BoxPrefab;
             var rootTransform = _boxSetting.BoxRootTransform;
             var numOfBoxes = _boxSetting.NumOfBoxes;

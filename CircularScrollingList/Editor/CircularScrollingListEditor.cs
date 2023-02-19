@@ -15,7 +15,7 @@ namespace AirFishLab.ScrollingList.Editor
 
             DrawPropertyField("_listBank");
             DrawBoxSetting();
-            DrawSetting();
+            DrawListSetting();
 
             if (_toGenerateBoxes)
                 GenerateBoxesAndArrange();
@@ -88,6 +88,7 @@ namespace AirFishLab.ScrollingList.Editor
         #region List Setting Property Drawer
 
         private SerializedProperty _listSettingProperty;
+        private SerializedProperty _focusingPosition;
         private SerializedProperty _controlMode;
 
         private SerializedProperty GetListSettingProperty(string path)
@@ -100,7 +101,7 @@ namespace AirFishLab.ScrollingList.Editor
             EditorGUILayout.PropertyField(GetListSettingProperty(path));
         }
 
-        private void DrawSetting()
+        private void DrawListSetting()
         {
             _listSettingProperty = serializedObject.FindProperty("_listSetting");
             _listSettingProperty.isExpanded =
@@ -110,6 +111,7 @@ namespace AirFishLab.ScrollingList.Editor
 
             ++EditorGUI.indentLevel;
 
+            _focusingPosition = GetListSettingProperty("_focusingPosition");
             _controlMode = GetListSettingProperty("_controlMode");
             DrawListMode();
             EditorGUILayout.Space();
@@ -144,7 +146,9 @@ namespace AirFishLab.ScrollingList.Editor
             DrawListSettingProperty("_direction");
             DrawListSettingProperty("_initFocusedContentID");
             DrawListSettingProperty("_focusSelectedBox");
-            DrawListSettingProperty("_reverseContentOrder");
+            if (_focusingPosition.intValue ==
+                (int)CircularScrollingList.FocusingPosition.Center)
+                DrawListSettingProperty("_reverseContentOrder");
             DrawListSettingProperty("_initializeOnStart");
         }
 

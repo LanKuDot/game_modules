@@ -44,7 +44,8 @@ namespace AirFishLab.ScrollingList
         [FormerlySerializedAs("_centerSelectedBox")]
         private bool _focusSelectedBox;
         [SerializeField]
-        [Tooltip("To show the list contents in the reversed order")]
+        [Tooltip("To show the list contents in the reversed order. "
+                 + "Available when the 'focusingPosition' is 'center'")]
         [FormerlySerializedAs("_reverseOrder")]
         private bool _reverseContentOrder;
         [SerializeField]
@@ -135,6 +136,25 @@ namespace AirFishLab.ScrollingList
         public ListBoxIntEvent OnBoxClick => _onBoxClick;
         public ListTwoBoxesEvent OnFocusingBoxChanged => _onFocusingBoxChanged;
         public UnityEvent OnMovementEnd => _onMovementEnd;
+
+        #endregion
+
+        #region Public Functions
+
+        /// <summary>
+        /// Validate the settings
+        /// </summary>
+        public void Validate()
+        {
+            switch (_focusingPosition) {
+                case CircularScrollingList.FocusingPosition.Top:
+                    _reverseContentOrder = false;
+                    break;
+                case CircularScrollingList.FocusingPosition.Bottom:
+                    _reverseContentOrder = true;
+                    break;
+            }
+        }
 
         #endregion
     }
