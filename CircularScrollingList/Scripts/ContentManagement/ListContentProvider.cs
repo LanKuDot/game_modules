@@ -77,7 +77,11 @@ namespace AirFishLab.ScrollingList.ContentManagement
             switch (_listSetting.FocusingPosition) {
                 case CircularScrollingList.FocusingPosition.Top:
                 case CircularScrollingList.FocusingPosition.Bottom:
-                    if (contentCount <= _numOfBoxes)
+                    if (_listSetting.ListType
+                        == CircularScrollingList.ListType.Circular)
+                        // No need to do content adjusting in the circular mode
+                        contentID = 0;
+                    else if (contentCount <= _numOfBoxes)
                         initFocusedContentID = 0;
                     else {
                         var numOfLackingContents =
