@@ -142,12 +142,25 @@ namespace AirFishLab.ScrollingList.ContentManagement
         /// </summary>
         /// <param name="contentID">The content id</param>
         /// <returns>The state of the id</returns>
-        public ContentIDState GetIDState(int contentID) =>
-            contentID < 0
+        public ContentIDState GetIDState(int contentID)
+        {
+            var contentCount = _listBank.GetContentCount();
+            var state = contentID < 0
                 ? ContentIDState.Underflow
-                : contentID >= _listBank.GetContentCount()
+                : contentID >= contentCount
                     ? ContentIDState.Overflow
                     : ContentIDState.Valid;
+
+            if (state != ContentIDState.Valid)
+                return state;
+
+            if (contentID == 0)
+                state |= ContentIDState.First;
+            if (contentID == contentCount - 1)
+                state |= ContentIDState.Last;
+
+            return state;
+        }
 
         /// <summary>
         /// Is the content id valid for getting the list content?

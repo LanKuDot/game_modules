@@ -358,7 +358,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 return;
 
             var isPreviouslyActivated = box.IsActivated;
-            var isIdValid = idState == ContentIDState.Valid;
+            var isIdValid = idState.HasFlag(ContentIDState.Valid);
 
             if (!isIdValid && isPreviouslyActivated)
                 box.IsActivated = false;
