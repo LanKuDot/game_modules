@@ -150,8 +150,8 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
             var exceedingDistance = _getAligningDistance() * -1 + deltaDistance;
 
-            if ((state == ListFocusingState.Bottom && exceedingDistance < 0)
-                || (state == ListFocusingState.Top && exceedingDistance > 0))
+            if ((state.HasFlag(ListFocusingState.Bottom) && exceedingDistance < 0)
+                || (state.HasFlag(ListFocusingState.Top) && exceedingDistance > 0))
                 return false;
 
             return Mathf.Abs(exceedingDistance) > _bouncingDeltaPos;
