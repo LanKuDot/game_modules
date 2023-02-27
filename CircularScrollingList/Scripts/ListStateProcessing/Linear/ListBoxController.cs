@@ -244,11 +244,14 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             var result =
                 _focusingBoxFinder.FindForBothEnds(_contentProvider.GetContentCount());
             var topFocusing = result.TopFocusing;
+            var topBoxIDState =
+                _contentProvider.GetIDState(topFocusing.Box.ContentID);
             var bottomFocusing = result.BottomFocusing;
             var bottomBoxIDState =
                 _contentProvider.GetIDState(bottomFocusing.Box.ContentID);
             var aligningDistance =
                 bottomBoxIDState.HasFlag(ContentIDState.Last)
+                && !topBoxIDState.HasFlag(ContentIDState.First)
                     ? bottomFocusing.AligningDistance
                     : topFocusing.AligningDistance;
 
@@ -276,11 +279,14 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             var result =
                 _focusingBoxFinder.FindForBothEnds(_contentProvider.GetContentCount());
             var topFocusing = result.TopFocusing;
-            var bottomFocusing = result.BottomFocusing;
             var topBoxIDState =
                 _contentProvider.GetIDState(topFocusing.Box.ContentID);
+            var bottomFocusing = result.BottomFocusing;
+            var bottomBoxIDState =
+                _contentProvider.GetIDState(bottomFocusing.Box.ContentID);
             var aligningDistance =
                 topBoxIDState.HasFlag(ContentIDState.Last)
+                && !bottomBoxIDState.HasFlag(ContentIDState.First)
                     ? topFocusing.AligningDistance
                     : bottomFocusing.AligningDistance;
 
