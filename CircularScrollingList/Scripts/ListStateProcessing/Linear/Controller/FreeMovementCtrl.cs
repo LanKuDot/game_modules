@@ -147,10 +147,9 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 if (!IsGoingTooFar(distance))
                     return distance;
 
-                var exceedingDistance = _getAligningDistance() * -1;
-                var limit =
-                    _exceedingDistanceLimit * Mathf.Sign(exceedingDistance);
-                distance = limit - exceedingDistance;
+                var curDistance = _getAligningDistance() * -1;
+                var limit = _exceedingDistanceLimit * Mathf.Sign(distance);
+                distance = limit - curDistance;
             }
             /* Aligning */
             else if (!_aligningMovementCurve.IsMovementEnded()) {
@@ -201,10 +200,17 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <param name="nextDistance">The next moving distance</param>
         private bool IsGoingTooFar(float nextDistance)
         {
-            return
-                (_getFocusingStateFunc() != ListFocusingState.Middle)
-                && Mathf.Abs(_getAligningDistance() * -1 + nextDistance)
-                    > _exceedingDistanceLimit;
+            var state = _getFocusingStateFunc();
+            if (state == ListFocusingState.Middle)
+                return false;
+
+            var exceedingDistance = _getAligningDistance() * -1 + nextDistance;
+
+            if ((state.HasFlag(ListFocusingState.Bottom) && exceedingDistance < 0)
+                || (state.HasFlag(ListFocusingState.Top) && exceedingDistance > 0))
+                return false;
+
+            return Mathf.Abs(exceedingDistance) > _exceedingDistanceLimit;
         }
     }
 }
