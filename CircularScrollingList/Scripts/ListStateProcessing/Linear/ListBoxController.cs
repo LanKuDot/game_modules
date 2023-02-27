@@ -243,9 +243,17 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         {
             var result =
                 _focusingBoxFinder.FindForBothEnds(_contentProvider.GetContentCount());
-            var (focusingBox, aligningDistance) = result.TopFocusing;
+            var topFocusing = result.TopFocusing;
+            var bottomFocusing = result.BottomFocusing;
+            var bottomBoxIDState =
+                _contentProvider.GetIDState(bottomFocusing.Box.ContentID);
+            var aligningDistance =
+                bottomBoxIDState.HasFlag(ContentIDState.Last)
+                    ? bottomFocusing.AligningDistance
+                    : topFocusing.AligningDistance;
+
             UpdateFocusingBox(
-                focusingBox, aligningDistance, result.ListFocusingState);
+                topFocusing.Box, aligningDistance, result.ListFocusingState);
         }
 
         /// <summary>
@@ -267,9 +275,17 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         {
             var result =
                 _focusingBoxFinder.FindForBothEnds(_contentProvider.GetContentCount());
-            var (focusingBox, aligningDistance) = result.BottomFocusing;
+            var topFocusing = result.TopFocusing;
+            var bottomFocusing = result.BottomFocusing;
+            var topBoxIDState =
+                _contentProvider.GetIDState(topFocusing.Box.ContentID);
+            var aligningDistance =
+                topBoxIDState.HasFlag(ContentIDState.Last)
+                    ? topFocusing.AligningDistance
+                    : bottomFocusing.AligningDistance;
+
             UpdateFocusingBox(
-                focusingBox, aligningDistance, result.ListFocusingState);
+                bottomFocusing.Box, aligningDistance, result.ListFocusingState);
         }
 
         /// <summary>
