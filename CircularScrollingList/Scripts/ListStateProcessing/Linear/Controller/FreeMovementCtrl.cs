@@ -40,6 +40,10 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// </summary>
         private readonly bool _toAlign;
         /// <summary>
+        /// The maximum delta distance for a movement
+        /// </summary>
+        private readonly float _maxDraggingDistance;
+        /// <summary>
         /// How far could the 1ist exceed the end?
         /// </summary>
         private readonly float _exceedingDistanceLimit;
@@ -67,6 +71,9 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// The x axis is the moving duration, and the y axis is the factor.
         /// </param>
         /// <param name="toAlign">Is it need to aligning after a movement?</param>
+        /// <param name="maxDraggingDistance">
+        /// The maximum delta distance for a movement
+        /// </param>
         /// <param name="exceedingDistanceLimit">
         /// How far could the list exceed the end?
         /// </param>
@@ -79,6 +86,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         public FreeMovementCtrl(
             AnimationCurve releasingCurve,
             bool toAlign,
+            float maxDraggingDistance,
             float exceedingDistanceLimit,
             Func<float> getAligningDistance,
             Func<ListFocusingState> getFocusingStateFunc)
@@ -91,6 +99,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                         new Keyframe(0.25f, 1.0f, 0.0f, 0.0f)
                     ));
             _toAlign = toAlign;
+            _maxDraggingDistance = maxDraggingDistance;
             _exceedingDistanceLimit = exceedingDistanceLimit;
             _getAligningDistance = getAligningDistance;
             _getFocusingStateFunc = getFocusingStateFunc;
@@ -109,7 +118,8 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             _isDragging = isDragging;
 
             if (isDragging) {
-                _draggingDistance = value;
+                _draggingDistance =
+                    Mathf.Min(Mathf.Abs(value), _maxDraggingDistance) * Mathf.Sign(value);
 
                 // End the last movement when start dragging
                 _aligningMovementCurve.EndMovement();
