@@ -1,5 +1,4 @@
 ﻿using System;
-using AirFishLab.ScrollingList.ListStateProcessing;
 using UnityEngine;
 
 namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
@@ -147,6 +146,8 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         public float GetDistance(float deltaTime)
         {
             var distance = 0.0f;
+            var curDistance = _getAligningDistance() * -1;
+            var state = _getFocusingStateFunc();
 
             /* If it's dragging, return the dragging distance set from `SetMovement()` */
             if (_isDragging) {
@@ -154,10 +155,10 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 // The dragging distance is only valid for one frame
                 _draggingDistance = 0;
 
-                if (!IsGoingTooFar(distance))
+                if (!MovementUtility.IsGoingToFar(
+                        state, _exceedingDistanceLimit, curDistance + distance))
                     return distance;
 
-                var curDistance = _getAligningDistance() * -1;
                 var limit = _exceedingDistanceLimit * Mathf.Sign(distance);
                 distance = limit - curDistance;
             }
@@ -169,7 +170,9 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             else if (!_releasingMovementCurve.IsMovementEnded()) {
                 distance = _releasingMovementCurve.GetDistance(deltaTime);
 
-                if (!IsGoingTooFar(distance) && !IsTooSlow())
+                if (!MovementUtility.IsGoingToFar(
+                        state, _exceedingDistanceLimit, curDistance + distance)
+                    && !IsTooSlow())
                     return distance;
 
                 // Make the releasing movement end
@@ -202,28 +205,6 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             return
                 _toAlign &&
                 Mathf.Abs(_releasingMovementCurve.lastVelocity) < _stopVelocityThreshold;
-        }
-
-        /// <summary>
-        /// Check if the moving distance of list exceeds the over-going threshold or not
-        /// </summary>
-        /// <param name="distance">The moving distance</param>
-        private bool IsGoingTooFar(float distance)
-        {
-            var state = _getFocusingStateFunc();
-            if (state == ListFocusingState.Middle)
-                return false;
-
-            var finalDistance = _getAligningDistance() * -1 + distance;
-
-            if (state == ListFocusingState.TopAndBottom)
-                return Mathf.Abs(finalDistance) > _exceedingDistanceLimit;
-
-            if ((state.HasFlag(ListFocusingState.Bottom) && finalDistance < 0)
-                || (state.HasFlag(ListFocusingState.Top) && finalDistance > 0))
-                return false;
-
-            return Mathf.Abs(finalDistance) > _exceedingDistanceLimit;
         }
     }
 }

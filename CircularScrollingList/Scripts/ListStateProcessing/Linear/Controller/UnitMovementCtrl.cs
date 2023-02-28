@@ -20,9 +20,9 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// </summary>
         private readonly DistanceMovementCurve _bouncingMovementCurve;
         /// <summary>
-        /// The delta position for the bouncing effect
+        /// How far could the 1ist exceed the end?
         /// </summary>
-        private readonly float _bouncingDeltaPos;
+        private readonly float _exceedingDistanceLimit;
         /// <summary>
         /// The function that returns the distance for aligning
         /// </summary>
@@ -39,8 +39,8 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// The curve that defines the distance factor.
         /// The x axis is the moving duration, and y axis is the factor value.
         /// </param>
-        /// <param name="bouncingDeltaPos">
-        /// The delta position for bouncing effect
+        /// <param name="exceedingDistanceLimit">
+        /// How far could the 1ist exceed the end?
         /// </param>
         /// <param name="getAligningDistance">
         /// The function that evaluates the distance for aligning
@@ -50,7 +50,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// </param>
         public UnitMovementCtrl(
             AnimationCurve movementCurve,
-            float bouncingDeltaPos,
+            float exceedingDistanceLimit,
             Func<float> getAligningDistance,
             Func<ListFocusingState> getFocusingStateFunc)
         {
@@ -61,7 +61,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
             _unitMovementCurve = new DistanceMovementCurve(movementCurve);
             _bouncingMovementCurve = new DistanceMovementCurve(bouncingCurve);
-            _bouncingDeltaPos = bouncingDeltaPos;
+            _exceedingDistanceLimit = exceedingDistanceLimit;
             _getAligningDistance = getAligningDistance;
             _getFocusingStateFunc = getFocusingStateFunc;
         }
@@ -86,7 +86,8 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
             if ((state == ListFocusingState.Top && movingDirection < 0) ||
                 (state == ListFocusingState.Bottom && movingDirection > 0)) {
-                _bouncingMovementCurve.SetMovement(movingDirection * _bouncingDeltaPos);
+                _bouncingMovementCurve.SetMovement(
+                    movingDirection * _exceedingDistanceLimit);
                 _unitMovementCurve.EndMovement();
             } else {
                 distanceAdded += _unitMovementCurve.distanceRemaining;
@@ -114,15 +115,18 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 return _bouncingMovementCurve.GetDistance(deltaTime);
             }
 
+            var state = _getFocusingStateFunc();
             var distance = _unitMovementCurve.GetDistance(deltaTime);
+            var curDistance = _getAligningDistance() * -1;
 
-            if (!NeedToBounceBack(distance))
+            if (!MovementUtility.IsGoingToFar(
+                    state, _exceedingDistanceLimit, curDistance + distance))
                 return distance;
 
             // Make the unit movement end
             _unitMovementCurve.EndMovement();
 
-            _bouncingMovementCurve.SetMovement(-1 * _getAligningDistance());
+            _bouncingMovementCurve.SetMovement(curDistance);
             // Start at the furthest point to move back
             _bouncingMovementCurve.GetDistance(0.125f);
             return _bouncingMovementCurve.GetDistance(deltaTime);
@@ -132,31 +136,6 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         {
             _unitMovementCurve.EndMovement();
             _bouncingMovementCurve.EndMovement();
-        }
-
-        /// <summary>
-        /// Check whether the list needs to bounce back
-        /// </summary>
-        /// <param name="deltaDistance">The next delta distance</param>
-        /// <returns>
-        /// Return true if the list exceeds the end for a distance or
-        /// the unit movement is ended.
-        /// </returns>
-        private bool NeedToBounceBack(float deltaDistance)
-        {
-            var state = _getFocusingStateFunc();
-            if (state == ListFocusingState.Middle)
-                return false;
-            if (state == ListFocusingState.TopAndBottom)
-                return true;
-
-            var exceedingDistance = _getAligningDistance() * -1 + deltaDistance;
-
-            if ((state.HasFlag(ListFocusingState.Bottom) && exceedingDistance < 0)
-                || (state.HasFlag(ListFocusingState.Top) && exceedingDistance > 0))
-                return false;
-
-            return Mathf.Abs(exceedingDistance) > _bouncingDeltaPos;
         }
     }
 }
