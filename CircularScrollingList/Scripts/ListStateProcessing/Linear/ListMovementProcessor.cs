@@ -1,5 +1,4 @@
 ﻿using System;
-using AirFishLab.ScrollingList.ListStateProcessing.Linear;
 using AirFishLab.ScrollingList.Util;
 using UnityEngine;
 
@@ -150,7 +149,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             _freeMovementCtrl = new FreeMovementCtrl(
                 setting.BoxVelocityCurve,
                 setting.AlignAtFocusingPosition,
-                _unitPos,
+                _unitPos * 1.2f,
                 exceedingLimit,
                 GetAligningDistance,
                 GetListFocusingState);
