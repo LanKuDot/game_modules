@@ -235,12 +235,12 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
             if (!(isFirstContent || isLastContent))
                 return ListFocusingState.Middle;
-            if (isReversed ^ isFirstContent)
-                return ListFocusingState.Top;
-            if (isReversed ^ isLastContent)
-                return ListFocusingState.Bottom;
+            if (isFirstContent && isLastContent)
+                return ListFocusingState.TopAndBottom;
 
-            return ListFocusingState.Middle;
+            return isReversed ^ isFirstContent
+                ? ListFocusingState.Top
+                : ListFocusingState.Bottom;
         }
     }
 }

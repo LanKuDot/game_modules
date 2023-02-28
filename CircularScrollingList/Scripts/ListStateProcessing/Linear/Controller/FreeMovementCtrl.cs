@@ -207,20 +207,23 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <summary>
         /// Check if the moving distance of list exceeds the over-going threshold or not
         /// </summary>
-        /// <param name="nextDistance">The next moving distance</param>
-        private bool IsGoingTooFar(float nextDistance)
+        /// <param name="distance">The moving distance</param>
+        private bool IsGoingTooFar(float distance)
         {
             var state = _getFocusingStateFunc();
             if (state == ListFocusingState.Middle)
                 return false;
 
-            var exceedingDistance = _getAligningDistance() * -1 + nextDistance;
+            var finalDistance = _getAligningDistance() * -1 + distance;
 
-            if ((state.HasFlag(ListFocusingState.Bottom) && exceedingDistance < 0)
-                || (state.HasFlag(ListFocusingState.Top) && exceedingDistance > 0))
+            if (state == ListFocusingState.TopAndBottom)
+                return Mathf.Abs(finalDistance) > _exceedingDistanceLimit;
+
+            if ((state.HasFlag(ListFocusingState.Bottom) && finalDistance < 0)
+                || (state.HasFlag(ListFocusingState.Top) && finalDistance > 0))
                 return false;
 
-            return Mathf.Abs(exceedingDistance) > _exceedingDistanceLimit;
+            return Mathf.Abs(finalDistance) > _exceedingDistanceLimit;
         }
     }
 }

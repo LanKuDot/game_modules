@@ -20,6 +20,10 @@ namespace AirFishLab.ScrollingList.ListStateProcessing
         /// <summary>
         /// The list reaches the bottom
         /// </summary>
-        Bottom = 1 << 2
+        Bottom = 1 << 2,
+        /// <summary>
+        /// The list is showing the top and the bottom at the same time
+        /// </summary>
+        TopAndBottom = Top | Bottom
     }
 }

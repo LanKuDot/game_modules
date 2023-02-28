@@ -147,6 +147,8 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             var state = _getFocusingStateFunc();
             if (state == ListFocusingState.Middle)
                 return false;
+            if (state == ListFocusingState.TopAndBottom)
+                return true;
 
             var exceedingDistance = _getAligningDistance() * -1 + deltaDistance;
 
