@@ -1,29 +1,32 @@
-﻿using AirFishLab.ScrollingList.ContentManagement;
+﻿using System.Collections.Generic;
+using AirFishLab.ScrollingList.ContentManagement;
+using UnityEngine;
 
 namespace AirFishLab.ScrollingList.Demo
 {
     public class IntListBank : BaseListBank
     {
-        private readonly int[] _contents = {
-            1, 2, 3, 4, 5, 6, 7, 8, 9, 10
-        };
+        [SerializeField]
+        private int _numOfContents = 10;
 
-        private readonly Content _contentWrapper = new Content();
+        private readonly List<int> _contents = new List<int>();
+        private readonly IntListContent _contentWrapper = new IntListContent();
+
+        private void Awake()
+        {
+            for (var i = 0; i < _numOfContents; ++i)
+                _contents.Add(i + 1);
+        }
 
         public override IListContent GetListContent(int index)
         {
-            _contentWrapper.Value = index;
+            _contentWrapper.Value = _contents[index];
             return _contentWrapper;
         }
 
         public override int GetContentCount()
         {
-            return _contents.Length;
-        }
-
-        public class Content : IListContent
-        {
-            public int Value;
+            return _contents.Count;
         }
     }
 }

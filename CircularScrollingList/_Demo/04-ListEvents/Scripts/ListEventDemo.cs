@@ -18,7 +18,7 @@ namespace AirFishLab.ScrollingList.Demo
         {
             var contentID = _list.GetFocusingContentID();
             var centeredContent =
-                (IntListBank.Content)_list.ListBank.GetListContent(contentID);
+                (IntListContent)_list.ListBank.GetListContent(contentID);
             _requestedContentText.text =
                 $"Focusing content: {centeredContent.Value}";
         }
@@ -26,7 +26,7 @@ namespace AirFishLab.ScrollingList.Demo
         public void GetSelectedContentID(int selectedContentID)
         {
             var content =
-                (IntListBank.Content)_list.ListBank.GetListContent(selectedContentID);
+                (IntListContent)_list.ListBank.GetListContent(selectedContentID);
             _selectedContentText.text =
                 $"Selected content ID: {selectedContentID}, Content: {content.Value}";
         }

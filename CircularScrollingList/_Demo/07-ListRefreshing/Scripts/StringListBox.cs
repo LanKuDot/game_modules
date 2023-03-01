@@ -11,7 +11,7 @@ namespace AirFishLab.ScrollingList.Demo
 
         protected override void UpdateDisplayContent(IListContent content)
         {
-            var dataWrapper = (VariableStringListBank.DataWrapper) content;
+            var dataWrapper = (AdjustableStringListBank.DataWrapper) content;
             _text.text = dataWrapper.Data;
         }
     }

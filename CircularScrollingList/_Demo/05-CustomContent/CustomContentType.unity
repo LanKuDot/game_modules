@@ -234,7 +234,7 @@ PrefabInstance:
     - target: {fileID: 7330782230327375330, guid: 85f0d2506f2a4524d90f18f16a92bdd7,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: 75
       objectReference: {fileID: 0}
     - target: {fileID: 7330782230327375330, guid: 85f0d2506f2a4524d90f18f16a92bdd7,
         type: 3}
@@ -478,7 +478,7 @@ GameObject:
   - component: {fileID: 629502229}
   - component: {fileID: 629502230}
   m_Layer: 5
-  m_Name: String Star List
+  m_Name: StringStarList
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -548,20 +548,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _listBank: {fileID: 629502229}
+  _boxSetting:
+    _boxRootTransform: {fileID: 629502228}
+    _boxPrefab: {fileID: 7330782230327375334, guid: 85f0d2506f2a4524d90f18f16a92bdd7,
+      type: 3}
+    _numOfBoxes: 5
   _listBoxes:
   - {fileID: 466542589}
   - {fileID: 1396979580}
   - {fileID: 1142272627}
   - {fileID: 1124786542}
   - {fileID: 1920920070}
-  _setting:
+  _listSetting:
     _listType: 0
-    _controlMode: -1
-    _alignInCenter: 1
-    _reverseScrollingDirection: 0
     _direction: 0
-    _centeredContentID: 0
-    _centerSelectedBox: 0
+    _controlMode: -1
+    _focusingPosition: 1
+    _alignAtFocusingPosition: 1
+    _reverseScrollingDirection: 0
+    _initFocusedContentID: 0
+    _focusSelectedBox: 0
     _reverseContentOrder: 0
     _initializeOnStart: 1
     _boxDensity: 1
@@ -664,10 +670,7 @@ MonoBehaviour:
     _onBoxClick:
       m_PersistentCalls:
         m_Calls: []
-    _onCenteredContentChanged:
-      m_PersistentCalls:
-        m_Calls: []
-    _onCenteredBoxChanged:
+    _onFocusingBoxChanged:
       m_PersistentCalls:
         m_Calls: []
     _onMovementEnd:
@@ -822,7 +825,7 @@ GameObject:
   - component: {fileID: 710224938}
   - component: {fileID: 710224937}
   m_Layer: 5
-  m_Name: Color String List
+  m_Name: ColorStringList
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -865,20 +868,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _listBank: {fileID: 710224938}
+  _boxSetting:
+    _boxRootTransform: {fileID: 710224936}
+    _boxPrefab: {fileID: 2603948118037113004, guid: 358f93e20741b3248a3cde46639d044c,
+      type: 3}
+    _numOfBoxes: 5
   _listBoxes:
   - {fileID: 1408831756480049081}
   - {fileID: 1061312023}
   - {fileID: 650329465}
   - {fileID: 962726189}
   - {fileID: 805145555}
-  _setting:
+  _listSetting:
     _listType: 0
-    _controlMode: -1
-    _alignInCenter: 1
-    _reverseScrollingDirection: 0
     _direction: 0
-    _centeredContentID: 0
-    _centerSelectedBox: 0
+    _controlMode: -1
+    _focusingPosition: 1
+    _alignAtFocusingPosition: 1
+    _reverseScrollingDirection: 0
+    _initFocusedContentID: 0
+    _focusSelectedBox: 0
     _reverseContentOrder: 0
     _initializeOnStart: 1
     _boxDensity: 1
@@ -981,10 +990,7 @@ MonoBehaviour:
     _onBoxClick:
       m_PersistentCalls:
         m_Calls: []
-    _onCenteredContentChanged:
-      m_PersistentCalls:
-        m_Calls: []
-    _onCenteredBoxChanged:
+    _onFocusingBoxChanged:
       m_PersistentCalls:
         m_Calls: []
     _onMovementEnd:
@@ -1237,7 +1243,7 @@ PrefabInstance:
     - target: {fileID: 1411453074566148836, guid: 358f93e20741b3248a3cde46639d044c,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -150
       objectReference: {fileID: 0}
     - target: {fileID: 1411453074566148836, guid: 358f93e20741b3248a3cde46639d044c,
         type: 3}
@@ -1291,7 +1297,7 @@ GameObject:
   - component: {fileID: 869449468}
   - component: {fileID: 869449469}
   m_Layer: 5
-  m_Name: Sprite List
+  m_Name: SpriteStringList
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1371,20 +1377,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _listBank: {fileID: 869449468}
+  _boxSetting:
+    _boxRootTransform: {fileID: 869449467}
+    _boxPrefab: {fileID: 2120648247205660293, guid: 4c5c1c4ba52a19c49889e864325e3954,
+      type: 3}
+    _numOfBoxes: 5
   _listBoxes:
   - {fileID: 217965537}
   - {fileID: 1183731452}
   - {fileID: 2117430172}
   - {fileID: 1635382854}
   - {fileID: 1803675741}
-  _setting:
+  _listSetting:
     _listType: 0
-    _controlMode: -1
-    _alignInCenter: 1
-    _reverseScrollingDirection: 0
     _direction: 0
-    _centeredContentID: 0
-    _centerSelectedBox: 0
+    _controlMode: -1
+    _focusingPosition: 1
+    _alignAtFocusingPosition: 1
+    _reverseScrollingDirection: 0
+    _initFocusedContentID: 0
+    _focusSelectedBox: 0
     _reverseContentOrder: 0
     _initializeOnStart: 1
     _boxDensity: 1
@@ -1487,10 +1499,7 @@ MonoBehaviour:
     _onBoxClick:
       m_PersistentCalls:
         m_Calls: []
-    _onCenteredContentChanged:
-      m_PersistentCalls:
-        m_Calls: []
-    _onCenteredBoxChanged:
+    _onFocusingBoxChanged:
       m_PersistentCalls:
         m_Calls: []
     _onMovementEnd:
@@ -1591,7 +1600,7 @@ PrefabInstance:
     - target: {fileID: 1411453074566148836, guid: 358f93e20741b3248a3cde46639d044c,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -75
       objectReference: {fileID: 0}
     - target: {fileID: 1411453074566148836, guid: 358f93e20741b3248a3cde46639d044c,
         type: 3}
@@ -1728,7 +1737,7 @@ PrefabInstance:
     - target: {fileID: 1411453074566148836, guid: 358f93e20741b3248a3cde46639d044c,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: 75
       objectReference: {fileID: 0}
     - target: {fileID: 1411453074566148836, guid: 358f93e20741b3248a3cde46639d044c,
         type: 3}
@@ -1884,12 +1893,12 @@ PrefabInstance:
     - target: {fileID: 2120648247205660292, guid: 4c5c1c4ba52a19c49889e864325e3954,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: -56.250004
       objectReference: {fileID: 0}
     - target: {fileID: 2120648247205660292, guid: 4c5c1c4ba52a19c49889e864325e3954,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: 75
       objectReference: {fileID: 0}
     - target: {fileID: 2120648247205660292, guid: 4c5c1c4ba52a19c49889e864325e3954,
         type: 3}
@@ -1909,7 +1918,7 @@ PrefabInstance:
     - target: {fileID: 2120648247205660347, guid: 4c5c1c4ba52a19c49889e864325e3954,
         type: 3}
       propertyPath: m_Name
-      value: SpriteBox (1)
+      value: SpriteStringBox (1)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4c5c1c4ba52a19c49889e864325e3954, type: 3}
@@ -2092,7 +2101,7 @@ PrefabInstance:
     - target: {fileID: 7330782230327375330, guid: 85f0d2506f2a4524d90f18f16a92bdd7,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -150
       objectReference: {fileID: 0}
     - target: {fileID: 7330782230327375330, guid: 85f0d2506f2a4524d90f18f16a92bdd7,
         type: 3}
@@ -2229,7 +2238,7 @@ PrefabInstance:
     - target: {fileID: 7330782230327375330, guid: 85f0d2506f2a4524d90f18f16a92bdd7,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -75
       objectReference: {fileID: 0}
     - target: {fileID: 7330782230327375330, guid: 85f0d2506f2a4524d90f18f16a92bdd7,
         type: 3}
@@ -2349,12 +2358,12 @@ PrefabInstance:
     - target: {fileID: 2120648247205660292, guid: 4c5c1c4ba52a19c49889e864325e3954,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: -56.250004
       objectReference: {fileID: 0}
     - target: {fileID: 2120648247205660292, guid: 4c5c1c4ba52a19c49889e864325e3954,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -75
       objectReference: {fileID: 0}
     - target: {fileID: 2120648247205660292, guid: 4c5c1c4ba52a19c49889e864325e3954,
         type: 3}
@@ -2374,7 +2383,7 @@ PrefabInstance:
     - target: {fileID: 2120648247205660347, guid: 4c5c1c4ba52a19c49889e864325e3954,
         type: 3}
       propertyPath: m_Name
-      value: SpriteBox (3)
+      value: SpriteStringBox (3)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4c5c1c4ba52a19c49889e864325e3954, type: 3}
@@ -2486,12 +2495,12 @@ PrefabInstance:
     - target: {fileID: 2120648247205660292, guid: 4c5c1c4ba52a19c49889e864325e3954,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: -56.250004
       objectReference: {fileID: 0}
     - target: {fileID: 2120648247205660292, guid: 4c5c1c4ba52a19c49889e864325e3954,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -150
       objectReference: {fileID: 0}
     - target: {fileID: 2120648247205660292, guid: 4c5c1c4ba52a19c49889e864325e3954,
         type: 3}
@@ -2511,7 +2520,7 @@ PrefabInstance:
     - target: {fileID: 2120648247205660347, guid: 4c5c1c4ba52a19c49889e864325e3954,
         type: 3}
       propertyPath: m_Name
-      value: SpriteBox (4)
+      value: SpriteStringBox (4)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4c5c1c4ba52a19c49889e864325e3954, type: 3}
@@ -2635,7 +2644,7 @@ PrefabInstance:
     - target: {fileID: 2120648247205660292, guid: 4c5c1c4ba52a19c49889e864325e3954,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: -56.250004
       objectReference: {fileID: 0}
     - target: {fileID: 2120648247205660292, guid: 4c5c1c4ba52a19c49889e864325e3954,
         type: 3}
@@ -2660,7 +2669,7 @@ PrefabInstance:
     - target: {fileID: 2120648247205660347, guid: 4c5c1c4ba52a19c49889e864325e3954,
         type: 3}
       propertyPath: m_Name
-      value: SpriteBox (2)
+      value: SpriteStringBox (2)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4c5c1c4ba52a19c49889e864325e3954, type: 3}
@@ -2784,12 +2793,12 @@ PrefabInstance:
     - target: {fileID: 2120648247205660292, guid: 4c5c1c4ba52a19c49889e864325e3954,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: -56.250004
       objectReference: {fileID: 0}
     - target: {fileID: 2120648247205660292, guid: 4c5c1c4ba52a19c49889e864325e3954,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 2120648247205660292, guid: 4c5c1c4ba52a19c49889e864325e3954,
         type: 3}
@@ -2809,7 +2818,7 @@ PrefabInstance:
     - target: {fileID: 2120648247205660347, guid: 4c5c1c4ba52a19c49889e864325e3954,
         type: 3}
       propertyPath: m_Name
-      value: SpriteBox
+      value: SpriteStringBox
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4c5c1c4ba52a19c49889e864325e3954, type: 3}
@@ -2914,7 +2923,7 @@ PrefabInstance:
     - target: {fileID: 1411453074566148836, guid: 358f93e20741b3248a3cde46639d044c,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 1411453074566148836, guid: 358f93e20741b3248a3cde46639d044c,
         type: 3}
@@ -3033,7 +3042,7 @@ PrefabInstance:
     - target: {fileID: 7330782230327375330, guid: 85f0d2506f2a4524d90f18f16a92bdd7,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 7330782230327375330, guid: 85f0d2506f2a4524d90f18f16a92bdd7,
         type: 3}

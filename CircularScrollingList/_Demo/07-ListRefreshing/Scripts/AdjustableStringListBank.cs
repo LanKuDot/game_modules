@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace AirFishLab.ScrollingList.Demo
 {
-    public class VariableStringListBank : BaseListBank
+    public class AdjustableStringListBank : BaseListBank
     {
         [SerializeField]
         private InputField _contentInputField;
