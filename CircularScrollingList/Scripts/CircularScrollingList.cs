@@ -262,8 +262,8 @@ namespace AirFishLab.ScrollingList
 
             var numOfExistingBoxes = existingBoxes.Count;
             if (numOfExistingBoxes > desiredNumOfBoxes)
-                Debug.LogWarning($"{name}: The number of existing boxes are "
-                                 + $"more than the number of desired boxes");
+                Debug.LogWarning("The number of existing boxes are more than "
+                                 + $"the number of desired boxes in the list '{name}'");
 
             var numOfBoxes = Mathf.Min(numOfExistingBoxes, desiredNumOfBoxes);
             listBoxes.Clear();
