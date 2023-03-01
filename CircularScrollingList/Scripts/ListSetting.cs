@@ -15,13 +15,17 @@ namespace AirFishLab.ScrollingList
         private CircularScrollingList.ListType _listType =
             CircularScrollingList.ListType.Circular;
         [SerializeField]
-        [Tooltip("The focusing position of the list")]
-        private CircularScrollingList.FocusingPosition _focusingPosition =
-                CircularScrollingList.FocusingPosition.Center;
+        [Tooltip("The major moving direction of the list.")]
+        private CircularScrollingList.Direction _direction =
+            CircularScrollingList.Direction.Vertical;
         [SerializeField]
         [Tooltip("The controlling mode of the list.")]
         private CircularScrollingList.ControlMode _controlMode =
             CircularScrollingList.ControlMode.Everything;
+        [SerializeField]
+        [Tooltip("The focusing position of the list")]
+        private CircularScrollingList.FocusingPosition _focusingPosition =
+                CircularScrollingList.FocusingPosition.Center;
         [SerializeField]
         [Tooltip("To align a box at the focusing position after sliding")]
         [FormerlySerializedAs("_alignMiddle")]
@@ -32,11 +36,7 @@ namespace AirFishLab.ScrollingList
         [FormerlySerializedAs("_reverseDirection")]
         private bool _reverseScrollingDirection;
         [SerializeField]
-        [Tooltip("The major moving direction of the list.")]
-        private CircularScrollingList.Direction _direction =
-            CircularScrollingList.Direction.Vertical;
-        [SerializeField]
-        [Tooltip("Specify the initial content ID for the centered box.")]
+        [Tooltip("Specify the initial content ID for the focused box.")]
         [FormerlySerializedAs(" _centeredContentID")]
         private int _initFocusedContentID;
         [SerializeField]
@@ -45,7 +45,7 @@ namespace AirFishLab.ScrollingList
         private bool _focusSelectedBox;
         [SerializeField]
         [Tooltip("To show the list contents in the reversed order. "
-                 + "Available when the 'focusingPosition' is 'center'")]
+                 + "Available when the 'FocusingPosition' is 'center'")]
         [FormerlySerializedAs("_reverseOrder")]
         private bool _reverseContentOrder;
         [SerializeField]
@@ -116,12 +116,12 @@ namespace AirFishLab.ScrollingList
         #region Setting Getter
 
         public CircularScrollingList.ListType ListType => _listType;
+        public CircularScrollingList.Direction Direction => _direction;
+        public CircularScrollingList.ControlMode ControlMode => _controlMode;
         public CircularScrollingList.FocusingPosition FocusingPosition =>
             _focusingPosition;
-        public CircularScrollingList.ControlMode ControlMode => _controlMode;
         public bool AlignAtFocusingPosition => _alignAtFocusingPosition;
         public bool ReverseScrollingDirection => _reverseScrollingDirection;
-        public CircularScrollingList.Direction Direction => _direction;
         public int InitFocusedContentID => _initFocusedContentID;
         public bool FocusSelectedBox => _focusSelectedBox;
         public bool ReverseContentOrder => _reverseContentOrder;

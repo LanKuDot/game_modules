@@ -126,7 +126,7 @@ namespace AirFishLab.ScrollingList.Editor
         {
             EditorGUILayout.LabelField("List Mode", EditorStyles.boldLabel);
             DrawListSettingProperty("_listType");
-            DrawListSettingProperty("_focusingPosition");
+            DrawListSettingProperty("_direction");
             DrawListSettingProperty("_controlMode");
 
             ++EditorGUI.indentLevel;
@@ -143,7 +143,7 @@ namespace AirFishLab.ScrollingList.Editor
             }
             --EditorGUI.indentLevel;
 
-            DrawListSettingProperty("_direction");
+            DrawListSettingProperty("_focusingPosition");
             DrawListSettingProperty("_initFocusedContentID");
             DrawListSettingProperty("_focusSelectedBox");
             if (_focusingPosition.intValue ==
