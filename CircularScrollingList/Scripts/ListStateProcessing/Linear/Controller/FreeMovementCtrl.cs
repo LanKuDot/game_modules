@@ -39,9 +39,9 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// </summary>
         private readonly bool _toAlign;
         /// <summary>
-        /// The maximum delta distance for a movement
+        /// The maximum delta distance per frame
         /// </summary>
-        private readonly float _maxDraggingDistance;
+        private readonly float _maxMovingDistance;
         /// <summary>
         /// How far could the 1ist exceed the end?
         /// </summary>
@@ -70,8 +70,8 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// The x axis is the moving duration, and the y axis is the factor.
         /// </param>
         /// <param name="toAlign">Is it need to aligning after a movement?</param>
-        /// <param name="maxDraggingDistance">
-        /// The maximum delta distance for a movement
+        /// <param name="maxMovingDistance">
+        /// The maximum delta distance per frame
         /// </param>
         /// <param name="exceedingDistanceLimit">
         /// How far could the list exceed the end?
@@ -85,7 +85,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         public FreeMovementCtrl(
             AnimationCurve releasingCurve,
             bool toAlign,
-            float maxDraggingDistance,
+            float maxMovingDistance,
             float exceedingDistanceLimit,
             Func<float> getFocusingPositionOffset,
             Func<ListFocusingState> getFocusingStateFunc)
@@ -98,7 +98,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                         new Keyframe(0.25f, 1.0f, 0.0f, 0.0f)
                     ));
             _toAlign = toAlign;
-            _maxDraggingDistance = maxDraggingDistance;
+            _maxMovingDistance = maxMovingDistance;
             _exceedingDistanceLimit = exceedingDistanceLimit;
             _getFocusingPositionOffset = getFocusingPositionOffset;
             _getFocusingStateFunc = getFocusingStateFunc;
@@ -117,8 +117,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             _isDragging = isDragging;
 
             if (isDragging) {
-                _draggingDistance =
-                    Mathf.Min(Mathf.Abs(value), _maxDraggingDistance) * Mathf.Sign(value);
+                _draggingDistance = value;
 
                 // End the last movement when start dragging
                 _aligningMovementCurve.EndMovement();
@@ -149,11 +148,9 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             var curDistance = _getFocusingPositionOffset();
             var state = _getFocusingStateFunc();
 
-            /* If it's dragging, return the dragging distance set from `SetMovement()` */
+            // ===== Dragging ===== //
             if (_isDragging) {
-                distance = _draggingDistance;
-                // The dragging distance is only valid for one frame
-                _draggingDistance = 0;
+                distance = LimitMovingDistance(_draggingDistance);
 
                 if (!MovementUtility.IsGoingToFar(
                         state, _exceedingDistanceLimit, curDistance + distance))
@@ -162,13 +159,14 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 var limit = _exceedingDistanceLimit * Mathf.Sign(distance);
                 distance = limit - curDistance;
             }
-            /* Aligning */
+            // ===== Aligning ===== //
             else if (!_aligningMovementCurve.IsMovementEnded()) {
                 distance = _aligningMovementCurve.GetDistance(deltaTime);
             }
-            /* Releasing */
+            // ===== Releasing ===== //
             else if (!_releasingMovementCurve.IsMovementEnded()) {
-                distance = _releasingMovementCurve.GetDistance(deltaTime);
+                distance =
+                    LimitMovingDistance(_releasingMovementCurve.GetDistance(deltaTime));
 
                 if (!MovementUtility.IsGoingToFar(
                         state, _exceedingDistanceLimit, curDistance + distance)
@@ -191,6 +189,14 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             _isDragging = false;
             _releasingMovementCurve.EndMovement();
             _aligningMovementCurve.EndMovement();
+        }
+
+        /// <summary>
+        /// Limit the moving distance
+        /// </summary>
+        private float LimitMovingDistance(float value)
+        {
+            return Mathf.Min(Mathf.Abs(value), _maxMovingDistance) * Mathf.Sign(value);
         }
 
         /// <summary>
