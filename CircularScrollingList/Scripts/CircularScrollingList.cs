@@ -380,10 +380,12 @@ namespace AirFishLab.ScrollingList
                 throw new IndexOutOfRangeException(
                     $"{nameof(contentID)} is invalid");
 
-            var centeredContentID = GetFocusingContentID();
-            SetSelectionMovement(
-                _listContentProvider.GetShortestIDDiff(
-                    centeredContentID, contentID));
+            var focusingContentID = GetFocusingContentID();
+            var idDiff =
+                _listContentProvider.GetShortestIDDiff(focusingContentID, contentID);
+
+            if (idDiff != 0)
+                SetSelectionMovement(idDiff);
         }
 
         #endregion
