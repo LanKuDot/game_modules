@@ -16,9 +16,17 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// </summary>
         private readonly DistanceMovementCurve _unitMovementCurve;
         /// <summary>
-        /// The curve for bouncing the movement when the list reaches the end
+        /// The curve for bouncing off to the exceeding limit
         /// </summary>
-        private readonly DistanceMovementCurve _bouncingMovementCurve;
+        private readonly DistanceMovementCurve _bouncingOffCurve;
+        /// <summary>
+        /// The curve for bouncing back to the aligned position
+        /// </summary>
+        private readonly DistanceMovementCurve _bouncingBackCurve;
+        /// <summary>
+        /// The time in seconds for the bouncing curve
+        /// </summary>
+        private const float BOUNCING_INTERVAL = 0.125f;
         /// <summary>
         /// How far could the 1ist exceed the end?
         /// </summary>
@@ -54,13 +62,16 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             Func<float> getAligningDistance,
             Func<ListFocusingState> getFocusingStateFunc)
         {
-            var bouncingCurve = new AnimationCurve(
+            var bouncingOff = new AnimationCurve(
                 new Keyframe(0.0f, 0.0f, 0.0f, 5.0f),
-                new Keyframe(0.125f, 1.0f, 0.0f, 0.0f),
-                new Keyframe(0.25f, 0.0f, -5.0f, 0.0f));
+                new Keyframe(BOUNCING_INTERVAL, 1.0f, 0.0f, 0.0f));
+            var bouncingBack = new AnimationCurve(
+                new Keyframe(0.0f, 0.0f, 0.0f, 0.0f),
+                new Keyframe(BOUNCING_INTERVAL, 1.0f, -5.0f, 0.0f));
 
             _unitMovementCurve = new DistanceMovementCurve(movementCurve);
-            _bouncingMovementCurve = new DistanceMovementCurve(bouncingCurve);
+            _bouncingOffCurve = new DistanceMovementCurve(bouncingOff);
+            _bouncingBackCurve = new DistanceMovementCurve(bouncingBack);
             _exceedingDistanceLimit = exceedingDistanceLimit;
             _getAligningDistance = getAligningDistance;
             _getFocusingStateFunc = getFocusingStateFunc;
@@ -78,16 +89,18 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         public void SetMovement(float distanceAdded, bool flag)
         {
             // Ignore any movement when the list is aligning
-            if (!_bouncingMovementCurve.IsMovementEnded())
+            if (!_bouncingOffCurve.IsMovementEnded()
+                || !_bouncingBackCurve.IsMovementEnded())
                 return;
 
+            var curDistance = _getAligningDistance() * -1;
             var state = _getFocusingStateFunc();
             var movingDirection = Mathf.Sign(distanceAdded);
 
-            if ((state == ListFocusingState.Top && movingDirection < 0) ||
-                (state == ListFocusingState.Bottom && movingDirection > 0)) {
-                _bouncingMovementCurve.SetMovement(
-                    movingDirection * _exceedingDistanceLimit);
+            if ((state.HasFlag(ListFocusingState.Top) && movingDirection < 0)
+                || (state.HasFlag(ListFocusingState.Bottom) && movingDirection > 0)) {
+                _bouncingOffCurve.SetMovement(
+                    movingDirection * _exceedingDistanceLimit - curDistance);
                 _unitMovementCurve.EndMovement();
             } else {
                 distanceAdded += _unitMovementCurve.distanceRemaining;
@@ -100,8 +113,9 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// </summary>
         public bool IsMovementEnded()
         {
-            return _bouncingMovementCurve.IsMovementEnded() &&
-                   _unitMovementCurve.IsMovementEnded();
+            return _bouncingOffCurve.IsMovementEnded()
+                   && _bouncingBackCurve.IsMovementEnded()
+                   && _unitMovementCurve.IsMovementEnded();
         }
 
         /// <summary>
@@ -111,31 +125,39 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <returns>The moving distance in this period</returns>
         public float GetDistance(float deltaTime)
         {
-            if (!_bouncingMovementCurve.IsMovementEnded()) {
-                return _bouncingMovementCurve.GetDistance(deltaTime);
+            var curDistance = _getAligningDistance() * -1;
+            var distance = 0f;
+
+            // ===== Bouncing Off ===== //
+            if (!_bouncingOffCurve.IsMovementEnded()) {
+                distance = _bouncingOffCurve.GetDistance(deltaTime);
+                if (_bouncingOffCurve.IsMovementEnded())
+                    _bouncingBackCurve.SetMovement(-(curDistance + distance));
+                return distance;
             }
 
+            if (!_bouncingBackCurve.IsMovementEnded())
+                return _bouncingBackCurve.GetDistance(deltaTime);
+
+            // ===== Unit Movement ===== //
             var state = _getFocusingStateFunc();
-            var distance = _unitMovementCurve.GetDistance(deltaTime);
-            var curDistance = _getAligningDistance() * -1;
+            distance = _unitMovementCurve.GetDistance(deltaTime);
 
             if (!MovementUtility.IsGoingToFar(
                     state, _exceedingDistanceLimit, curDistance + distance))
                 return distance;
 
-            // Make the unit movement end
+            // ===== Bouncing Back ===== //
             _unitMovementCurve.EndMovement();
-
-            _bouncingMovementCurve.SetMovement(curDistance);
-            // Start at the furthest point to move back
-            _bouncingMovementCurve.GetDistance(0.125f);
-            return _bouncingMovementCurve.GetDistance(deltaTime);
+            _bouncingBackCurve.SetMovement(-curDistance);
+            return _bouncingBackCurve.GetDistance(deltaTime);
         }
 
         public void EndMovement()
         {
             _unitMovementCurve.EndMovement();
-            _bouncingMovementCurve.EndMovement();
+            _bouncingOffCurve.EndMovement();
+            _bouncingBackCurve.EndMovement();
         }
     }
 }
