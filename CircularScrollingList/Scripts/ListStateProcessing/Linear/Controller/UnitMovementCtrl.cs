@@ -32,9 +32,9 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// </summary>
         private readonly float _exceedingDistanceLimit;
         /// <summary>
-        /// The function that returns the distance for aligning
+        /// The function that returns the focusing distance offset
         /// </summary>
-        private readonly Func<float> _getAligningDistance;
+        private readonly Func<float> _getFocusingDistanceOffset;
         /// <summary>
         /// The function that returns the focusing state of the list
         /// </summary>
@@ -50,8 +50,8 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <param name="exceedingDistanceLimit">
         /// How far could the 1ist exceed the end?
         /// </param>
-        /// <param name="getAligningDistance">
-        /// The function that evaluates the distance for aligning
+        /// <param name="getFocusingDistanceOffset">
+        /// The function that returns the focusing distance offset
         /// </param>
         /// <param name="getFocusingStateFunc">
         /// The function that returns the focusing state of the list
@@ -59,7 +59,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         public UnitMovementCtrl(
             AnimationCurve movementCurve,
             float exceedingDistanceLimit,
-            Func<float> getAligningDistance,
+            Func<float> getFocusingDistanceOffset,
             Func<ListFocusingState> getFocusingStateFunc)
         {
             var bouncingOff = new AnimationCurve(
@@ -73,7 +73,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             _bouncingOffCurve = new DistanceMovementCurve(bouncingOff);
             _bouncingBackCurve = new DistanceMovementCurve(bouncingBack);
             _exceedingDistanceLimit = exceedingDistanceLimit;
-            _getAligningDistance = getAligningDistance;
+            _getFocusingDistanceOffset = getFocusingDistanceOffset;
             _getFocusingStateFunc = getFocusingStateFunc;
         }
 
@@ -93,7 +93,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 || !_bouncingBackCurve.IsMovementEnded())
                 return;
 
-            var curDistance = _getAligningDistance() * -1;
+            var curDistance = _getFocusingDistanceOffset();
             var state = _getFocusingStateFunc();
             var movingDirection = Mathf.Sign(distanceAdded);
 
@@ -125,7 +125,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <returns>The moving distance in this period</returns>
         public float GetDistance(float deltaTime)
         {
-            var curDistance = _getAligningDistance() * -1;
+            var curDistance = _getFocusingDistanceOffset();
             var distance = 0f;
 
             // ===== Bouncing Off ===== //

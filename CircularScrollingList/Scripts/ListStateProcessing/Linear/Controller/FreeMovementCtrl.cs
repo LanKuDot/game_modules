@@ -52,11 +52,11 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// It is used when `_alignMiddle` is true.
         private const float _stopVelocityThreshold = 200.0f;
         /// <summary>
-        /// The function that returning the distance to align the list
+        /// The function that returns the focusing position offset
         /// </summary>
-        private readonly Func<float> _getAligningDistance;
+        private readonly Func<float> _getFocusingPositionOffset;
         /// <summary>
-        /// The function that getting the focusing state of the list
+        /// The function that gets the focusing state of the list
         /// </summary>
         private readonly Func<ListFocusingState> _getFocusingStateFunc;
 
@@ -76,8 +76,8 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <param name="exceedingDistanceLimit">
         /// How far could the list exceed the end?
         /// </param>
-        /// <param name="getAligningDistance">
-        /// The function that evaluates the distance for aligning
+        /// <param name="getFocusingPositionOffset">
+        /// The function that gets the focusing position offset
         /// </param>
         /// <param name="getFocusingStateFunc">
         /// The function that returns the focusing state of the list
@@ -87,7 +87,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             bool toAlign,
             float maxDraggingDistance,
             float exceedingDistanceLimit,
-            Func<float> getAligningDistance,
+            Func<float> getFocusingPositionOffset,
             Func<ListFocusingState> getFocusingStateFunc)
         {
             _releasingMovementCurve = new VelocityMovementCurve(releasingCurve);
@@ -100,7 +100,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             _toAlign = toAlign;
             _maxDraggingDistance = maxDraggingDistance;
             _exceedingDistanceLimit = exceedingDistanceLimit;
-            _getAligningDistance = getAligningDistance;
+            _getFocusingPositionOffset = getFocusingPositionOffset;
             _getFocusingStateFunc = getFocusingStateFunc;
         }
 
@@ -124,7 +124,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 _aligningMovementCurve.EndMovement();
                 _releasingMovementCurve.EndMovement();
             } else if (_getFocusingStateFunc() != ListFocusingState.Middle) {
-                _aligningMovementCurve.SetMovement(_getAligningDistance());
+                _aligningMovementCurve.SetMovement(-_getFocusingPositionOffset());
             } else {
                 _releasingMovementCurve.SetMovement(value);
             }
@@ -146,7 +146,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         public float GetDistance(float deltaTime)
         {
             var distance = 0.0f;
-            var curDistance = _getAligningDistance() * -1;
+            var curDistance = _getFocusingPositionOffset();
             var state = _getFocusingStateFunc();
 
             /* If it's dragging, return the dragging distance set from `SetMovement()` */
@@ -179,7 +179,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 _releasingMovementCurve.EndMovement();
 
                 // Start the aligning movement instead
-                _aligningMovementCurve.SetMovement(_getAligningDistance());
+                _aligningMovementCurve.SetMovement(-_getFocusingPositionOffset());
                 distance = _aligningMovementCurve.GetDistance(deltaTime);
             }
 

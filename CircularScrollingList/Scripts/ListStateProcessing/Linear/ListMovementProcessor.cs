@@ -80,7 +80,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             // If the unit movement is not started yet,
             // countervail the position difference
             if (_unitMovementCtrl.IsMovementEnded())
-                deltaDistance += _listBoxController.ShortestDistanceToCenter;
+                deltaDistance -= _listBoxController.FocusingDistanceOffset;
 
             _unitMovementCtrl.SetMovement(deltaDistance, false);
         }
@@ -91,7 +91,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
             var deltaDistance =
                 units * _unitPos * _selectionDistanceFactor
-                + _listBoxController.ShortestDistanceToCenter;
+                - _listBoxController.FocusingDistanceOffset;
             _unitMovementCtrl.SetMovement(deltaDistance, false);
         }
 
@@ -151,12 +151,12 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 setting.AlignAtFocusingPosition,
                 _unitPos * 1.2f,
                 exceedingLimit,
-                GetAligningDistance,
+                GetFocusingDistanceOffset,
                 GetListFocusingState);
             _unitMovementCtrl = new UnitMovementCtrl(
                 setting.BoxMovementCurve,
                 exceedingLimit,
-                GetAligningDistance,
+                GetFocusingDistanceOffset,
                 GetListFocusingState);
             _scrollingFactor = setting.ReverseScrollingDirection ? -1 : 1;
             _selectionDistanceFactor = setting.ReverseContentOrder ? -1 : 1;
@@ -177,8 +177,8 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         private ListFocusingState GetListFocusingState() =>
             _listBoxController.ListFocusingState;
 
-        private float GetAligningDistance() =>
-            _listBoxController.ShortestDistanceToCenter;
+        private float GetFocusingDistanceOffset() =>
+            _listBoxController.FocusingDistanceOffset;
 
         #endregion
     }

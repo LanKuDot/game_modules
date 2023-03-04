@@ -15,9 +15,9 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         public ListFocusingState ListFocusingState { get; private set; } =
             ListFocusingState.Middle;
         /// <summary>
-        /// The shortest distance to make a box at the center position of the list
+        /// The distance how long is the box away from the focusing position
         /// </summary>
-        public float ShortestDistanceToCenter { get; private set; }
+        public float FocusingDistanceOffset { get; private set; }
 
         #endregion
 
@@ -249,14 +249,14 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             var bottomFocusing = result.BottomFocusing;
             var bottomBoxIDState =
                 _contentProvider.GetIDState(bottomFocusing.Box.ContentID);
-            var aligningDistance =
+            var distanceOffset =
                 bottomBoxIDState.HasFlag(ContentIDState.Last)
                 && !topBoxIDState.HasFlag(ContentIDState.First)
-                    ? bottomFocusing.AligningDistance
-                    : topFocusing.AligningDistance;
+                    ? bottomFocusing.DistanceOffset
+                    : topFocusing.DistanceOffset;
 
             UpdateFocusingBox(
-                topFocusing.Box, aligningDistance, result.ListFocusingState);
+                topFocusing.Box, distanceOffset, result.ListFocusingState);
         }
 
         /// <summary>
@@ -284,25 +284,25 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             var bottomFocusing = result.BottomFocusing;
             var bottomBoxIDState =
                 _contentProvider.GetIDState(bottomFocusing.Box.ContentID);
-            var aligningDistance =
+            var distanceOffset =
                 topBoxIDState.HasFlag(ContentIDState.Last)
                 && !bottomBoxIDState.HasFlag(ContentIDState.First)
-                    ? topFocusing.AligningDistance
-                    : bottomFocusing.AligningDistance;
+                    ? topFocusing.DistanceOffset
+                    : bottomFocusing.DistanceOffset;
 
             UpdateFocusingBox(
-                bottomFocusing.Box, aligningDistance, result.ListFocusingState);
+                bottomFocusing.Box, distanceOffset, result.ListFocusingState);
         }
 
         /// <summary>
         /// Update the focusing box
         /// </summary>
         private void UpdateFocusingBox(
-            IListBox focusingBox, float aligningDistance,
+            IListBox focusingBox, float distanceOffset,
             ListFocusingState listFocusingState)
         {
             ListFocusingState = listFocusingState;
-            ShortestDistanceToCenter = aligningDistance;
+            FocusingDistanceOffset = distanceOffset;
 
             if (focusingBox == _focusingBox)
                 return;

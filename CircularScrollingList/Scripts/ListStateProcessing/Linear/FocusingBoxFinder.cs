@@ -21,14 +21,14 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             /// </summary>
             public IListBox Box;
             /// <summary>
-            /// The distance to align the focusing box to the baseline
+            /// The distance how long the box is away from the baseline
             /// </summary>
-            public float AligningDistance;
+            public float DistanceOffset;
 
-            public void Deconstruct(out IListBox box, out float aligningDistance)
+            public void Deconstruct(out IListBox box, out float distanceOffset)
             {
                 box = Box;
-                aligningDistance = AligningDistance;
+                distanceOffset = DistanceOffset;
             }
         }
 
@@ -106,7 +106,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <returns>The result</returns>
         public MiddleResult FindForMiddle(int contentCount)
         {
-            var deltaDistance = Mathf.Infinity;
+            var distanceOffset = Mathf.Infinity;
             IListBox candidateBox = null;
 
             foreach (var box in _boxes) {
@@ -114,17 +114,17 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                     && box.ContentID != ListContentProvider.NO_CONTENT_ID)
                     continue;
 
-                var boxDeltaDistance = -box.GetPositionFactor();
-                if (Mathf.Abs(boxDeltaDistance) >= Mathf.Abs(deltaDistance))
+                var boxDistanceOffset = box.GetPositionFactor();
+                if (Mathf.Abs(boxDistanceOffset) >= Mathf.Abs(distanceOffset))
                     continue;
 
-                deltaDistance = boxDeltaDistance;
+                distanceOffset = boxDistanceOffset;
                 candidateBox = box;
             }
 
             var focusingBox = new FocusingBox {
                 Box = candidateBox,
-                AligningDistance = deltaDistance
+                DistanceOffset = distanceOffset
             };
             var focusingState = FindFocusingStateForMiddle(focusingBox, contentCount);
 
@@ -152,9 +152,9 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <returns>The result</returns>
         public BothEndsResult FindForBothEnds(int contentCount)
         {
-            var topDeltaDistance = Mathf.Infinity;
+            var topDistanceOffset = Mathf.Infinity;
             IListBox topCandidateBox = null;
-            var bottomDeltaDistance = Mathf.NegativeInfinity;
+            var bottomDistanceOffset = Mathf.Infinity;
             IListBox bottomCandidateBox = null;
 
             foreach (var box in _boxes) {
@@ -163,27 +163,27 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                     continue;
 
                 var positionFactor = box.GetPositionFactor();
-                var boxTopDeltaDistance = _topBaseline - positionFactor;
-                var boxBottomDeltaDistance = _bottomBaseline - positionFactor;
+                var boxTopDistanceOffset = positionFactor - _topBaseline;
+                var boxBottomDistanceOffset = positionFactor - _bottomBaseline;
 
-                if (Mathf.Abs(boxTopDeltaDistance) < Mathf.Abs(topDeltaDistance)) {
-                    topDeltaDistance = boxTopDeltaDistance;
+                if (Mathf.Abs(boxTopDistanceOffset) < Mathf.Abs(topDistanceOffset)) {
+                    topDistanceOffset = boxTopDistanceOffset;
                     topCandidateBox = box;
                 }
 
-                if (Mathf.Abs(boxBottomDeltaDistance) < Mathf.Abs(bottomDeltaDistance)) {
-                    bottomDeltaDistance = boxBottomDeltaDistance;
+                if (Mathf.Abs(boxBottomDistanceOffset) < Mathf.Abs(bottomDistanceOffset)) {
+                    bottomDistanceOffset = boxBottomDistanceOffset;
                     bottomCandidateBox = box;
                 }
             }
 
             var topFocusingBox = new FocusingBox {
                 Box = topCandidateBox,
-                AligningDistance = topDeltaDistance
+                DistanceOffset = topDistanceOffset
             };
             var bottomFocusingBox = new FocusingBox {
                 Box = bottomCandidateBox,
-                AligningDistance = bottomDeltaDistance
+                DistanceOffset = bottomDistanceOffset
             };
             var focusingState =
                 FindFocusingStateForBothEnds(
