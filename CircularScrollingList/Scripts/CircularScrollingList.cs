@@ -169,14 +169,25 @@ namespace AirFishLab.ScrollingList
             if (_isInitialized)
                 return;
 
+            Validate();
             _boxSetting.Validate(gameObject);
-            _listSetting.Validate();
+            _listSetting.Validate(_listBank, name);
 
             GetComponentReference();
             SetListBoxes();
             InitializeMembers();
 
             _isInitialized = true;
+        }
+
+        /// <summary>
+        /// Validate the setting
+        /// </summary>
+        private void Validate()
+        {
+            if (!_listBank)
+                throw new UnassignedReferenceException(
+                    $"The 'ListBank' is not assigned in the list '{name}'");
         }
 
         /// <summary>

@@ -144,8 +144,21 @@ namespace AirFishLab.ScrollingList
         /// <summary>
         /// Validate the settings
         /// </summary>
-        public void Validate()
+        /// <param name="listBank">The list bank</param>
+        /// <param name="name">The name of the list</param>
+        public void Validate(BaseListBank listBank, string name)
         {
+            if (_initFocusedContentID < 0
+                || _initFocusedContentID >= listBank.GetContentCount())
+                throw new IndexOutOfRangeException(
+                    "The 'InitFocusedContentID' is negative "
+                    + "or greater than the number of contents in the list bank "
+                    + $"in the list '{name}'.");
+
+            if (Mathf.Approximately(_boxDensity, 0f))
+                throw new InvalidOperationException(
+                    $"The 'BoxDensity' shouldn't be 0 in the list '{name}'");
+
             switch (_focusingPosition) {
                 case CircularScrollingList.FocusingPosition.Top:
                     _reverseContentOrder = false;

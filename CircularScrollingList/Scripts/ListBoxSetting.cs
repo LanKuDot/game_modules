@@ -30,21 +30,22 @@ namespace AirFishLab.ScrollingList
         /// <param name="listObject">The game object of the scrolling list</param>
         public void Validate(GameObject listObject)
         {
+            var listName = listObject.name;
+
             if (!BoxRootTransform) {
                 Debug.LogWarning(
-                    $"{listObject.name}: "
-                    + "The box root transform is not specified. "
-                    + "Use itself as the box root transform");
+                    $"The 'BoxRootTransform' is not assigned in the list '{listName}'. "
+                    + "Use itself as the 'BoxRootTransform'");
                 BoxRootTransform = listObject.transform;
             }
 
             if (!BoxPrefab)
-                throw new InvalidOperationException(
-                    $"{listObject.name}: The box prefab is not set");
+                throw new UnassignedReferenceException(
+                    $"The 'BoxPrefab' is not assigned in the list '{listName}'");
 
             if (NumOfBoxes <= 0)
                 throw new InvalidOperationException(
-                    $"{listObject.name}: The number of list boxes is invalid");
+                    $"The 'NumOfBoxes' is 0 or negative in the list '{listName}'");
         }
     }
 }
