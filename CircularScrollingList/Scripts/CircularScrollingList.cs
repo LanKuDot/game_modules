@@ -509,21 +509,6 @@ namespace AirFishLab.ScrollingList
         #region Editor Utility
 #if UNITY_EDITOR
 
-        [ContextMenu("Assign References of Bank and Boxes")]
-        private void AssignReferences()
-        {
-            _listBank = GetComponent<BaseListBank>();
-            if (_listBoxes == null)
-                _listBoxes = new List<ListBox>();
-            else
-                _listBoxes.Clear();
-            foreach (Transform child in transform) {
-                var listBox = child.GetComponent<ListBox>();
-                if (listBox)
-                    _listBoxes.Add(listBox);
-            }
-        }
-
         /// <summary>
         /// Generate the boxes and arrange them
         /// </summary>
