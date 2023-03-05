@@ -372,8 +372,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
-  - {fileID: 710224936}
   - {fileID: 629502228}
+  - {fileID: 710224936}
   - {fileID: 869449467}
   m_Father: {fileID: 0}
   m_RootOrder: 1
@@ -501,7 +501,7 @@ RectTransform:
   - {fileID: 1545044352}
   - {fileID: 1387577688}
   m_Father: {fileID: 552385327}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -566,7 +566,7 @@ MonoBehaviour:
     _focusingPosition: 1
     _alignAtFocusingPosition: 1
     _reverseScrollingDirection: 0
-    _initFocusedContentID: 0
+    _initFocusingContentID: 0
     _focusSelectedBox: 0
     _reverseContentOrder: 0
     _initializeOnStart: 1
@@ -667,7 +667,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    _onBoxClick:
+    _onBoxSelected:
       m_PersistentCalls:
         m_Calls: []
     _onFocusingBoxChanged:
@@ -848,7 +848,7 @@ RectTransform:
   - {fileID: 962726188}
   - {fileID: 805145554}
   m_Father: {fileID: 552385327}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -886,7 +886,7 @@ MonoBehaviour:
     _focusingPosition: 1
     _alignAtFocusingPosition: 1
     _reverseScrollingDirection: 0
-    _initFocusedContentID: 0
+    _initFocusingContentID: 0
     _focusSelectedBox: 0
     _reverseContentOrder: 0
     _initializeOnStart: 1
@@ -987,7 +987,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    _onBoxClick:
+    _onBoxSelected:
       m_PersistentCalls:
         m_Calls: []
     _onFocusingBoxChanged:
@@ -1395,7 +1395,7 @@ MonoBehaviour:
     _focusingPosition: 1
     _alignAtFocusingPosition: 1
     _reverseScrollingDirection: 0
-    _initFocusedContentID: 0
+    _initFocusingContentID: 0
     _focusSelectedBox: 0
     _reverseContentOrder: 0
     _initializeOnStart: 1
@@ -1496,7 +1496,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    _onBoxClick:
+    _onBoxSelected:
       m_PersistentCalls:
         m_Calls: []
     _onFocusingBoxChanged:
