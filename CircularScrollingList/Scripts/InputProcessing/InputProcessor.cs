@@ -37,7 +37,6 @@ namespace AirFishLab.ScrollingList
         {
             _rectTransform = rectTransform;
             _maxRectPos = _rectTransform.rect.max;
-            Debug.Log(_maxRectPos);
             _canvasRefCamera = canvasRefCamera;
         }
 
