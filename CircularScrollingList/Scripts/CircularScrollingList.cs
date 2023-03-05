@@ -93,6 +93,10 @@ namespace AirFishLab.ScrollingList
         public BaseListBank ListBank => _listBank;
         public ListBox[] ListBoxes => _listBoxes.ToArray();
         public ListSetting ListSetting => _listSetting;
+        /// <summary>
+        /// Is the list interactable?
+        /// </summary>
+        public bool IsInteractable => _isInteractable;
 
         #endregion
 
