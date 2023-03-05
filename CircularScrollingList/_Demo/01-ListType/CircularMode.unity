@@ -418,7 +418,7 @@ MonoBehaviour:
     _focusingPosition: 1
     _alignAtFocusingPosition: 1
     _reverseScrollingDirection: 0
-    _initFocusedContentID: 0
+    _initFocusingContentID: 0
     _focusSelectedBox: 0
     _reverseContentOrder: 0
     _initializeOnStart: 1
@@ -519,7 +519,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    _onBoxClick:
+    _onBoxSelected:
       m_PersistentCalls:
         m_Calls: []
     _onFocusingBoxChanged:
@@ -854,7 +854,7 @@ MonoBehaviour:
     _focusingPosition: 1
     _alignAtFocusingPosition: 0
     _reverseScrollingDirection: 0
-    _initFocusedContentID: 0
+    _initFocusingContentID: 0
     _focusSelectedBox: 0
     _reverseContentOrder: 0
     _initializeOnStart: 1
@@ -955,7 +955,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    _onBoxClick:
+    _onBoxSelected:
       m_PersistentCalls:
         m_Calls: []
     _onFocusingBoxChanged:
@@ -2364,7 +2364,7 @@ MonoBehaviour:
     _focusingPosition: 1
     _alignAtFocusingPosition: 0
     _reverseScrollingDirection: 0
-    _initFocusedContentID: 0
+    _initFocusingContentID: 0
     _focusSelectedBox: 0
     _reverseContentOrder: 0
     _initializeOnStart: 1
@@ -2465,7 +2465,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    _onBoxClick:
+    _onBoxSelected:
       m_PersistentCalls:
         m_Calls: []
     _onFocusingBoxChanged:
@@ -2625,7 +2625,7 @@ MonoBehaviour:
     _focusingPosition: 1
     _alignAtFocusingPosition: 0
     _reverseScrollingDirection: 0
-    _initFocusedContentID: 0
+    _initFocusingContentID: 0
     _focusSelectedBox: 0
     _reverseContentOrder: 0
     _initializeOnStart: 1
@@ -2726,7 +2726,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    _onBoxClick:
+    _onBoxSelected:
       m_PersistentCalls:
         m_Calls: []
     _onFocusingBoxChanged:
