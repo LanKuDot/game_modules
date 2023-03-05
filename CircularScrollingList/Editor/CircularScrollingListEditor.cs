@@ -172,16 +172,16 @@ namespace AirFishLab.ScrollingList.Editor
                     fontStyle = FontStyle.Bold
                 };
 
-            var onBoxClick = GetListSettingProperty("_onBoxClick");
-            onBoxClick.isExpanded =
+            var onBoxSelected = GetListSettingProperty("_onBoxSelected");
+            onBoxSelected.isExpanded =
                 EditorGUILayout.Foldout(
-                    onBoxClick.isExpanded, "List Events", true, boldFoldout);
+                    onBoxSelected.isExpanded, "List Events", true, boldFoldout);
 
-            if (!onBoxClick.isExpanded)
+            if (!onBoxSelected.isExpanded)
                 return;
 
             ++EditorGUI.indentLevel;
-            DrawListSettingProperty("_onBoxClick");
+            DrawListSettingProperty("_onBoxSelected");
             DrawListSettingProperty("_onFocusingBoxChanged");
             DrawListSettingProperty("_onMovementEnd");
             --EditorGUI.indentLevel;

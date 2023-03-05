@@ -23,12 +23,12 @@ namespace AirFishLab.ScrollingList.Demo
                 $"Focusing content: {centeredContent.Value}";
         }
 
-        public void GetSelectedContentID(int selectedContentID)
+        public void OnBoxSelected(ListBox listBox)
         {
             var content =
-                (IntListContent)_list.ListBank.GetListContent(selectedContentID);
+                (IntListContent)_list.ListBank.GetListContent(listBox.ContentID);
             _selectedContentText.text =
-                $"Selected content ID: {selectedContentID}, Content: {content.Value}";
+                $"Selected content ID: {listBox.ContentID}, Content: {content.Value}";
         }
 
         public void OnFocusingBoxChanged(

@@ -207,7 +207,8 @@ namespace AirFishLab.ScrollingList
         private void InitializeMembers()
         {
             if (_listSetting.FocusSelectedBox)
-                _listSetting.OnBoxClick.AddListener(SelectContentID);
+                _listSetting.OnBoxSelected.AddListener(
+                    box => SelectContentID(box.ContentID));
             _controlMode = _listSetting.ControlMode;
 
             _inputProcessor =
@@ -389,7 +390,7 @@ namespace AirFishLab.ScrollingList
 
             if (!_listContentProvider.IsIDValid(contentID))
                 throw new IndexOutOfRangeException(
-                    $"{nameof(contentID)} is invalid");
+                    $"'{nameof(contentID)}' is invalid");
 
             var focusingContentID = GetFocusingContentID();
             var idDiff =

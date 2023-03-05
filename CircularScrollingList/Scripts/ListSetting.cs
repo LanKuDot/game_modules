@@ -97,10 +97,10 @@ namespace AirFishLab.ScrollingList
         #region Events
 
         [SerializeField]
-        [Tooltip("The callback to be invoked when a box is clicked. " +
+        [Tooltip("The callback to be invoked when a box is selected. " +
                  "The registered callbacks will be added to the 'onClick' event of boxes, " +
                  "therefore, boxes should be 'Button's.")]
-        private ListBoxIntEvent _onBoxClick;
+        private ListBoxSelectedEvent _onBoxSelected;
         [SerializeField]
         [Tooltip("The callback to be invoked when the focusing box is changed. " +
                  "The first argument is previous focusing box, " +
@@ -133,7 +133,7 @@ namespace AirFishLab.ScrollingList
         public AnimationCurve BoxVelocityCurve => _boxVelocityCurve;
         public AnimationCurve BoxMovementCurve => _boxMovementCurve;
 
-        public ListBoxIntEvent OnBoxClick => _onBoxClick;
+        public ListBoxSelectedEvent OnBoxSelected => _onBoxSelected;
         public ListTwoBoxesEvent OnFocusingBoxChanged => _onFocusingBoxChanged;
         public UnityEvent OnMovementEnd => _onMovementEnd;
 

@@ -108,7 +108,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 box.Initialize(
                     setupData.ScrollingList,
                     boxID, lastListBox, nextListBox);
-                box.OnBoxClick.AddListener(_setting.OnBoxClick.Invoke);
+                box.OnBoxSelected.AddListener(_setting.OnBoxSelected.Invoke);
 
                 _transformController.SetInitialLocalTransform(box.GetTransform(), boxID);
 

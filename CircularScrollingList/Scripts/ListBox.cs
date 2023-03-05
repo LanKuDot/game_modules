@@ -18,7 +18,7 @@ namespace AirFishLab.ScrollingList
         public int ContentID { get; private set; }
         public IListBox LastListBox { get; private set; }
         public IListBox NextListBox { get; private set; }
-        public ListBoxIntEvent OnBoxClick { get; } = new ListBoxIntEvent();
+        public ListBoxSelectedEvent OnBoxSelected { get; } = new ListBoxSelectedEvent();
         public CircularScrollingList ScrollingList { get; private set; }
         public bool IsActivated
         {
@@ -108,7 +108,7 @@ namespace AirFishLab.ScrollingList
 
         private void OnButtonClick()
         {
-            OnBoxClick?.Invoke(ContentID);
+            OnBoxSelected?.Invoke(this);
         }
 
         #endregion

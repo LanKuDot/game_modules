@@ -29,9 +29,9 @@ namespace AirFishLab.ScrollingList
         IListBox NextListBox { get; }
 
         /// <summary>
-        /// The event to be invoked when the box is clicked
+        /// The event to be invoked when the box is selected
         /// </summary>
-        ListBoxIntEvent OnBoxClick { get; }
+        ListBoxSelectedEvent OnBoxSelected { get; }
 
         /// <summary>
         /// Is the box activated?

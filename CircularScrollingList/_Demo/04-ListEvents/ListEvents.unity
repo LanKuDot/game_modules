@@ -789,11 +789,11 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    _onBoxClick:
+    _onBoxSelected:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 1328845008}
-          m_MethodName: GetSelectedContentID
+          m_MethodName: OnBoxSelected
           m_Mode: 0
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
