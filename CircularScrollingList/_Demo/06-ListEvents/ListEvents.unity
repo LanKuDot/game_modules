@@ -478,9 +478,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: '(Auto Updated)
+  m_Text: '(Auto updated)
 
-    Centered content:'
+    Focusing content:'
 --- !u!222 &268905300
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -688,7 +688,7 @@ MonoBehaviour:
     _focusingPosition: 1
     _alignAtFocusingPosition: 1
     _reverseScrollingDirection: 0
-    _initFocusedContentID: 0
+    _initFocusingContentID: 0
     _focusSelectedBox: 0
     _reverseContentOrder: 1
     _initializeOnStart: 1
