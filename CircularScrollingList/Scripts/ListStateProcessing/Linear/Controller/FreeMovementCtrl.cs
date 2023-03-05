@@ -150,7 +150,12 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
             // ===== Dragging ===== //
             if (_isDragging) {
+                if (Mathf.Approximately(_draggingDistance, 0f))
+                    return 0f;
+
                 distance = LimitMovingDistance(_draggingDistance);
+                // The dragging distance is only valid for one frame
+                _draggingDistance = 0;
 
                 if (!MovementUtility.IsGoingToFar(
                         state, _exceedingDistanceLimit, curDistance + distance))
