@@ -370,13 +370,16 @@ namespace AirFishLab.ScrollingList
         /// <summary>
         /// Make the boxes recalculate their content ID and reacquire the contents
         /// </summary>
-        /// <param name="centeredContentID">
-        /// The centered content ID after the list is refreshed
+        /// <param name="focusingContentID">
+        /// The focusing content ID after the list is refreshed
+        /// If it is negative, it will take current focusing content ID. <para />
+        /// If current focusing content ID is larger than the number of contents,
+        /// it will be the ID of the last content.
         /// </param>
-        public void Refresh(int centeredContentID = -1)
+        public void Refresh(int focusingContentID = -1)
         {
-            _listBoxController.RefreshBoxes(centeredContentID);
             _hasNoContent = _listContentProvider.GetContentCount() == 0;
+            _listBoxController.RefreshBoxes(focusingContentID);
         }
 
         /// <summary>

@@ -148,8 +148,9 @@ namespace AirFishLab.ScrollingList
         /// <param name="name">The name of the list</param>
         public void Validate(BaseListBank listBank, string name)
         {
+            var contentCount = listBank.GetContentCount();
             if (_initFocusingContentID < 0
-                || _initFocusingContentID >= listBank.GetContentCount())
+                || (contentCount > 0 && _initFocusingContentID >= contentCount))
                 throw new IndexOutOfRangeException(
                     "The 'InitFocusingContentID' is negative "
                     + "or greater than the number of contents in the list bank "

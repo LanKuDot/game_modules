@@ -110,8 +110,10 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             IListBox candidateBox = null;
 
             foreach (var box in _boxes) {
-                if (!box.IsActivated
-                    && box.ContentID != ListContentProvider.NO_CONTENT_ID)
+                var idState =
+                    ListContentProvider.GetIDState(box.ContentID, contentCount);
+                if (idState == ContentIDState.Overflow
+                    || idState == ContentIDState.Underflow)
                     continue;
 
                 var boxDistanceOffset = box.GetPositionFactor();
@@ -158,8 +160,10 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             IListBox bottomCandidateBox = null;
 
             foreach (var box in _boxes) {
-                if (!box.IsActivated
-                    && box.ContentID != ListContentProvider.NO_CONTENT_ID)
+                var idState =
+                    ListContentProvider.GetIDState(box.ContentID, contentCount);
+                if (idState == ContentIDState.Overflow
+                    || idState == ContentIDState.Underflow)
                     continue;
 
                 var positionFactor = box.GetPositionFactor();

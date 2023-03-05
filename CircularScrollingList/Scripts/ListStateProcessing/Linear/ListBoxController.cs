@@ -168,22 +168,21 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             _updateFocusingBoxFunc();
         }
 
-        public void RefreshBoxes(int centeredContentID = -1)
+        public void RefreshBoxes(int focusingContentID = -1)
         {
-            var curCenteredContentID = _focusingBox.ContentID;
+            var curFocusingContentID = _focusingBox.ContentID;
             var numOfContents = _contentProvider.GetContentCount();
 
-            if (centeredContentID >= numOfContents)
+            if (focusingContentID >= numOfContents)
                 throw new IndexOutOfRangeException(
-                    $"{nameof(centeredContentID)} is larger than the number of contents");
+                    $"{nameof(focusingContentID)} is larger than the number of contents");
 
-            if (centeredContentID < 0)
-                centeredContentID =
-                    curCenteredContentID == ListContentProvider.NO_CONTENT_ID
-                        ? 0
-                        : Mathf.Min(curCenteredContentID, numOfContents - 1);
+            if (focusingContentID < 0)
+                focusingContentID =
+                    curFocusingContentID == ListContentProvider.NO_CONTENT_ID
+                        ? 0 : Mathf.Min(curFocusingContentID, numOfContents - 1);
 
-            RecalculateAllBoxContent(centeredContentID);
+            RecalculateAllBoxContent(focusingContentID);
         }
 
         public IListBox GetFocusingBox() => _focusingBox;
@@ -373,9 +372,6 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 box.IsActivated = false;
                 return;
             }
-
-            if (_setting.ListType != CircularScrollingList.ListType.Linear)
-                return;
 
             var isPreviouslyActivated = box.IsActivated;
             var isIdValid = idState.HasFlag(ContentIDState.Valid);
