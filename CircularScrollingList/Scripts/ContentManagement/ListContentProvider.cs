@@ -73,7 +73,7 @@ namespace AirFishLab.ScrollingList.ContentManagement
                 return NO_CONTENT_ID;
 
             var contentID = 0;
-            var initFocusedContentID = _listSetting.InitFocusedContentID;
+            var initFocusedContentID = _listSetting.InitFocusingContentID;
             switch (_listSetting.FocusingPosition) {
                 case CircularScrollingList.FocusingPosition.Top:
                 case CircularScrollingList.FocusingPosition.Bottom:

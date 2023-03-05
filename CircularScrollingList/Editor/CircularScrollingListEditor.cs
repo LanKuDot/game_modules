@@ -144,7 +144,7 @@ namespace AirFishLab.ScrollingList.Editor
             --EditorGUI.indentLevel;
 
             DrawListSettingProperty("_focusingPosition");
-            DrawListSettingProperty("_initFocusedContentID");
+            DrawListSettingProperty("_initFocusingContentID");
             DrawListSettingProperty("_focusSelectedBox");
             if (_focusingPosition.intValue ==
                 (int)CircularScrollingList.FocusingPosition.Center)

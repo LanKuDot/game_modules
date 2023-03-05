@@ -36,9 +36,9 @@ namespace AirFishLab.ScrollingList
         [FormerlySerializedAs("_reverseDirection")]
         private bool _reverseScrollingDirection;
         [SerializeField]
-        [Tooltip("Specify the initial content ID for the focused box.")]
+        [Tooltip("Specify the initial content ID at the focusing position")]
         [FormerlySerializedAs(" _centeredContentID")]
-        private int _initFocusedContentID;
+        private int _initFocusingContentID;
         [SerializeField]
         [Tooltip("Move the selected box to the focusing position")]
         [FormerlySerializedAs("_centerSelectedBox")]
@@ -122,7 +122,7 @@ namespace AirFishLab.ScrollingList
             _focusingPosition;
         public bool AlignAtFocusingPosition => _alignAtFocusingPosition;
         public bool ReverseScrollingDirection => _reverseScrollingDirection;
-        public int InitFocusedContentID => _initFocusedContentID;
+        public int InitFocusingContentID => _initFocusingContentID;
         public bool FocusSelectedBox => _focusSelectedBox;
         public bool ReverseContentOrder => _reverseContentOrder;
         public bool InitializeOnStart => _initializeOnStart;
@@ -148,10 +148,10 @@ namespace AirFishLab.ScrollingList
         /// <param name="name">The name of the list</param>
         public void Validate(BaseListBank listBank, string name)
         {
-            if (_initFocusedContentID < 0
-                || _initFocusedContentID >= listBank.GetContentCount())
+            if (_initFocusingContentID < 0
+                || _initFocusingContentID >= listBank.GetContentCount())
                 throw new IndexOutOfRangeException(
-                    "The 'InitFocusedContentID' is negative "
+                    "The 'InitFocusingContentID' is negative "
                     + "or greater than the number of contents in the list bank "
                     + $"in the list '{name}'.");
 
