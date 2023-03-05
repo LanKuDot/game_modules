@@ -144,6 +144,9 @@ namespace AirFishLab.ScrollingList.ContentManagement
         /// <returns>The state of the id</returns>
         public ContentIDState GetIDState(int contentID)
         {
+            if (contentID == NO_CONTENT_ID)
+                return ContentIDState.NoContent;
+
             var contentCount = _listBank.GetContentCount();
             var state = contentID < 0
                 ? ContentIDState.Underflow

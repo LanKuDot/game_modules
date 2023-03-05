@@ -367,11 +367,9 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <param name="idState">The content id state of the box</param>
         private void ToggleBoxActivation(IListBox box, ContentIDState idState)
         {
-            var contentID = box.ContentID;
-
             // If there has no content in the content provider,
             // just inactivate the box.
-            if (contentID == ListContentProvider.NO_CONTENT_ID) {
+            if (idState == ContentIDState.NoContent) {
                 box.IsActivated = false;
                 return;
             }
