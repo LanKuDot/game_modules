@@ -1,5 +1,48 @@
 # Change Log
 
+### [CircularList_v6 pre] - 2023.03
+
+**Added**
+
+- Add events
+  - `OnBoxSelected`
+  - `OnFocusingBoxChanged`
+- Allow multi controlling modes at the same time
+- Support the list to be stopped at the top or the bottom (`Focusing Position` option)
+- Support layout preview in the editor
+- Stop the movement by the script
+- Toggle the interaction of the list by the script
+- Provide setting setup by the script
+- Get the the boxes in the list and the list which the box belongs to
+- Validate the setting at the initialization
+
+**Changed**
+
+- Code refactoring a lot
+- Rearrange the demo scenes
+- Rearrange the displaying order of options
+- Rename options
+  - The setting "Setting" -> "ListSetting" 
+  - The mode "Drag" -> "Pointer"
+  - The option "Align Middle" -> "Align At Focusing Position"
+  - The option "Reverse Direction" -> "Reverse Scrolling Direction"
+  - The option "Centered Content ID" -> "Init Focusing Content ID"
+  - The option "Center Selected Box" -> "Focus Selected Box"
+  - The option "Reverse Order" -> "Reverse Content Order"
+- Rename properties
+  - Capitalize the first character of properties
+
+**Fixed**
+
+- Incorrect layout when the list moves too fast
+
+**Removed**
+
+- Remove events
+  - `OnBoxClick`
+  - `OnCenteredContentChanged`
+- Remove "Assign References of Bank and Boxes" option from the context menu
+
 ### [CircularList_v5.1] - 2021.11.11
 
 **Fixed**
