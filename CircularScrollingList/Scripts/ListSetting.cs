@@ -139,6 +139,81 @@ namespace AirFishLab.ScrollingList
 
         #endregion
 
+        #region Property Setters
+
+        public void SetListType(CircularScrollingList.ListType listType) =>
+            _listType = listType;
+
+        public void SetDirection(CircularScrollingList.Direction direction) =>
+            _direction = direction;
+
+        public void SetControlMode(CircularScrollingList.ControlMode controlMode) =>
+            _controlMode = controlMode;
+
+        public void SetFocusingPosition(
+            CircularScrollingList.FocusingPosition focusingPosition) =>
+            _focusingPosition = focusingPosition;
+
+        public void SetAlignAtFocusingPosition(bool toAlign) =>
+            _alignAtFocusingPosition = toAlign;
+
+        public void SetReverseScrollingDirection(bool toReverse) =>
+            _reverseScrollingDirection = toReverse;
+
+        public void SetInitFocusingContentID(int contentID) =>
+            _initFocusingContentID = contentID;
+
+        public void SetFocusSelectedBox(bool toFocus) =>
+            _focusSelectedBox = toFocus;
+
+        public void SetReverseContentOrder(bool toReverse) =>
+            _reverseContentOrder = toReverse;
+
+        #endregion
+
+        #region Appearance Setters
+
+        public void SetBoxDensity(float boxDensity) =>
+            _boxDensity = boxDensity;
+
+        public void SetBoxPositionCurve(AnimationCurve curve) =>
+            _boxPositionCurve = curve;
+
+        public void SetBoxScaleCurve(AnimationCurve curve) =>
+            _boxScaleCurve = curve;
+
+        public void SetBoxVelocityCurve(AnimationCurve curve) =>
+            _boxVelocityCurve = curve;
+
+        public void SetBoxMovementCurve(AnimationCurve curve) =>
+            _boxMovementCurve = curve;
+
+        #endregion
+
+        #region Event Setters
+
+        public void AddOnBoxSelectedCallback(UnityAction<ListBox> callback) =>
+            _onBoxSelected.AddListener(callback);
+
+        public void RemoveOnBoxSelectedCallback(UnityAction<ListBox> callback) =>
+            _onBoxSelected.RemoveListener(callback);
+
+        public void AddOnFocusingBoxChangedCallback(
+            UnityAction<ListBox, ListBox> callback) =>
+            _onFocusingBoxChanged.AddListener(callback);
+
+        public void RemoveOnFocusingBoxChangedCallback(
+            UnityAction<ListBox, ListBox> callback) =>
+            _onFocusingBoxChanged.RemoveListener(callback);
+
+        public void AddOnMovementEndCallback(UnityAction callback) =>
+            _onMovementEnd.AddListener(callback);
+
+        public void RemoveOnMovementEndCallback(UnityAction callback) =>
+            _onMovementEnd.RemoveListener(callback);
+
+        #endregion
+
         #region Public Functions
 
         /// <summary>
