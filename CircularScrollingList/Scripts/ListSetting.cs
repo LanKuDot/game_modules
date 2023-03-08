@@ -27,6 +27,11 @@ namespace AirFishLab.ScrollingList
         private CircularScrollingList.FocusingPosition _focusingPosition =
                 CircularScrollingList.FocusingPosition.Center;
         [SerializeField]
+        [Tooltip("To show the list contents in the reversed order. "
+                 + "Available when the 'FocusingPosition' is 'center'")]
+        [FormerlySerializedAs("_reverseOrder")]
+        private bool _reverseContentOrder;
+        [SerializeField]
         [Tooltip("To align a box at the focusing position after sliding")]
         [FormerlySerializedAs("_alignMiddle")]
         [FormerlySerializedAs("_alignInCenter")]
@@ -43,11 +48,6 @@ namespace AirFishLab.ScrollingList
         [Tooltip("Move the selected box to the focusing position")]
         [FormerlySerializedAs("_centerSelectedBox")]
         private bool _focusSelectedBox;
-        [SerializeField]
-        [Tooltip("To show the list contents in the reversed order. "
-                 + "Available when the 'FocusingPosition' is 'center'")]
-        [FormerlySerializedAs("_reverseOrder")]
-        private bool _reverseContentOrder;
         [SerializeField]
         [Tooltip("Whether to initialize the list on Start or not. " +
                  "If set to false, manually call Initialize() to initialize the list.")]
@@ -118,13 +118,13 @@ namespace AirFishLab.ScrollingList
         public CircularScrollingList.ListType ListType => _listType;
         public CircularScrollingList.Direction Direction => _direction;
         public CircularScrollingList.ControlMode ControlMode => _controlMode;
-        public CircularScrollingList.FocusingPosition FocusingPosition =>
-            _focusingPosition;
         public bool AlignAtFocusingPosition => _alignAtFocusingPosition;
         public bool ReverseScrollingDirection => _reverseScrollingDirection;
+        public CircularScrollingList.FocusingPosition FocusingPosition =>
+            _focusingPosition;
+        public bool ReverseContentOrder => _reverseContentOrder;
         public int InitFocusingContentID => _initFocusingContentID;
         public bool FocusSelectedBox => _focusSelectedBox;
-        public bool ReverseContentOrder => _reverseContentOrder;
         public bool InitializeOnStart => _initializeOnStart;
 
         public float BoxDensity => _boxDensity;
@@ -150,24 +150,24 @@ namespace AirFishLab.ScrollingList
         public void SetControlMode(CircularScrollingList.ControlMode controlMode) =>
             _controlMode = controlMode;
 
-        public void SetFocusingPosition(
-            CircularScrollingList.FocusingPosition focusingPosition) =>
-            _focusingPosition = focusingPosition;
-
         public void SetAlignAtFocusingPosition(bool toAlign) =>
             _alignAtFocusingPosition = toAlign;
 
         public void SetReverseScrollingDirection(bool toReverse) =>
             _reverseScrollingDirection = toReverse;
 
+        public void SetFocusingPosition(
+            CircularScrollingList.FocusingPosition focusingPosition) =>
+            _focusingPosition = focusingPosition;
+
+        public void SetReverseContentOrder(bool toReverse) =>
+            _reverseContentOrder = toReverse;
+
         public void SetInitFocusingContentID(int contentID) =>
             _initFocusingContentID = contentID;
 
         public void SetFocusSelectedBox(bool toFocus) =>
             _focusSelectedBox = toFocus;
-
-        public void SetReverseContentOrder(bool toReverse) =>
-            _reverseContentOrder = toReverse;
 
         #endregion
 
