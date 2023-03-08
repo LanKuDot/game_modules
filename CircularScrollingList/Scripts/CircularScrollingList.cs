@@ -302,7 +302,19 @@ namespace AirFishLab.ScrollingList
         private static ListBox GenerateListBox(
             ListBox prefab, Transform rootTransform, int index)
         {
-            var box = Instantiate(prefab, rootTransform);
+            ListBox box;
+
+#if UNITY_EDITOR
+            if (!Application.isPlaying && PrefabUtility.IsPartOfAnyPrefab(prefab)) {
+                // If it is the prefab instance, get the source prefab asset
+                if (PrefabUtility.IsPartOfPrefabInstance(prefab))
+                    prefab = PrefabUtility.GetCorrespondingObjectFromSource(prefab);
+                box = PrefabUtility.InstantiatePrefab(prefab, rootTransform) as ListBox;
+            }
+            else
+#endif
+                box = Instantiate(prefab, rootTransform);
+
             box.name = $"{prefab.name} ({index})";
             return box;
         }
