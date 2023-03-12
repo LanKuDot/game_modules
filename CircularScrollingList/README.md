@@ -6,172 +6,222 @@ The quick overview of version 5 - [Demo video](https://youtu.be/6lFR4xGdmQ4)
 
 ## Outline
 
-* [Features](#features)
-* [Properties](#properties)
-  * [List Mode](#list-mode)
-  * [List Appearance](#list-appearance)
-  * [List Events](#list-events)
-* [How to Use](#how-to-use)
-  * [Set up the List](#set-up-the-list)
-  * [Set the Control Mode](#set-the-control-mode)
-  * [Appearance Curves](#appearance-curves)
-    * [Curve Presets](#curve-presets)
-* [`ListBank` and `ListBox`](#listbank-and-listbox)
-  * [Custom `ListBank`](#custom-listbank)
-  * [Custom `ListBox`](#custom-listbox)
-  * [Use Them in the List](#use-them-in-the-list)
-  * [Avoid Boxing/Unboxing Problem](#avoid-boxingunboxing-problem)
-* [Get the ID of the Selected Content](#get-the-id-of-the-selected-content)
-  * [`OnBoxClick` Event](#onboxclick-event)
-  * [`OnCenteredContentChanged` Event](#oncenteredcontentchanged-event)
-  * [Manually Get the Centered Content ID](#manually-get-the-centered-content-id)
-* [Select the Content from Script](#select-the-content-from-script)
-* [Refresh the List](#refresh-the-list)
+- [Circular Scrolling List](#circular-scrolling-list)
+  - [Outline](#outline)
+  - [Features](#features)
+  - [Setting](#setting)
+    - [Box Setting](#box-setting)
+    - [List Setting](#list-setting)
+      - [List Mode](#list-mode)
+      - [List Appearance](#list-appearance)
+      - [List Events](#list-events)
+  - [How to Use](#how-to-use)
+    - [Set Up the List](#set-up-the-list)
+    - [Set the Layout Area](#set-the-layout-area)
+    - [Set the Control Mode](#set-the-control-mode)
+    - [Set the Focusing Position](#set-the-focusing-position)
+    - [Appearance Curves](#appearance-curves)
+      - [Curve Presets](#curve-presets)
+  - [`ListBank` and `ListBox`](#listbank-and-listbox)
+    - [Custom `ListBank`](#custom-listbank)
+    - [Custom `ListBox`](#custom-listbox)
+    - [Use Them in the List](#use-them-in-the-list)
+    - [Avoid Boxing/Unboxing Problem](#avoid-boxingunboxing-problem)
+  - [Get the ID of the Selected Content](#get-the-id-of-the-selected-content)
+    - [`OnBoxClick` Event](#onboxclick-event)
+    - [`OnCenteredContentChanged` Event](#oncenteredcontentchanged-event)
+    - [Manually Get the Centered Content ID](#manually-get-the-centered-content-id)
+  - [Select the Content from Script](#select-the-content-from-script)
+  - [Refresh the List](#refresh-the-list)
 
 ## Features
 
-* Use finite list boxes to display infinite contents
-* 2 list types: Circular or Linear mode
-* 3 Control modes: Drag, Function, or Mouse wheel
-* Support both vertical and horizontal scrolling
-* Support all three render modes of the canvas plane
-* Custom layout and movement
-* Custom displaying contents
-* Reverse order and scrolling direction
-* Select the content from the script
-* Support dynamic list contents
-* Image sorting - The centered list item is in the front of the others
-* Callback events
-* Support Unity 2018.4+ (Tested in Unity 2018.4.15f1. The demo scenes in the project are made in Unity 2019.4.16f1)
+- Use finite list boxes to display infinite contents
+- 2 list types: Circular or Linear mode
+- 3 control modes: Pointer, Mouse wheel, and Script
+- 3 focusing (ending) position: Top, Center, and Bottom
+- Support both vertical and horizontal scrolling
+- Support all three render modes of the canvas plane
+- Custom layout and movement, and layout preview in the editor
+- Custom displaying contents
+- Support dynamic list contents
+- Script interacting
+- Image sorting - The box which is closest to the focusing position will be popped up
+- Callback events
+- Support Unity 2018.4+ (Tested in Unity 2018.4.15f1. The demo scenes in the project are made in Unity 2019.4.16f1)
 
-## Properties
+## Setting
 
 <img src="./ReadmeData~/circular_scrolling_list_panel_general.png" width=400px />
 
 |Property|Description|
-|:--------|:--------|
+|:-------|:----------|
 |**List Bank**|The game object that stores the contents for the list to display|
-|**List Boxes**|The game objects that used for displaying the content|
-|**Setting**|The setting of the list. See below.|
+|**Box Setting**|The setting of the list box. See [Box Setting](#box-setting) section|
+|**List Setting**|The setting of the list. See [List Setting](#list-setting) section|
 
-### List Mode
+### Box Setting
 
-<img src="./ReadmeData~/circular_scrolling_list_panel_list_mode.png" width=400px />
+<img src="./ReadmeData~/circular_scrolling_list_panel_list_box_setting.png" width=400px />
+
+|Property|Description|
+|:-------|:----------|
+|**Box Root Transform**|The root rect transform that holding the list boxes.<br>Default to the gameobject where the script is attached to|
+|**Box Prefab**|The prefab of the list box|
+|**Num Of Boxes**|The number of boxes to be generated|
+|**Generate Boxes and Arrange**|Generate the boxes under the "Box Root Transform" and<br>arrange them according to the [list appearance](#list-appearance)|
+|**Show/Hide the Boxes**|Show or hide the reference of managed boxes|
+
+The managed boxes will be shown when click the "Show the Boxes" button, and be hidden by clicking the button again:
+<img src="./ReadmeData~/circular_scrolling_list_panel_show_the_boxes.png" width=600px />
+
+### List Setting
+
+#### List Mode
+
+<img src="./ReadmeData~/circular_scrolling_list_panel_list_mode.png" width=470px />
 
 |Property|Description|
 |:-------|:----------|
 |**List Type**|The type of the list. Could be **Circular** or **Linear**|
-|**Control Mode**|The controlling mode. Could be **Drag**, **Function**, or **Mouse Wheel**<br>See [Set the Control Mode](#set-the-control-mode) for more information|
-|-- **Align Middle**|Whether to align a box in the middle after sliding or not.<br>Available if the control mode is **Drag**.|
-|-- **Reverse Direction**|Whether to reverse the scrolling direction or not.<br>Available if the control mode is **Mouse Wheel**.|
 |**Direction**|The major scrolling direction. Could be **Vertical** or **Horizontal**|
-|**Centered Content ID**|The initial content ID to be displayed in the centered box|
-|**Center Selected Box**|Whether to move the selected box to the center or not<br>The list box must be a button to make this function take effect.|
-|**Reverse Order**|Whether to reverse the content displaying order or not|
+|**Control Mode**|The controlling mode. Could be **Nothing**, or **Everthing**, **Pointer**, and **Mouse Wheel**<br>See [Set the Control Mode](#set-the-control-mode) for more information|
+|┕ **Align At Focusing Position**|Whether to align a box at the focusing position after sliding or not.<br>Available if the control mode has **Pointer** set.|
+|┕ **Reverse Scrolling Direction**|Whether to reverse the scrolling direction or not.<br>Available if the control mode has **Mouse Wheel** set.|
+|**Focusing Position**|The focusing (ending) position of the list. Could be **Top**, **Center**, or **Bottom**<br>See [Set the Focusing Position](#set-the-focusing-position) for more information|
+|┕ **Reverse Content Order**|Whether to reverse the content displaying order or not.<br>Available if the focusing position is **Center**.|
+|**Init Focusing Content ID**|The initial content ID to be displayed in the focusing box|
+|**Focus Selected Box**|Whether to move the selected box to the focusing position or not.<br>The list box must be a button to make this function take effect.|
 |**Initialize On Start**|Whether to initialize the list in its `Start()` or not<br>If it is false, manually initialize the list by invoking `CircularScrollingList.Initialize()`|
 
-### List Appearance
+#### List Appearance
 
-<img src="./ReadmeData~/circular_scrolling_list_panel_list_appearance.png" width=400px />
+<img src="./ReadmeData~/circular_scrolling_list_panel_list_appearance.png" width=470px />
 
 |Property|Description|
 |:-------|:----------|
 |**Box Density**|The factor for adjusting the distance between boxes.<br>The larger, the closer|
 |**Box Position Curve**|The curve specifying the passive position of the box|
 |**Box Scale Curve**|The curve specifying the box scale|
-|**Box Velocity Curve**|The curve specifying the velocity factor of the box after releasing.<br>Available if the control mode is **Drag**.|
-|**Box Movement Curve**|The curve specifying the movement factor of the box.<br>Available if the control mode is **Function** or **Mouse Wheel**.|
+|**Box Velocity Curve**|The curve specifying the velocity factor of the box after releasing.<br>Available if the control mode has **Pointer** set.|
+|**Box Movement Curve**|The curve specifying the movement factor of the box|
 
 For the detailed information of the curves, see [Appearance Curves](#appearance-curves).
 
-### List Events
+#### List Events
 
-<img src="./ReadmeData~/circular_scrolling_list_panel_list_events.png" width=400px />
+<img src="./ReadmeData~/circular_scrolling_list_panel_list_events.png" width=470px />
 
 |Property|Description|
 |:-------|:----------|
-|**On Box Click**|The callback to be invoked when a box is clicked.<br>The int parameter is the content ID of the clicked box.|
-|**On Centered<br>Content Changed**|The callback to be invoked when the centered content is changed.<br>The int parameter is the content ID of the centered box.|
+|**On Box Selected**|The callback to be invoked when a box is selected by clicking.<br>The `ListBox` parameter is the selected box.|
+|**On Focusing Box Changed**|The callback to be invoked when the focusing box is changed.<br>The first parameter is the previous focusing box,<br>and the second parameter is the current one.|
 |**On Movement End**|The callback to be invoked when the list movement is ended|
 
 ## How to Use
 
-### Set up the List
+### Set Up the List
 
-1. Add a Canvas plane to the scene. Set the render mode to "Screen Space - Camera" for example, and assign the "Main Camera" to the "Render Camera". \
+1. Add a Canvas plane to the scene. Set the render mode to "Screen Space - Camera" for example, and assign the "Main Camera" to the "Render Camera". Set the ui scale mode to "Scale With Screen Size", and the "Match" to 1. \
     <img src="./ReadmeData~/step_a_1.PNG" width=400px />
-2. Create an empty gameobject as the child of the canvas plane, rename it to "CircularScrollingList" (or another name you like), and attach the script `ListPositionCtrl.cs` to it. \
+2. Create an empty gameobject as the child of the canvas plane, rename it to "CircularScrollingList" (or other name you like), and set the height to 400. It will define the reference area of the list (See [Set the Layout Area](#set-the-layout-area) for more information). Then attach the script `ListPositionCtrl.cs` to it. \
     <img src="./ReadmeData~/step_a_2.PNG" width=650px />
-3. Create a Button gameobject as the child of the "CircularScrollingList", rename it to "ListBox", change the sprite and the font size if needed. \
+3. Create a Button gameobject as the child of the "CircularScrollingList", rename it to "ListBox", and adjust the image or text size if needed. \
     <img src="./ReadmeData~/step_a_3.PNG" width=650px />
 4. Create a new script `IntListBox.cs` and add the following code. For more information, see [ListBank and ListBox](#listbank-and-listbox) section.
 
     ```csharp
-    using AirFishLab.ScrollingList;
+    using AirFishLab.ScrollingList.ContentManagement;
     using UnityEngine;
     using UnityEngine.UI;
 
     // The box used for displaying the content
-    // Must be inherited from the class ListBox
+    // Must inherit from the class `ListBox`
     public class IntListBox : ListBox
     {
         [SerializeField]
         private Text _contentText;
 
         // This function is invoked by the `CircularScrollingList` for updating the list content.
-        // The type of the content will be converted to `object` in the `IntListBank` (Defined later)
-        // So it should be converted back to its own type for being used.
-        // The original type of the content is `int`.
-        protected override void UpdateDisplayContent(object content)
+        protected override void UpdateDisplayContent(IListContent listContent)
         {
-            _contentText.text = ((int) content).ToString();
+            // Code will be added later
         }
     }
     ```
 
-5. Attach the script `IntListBox.cs` to it, assign the gameobject "Text" of the Button to the "Content Text" of the `ListBox.cs`, and then create a prefab of it .\
+5. Attach the script `IntListBox.cs` to it, assign the gameobject "Text" of the Button to the "Content Text" of the `ListBox.cs`, and then create a prefab of it.\
     <img src="./ReadmeData~/step_a_5.PNG" width=650px/>
-6. Duplicate the gameobject `ListBox` or create gameobjects from the prefab as many times as you want (4 times here, for exmaple) \
-    <img src="./ReadmeData~/step_a_6.PNG" width=260px/>
-7. Click the menu of the `CircularScrollingList` and select "Assign References of Bank and Boxes" to automatically add the reference of boxes to it (The list boxes must be the children of `CircularScrollingList`), or maually assign them to the property "List Boxes". \
-    <img src="./ReadmeData~/step_a_7-1.PNG" width=400px />
-    <img src="./ReadmeData~/step_a_7-2.PNG" width=650px />
+6. Assign the created prefab to the "Box Prefab" in the "Box Setting" of the `CircularScrollingList.cs`.\
+    <img src="./ReadmeData~/step_a_6.PNG" width=650px/>
+7. Click the "Generate Boxes and Arrange" button, and 4 more boxes will be generated and arranged. Click "Show the Boxes" button to view the referenced boxes.
+    <img src="./ReadmeData~/step_a_7.PNG" width=650px />
 8. Create a new script `IntListBank.cs` and add the following code. For more information, see [ListBank and ListBox](#listbank-and-listbox) section.
 
     ```csharp
-    using AirFishLab.ScrollingList;
+    using AirFishLab.ScrollingList.ContentManagement;
 
     // The bank for providing the content for the box to display
     // Must be inherit from the class BaseListBank
     public class IntListBank : BaseListBank
     {
+        // The content to be passed to the list box
+        // must inherit from the class `IListContent`.
+        public class Content : IListContent
+        {
+            public int Value;
+        }
+
         private readonly int[] _contents = {
             1, 2, 3, 4, 5, 6, 7, 8, 9, 10
         };
 
         // This function will be invoked by the `CircularScrollingList`
-        // when acquiring the content to display
-        // The object returned will be converted to the type `object`
-        // which will be converted back to its own type in `IntListBox.UpdateDisplayContent()`
-        public override object GetListContent(int index)
+        // to get the content to display.
+        public override IListContent GetListContent(int index)
         {
-            return _contents[index];
+            var content = new Content {
+                Value = _contents[index]
+            };
+
+            return content;
         }
 
-        public override int GetListLength()
+        public override int GetContentCount()
         {
             return _contents.Length;
         }
     }
     ```
 
-9. Attach the script `IntListBank.cs` to the gameobject "CircularScrollingList" (or another gameobejct you like)
-10. Again click the menu of the `CircularScrollingList` and select "Assign References of Bank and Boxes" to automatically add the reference of `IntListBank` to it (The script must be in the same gameobject of the `CircularScrollingList`), or manually assign it to the property "List Bank". \
-    <img src="./ReadmeData~/step_a_10.PNG" width=400px />
-11. Adjust the height or width of the rect transform of the gameobject "CircularScrollingList". When the game is running, the list boxes will be evenly distributed in the range of height (for **Vertically** scrolling list) or width (for **Horizontally** scrolling list). \
-    The distance between the boxes can be adjusted by the property "Box Density". \
-    <img src="./ReadmeData~/step_a_11.PNG" width=800px />
-12. Click "Play" to see the result
+9. In the script `IntListBox.cs`, add the code to the function `UpdateDisplayContent()` to receive the content.
+
+    ```csharp
+    using AirFishLab.ScrollingList.ContentManagement;
+    using UnityEngine;
+    using UnityEngine.UI;
+
+    // The box used for displaying the content
+    // Must inherit from the class `ListBox`
+    public class IntListBox : ListBox
+    {
+        [SerializeField]
+        private Text _contentText;
+
+        // This function is invoked by the `CircularScrollingList` for updating the list content.
+        protected override void UpdateDisplayContent(IListContent listContent)
+        {
+            var content = (IntListBank.Content)listContent;
+            _contentText.text = content.Value;
+        }
+    }
+    ```
+
+10. Attach the script `IntListBank.cs` to the gameobject "CircularScrollingList" (or another gameobejct you like), and assign the reference to the "List Bank" of the `CircularScrollingList.cs`.
+    <img src="./ReadmeData~/step_a_10.PNG" width=650px/>
+11. Click "Play" to see the result
+
+### Set the Layout Area
 
 ### Set the Control Mode
 
@@ -183,6 +233,8 @@ There are 3 control mode for the list:
   In this mode, the list can be moved by additional buttons by assigning these two function to them. \
   <img src="./ReadmeData~/function_mode_demo.png" width=650px>
 * **Mouse Wheel**: The list can be moved by scrolling the mouse wheel.
+
+### Set the Focusing Position
 
 ### Appearance Curves
 
