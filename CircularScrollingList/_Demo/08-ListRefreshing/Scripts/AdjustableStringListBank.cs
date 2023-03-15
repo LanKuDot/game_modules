@@ -42,7 +42,7 @@ namespace AirFishLab.ScrollingList.Demo
         }
 
         /// <summary>
-        /// Used for carry the data of value type to avoid boxing/unboxing
+        /// Used for carrying the data
         /// </summary>
         public class DataWrapper : IListContent
         {

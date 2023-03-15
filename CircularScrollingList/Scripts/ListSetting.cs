@@ -86,7 +86,7 @@ namespace AirFishLab.ScrollingList
         [SerializeField]
         [Tooltip("The curve specifying the movement factor of the box. " +
                  "The x axis is the moving duration in seconds, which starts from 0. " +
-                 "The y axis is the factor for reaching the target position.")]
+                 "The y axis is the lerping factor for reaching the target position.")]
         private AnimationCurve _boxMovementCurve =
             new AnimationCurve(
                 new Keyframe(0.0f, 0.0f, 0.0f, 8f),
