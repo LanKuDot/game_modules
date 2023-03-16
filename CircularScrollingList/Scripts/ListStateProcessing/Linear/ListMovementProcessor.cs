@@ -77,11 +77,6 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
             var deltaDistance = unit * _unitPos;
 
-            // If the unit movement is not started yet,
-            // countervail the position difference
-            if (_unitMovementCtrl.IsMovementEnded())
-                deltaDistance -= _listBoxController.FocusingDistanceOffset;
-
             _unitMovementCtrl.SetMovement(deltaDistance, false);
         }
 

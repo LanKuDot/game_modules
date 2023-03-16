@@ -103,7 +103,15 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                     movingDirection * _exceedingDistanceLimit - curDistance);
                 _unitMovementCurve.EndMovement();
             } else {
-                distanceAdded += _unitMovementCurve.distanceRemaining;
+                var distanceRemaining = _unitMovementCurve.distanceRemaining;
+                // If the moving direction is the same, just add it
+                if (!Mathf.Approximately(distanceRemaining, 0f)
+                    && Mathf.Approximately(
+                        Mathf.Sign(distanceRemaining), Math.Sign(distanceAdded)))
+                    distanceAdded += _unitMovementCurve.distanceRemaining;
+                // If it is not, reverse the moving direction immediately
+                else
+                    distanceAdded -= curDistance;
                 _unitMovementCurve.SetMovement(distanceAdded);
             }
         }
