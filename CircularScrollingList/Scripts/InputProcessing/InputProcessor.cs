@@ -47,7 +47,7 @@ namespace AirFishLab.ScrollingList
         {
             var deltaPos =
                 phase == InputPhase.Scrolled
-                    ? eventData.scrollDelta
+                    ? GetScrollDeltaPos(eventData.scrollDelta)
                     : GetDeltaPos(eventData.position, phase);
             var deltaPosNormalized =
                 new Vector2(
@@ -66,6 +66,17 @@ namespace AirFishLab.ScrollingList
                 DeltaLocalPosNormalized = deltaPosNormalized,
                 DeltaTime = deltaTime
             };
+        }
+
+        /// <summary>
+        /// Get the unit delta pos for the scrolling
+        /// </summary>
+        /// <param name="scrollDelta">The original input value</param>
+        /// <returns>The unit delta pos</returns>
+        private Vector2 GetScrollDeltaPos(Vector2 scrollDelta)
+        {
+            // Ignore the scalar, only return the unit pos and the direction
+            return scrollDelta.y > 0 ? Vector2.up : Vector2.down;
         }
 
         /// <summary>
