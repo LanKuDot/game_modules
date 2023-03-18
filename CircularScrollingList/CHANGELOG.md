@@ -8,7 +8,8 @@
   - `OnBoxSelected`
   - `OnFocusingBoxChanged`
 - Allow multi controlling modes at the same time
-- Support the list to be stopped at the top or the bottom (`Focusing Position` option)
+- Support focusing posiiton
+- Support the list to be stopped at the top or the bottom
 - Support layout preview in the editor
 - Stop the movement by the script
 - Toggle the interaction of the list by the script
@@ -22,7 +23,7 @@
 - Rearrange the demo scenes
 - Rearrange the displaying order of options
 - Rename options
-  - The setting "Setting" -> "ListSetting" 
+  - The setting "Setting" -> "ListSetting"
   - The mode "Drag" -> "Pointer"
   - The option "Align Middle" -> "Align At Focusing Position"
   - The option "Reverse Direction" -> "Reverse Scrolling Direction"

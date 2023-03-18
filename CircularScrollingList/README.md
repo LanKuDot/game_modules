@@ -16,7 +16,7 @@ The quick overview of version 5 - [Demo video](https://youtu.be/6lFR4xGdmQ4)
       - [List Appearance](#list-appearance)
       - [List Events](#list-events)
   - [How to Use](#how-to-use)
-    - [Set Up the List](#set-up-the-list)
+    - [Setup the List](#setup-the-list)
     - [Set the Layout Area](#set-the-layout-area)
     - [Set the Control Mode](#set-the-control-mode)
     - [Set the Focusing Position](#set-the-focusing-position)
@@ -26,20 +26,24 @@ The quick overview of version 5 - [Demo video](https://youtu.be/6lFR4xGdmQ4)
     - [Custom `ListBank`](#custom-listbank)
     - [Custom `ListBox`](#custom-listbox)
     - [Use Them in the List](#use-them-in-the-list)
-    - [Avoid Boxing/Unboxing Problem](#avoid-boxingunboxing-problem)
-  - [Get the ID of the Selected Content](#get-the-id-of-the-selected-content)
-    - [`OnBoxClick` Event](#onboxclick-event)
-    - [`OnCenteredContentChanged` Event](#oncenteredcontentchanged-event)
-    - [Manually Get the Centered Content ID](#manually-get-the-centered-content-id)
-  - [Select the Content from Script](#select-the-content-from-script)
-  - [Refresh the List](#refresh-the-list)
+    - [Pass Data of Primitive Type](#pass-data-of-primitive-type)
+  - [Events](#events)
+    - [`OnBoxSelected` Event](#onboxselected-event)
+    - [`OnFocusingBoxChanged` Event](#onfocusingboxchanged-event)
+    - [Manually Get the Focusing Box](#manually-get-the-focusing-box)
+    - [`OnMovementEnd` event](#onmovementend-event)
+  - [Script Operations](#script-operations)
+    - [Toggle List Interaction](#toggle-list-interaction)
+    - [Select the Content](#select-the-content)
+    - [Refresh the List](#refresh-the-list)
+    - [Stop the Movement](#stop-the-movement)
 
 ## Features
 
 - Use finite list boxes to display infinite contents
 - 2 list types: Circular or Linear mode
 - 3 control modes: Pointer, Mouse wheel, and Script
-- 3 focusing (ending) position: Top, Center, and Bottom
+- 3 focusing position: Top, Center, and Bottom
 - Support both vertical and horizontal scrolling
 - Support all three render modes of the canvas plane
 - Custom layout and movement, and layout preview in the editor
@@ -72,7 +76,7 @@ The quick overview of version 5 - [Demo video](https://youtu.be/6lFR4xGdmQ4)
 |**Generate Boxes and Arrange**|Generate the boxes under the "Box Root Transform" and<br>arrange them according to the [list appearance](#list-appearance)|
 |**Show/Hide the Boxes**|Show or hide the reference of managed boxes|
 
-The managed boxes will be shown when click the "Show the Boxes" button, and be hidden by clicking the button again:
+The managed boxes will be shown when click the "Show the Boxes" button, and be hidden by clicking the button again: \
 <img src="./ReadmeData~/circular_scrolling_list_panel_show_the_boxes.png" width=600px />
 
 ### List Setting
@@ -101,7 +105,7 @@ The managed boxes will be shown when click the "Show the Boxes" button, and be h
 |Property|Description|
 |:-------|:----------|
 |**Box Density**|The factor for adjusting the distance between boxes.<br>The larger, the closer|
-|**Box Position Curve**|The curve specifying the passive position of the box|
+|**Box Position Curve**|The curve specifying the minor position of the box|
 |**Box Scale Curve**|The curve specifying the box scale|
 |**Box Velocity Curve**|The curve specifying the velocity factor of the box after releasing.<br>Available if the control mode has **Pointer** set.|
 |**Box Movement Curve**|The curve specifying the movement factor of the box|
@@ -120,7 +124,7 @@ For the detailed information of the curves, see [Appearance Curves](#appearance-
 
 ## How to Use
 
-### Set Up the List
+### Setup the List
 
 1. Add a Canvas plane to the scene. Set the render mode to "Screen Space - Camera" for example, and assign the "Main Camera" to the "Render Camera". Set the ui scale mode to "Scale With Screen Size", and the "Match" to 1. \
     <img src="./ReadmeData~/step_a_1.PNG" width=400px />
@@ -152,9 +156,9 @@ For the detailed information of the curves, see [Appearance Curves](#appearance-
 
 5. Attach the script `IntListBox.cs` to it, assign the gameobject "Text" of the Button to the "Content Text" of the `ListBox.cs`, and then create a prefab of it.\
     <img src="./ReadmeData~/step_a_5.PNG" width=650px/>
-6. Assign the created prefab to the "Box Prefab" in the "Box Setting" of the `CircularScrollingList.cs`.\
+6. Assign the created prefab to the "Box Prefab" in the "Box Setting" of the `CircularScrollingList.cs`. \
     <img src="./ReadmeData~/step_a_6.PNG" width=650px/>
-7. Click the "Generate Boxes and Arrange" button, and 4 more boxes will be generated and arranged. Click "Show the Boxes" button to view the referenced boxes.
+7. Click the "Generate Boxes and Arrange" button, and 4 more boxes will be generated and arranged. Click "Show the Boxes" button to view the referenced boxes. \
     <img src="./ReadmeData~/step_a_7.PNG" width=650px />
 8. Create a new script `IntListBank.cs` and add the following code. For more information, see [ListBank and ListBox](#listbank-and-listbox) section.
 
@@ -217,50 +221,78 @@ For the detailed information of the curves, see [Appearance Curves](#appearance-
     }
     ```
 
-10. Attach the script `IntListBank.cs` to the gameobject "CircularScrollingList" (or another gameobejct you like), and assign the reference to the "List Bank" of the `CircularScrollingList.cs`.
-    <img src="./ReadmeData~/step_a_10.PNG" width=650px/>
+10. Attach the script `IntListBank.cs` to the gameobject "CircularScrollingList" (or another gameobejct you like), and assign the reference to the "List Bank" of the `CircularScrollingList.cs`. \
+    <img src="./ReadmeData~/step_a_10.PNG" width=650px />
 11. Click "Play" to see the result
 
 ### Set the Layout Area
 
+*Related demo scene: 01-ListType*
+
+The rect size of the given "Box Root Transform" defines the layout area. If the direction of the list is **Vertical**, the list will use the height of the rect size to arrange the boxes. If the direction of the list is **Horizontal**, the list will use the width instead. \
+<img src="./ReadmeData~/set-the-layout-area.PNG" width=650px />
+
+The gap between the boxes could be adjusted by setting the "Box Density" in the "List Appearence" section of the setting. The higher, the closer. \
+<img src="./ReadmeData~/set-the-layout-area-box-density.PNG" width=500px />
+
 ### Set the Control Mode
 
-There are 3 control mode for the list:
+*Related demo scene: 02-ControlMode*
 
-* **Drag**: The list can be moved by dragging it.
-* **Function**: The list can be moved by invoking `CircularScrollingList.MoveOneUnitUp()` or `CicularScrollingList.MoveOneUnitDown()`. \
-  For the **horizontally** scolling list, invoking `CircularScrollingList.MoveOneUnitUp()` will move the list one unit right, and one unit left by invoking `CicularScrollingList.MoveOneUnitDown()`. \
-  In this mode, the list can be moved by additional buttons by assigning these two function to them. \
-  <img src="./ReadmeData~/function_mode_demo.png" width=650px>
-* **Mouse Wheel**: The list can be moved by scrolling the mouse wheel.
+There are 3 control modes. Two of them could be toggled in the setting. \
+<img src="./ReadmeData~/control-modes.png" width=450px />
+
+- **Pointer**: The list can be moved by dragging it.
+  - **Align At Focusing Position** option will be shown if this control mode is set. If it is activated, the list will align a box to the focusing position after the list is released.
+- **Mouse Wheel**: The list can be moved by scrolling the mouse wheel.
+  - **Reverse Scrolling Direction** option will be shown if this contol mode is set. If it is activated, the list will be scrolled in the reversed direction.
+
+The last control mode is **Function**. The list can be moved by invoking `CircularScrollingList.MoveOneUnitUp()` or `CircularScrollingList.MoveOneUnitDown()`. In this mode, the list can be moved by buttons which invoking these two functions. \
+<img src="./ReadmeData~/function_mode_demo.png" width=650px />
 
 ### Set the Focusing Position
 
+*Related demo scene: 03-FocusingPosition*
+
+The focusing position defines which box will be the focusing box at that position. The **Reverse Content Order** option will be shown if the focusing position is set to **Center**. \
+<img src="./ReadmeData~/focusing-position.png" width=450px />
+
+Here is the focusing position related to the position of the box. The focusing position will affect the result of the `OnFocusingBoxChanged` event. \
+<img src="./ReadmeData~/focusing-position-target-box.png" width=650px />
+
+If the focusing position is set to **Top**, the order of the displaying content will be from the top to the bottom. If it is **Bottom**, the order will be reversed. If it is **Center**, the order is decided by the **Reverse Content Order** option. \
+<img src="./ReadmeData~/focusing-position-circular-list.png" width=600px />
+
+The focusing position also defines the ending position of the **linear** list. If it is set to **Top**, the list will be ended at the bottom. If it is set to **Bottom**, the list will be ended at the top. That is, unlike **Center** focusing position, the box showing the last content couldn't be dragged to the focusing position. \
+<img src="./ReadmeData~/focusing-position-ending-position.png" width=600px />
+
+But if the number of the content is less than the number of the boxes, the content will be shown from the focusing position, and the list couldn't be dragged, when the focusing position is set to **Top** or **Bottom**. \
+<img src="./ReadmeData~/focusing-position-ending-position-fewer-content.png" width=600px />
+
 ### Appearance Curves
 
-* **Box Position Curve**: The curve specifying the passive position of the box
-  * X axis: The major position of the box, which is mapped to [-1, 1] (from the smallest value to the largest value).
-  * Y axis: The factor of the passive position.
+*Related demo scene: 04-LayoutAndMovement*
 
-  For example, in the vertical mode, the major position is the y position and the passive position is the x position: \
+- **Box Position Curve**: The curve specifying the minor position of the box
+  - X axis: The major position of the box, which is mapped to [-1, 1] (from the smallest major position to the largest major position).
+  - Y axis: The factor of the minor position.
+
+  For example, in the vertical mode, the major position is the y position and the minor position is the x position: \
   <img src="./ReadmeData~/list_position_vertical_curve_explain.png" width=700px /> \
   It is intuitive in the horizontal mode: \
   <img src="./ReadmeData~/list_position_horizontal_curve_explain.png" width=700px /> \
-  Note that "1" in the curve equals to (number of boxes / 2) * unitPos, where unitPos equals to (width/length of rect / (number of boxes - 1)).
-* **Box Scale Curve**: The curve specifying the box scale
-  * X axis: Same as the box position curve
-  * Y axis: The scale value of the box at that major position
-* **Box Velocity Curve**: The curve specifying the velocity factor of the box after releasing
-  * X axis: The movement duration in seconds, which starts from 0.
-  * Y axis: The factor relative to the releasing velocity
+  Note that "1" in the curve equals to `(number of boxes / 2) * unitPos`, where unitPos equals to `(width or length of root rect size / (number of boxes - 1))`. For example, if there are 5 boxes, then the length of "1" is 2.5 unitPos. And if the width of the root rect transform is 400, then the unitPos is 100.
 
-  The y value of curve should **start from 1 and end with 0**. \
+- **Box Scale Curve**: The curve specifying the box scale
+  - X axis: Same as the box position curve
+  - Y axis: The scale value of the box at that major position
+- **Box Velocity Curve**: The curve specifying the velocity factor of the box after releasing
+  - X axis: The movement duration in seconds, which starts from 0.
+  - Y axis: The factor of the releasing velocity. It should **start from 1 and end with 0**. \
   <img src="./ReadmeData~/box_velocity_curve_example.PNG" width=400px />
-* **Box Movement Curve**: The curve specifying the movement factor of the box. 
-  * X axis: Same as the box velocity curve
-  * Y axis: The factor relative to the target position.
-
-  The y value of curve should **start from 0 and end with 1**. \
+- **Box Movement Curve**: The curve specifying the movement factor of the box.
+  - X axis: Same as the box velocity curve
+  - Y axis: The lerping factor between current position and the target position. It should **start from 0 and end with 1**. \
   <img src="./ReadmeData~/box_movement_curve_example.PNG" width=400px />
 
 #### Curve Presets
@@ -272,7 +304,9 @@ Part A are position curves, part B are scale curves, part C is a velocity curve,
 
 ## `ListBank` and `ListBox`
 
-Scene version 5, the list supports custom content type. Different type of `ListBank` and `ListBox` can be used in the different list. In this section mentions how to implement your own `ListBank` and `ListBox`.
+*Related demo scene: 05-CustomContent*
+
+Since version 5, the list supports custom content type. Different type of `ListBank` and `ListBox` can be used in the different list. In this section mentions how to implement your own `ListBank` and `ListBox`.
 
 <img src="./ReadmeData~/custom_list_example.png" width=200px>
 
@@ -281,24 +315,28 @@ Scene version 5, the list supports custom content type. Different type of `ListB
 Here is the example of the custom `ColorStrListBank`:
 
 ```csharp
+using System;
+using AirFishLab.ScrollingList.ContentManagement;
+using UnityEngine;
+
 public class ColorStrListBank : BaseListBank
 {
     [SerializeField]
     private ColorString[] _contents;
 
-    public override object GetListContent(int index)
+    public override IListContent GetListContent(int index)
     {
         return _contents[index];
     }
 
-    public override int GetListLength()
+    public override int GetContentCount()
     {
         return _contents.Length;
     }
 }
 
 [Serializable]
-public class ColorString
+public class ColorString : IListContent
 {
     public Color color;
     public string name;
@@ -307,15 +345,15 @@ public class ColorString
 
 The class must inherit from the class `BaseListBank`, and there are 2 methods to be implemented:
 
-* `public override object GetListContent(int index)`: The function for the list to request the content to display. This function always convert the returned content to type `object`, and it should be converted back to its orignal type for being used in the custom `ListBox`.
-* `public override int GetListLength()`: Get the number of the contents.
+- `public override IListContent GetListContent(int index)`: The function for the list to get the content to display. The data object passed by this function should inherit `IListContent`, and it should be converted back to its orignal type for being used in the custom `ListBox`.
+- `public override int GetListLength()`: Get the number of the content.
 
 ### Custom `ListBox`
 
 Here is the example of the corresponding `ColorStrListBox`:
 
 ```csharp
-using AirFishLab.ScrollingList;
+using AirFishLab.ScrollingList.ContentManagement;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -326,176 +364,203 @@ public class ColorStrListBox : ListBox
     [SerializeField]
     private Text _contentText;
 
-    protected override void UpdateDisplayContent(object content)
+    protected override void UpdateDisplayContent(IListContent content)
     {
-        var colorString = (ColorString) content;
+        // Convert the content type back to the ColorString to get the data
+        var colorString = (ColorString)content;
         _contentImage.color = colorString.color;
         _contentText.text = colorString.name;
     }
 }
 ```
 
-The class must inherit from the class `ListBox`, and there are 1 method to be implemented:
+The class must inherit from the class `ListBox`, and there is 1 method to be implemented:
 
-* `protected override void UpdateDisplayContent(object content)`: The function for the list to update the content of the box. `content` is the content requested from the custom list bank, and it should be converted back to its original type for being used.
+- `protected override void UpdateDisplayContent(IListContent content)`: The function for the list to update the content of the box. `content` is the content requested from `GetListContent()` of the custom list bank, and it should be converted back to its original type for being used.
 
 ### Use Them in the List
 
-Same as the setup steps in the [Set up the List](#set-up-the-list) section but replacing the `IntListBox` and `IntListBank` with your own version of `ListBox` and `ListBank`.
+Same as the setup steps in the [Setup the List](#setup-the-list) section but replacing the `IntListBox` and `IntListBank` with your own version of `ListBox` and `ListBank`.
 
 <img src="./ReadmeData~/custom_list_box_example.png" width=650px /> \
 <img src="./ReadmeData~/custom_list_bank_example.png" width=650px />
 
-### Avoid Boxing/Unboxing Problem
+### Pass Data of Primitive Type
 
-According to [this C# programming guide](https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/types/boxing-and-unboxing), converting a value type to `object` type is called boxing, and converting `object` type to a value type is called unboxing, which causes a performance problem. To avoid this situation, create a data class to carry the data of value type.
+If the type of the content is primitive type such as `int` or `string`, you should create a class carrying the data and make it inherit from the `IListContent`.
 
-The modified version of `IntListBank`:
+For example, for passing the string as the content:
 
 ```csharp
-using AirFishLab.ScrollingList;
-
-public class IntListBank : BaseListBank
+public class StringListBank : BaseListBank
 {
-    private readonly int[] _contents = {
-        1, 2, 3, 4, 5, 6, 7, 8, 9, 10
-    };
+    /// <summary>
+    /// Used for carrying the data
+    /// </summary>
+    public class DataWrapper : IListContent
+    {
+        public string Data;
+    }
 
-    // Create a data wrapper for carrying the data
+    private string[] _contents = {"apple", "book", "car", "door", "egg"};
+    // Create a wrapper object for carrying the data
     private DataWrapper _dataWrapper = new DataWrapper();
 
-    public override object GetListContent(int index)
+    public override IListContent GetListContent(int index)
     {
-        _dataWrapper.value = _contents[index];
+        // Store the content in the data wrapper
+        _dataWrapper.Data = _contents[index];
         return _dataWrapper;
     }
 
-    public override int GetListLength()
+    public override int GetContentCount()
     {
         return _contents.Length;
     }
 }
 
-public class DataWrapper
-{
-    public int value;
-}
-```
-
-The modified version of `IntListBox`:
-
-```csharp
-using AirFishLab.ScrollingList;
-
-public class IntListBox : ListBox
+public class StringListBox : ListBox
 {
     [SerializeField]
-    private Text _contentText;
+    private Text _text;
 
-    protected override void UpdateDisplayContent(object content)
+    protected override void UpdateDisplayContent(IListContent content)
     {
-        var data = (DataWrapper) content;
-        _contentText.text = (string) data.value;
+        var dataWrapper = (StringListBank.DataWrapper)content;
+        // Extract the content from the wrapper
+        _text.text = dataWrapper.Data;
     }
 }
 ```
 
-## Get the ID of the Selected Content
+## Events
 
-There are three ways to get ID of the selected content.
+*Related demo scene: 06-ListEvents*
 
-1. `OnBoxClicked` event
-2. `OnCenteredContentChanged` event
-3. Manually get the centered content ID
+All the events could be subscribed or unsubscribed by script by invoking `CircularScrollingList.ListSetting.AddXXXCallback()` and `CircularScrollingList.ListSetting.RemoveXXXCallback()`.
 
-### `OnBoxClick` Event
+### `OnBoxSelected` Event
 
-When a box is clicked, the `CircularScrollingList` will launch the event `OnBoxClick` (actually launch from the `Button.onClick` event). The callback function (or the listener) for the event must have 1 parameter for receiving the ID of the selected content.
+When a box is clicked, the list will launch the `OnBoxSelected` event (actually launch from the `Button.onClick` event). The callback function (or the listener) for the event must have 1 parameter for receiving the focusing box.
 
 Here is an example of the callback function:
 
 ```csharp
 using AirFishLab.ScrollingList;
+using UnityEngine;
+using UnityEngine.UI;
 
-public class DisplayAndSelectExample : MonoBehaviour
+public class ListEventDemo : MonoBehaviour
 {
     [SerializeField]
     private CircularScrollingList _list;
+    [SerializeField]
+    private Text _selectedContentText;
 
-    public void GetSelectedContentID(int selectedContentID)
+    public void OnBoxSelected(ListBox listBox)
     {
-        var content = (int) _list.listBank.GetListContent(selectedContentID);
-        Debug.Log("Selected content ID: " + selectedContentID +
-                ", Content: " + content);
+        var contentID = listBox.ContentID;
+        // Get the content by the content ID
+        var content = (IntListContent)_list.ListBank.GetListContent(contentID);
+        _selectedContentText.text =
+            $"Selected content ID: {contentID}, Content: {content}";
+    }
+
+    public void OnBoxSelected2(ListBox listBox)
+    {
+        // The other way is to convert the type of the box back to its original type,
+        // and then get the custom property from the box
+        var customBox = (CustomBox)listBox;
+        _selectedContentText.text =
+            $"Selected content ID: {customBox.ContentID}, Content: {customBox.Content}";
     }
 }
 ```
 
-Then, assign it to the property "On Box Click (Int 32)". (Note that select the function in the "dynamic int" section) \
-<img src="./ReadmeData~/on_box_clicked_assignment.PNG" width=500px>
+Then, assign it to the property "On Box Selected (ListBox)".
+<img src="./ReadmeData~/on-box-selected-event.PNG" width=500px>
 
-It will be like: \
-<img src="https://i.imgur.com/mNhwjRQ.gif" width=400px />
+It will be like:
+<img src="./ReadmeData~/on-box-selected-event-demo.gif" width=400px />
 
-### `OnCenteredContentChanged` Event
+### `OnFocusingBoxChanged` Event
 
-The `OnCenteredContentChanged` event will be invoked when the centered content is changed. The callbacks for this event are similar to the `OnBoxClicked` event.
+The `OnFocusingBoxChanged` event will be invoked when the box at the specified **Focusing Position** is changed. Two parameters are required for the callback: the last focusing box and the current one.
 
 Here is an example of the callback function:
 
 ```csharp
 using AirFishLab.ScrollingList;
+using UnityEngine;
+using UnityEngine.UI;
 
-public class DisplayAndSelectExample : MonoBehaviour
+public class ListEventDemo : MonoBehaviour
 {
     [SerializeField]
     private CircularScrollingList _list;
     [SerializeField]
-    private Text _centeredContentText;
+    private Text _autoUpdatedContentText;
 
-    public void OnListCenteredContentChanged(int centeredContentID)
+    public void OnFocusingBoxChanged(
+        ListBox prevFocusingBox, ListBox curFocusingBox)
     {
-        var content = (int) _list.listBank.GetListContent(centeredContentID);
-        _centeredContentText.text = "(Auto updated)\nCentered content: " + content;
+        var curFocusingIntBox = (IntListBox)curFocusingBox;
+        // The `IntListBox` has custom property `Content` for storing the displaying content
+        _autoUpdatedContentText.text =
+            $"(Auto updated)\nFocusing content: {curFocusingIntBox.Content}";
     }
 }
 ```
 
-Assign it to the property "On Centered Content Changed (Int 32)" \
-<img src="./ReadmeData~/on_centered_content_changed_assignment.PNG" width=500px>
+Assign it to the property "On Focusing Box Changed (ListBox, ListBox)" \
+<img src="./ReadmeData~/on-focusing-box-changed.PNG" width=500px />
 
-It will be like: \
-<img src="./ReadmeData~/on_centered_content_changed_demo.gif" width=350px>
+If the **Focusing Position** is set to **Center**, then it will be like: \
+<img src="./ReadmeData~/on-focusing-box-changed-demo.gif" width=350px />
 
-### Manually Get the Centered Content ID
+If the **Focusing Position** is set to **Top**, then it will be like: \
+<img src="./ReadmeData~/on-focusing-box-changed-demo-top-pos.gif" width=350px />
 
-The other way is to invoke the function `CircularScrollingList.GetCenteredContentID()` to manually get the centered content ID.
+### Manually Get the Focusing Box
 
-For example, create a function which will update the content of the centered box to the Text, and use a Button to invoke it.
+Invoking `CircularScrollingList.GetFocusingBox()` to manually get the focusing box, or invoking `CircularScrollingList.GetFocusingContentID()` to get the content id.
+
+For example, create a function which will update the content of the focusing content to the `Text`, and use a `Button` to invoke it.
 
 ```csharp
 using AirFishLab.ScrollingList;
+using UnityEngine;
+using UnityEngine.UI;
 
-public class DisplayAndSelectExample : MonoBehaviour
+public class ListEventDemo : MonoBehaviour
 {
     [SerializeField]
     private CircularScrollingList _list;
     [SerializeField]
     private Text _displayText;
 
-    public void DisplayCenteredContent()
+    public void DisplayFocusingContent()
     {
-        var contentID = _list.GetCenteredContentID();
-        var centeredContent = (int) _list.listBank.GetListContent(contentID);
-        _displayText.text = "Centered content: " + centeredContent;
+        var focusingBox = (IntListBox)_list.GetFocusingBox();
+        // The `IntListBox` has custom property `Content` for storing the displaying content
+        var focusingContent = focusingBox.Content;
+        _displayText.text = "Focusing content: " + focusingContent;
     }
 }
 ```
 
-It will be like: \
-<img src="https://i.imgur.com/zgxpO3M.gif" width=300px />
+If the **Focusing Position** is set to **Bottom**, then it will be like: \
+<img src="./ReadmeData~/get-focusing-box-demo.gif" width=300px />
 
-## Select the Content from Script
+### `OnMovementEnd` event
+
+`OnMovementEnd` event will be invoked when the list stops moving.
+
+## Script Operations
+
+### Toggle List Interaction
+
+### Select the Content
 
 The list content could be selected from the script by invoking:
 
@@ -530,7 +595,7 @@ public class ListIteration : MonoBehaviour
         while (true) {
             _list.SelectContentID(_currentID);
             _currentID =
-                (int) Mathf.Repeat(_currentID + 1, _list.listBank.GetListLength());
+                (int)Mathf.Repeat(_currentID + 1, _list.listBank.GetListLength());
             yield return new WaitForSeconds(_stepInterval);
         }
     }
@@ -540,7 +605,7 @@ public class ListIteration : MonoBehaviour
 It will be like: \
 <img src="./ReadmeData~/list_selection_demo.gif" width=300px />
 
-## Refresh the List
+### Refresh the List
 
 When any content in the list bank is changed, make the list refresh its displaying contents by invoking:
 
@@ -592,3 +657,5 @@ public class VariableStringListBank : BaseListBank
 
 It will be like: \
 <img src="./ReadmeData~/list_refreshing_demo.gif" width=600px />
+
+### Stop the Movement
