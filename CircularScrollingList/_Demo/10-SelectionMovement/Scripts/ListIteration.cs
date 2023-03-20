@@ -16,12 +16,15 @@ namespace AirFishLab.ScrollingList.Demo
 
         private void Start()
         {
+            _list.SetInteractable(false);
             StartCoroutine(IterationLoop());
         }
 
         private IEnumerator IterationLoop()
         {
             while (true) {
+                // The selection movement still works even if the list is not interactable.
+                // The default value of 'notToIgnore' parameter is true.
                 _list.SelectContentID(_currentID);
                 _currentID =
                     (int) Mathf.Repeat(
