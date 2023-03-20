@@ -159,7 +159,7 @@ For the detailed information of the curves, see [Appearance Curves](#appearance-
 6. Assign the created prefab to the "Box Prefab" in the "Box Setting" of the `CircularScrollingList.cs`. \
     <img src="./ReadmeData~/step_a_6.png" width=650px/>
 7. Click the "Generate Boxes and Arrange" button, and 4 more boxes will be generated and arranged. Click "Show the Boxes" button to view the referenced boxes. \
-    <img src="./ReadmeData~/step_a_7.png" width=650px />
+    <img src="./ReadmeData~/step_a_7.png" width=800px />
 8. Create a new script `IntListBank.cs` and add the following code. For more information, see [ListBank and ListBox](#listbank-and-listbox) section.
 
     ```csharp
