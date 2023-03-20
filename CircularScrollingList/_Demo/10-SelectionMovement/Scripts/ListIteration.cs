@@ -16,6 +16,7 @@ namespace AirFishLab.ScrollingList.Demo
 
         private void Start()
         {
+            // Make the list not interactable while it is controlled by the script
             _list.SetInteractable(false);
             StartCoroutine(IterationLoop());
         }
