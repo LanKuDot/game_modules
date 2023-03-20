@@ -127,11 +127,11 @@ For the detailed information of the curves, see [Appearance Curves](#appearance-
 ### Setup the List
 
 1. Add a Canvas plane to the scene. Set the render mode to "Screen Space - Camera" for example, and assign the "Main Camera" to the "Render Camera". Set the ui scale mode to "Scale With Screen Size", and the "Match" to 1. \
-    <img src="./ReadmeData~/step_a_1.PNG" width=400px />
+    <img src="./ReadmeData~/step_a_1.png" width=400px />
 2. Create an empty gameobject as the child of the canvas plane, rename it to "CircularScrollingList" (or other name you like), and set the height to 400. It will define the reference area of the list (See [Set the Layout Area](#set-the-layout-area) for more information). Then attach the script `ListPositionCtrl.cs` to it. \
-    <img src="./ReadmeData~/step_a_2.PNG" width=650px />
+    <img src="./ReadmeData~/step_a_2.png" width=650px />
 3. Create a Button gameobject as the child of the "CircularScrollingList", rename it to "ListBox", and adjust the image or text size if needed. \
-    <img src="./ReadmeData~/step_a_3.PNG" width=650px />
+    <img src="./ReadmeData~/step_a_3.png" width=650px />
 4. Create a new script `IntListBox.cs` and add the following code. For more information, see [ListBank and ListBox](#listbank-and-listbox) section.
 
     ```csharp
@@ -155,11 +155,11 @@ For the detailed information of the curves, see [Appearance Curves](#appearance-
     ```
 
 5. Attach the script `IntListBox.cs` to it, assign the gameobject "Text" of the Button to the "Content Text" of the `ListBox.cs`, and then create a prefab of it.\
-    <img src="./ReadmeData~/step_a_5.PNG" width=650px/>
+    <img src="./ReadmeData~/step_a_5.png" width=650px/>
 6. Assign the created prefab to the "Box Prefab" in the "Box Setting" of the `CircularScrollingList.cs`. \
-    <img src="./ReadmeData~/step_a_6.PNG" width=650px/>
+    <img src="./ReadmeData~/step_a_6.png" width=650px/>
 7. Click the "Generate Boxes and Arrange" button, and 4 more boxes will be generated and arranged. Click "Show the Boxes" button to view the referenced boxes. \
-    <img src="./ReadmeData~/step_a_7.PNG" width=650px />
+    <img src="./ReadmeData~/step_a_7.png" width=650px />
 8. Create a new script `IntListBank.cs` and add the following code. For more information, see [ListBank and ListBox](#listbank-and-listbox) section.
 
     ```csharp
@@ -222,7 +222,7 @@ For the detailed information of the curves, see [Appearance Curves](#appearance-
     ```
 
 10. Attach the script `IntListBank.cs` to the gameobject "CircularScrollingList" (or another gameobejct you like), and assign the reference to the "List Bank" of the `CircularScrollingList.cs`. \
-    <img src="./ReadmeData~/step_a_10.PNG" width=650px />
+    <img src="./ReadmeData~/step_a_10.png" width=650px />
 11. Click "Play" to see the result
 
 ### Set the Layout Area
@@ -230,10 +230,10 @@ For the detailed information of the curves, see [Appearance Curves](#appearance-
 *Related demo scene: 01-ListType*
 
 The rect size of the given "Box Root Transform" defines the layout area. If the direction of the list is **Vertical**, the list will use the height of the rect size to arrange the boxes. If the direction of the list is **Horizontal**, the list will use the width instead. \
-<img src="./ReadmeData~/set-the-layout-area.PNG" width=650px />
+<img src="./ReadmeData~/set-the-layout-area.png" width=650px />
 
 The gap between the boxes could be adjusted by setting the "Box Density" in the "List Appearence" section of the setting. The higher, the closer. \
-<img src="./ReadmeData~/set-the-layout-area-box-density.PNG" width=500px />
+<img src="./ReadmeData~/set-the-layout-area-box-density.png" width=500px />
 
 ### Set the Control Mode
 
@@ -261,13 +261,13 @@ Here is the focusing position related to the position of the box. The focusing p
 <img src="./ReadmeData~/focusing-position-target-box.png" width=650px />
 
 If the focusing position is set to **Top**, the order of the displaying content will be from the top to the bottom. If it is **Bottom**, the order will be reversed. If it is **Center**, the order is decided by the **Reverse Content Order** option. \
-<img src="./ReadmeData~/focusing-position-circular-list.png" width=600px />
+<img src="./ReadmeData~/focusing-position-circular-list.png" width=500px />
 
-The focusing position also defines the ending position of the **linear** list. If it is set to **Top**, the list will be ended at the bottom. If it is set to **Bottom**, the list will be ended at the top. That is, unlike **Center** focusing position, the box showing the last content couldn't be dragged to the focusing position. \
-<img src="./ReadmeData~/focusing-position-ending-position.png" width=600px />
+The focusing position also defines the ending position of the **Linear** list. If it is set to **Top**, the list will be ended at the bottom. If it is set to **Bottom**, the list will be ended at the top. That is, unlike **Center** focusing position, the box showing the last content couldn't be dragged to the focusing position. \
+<img src="./ReadmeData~/focusing-position-ending-position.png" width=500px />
 
 But if the number of the content is less than the number of the boxes, the content will be shown from the focusing position, and the list couldn't be dragged, when the focusing position is set to **Top** or **Bottom**. \
-<img src="./ReadmeData~/focusing-position-ending-position-fewer-content.png" width=600px />
+<img src="./ReadmeData~/focusing-position-ending-position-fewer-content.png" width=500px />
 
 ### Appearance Curves
 
@@ -289,11 +289,11 @@ But if the number of the content is less than the number of the boxes, the conte
 - **Box Velocity Curve**: The curve specifying the velocity factor of the box after releasing
   - X axis: The movement duration in seconds, which starts from 0.
   - Y axis: The factor of the releasing velocity. It should **start from 1 and end with 0**. \
-  <img src="./ReadmeData~/box_velocity_curve_example.PNG" width=400px />
+  <img src="./ReadmeData~/box_velocity_curve_example.png" width=400px />
 - **Box Movement Curve**: The curve specifying the movement factor of the box.
   - X axis: Same as the box velocity curve
   - Y axis: The lerping factor between current position and the target position. It should **start from 0 and end with 1**. \
-  <img src="./ReadmeData~/box_movement_curve_example.PNG" width=400px />
+  <img src="./ReadmeData~/box_movement_curve_example.png" width=400px />
 
 #### Curve Presets
 
@@ -437,7 +437,12 @@ public class StringListBox : ListBox
 
 *Related demo scene: 06-ListEvents*
 
-All the events could be subscribed or unsubscribed by script by invoking `CircularScrollingList.ListSetting.AddXXXCallback()` and `CircularScrollingList.ListSetting.RemoveXXXCallback()`.
+All the events could be subscribed or unsubscribed by script by invoking:
+
+```csharp
+CircularScrollingList.ListSetting.AddXXXCallback(callback)
+CircularScrollingList.ListSetting.RemoveXXXCallback(callback)
+```
 
 ### `OnBoxSelected` Event
 
@@ -477,15 +482,15 @@ public class ListEventDemo : MonoBehaviour
 }
 ```
 
-Then, assign it to the property "On Box Selected (ListBox)".
-<img src="./ReadmeData~/on-box-selected-event.PNG" width=500px>
+Then, assign it to the property "On Box Selected (ListBox)". \
+<img src="./ReadmeData~/on-box-selected-event.png" width=500px>
 
-It will be like:
+It will be like (ReadmeData~/on-box-selected-event-demo.gif): \
 <img src="./ReadmeData~/on-box-selected-event-demo.gif" width=400px />
 
 ### `OnFocusingBoxChanged` Event
 
-The `OnFocusingBoxChanged` event will be invoked when the box at the specified **Focusing Position** is changed. Two parameters are required for the callback: the last focusing box and the current one.
+The `OnFocusingBoxChanged` event will be invoked when the box at the specified "Focusing Position" is changed. Two parameters are required for the callback: the last focusing box and the current one.
 
 Here is an example of the callback function:
 
@@ -513,17 +518,27 @@ public class ListEventDemo : MonoBehaviour
 ```
 
 Assign it to the property "On Focusing Box Changed (ListBox, ListBox)" \
-<img src="./ReadmeData~/on-focusing-box-changed.PNG" width=500px />
+<img src="./ReadmeData~/on-focusing-box-changed.png" width=500px />
 
-If the **Focusing Position** is set to **Center**, then it will be like: \
-<img src="./ReadmeData~/on-focusing-box-changed-demo.gif" width=350px />
+If the "Focusing Position" is set to **Center**, then it will be like (ReadmeData~/on-focusing-box-changed-demo.gif): \
+<img src="./ReadmeData~/on-focusing-box-changed-demo.gif" width=320px />
 
-If the **Focusing Position** is set to **Top**, then it will be like: \
-<img src="./ReadmeData~/on-focusing-box-changed-demo-top-pos.gif" width=350px />
+If the "Focusing Position" is set to **Top**, then it will be like (ReadmeData~/on-focusing-box-changed-demo-top-pos.gif): \
+<img src="./ReadmeData~/on-focusing-box-changed-demo-top-pos.gif" width=320px />
 
 ### Manually Get the Focusing Box
 
-Invoking `CircularScrollingList.GetFocusingBox()` to manually get the focusing box, or invoking `CircularScrollingList.GetFocusingContentID()` to get the content id.
+Manually get the focusing box by invoking:
+
+```csharp
+CircularScrollingList.GetFocusingBox()
+```
+
+To get the content id by invoking:
+
+```csharp
+CircularScrollingList.GetFocusingContentID()
+```
 
 For example, create a function which will update the content of the focusing content to the `Text`, and use a `Button` to invoke it.
 
@@ -549,8 +564,8 @@ public class ListEventDemo : MonoBehaviour
 }
 ```
 
-If the **Focusing Position** is set to **Bottom**, then it will be like: \
-<img src="./ReadmeData~/get-focusing-box-demo.gif" width=300px />
+If the "Focusing Position" is set to **Bottom**, then it will be like (ReadmeData~/get-focusing-box-demo.gif): \
+<img src="./ReadmeData~/get-focusing-box-demo.gif" width=280px />
 
 ### `OnMovementEnd` event
 
@@ -560,16 +575,53 @@ If the **Focusing Position** is set to **Bottom**, then it will be like: \
 
 ### Toggle List Interaction
 
+*Related demo scene: 11-InteractingByScript*
+
+The list interaction could be toggled by invoking:
+
+```csharp
+CircularScrolingList.SetInteractable(bool isInteractable)
+```
+
+and the current interaction state could be checked by:
+
+```csharp
+CircularScrollingList.IsInteractable
+```
+
+Here is an example:
+
+```csharp
+public class ListInteraction : MonoBehaviour
+{
+    [SerializeField]
+    private CircularScrollingList _scrollingList;
+    [SerializeField]
+    private Text _toggleInteractionText;
+
+    public void ToggleListInteractable()
+    {
+        _scrollingList.SetInteractable(!_scrollingList.IsInteractable);
+
+        var interactingState = _scrollingList.IsInteractable ? "ON" : "OFF";
+        _toggleInteractionText.text = $"List interactable: {interactingState}";
+    }
+}
+```
+
 ### Select the Content
+
+*Related demo scene: 10-SelectionMovement*
 
 The list content could be selected from the script by invoking:
 
 ```csharp
-CircularScrollingList.SelectContentID(int contentID)
+CircularScrollingList.SelectContentID(int contentID, bool notToIgnore = true)
 ```
 
-Whether the "Centered Selected Box" is on or off, the selected content will always be centered. \
-If the specified `contentID` is not valid, it will raise `IndexOutOfRangeException`. It the list has no content to display, this function has no effect, no matter what the value of `contentID` is.
+Whether the "Focus Selected Box" is on or off, the selected content will always be moved to the focusing position. \
+If the specified `contentID` is invalid, it will raise `IndexOutOfRangeException`. It the list has no content to display, this function has no effect, no matter what the value of `contentID` is. \
+If the `notToIgnore` is `true`, the selection movement still works even if the list is not interactable. If it is `false`, then this function call will be ignored instead.
 
 Here is an example for iteration through the list contents by selecting each content:
 
@@ -587,12 +639,16 @@ public class ListIteration : MonoBehaviour
 
     private void Start()
     {
+        // Make the list not interactable while it is controlled by the script
+        _list.SetInteractable(false);
         StartCoroutine(IterationLoop());
     }
 
     private IEnumerator IterationLoop()
     {
         while (true) {
+            // The selection movement still works even if the list is not interactable.
+            // The default value of 'notToIgnore' parameter is true.
             _list.SelectContentID(_currentID);
             _currentID =
                 (int)Mathf.Repeat(_currentID + 1, _list.listBank.GetListLength());
@@ -602,20 +658,22 @@ public class ListIteration : MonoBehaviour
 }
 ```
 
-It will be like: \
-<img src="./ReadmeData~/list_selection_demo.gif" width=300px />
+It will be like (ReadmeData~/list_selection_demo.gif): \
+<img src="./ReadmeData~/list_selection_demo.gif" width=320px />
 
 ### Refresh the List
 
-When any content in the list bank is changed, make the list refresh its displaying contents by invoking:
+*Related demo scene: 08-ListRefreshing*
+
+When the content in the list bank is changed, make the list refresh its displaying contents by invoking:
 
 ```csharp
-CircularScrollingList.Refresh(int centeredContentID = -1)
+CircularScrollingList.Refresh(int focusingContentID = -1)
 ```
 
 The boxes in the list will recalculate their content ID and reacquire the content from the list bank. \
-The `centeredContentID` specifies the ID of the centered content after the list is refreshed. If it's value is invalid, the function will raise `IndexOutOfRangeException`. \
-If the `centeredContentID` is negative, whose defalut value is -1, the list will use the current centered content ID as the content ID of the centered box (Note that it uses ID, not content). If the current centered content ID is larger than the number of contents, it will be the ID of the last item of them. If there is no content to be displayed before calling `Refresh()`, the ID of the centered content will be 0.
+The `focusingContentID` specifies the ID of the focusing content after the list is refreshed. If the value is invalid, the function will raise `IndexOutOfRangeException`. \
+If the `focusingContentID` is negative, whose defalut value is -1, the list will use the current focusing content ID as the content ID of the focusing box (Note that it uses the ID, not content). If the current focusing content ID is larger than the number of contents, it will be the ID of the last content. If there is no content to be displayed before calling `Refresh()`, the focusing content ID will be 0.
 
 Here is an example for extracting new contents and refresh the list:
 
@@ -631,6 +689,8 @@ public class VariableStringListBank : BaseListBank
     [SerializeField]
     private CircularScrollingList _list;
 
+    private Content _dataWrapper = new Content();
+
     /// <summary>
     /// Extract the contents from the input field and refresh the list
     /// </summary>
@@ -643,19 +703,35 @@ public class VariableStringListBank : BaseListBank
         _list.Refresh();
     }
 
-    public override object GetListContent(int index)
+    public override IListContent GetListContent(int index)
     {
-        return _contents[index];
+        _dataWrapper.Content = _contents[index];
+        return _dataWrapper;
     }
 
     public override int GetListLength()
     {
         return _contents.Length;
     }
+
+    public class Content : IListContent
+    {
+        public string Value;
+    }
 }
 ```
 
-It will be like: \
+It will be like (ReadmeData~/list_refreshing_demo.gif): \
 <img src="./ReadmeData~/list_refreshing_demo.gif" width=600px />
 
 ### Stop the Movement
+
+*Related demo scene: 11-InteractingByScript*
+
+The list movement could be stopped by invoking:
+
+```csharp
+CircularScrollingList.EndMovement()
+```
+
+The `OnMovementEnd` event will be invoked when this function is called.
