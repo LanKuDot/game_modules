@@ -212,7 +212,7 @@ namespace AirFishLab.ScrollingList
         {
             if (_listSetting.FocusSelectedBox)
                 _listSetting.OnBoxSelected.AddListener(
-                    box => SelectContentID(box.ContentID));
+                    box => SelectContentID(box.ContentID, false));
             _controlMode = _listSetting.ControlMode;
 
             _inputProcessor =
@@ -402,7 +402,10 @@ namespace AirFishLab.ScrollingList
         /// Select the specified content ID and make it be aligned at the center
         /// </summary>
         /// <param name="contentID">The target content ID</param>
-        public void SelectContentID(int contentID)
+        /// <param name="notToIgnore">
+        /// Not to ignore the selection movement when the list is not interactable
+        /// </param>
+        public void SelectContentID(int contentID, bool notToIgnore = true)
         {
             if (_hasNoContent)
                 return;
@@ -416,7 +419,7 @@ namespace AirFishLab.ScrollingList
                 _listContentProvider.GetShortestIDDiff(focusingContentID, contentID);
 
             if (idDiff != 0)
-                SetSelectionMovement(idDiff);
+                SetSelectionMovement(idDiff, notToIgnore);
         }
 
         #endregion
@@ -514,9 +517,10 @@ namespace AirFishLab.ScrollingList
         /// <param name="shortestIDDiff">
         /// The shortest id difference between centered content and the selected content
         /// </param>
-        private void SetSelectionMovement(int shortestIDDiff)
+        /// <param name="notToIgnore">Not to ignore this movement</param>
+        private void SetSelectionMovement(int shortestIDDiff, bool notToIgnore)
         {
-            if (ToIgnoreMovement())
+            if (!notToIgnore && ToIgnoreMovement())
                 return;
 
             _listMovementProcessor.SetSelectionMovement(shortestIDDiff);
