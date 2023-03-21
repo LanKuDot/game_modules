@@ -734,4 +734,9 @@ The list movement could be stopped by invoking:
 CircularScrollingList.EndMovement()
 ```
 
-The `OnMovementEnd` event will be invoked when this function is called.
+A box will be aligned if the fucntion is invoked:
+
+- during the **Mouse Wheel** or the **Function** movement, or
+- during movement after the **Pointer** releases and the **Align At Focusing Position** option is set.
+
+The `OnMovementEnd` event will be invoked when the movement is ended.
