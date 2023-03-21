@@ -42,8 +42,14 @@
         bool IsMovementEnded();
 
         /// <summary>
+        /// Whether need to align a box or not
+        /// </summary>
+        bool NeedToAlign();
+
+        /// <summary>
         /// Discard the current movement
         /// </summary>
-        void EndMovement();
+        /// <param name="toAlign">Whether to align a box</param>
+        void EndMovement(bool toAlign);
     }
 }

@@ -28,6 +28,10 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// The factor for reversing the moving direction of selection movement
         /// </summary>
         private int _selectionDistanceFactor;
+        /// <summary>
+        /// Whether to align a box after releasing
+        /// </summary>
+        private bool _alignAtFocusingPosition;
 
         #endregion
 
@@ -35,12 +39,16 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
         public void Initialize(ListSetupData setupData)
         {
+            var setting = setupData.ListSetting;
+
             InitializePositionVars(
                 setupData.RectTransform.rect,
-                setupData.ListSetting.Direction,
-                setupData.ListSetting.BoxDensity,
+                setting.Direction,
+                setting.BoxDensity,
                 setupData.ListBoxes.Count);
-            InitializeComponents(setupData.ListSetting);
+            InitializeComponents(setting);
+
+            _alignAtFocusingPosition = setting.AlignAtFocusingPosition;
         }
 
         public void SetMovement(InputInfo inputInfo)
@@ -82,7 +90,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
         public void SetSelectionMovement(int units)
         {
-            EndMovement();
+            EndMovement(false);
 
             var deltaDistance =
                 units * _unitPos * _selectionDistanceFactor
@@ -104,10 +112,20 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             _freeMovementCtrl.IsMovementEnded()
             && _unitMovementCtrl.IsMovementEnded();
 
-        public void EndMovement()
+        public bool NeedToAlign()
+        {
+            return (_alignAtFocusingPosition && !_freeMovementCtrl.IsMovementEnded())
+                   || !_unitMovementCtrl.IsMovementEnded();
+        }
+
+        public void EndMovement(bool toAlign)
         {
             _freeMovementCtrl.EndMovement();
             _unitMovementCtrl.EndMovement();
+
+            // Use unit movement control to align the box
+            if (toAlign)
+                _unitMovementCtrl.SetMovement(0, false);
         }
 
         #endregion

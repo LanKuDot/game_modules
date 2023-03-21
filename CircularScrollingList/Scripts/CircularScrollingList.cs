@@ -362,7 +362,12 @@ namespace AirFishLab.ScrollingList
             if (_listMovementProcessor.IsMovementEnded())
                 return;
 
-            _listMovementProcessor.EndMovement();
+            var toAlign = _listMovementProcessor.NeedToAlign();
+            _listMovementProcessor.EndMovement(toAlign);
+
+            if (toAlign)
+                return;
+
             _listSetting.OnMovementEnd.Invoke();
             _isMoving = false;
         }
