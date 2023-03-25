@@ -1,16 +1,17 @@
 # Change Log
 
-### [CircularList_v6 pre] - 2023.03
+### [CircularList_v6] - 2023.03.25
 
 **Added**
 
 - Add events
   - `OnBoxSelected`
   - `OnFocusingBoxChanged`
-- Allow multi controlling modes at the same time
-- Support focusing posiiton
+- Allow multi-control modes at the same time
+- Support 3 different focusing posiiton
 - Support the list to be stopped at the top or the bottom
 - Support layout preview in the editor
+- Support initiailzation at runtime
 - Stop the movement by the script
 - Toggle the interaction of the list by the script
 - Provide setting setup by the script
@@ -20,8 +21,8 @@
 **Changed**
 
 - Code refactoring a lot
-- Rearrange the demo scenes
-- Rearrange the displaying order of options
+- Arrange the demo scenes
+- Arrange the displaying order of options
 - Rename options
   - The setting "Setting" -> "ListSetting"
   - The mode "Drag" -> "Pointer"
@@ -36,6 +37,7 @@
 **Fixed**
 
 - Incorrect layout when the list moves too fast
+- Incorrect aligning position for even number of boxes
 
 **Removed**
 
