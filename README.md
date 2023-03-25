@@ -12,7 +12,7 @@
 
 ## Modules
 
-### [Circular Scrolling List - v5](CircularScrollingList/)
+### [Circular Scrolling List - v6](CircularScrollingList/)
 
 Available at [Unity Asset Store](https://u3d.as/2jZ9)
 
