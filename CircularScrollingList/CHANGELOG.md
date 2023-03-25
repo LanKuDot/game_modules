@@ -16,7 +16,6 @@
 - Toggle the interaction of the list by the script
 - Provide setting setup by the script
 - Get the the boxes in the list and the list which the box belongs to
-- Validate the setting at the initialization
 
 **Changed**
 
