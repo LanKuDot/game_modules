@@ -92,6 +92,7 @@ namespace AirFishLab.ScrollingList
 
         public BaseListBank ListBank => _listBank;
         public ListBox[] ListBoxes => _listBoxes.ToArray();
+        public ListBoxSetting BoxSetting => _boxSetting;
         public ListSetting ListSetting => _listSetting;
         /// <summary>
         /// Is the list interactable?
@@ -166,22 +167,44 @@ namespace AirFishLab.ScrollingList
         #region Initialization
 
         /// <summary>
+        /// Set the list bank of the list
+        /// </summary>
+        public void SetListBank(BaseListBank listBank)
+        {
+            if (CheckIsInitialized())
+                return;
+
+            _listBank = listBank;
+        }
+
+        /// <summary>
         /// Initialize the list
         /// </summary>
         public void Initialize()
         {
-            if (_isInitialized)
+            if (CheckIsInitialized())
                 return;
 
             Validate();
-            _boxSetting.Validate(gameObject);
-            _listSetting.Validate(_listBank, name);
+            _boxSetting.Initialize(gameObject);
+            _listSetting.Initialize(_listBank, name);
 
             GetComponentReference();
             SetListBoxes();
             InitializeMembers();
 
             _isInitialized = true;
+        }
+
+        /// <summary>
+        /// Check if the list is initialized
+        /// </summary>
+        private bool CheckIsInitialized()
+        {
+            if (_isInitialized)
+                Debug.LogWarning($"The list '{name}' is initialized. Skip.");
+
+            return _isInitialized;
         }
 
         /// <summary>

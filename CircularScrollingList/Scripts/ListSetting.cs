@@ -139,54 +139,137 @@ namespace AirFishLab.ScrollingList
 
         #endregion
 
+        #region Private Members
+
+        /// <summary>
+        /// The name of the list
+        /// </summary>
+        private string _name;
+        /// <summary>
+        /// Is the setting initialized?
+        /// </summary>
+        private bool _isInitialized;
+
+        #endregion
+
         #region Property Setters
 
-        public void SetListType(CircularScrollingList.ListType listType) =>
+        public void SetListType(CircularScrollingList.ListType listType)
+        {
+            if (CheckIsInitialized())
+                return;
+
             _listType = listType;
+        }
 
-        public void SetDirection(CircularScrollingList.Direction direction) =>
+        public void SetDirection(CircularScrollingList.Direction direction)
+        {
+            if (CheckIsInitialized())
+                return;
+
             _direction = direction;
+        }
 
-        public void SetControlMode(CircularScrollingList.ControlMode controlMode) =>
+        public void SetControlMode(CircularScrollingList.ControlMode controlMode)
+        {
+            if (CheckIsInitialized())
+                return;
+
             _controlMode = controlMode;
+        }
 
-        public void SetAlignAtFocusingPosition(bool toAlign) =>
+        public void SetAlignAtFocusingPosition(bool toAlign)
+        {
+            if (CheckIsInitialized())
+                return;
+
             _alignAtFocusingPosition = toAlign;
+        }
 
-        public void SetReverseScrollingDirection(bool toReverse) =>
+        public void SetReverseScrollingDirection(bool toReverse)
+        {
+            if (CheckIsInitialized())
+                return;
+
             _reverseScrollingDirection = toReverse;
+        }
 
         public void SetFocusingPosition(
-            CircularScrollingList.FocusingPosition focusingPosition) =>
+            CircularScrollingList.FocusingPosition focusingPosition)
+        {
+            if (CheckIsInitialized())
+                return;
+
             _focusingPosition = focusingPosition;
+        }
 
-        public void SetReverseContentOrder(bool toReverse) =>
+        public void SetReverseContentOrder(bool toReverse)
+        {
+            if (CheckIsInitialized())
+                return;
+
             _reverseContentOrder = toReverse;
+        }
 
-        public void SetInitFocusingContentID(int contentID) =>
+        public void SetInitFocusingContentID(int contentID)
+        {
+            if (CheckIsInitialized())
+                return;
+
             _initFocusingContentID = contentID;
+        }
 
-        public void SetFocusSelectedBox(bool toFocus) =>
+        public void SetFocusSelectedBox(bool toFocus)
+        {
+            if (CheckIsInitialized())
+                return;
+
             _focusSelectedBox = toFocus;
+        }
 
         #endregion
 
         #region Appearance Setters
 
-        public void SetBoxDensity(float boxDensity) =>
+        public void SetBoxDensity(float boxDensity)
+        {
+            if (CheckIsInitialized())
+                return;
+
             _boxDensity = boxDensity;
+        }
 
-        public void SetBoxPositionCurve(AnimationCurve curve) =>
+        public void SetBoxPositionCurve(AnimationCurve curve)
+        {
+            if (CheckIsInitialized())
+                return;
+
             _boxPositionCurve = curve;
+        }
 
-        public void SetBoxScaleCurve(AnimationCurve curve) =>
+        public void SetBoxScaleCurve(AnimationCurve curve)
+        {
+            if (CheckIsInitialized())
+                return;
+
             _boxScaleCurve = curve;
+        }
 
-        public void SetBoxVelocityCurve(AnimationCurve curve) =>
+        public void SetBoxVelocityCurve(AnimationCurve curve)
+        {
+            if (CheckIsInitialized())
+                return;
+
             _boxVelocityCurve = curve;
+        }
 
-        public void SetBoxMovementCurve(AnimationCurve curve) =>
+        public void SetBoxMovementCurve(AnimationCurve curve)
+        {
+            if (CheckIsInitialized())
+                return;
+
             _boxMovementCurve = curve;
+        }
 
         #endregion
 
@@ -217,11 +300,23 @@ namespace AirFishLab.ScrollingList
         #region Public Functions
 
         /// <summary>
-        /// Validate the settings
+        /// Is the list initialized?
+        /// </summary>
+        private bool CheckIsInitialized()
+        {
+            if (_isInitialized)
+                Debug.LogWarning(
+                    $"The list setting of the list '{_name}' is initialized. Skip");
+
+            return _isInitialized;
+        }
+
+        /// <summary>
+        /// Initialize the settings
         /// </summary>
         /// <param name="listBank">The list bank</param>
         /// <param name="name">The name of the list</param>
-        public void Validate(BaseListBank listBank, string name)
+        public void Initialize(BaseListBank listBank, string name)
         {
             var contentCount = listBank.GetContentCount();
             if (_initFocusingContentID < 0
@@ -243,6 +338,9 @@ namespace AirFishLab.ScrollingList
                     _reverseContentOrder = true;
                     break;
             }
+
+            _name = name;
+            _isInitialized = true;
         }
 
         #endregion
