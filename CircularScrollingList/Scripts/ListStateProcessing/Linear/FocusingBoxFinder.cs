@@ -83,6 +83,10 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// </summary>
         private readonly float _topBaseline;
         /// <summary>
+        /// The baseline position at the middle of the list
+        /// </summary>
+        private readonly float _middleBaseline;
+        /// <summary>
         /// The baseline position at the bottom of the list
         /// </summary>
         private readonly float _bottomBaseline;
@@ -91,11 +95,12 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
 
         public FocusingBoxFinder(
             List<IListBox> boxes, ListSetting setting,
-            float topBaseline, float bottomBaseline)
+            float topBaseline, float middleBaseline, float bottomBaseline)
         {
             _boxes = boxes;
             _setting = setting;
             _topBaseline = topBaseline;
+            _middleBaseline = middleBaseline;
             _bottomBaseline = bottomBaseline;
         }
 
@@ -116,7 +121,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                     || idState == ContentIDState.Underflow)
                     continue;
 
-                var boxDistanceOffset = box.GetPositionFactor();
+                var boxDistanceOffset = box.GetPositionFactor() - _middleBaseline;
                 if (Mathf.Abs(boxDistanceOffset) >= Mathf.Abs(distanceOffset))
                     continue;
 

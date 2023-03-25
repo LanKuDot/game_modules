@@ -50,6 +50,10 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// </summary>
         public float TopBaseline { get; private set; }
         /// <summary>
+        /// The baseline position at the middle of the list
+        /// </summary>
+        public float MiddleBaseline { get; private set; }
+        /// <summary>
         /// The baseline position at the bottom of the list
         /// </summary>
         public float BottomBaseline { get; private set; }
@@ -101,6 +105,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             var boundAdjust = (numOfBoxes & 0x1) == 0 ? 0.5f : 0;
             TopBaseline = _unitPos * (numOfBoxes / 2 - boundAdjust);
             BottomBaseline = -TopBaseline;
+            MiddleBaseline = _unitPos * boundAdjust;
 
             _maxPos = TopBaseline + _unitPos;
             _minPos = -_maxPos;

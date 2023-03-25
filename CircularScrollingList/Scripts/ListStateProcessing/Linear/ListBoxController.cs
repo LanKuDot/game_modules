@@ -76,6 +76,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 new FocusingBoxFinder(
                     _boxes, _setting,
                     _transformController.TopBaseline,
+                    _transformController.MiddleBaseline,
                     _transformController.BottomBaseline);
 
             switch (_setting.FocusingPosition) {
