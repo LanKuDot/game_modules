@@ -50,9 +50,9 @@ The quick overview of version 6 - [Demo video](https://youtu.be/6y-_MaeWIAg)
 - Custom layout and movement, and layout preview in the editor
 - Custom displaying contents
 - Support dynamic list contents
-- Support interaction via the script
+- Support interaction via the script - Content selection, toggle interaction state, etc.
 - Runtime setup and initialization
-- Image sorting - The box which is closest to the focusing position will be popped up
+- Image sorting - The focused box will be popped up
 - Provide callback events
 - Support Unity 2018.4+ (Tested in Unity 2018.4.15f1. The demo scenes in the project are made in Unity 2019.4.16f1)
 

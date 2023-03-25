@@ -11,10 +11,9 @@
 - Support 3 different focusing posiiton
 - Support the list to be stopped at the top or the bottom
 - Support layout preview in the editor
-- Support initiailzation at runtime
+- Support runtime setup and initialization
 - Stop the movement by the script
 - Toggle the interaction of the list by the script
-- Provide setting setup by the script
 - Get the the boxes in the list and the list which the box belongs to
 
 **Changed**
