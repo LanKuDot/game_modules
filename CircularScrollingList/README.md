@@ -2,7 +2,7 @@
 
 <img src="./ReadmeData~/list_outline_demo.gif" width=350px />
 
-The quick overview of version 5 - [Demo video](https://youtu.be/6lFR4xGdmQ4)
+The quick overview of version 6 - [Demo video](https://youtu.be/6y-_MaeWIAg)
 
 ## Outline
 
@@ -33,6 +33,7 @@ The quick overview of version 5 - [Demo video](https://youtu.be/6lFR4xGdmQ4)
     - [Manually Get the Focusing Box](#manually-get-the-focusing-box)
     - [`OnMovementEnd` event](#onmovementend-event)
   - [Script Operations](#script-operations)
+    - [Late Initialization](#late-initialization)
     - [Toggle List Interaction](#toggle-list-interaction)
     - [Select the Content](#select-the-content)
     - [Refresh the List](#refresh-the-list)
@@ -572,6 +573,26 @@ If the "Focusing Position" is set to **Bottom**, then it will be like (ReadmeDat
 `OnMovementEnd` event will be invoked when the list stops moving.
 
 ## Script Operations
+
+### Late Initialization
+
+*Related demo scene: 07-LateInitialization*
+
+If the **Initialize On Start** is not set, the list could be initialized by invoking:
+
+```csharp
+CircularScrollingList.Initialize()
+```
+
+The setting of the list could be setup before the `Initialize()` call. The `XXX` below is the placeholder of the setting name:
+
+- To set the `ListBank` by invoking `CircularScrollingList.SetListBank()`
+- To set the box setting by invoking `CircularScrollingList.BoxSetting.SetXXX()`, such as `SetBoxPrefab()`
+- To set the list setting by invoking `CircularScrollingList.ListSetting.SetXXX()`, such as `SetFocusSelectedBox()`
+- To register the event callback by invoking `CircularScrollingList.ListSetting.AddXXXCallback()`, such as `AddOnBoxSelectedCallback()`
+- To unregister the event callback by invoking `CircularScrollingList.ListSetting.RemoveXXXCallback()`, such as `RemoveOnBoxSelctedCallback()`
+
+The callback registration/unregistration could be invoked at any time. But for other functions, they will print the warning message and ignore the value after `Initialize()` call.
 
 ### Toggle List Interaction
 
