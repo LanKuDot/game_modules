@@ -764,10 +764,10 @@ MonoBehaviour:
     _controlMode: 3
     _focusingPosition: 1
     _reverseContentOrder: 0
-    _alignAtFocusingPosition: 0
+    _alignAtFocusingPosition: 1
     _reverseScrollingDirection: 0
     _initFocusingContentID: 0
-    _focusSelectedBox: 0
+    _focusSelectedBox: 1
     _initializeOnStart: 1
     _boxDensity: 1
     _boxPositionCurve:
@@ -848,20 +848,20 @@ MonoBehaviour:
       - serializedVersion: 3
         time: 0
         value: 0
-        inSlope: 2.527273
-        outSlope: 2.527273
+        inSlope: 10.214248
+        outSlope: 10.214248
         tangentMode: 0
         weightedMode: 0
         inWeight: 0
-        outWeight: 0.040816322
+        outWeight: 0.04838854
       - serializedVersion: 3
-        time: 1
+        time: 0.25
         value: 1
-        inSlope: 0
-        outSlope: 0
+        inSlope: -0.000001252862
+        outSlope: -0.000001252862
         tangentMode: 0
         weightedMode: 0
-        inWeight: 0
+        inWeight: 0.09514958
         outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
