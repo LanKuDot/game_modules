@@ -446,8 +446,7 @@ namespace AirFishLab.ScrollingList
             var idDiff =
                 _listContentProvider.GetShortestIDDiff(focusingContentID, contentID);
 
-            if (idDiff != 0)
-                SetSelectionMovement(idDiff, notToIgnore);
+            SetSelectionMovement(idDiff, notToIgnore);
         }
 
         #endregion

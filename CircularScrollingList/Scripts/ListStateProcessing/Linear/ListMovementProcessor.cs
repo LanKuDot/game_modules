@@ -93,8 +93,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             EndMovement(false);
 
             var deltaDistance =
-                units * _unitPos * _selectionDistanceFactor
-                - _listBoxController.FocusingDistanceOffset;
+                units * _unitPos * _selectionDistanceFactor;
             _unitMovementCtrl.SetMovement(deltaDistance, false);
         }
 
