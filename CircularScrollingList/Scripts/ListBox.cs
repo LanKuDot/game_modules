@@ -56,6 +56,8 @@ namespace AirFishLab.ScrollingList
                 _factorFunc = FactorUtility.GetVector2Y;
 
             RegisterClickEvent();
+
+            OnInitialized();
         }
 
         public Transform GetTransform()
@@ -114,6 +116,12 @@ namespace AirFishLab.ScrollingList
         #endregion
 
         #region Content Handling
+
+        /// <summary>
+        /// This function is called after the box is initialized
+        /// </summary>
+        protected virtual void OnInitialized()
+        {}
 
         /// <summary>
         /// Update the displaying content on the ListBox
