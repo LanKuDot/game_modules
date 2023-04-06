@@ -51,6 +51,10 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// The function for updating the focusing box
         /// </summary>
         private Action _updateFocusingBoxFunc;
+        /// <summary>
+        /// The function for recalculating the all box content
+        /// </summary>
+        private Action<int> _recalculateAllBoxContentFunc;
 
         #endregion
 
@@ -82,12 +86,15 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             switch (_setting.FocusingPosition) {
                 case CircularScrollingList.FocusingPosition.Top:
                     _updateFocusingBoxFunc = UpdateTopFocusingBox;
+                    _recalculateAllBoxContentFunc = RecalculateAllBoxContentForBothEnds;
                     break;
                 case CircularScrollingList.FocusingPosition.Center:
                     _updateFocusingBoxFunc = UpdateCenterFocusingBox;
+                    _recalculateAllBoxContentFunc = RecalculateAllBoxContentFofMiddle;
                     break;
                 case CircularScrollingList.FocusingPosition.Bottom:
                     _updateFocusingBoxFunc = UpdateBottomFocusingBox;
+                    _recalculateAllBoxContentFunc = RecalculateAllBoxContentForBothEnds;
                     break;
             }
 
@@ -181,9 +188,10 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             if (focusingContentID < 0)
                 focusingContentID =
                     curFocusingContentID == ListContentProvider.NO_CONTENT_ID
-                        ? 0 : Mathf.Min(curFocusingContentID, numOfContents - 1);
+                        ? 0
+                        : Mathf.Min(curFocusingContentID, numOfContents - 1);
 
-            RecalculateAllBoxContent(focusingContentID);
+            _recalculateAllBoxContentFunc(focusingContentID);
         }
 
         public IListBox GetFocusingBox() => _focusingBox;
@@ -318,28 +326,69 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         #region Content Management
 
         /// <summary>
-        /// Recalculate all the box contents
+        /// Recalculate all the box contents for the middle focusing position
         /// </summary>
-        /// <param name="newCenteredContentID">The new centered content ID</param>
-        private void RecalculateAllBoxContent(int newCenteredContentID)
+        /// <param name="newFocusingContentID">The new focusing content ID</param>
+        private void RecalculateAllBoxContentFofMiddle(int newFocusingContentID)
         {
             var numOfBoxes = _boxes.Count;
-            var centeredBoxID = _focusingBox.ListBoxID;
+            var focusingBoxID = _focusingBox.ListBoxID;
             var reverseFactor = _setting.ReverseContentOrder ? -1 : 1;
 
             foreach (var box in _boxes) {
                 var posFactor = box.GetPositionFactor();
                 var tempBoxID = box.ListBoxID;
 
-                if (tempBoxID > centeredBoxID && posFactor > 0)
+                if (tempBoxID > focusingBoxID && posFactor > 0)
                     tempBoxID -= numOfBoxes;
-                else if (tempBoxID < centeredBoxID && posFactor < 0)
+                else if (tempBoxID < focusingBoxID && posFactor < 0)
                     tempBoxID += numOfBoxes;
 
                 var contentID =
-                    newCenteredContentID + (tempBoxID - centeredBoxID) * reverseFactor;
+                    newFocusingContentID + (tempBoxID - focusingBoxID) * reverseFactor;
                 var newContentID = _contentProvider.GetRefreshedContentID(contentID);
                 UpdateBoxContent(box, newContentID);
+            }
+
+            _updateFocusingBoxFunc();
+        }
+
+        /// <summary>
+        /// Recalculate all the box contents for both ends
+        /// </summary>
+        /// <param name="newFocusingContentID">The new focusing content ID</param>
+        private void RecalculateAllBoxContentForBothEnds(int newFocusingContentID)
+        {
+            // TODO Combine the algorithm with the GetInitialContentID
+            // in the ContentProvider
+            var tempBoxList = new List<IListBox>(_boxes);
+            if (!_setting.ReverseContentOrder)
+                tempBoxList.Sort((a, b) =>
+                    b.GetPositionFactor().CompareTo(a.GetPositionFactor()));
+            else
+                tempBoxList.Sort((a, b) =>
+                    a.GetPositionFactor().CompareTo(b.GetPositionFactor()));
+
+            var numOfBoxes = tempBoxList.Count;
+            var numOfContents = _contentProvider.GetContentCount();
+
+            if (_setting.ListType == CircularScrollingList.ListType.Circular)
+                // No need to do content content id adjusting
+                newFocusingContentID = newFocusingContentID;
+            else if (numOfContents <= numOfBoxes)
+                newFocusingContentID = 0;
+            else {
+                var numOfLackingContents =
+                    numOfContents - newFocusingContentID - numOfBoxes;
+                if (numOfLackingContents < 0)
+                    newFocusingContentID += numOfLackingContents;
+            }
+
+            foreach (var box in tempBoxList) {
+                var newContentID =
+                    _contentProvider.GetRefreshedContentID(newFocusingContentID);
+                UpdateBoxContent(box, newContentID);
+                ++newFocusingContentID;
             }
 
             _updateFocusingBoxFunc();
