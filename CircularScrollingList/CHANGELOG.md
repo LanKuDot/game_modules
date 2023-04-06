@@ -1,5 +1,15 @@
 # Change Log
 
+### [CircularList_v6.1] - 2023.04.06
+
+**Added**
+
+- Add `OnInitialized` to `ListBox`
+
+**Fixed**
+
+- Incorrect box state when refreshing the list with top/bottom focusing
+
 ### [CircularList_v6] - 2023.03.25
 
 **Added**
