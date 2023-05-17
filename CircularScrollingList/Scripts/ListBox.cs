@@ -75,9 +75,7 @@ namespace AirFishLab.ScrollingList
         }
 
         public virtual void OnBoxMoved(float positionRatio)
-        {
-            Debug.Log(positionRatio);
-        }
+        {}
 
         public void SetContentID(int contentID)
         {
