@@ -153,9 +153,9 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <summary>
         /// Set the initial local transform
         /// </summary>
-        /// <param name="boxTransform">The transform of the box</param>
-        /// <param name="boxID">The id of the box</param>
-        public void SetInitialLocalTransform(Transform boxTransform, int boxID)
+        /// <param name="box">The target box</param>
+        /// <param name="boxID">The ID of the box</param>
+        public void SetInitialLocalTransform(IListBox box, int boxID)
         {
             var majorPos = _unitPos * (boxID * -1 + _numOfBoxes / 2);
 
@@ -164,6 +164,8 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             if ((_numOfBoxes & 0x1) == 0) {
                 majorPos = _unitPos * (boxID * -1 + _numOfBoxes / 2) - _unitPos / 2;
             }
+
+            var boxTransform = box.GetTransform();
 
             var minorPos = GetMinorPosition(majorPos);
             var localPosZ = boxTransform.localPosition.z;
@@ -175,17 +177,21 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                 _getLocalPositionFunc(majorPos, minorPos, localPosZ);
             boxTransform.localScale =
                 new Vector3(scaleValue, scaleValue, localScaleZ);
+
+            if (Application.isPlaying)
+                box.OnBoxMoved(GetPositionRatio(majorPos));
         }
 
         /// <summary>
         /// Update the local transform of the box according to the moving distance
         /// </summary>
-        /// <param name="boxTransform">The transform of the box</param>
+        /// <param name="box">The target box</param>
         /// <param name="deltaPos">The moving distance</param>
         /// <returns>The final status of the transform position</returns>
         public BoxPositionState UpdateLocalTransform(
-            Transform boxTransform, float deltaPos)
+            IListBox box, float deltaPos)
         {
+            var boxTransform = box.GetTransform();
             var localPosition = boxTransform.localPosition;
             var majorFactor = _getMajorFactorFunc(localPosition);
             var majorPosition =
@@ -203,6 +209,8 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             boxTransform.localScale =
                 new Vector3(scaleValue, scaleValue, localScale.z);
 
+            box.OnBoxMoved(GetPositionRatio(majorFactor));
+
             return
                 isJumpingToTop ? BoxPositionState.JumpToTop :
                 isJumpingToBottom ? BoxPositionState.JumpToBottom :
@@ -212,6 +220,15 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         #endregion
 
         #region Position Handling
+
+        /// <summary>
+        /// Get the position ratio of the major position in the list
+        /// </summary>
+        /// <returns>The position ratio from -1 to 1</returns>
+        private float GetPositionRatio(float majorPosition)
+        {
+            return Mathf.InverseLerp(_minPos, _maxPos, majorPosition) * 2 - 1;
+        }
 
         /// <summary>
         /// Get the major position according to the requested position

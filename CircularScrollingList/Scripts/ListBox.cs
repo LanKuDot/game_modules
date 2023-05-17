@@ -74,6 +74,11 @@ namespace AirFishLab.ScrollingList
             return _factorFunc(_transform.localPosition);
         }
 
+        public virtual void OnBoxMoved(float positionRatio)
+        {
+            Debug.Log(positionRatio);
+        }
+
         public void SetContentID(int contentID)
         {
             ContentID = contentID;

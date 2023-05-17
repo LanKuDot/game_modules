@@ -10,16 +10,16 @@ namespace AirFishLab.ScrollingList.ListStateProcessing
         /// <summary>
         /// Set the initial local transform
         /// </summary>
-        /// <param name="boxTransform">The transform of the box</param>
+        /// <param name="box">The target box</param>
         /// <param name="boxID">The id of the box</param>
-        void SetInitialLocalTransform(Transform boxTransform, int boxID);
+        void SetInitialLocalTransform(IListBox box, int boxID);
 
         /// <summary>
         /// Update the local transform of the box according to the moving distance
         /// </summary>
-        /// <param name="boxTransform">The transform of the box</param>
+        /// <param name="box">The target box</param>
         /// <param name="deltaPos">The moving distance</param>
         /// <returns>The final status of the transform position</returns>
-        BoxPositionState UpdateLocalTransform(Transform boxTransform, float deltaPos);
+        BoxPositionState UpdateLocalTransform(IListBox box, float deltaPos);
     }
 }

@@ -67,6 +67,16 @@ namespace AirFishLab.ScrollingList
         float GetPositionFactor();
 
         /// <summary>
+        /// The function to be invoked when the box is moved
+        /// NOTE: This function is for the future feature
+        /// </summary>
+        /// <param name="positionRatio">
+        /// The ratio of the position in the list, which is from -1 to 1.
+        /// 0 means that thw box is at the center of the list
+        /// </param>
+        void OnBoxMoved(float positionRatio);
+
+        /// <summary>
         /// Set the content id of the box
         /// </summary>
         /// <param name="contentID">The content id</param>

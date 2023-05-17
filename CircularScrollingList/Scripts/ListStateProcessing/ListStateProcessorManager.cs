@@ -48,7 +48,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing
                 Undo.RegisterCompleteObjectUndo(
                     transform, "Generate Boxes and Arrange");
                 Undo.CollapseUndoOperations(undoGroupID);
-                transformController.SetInitialLocalTransform(transform, i);
+                transformController.SetInitialLocalTransform(box, i);
             }
         }
 #endif

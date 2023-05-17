@@ -118,7 +118,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
                     boxID, lastListBox, nextListBox);
                 box.OnBoxSelected.AddListener(_setting.OnBoxSelected.Invoke);
 
-                _transformController.SetInitialLocalTransform(box.GetTransform(), boxID);
+                _transformController.SetInitialLocalTransform(box, boxID);
 
                 var contentID =
                     _contentProvider.GetInitialContentID(boxID);
@@ -158,8 +158,7 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
             var allPositionStatuses = BoxPositionState.Nothing;
             foreach (var box in _boxes) {
                 var positionStatus =
-                    _transformController.UpdateLocalTransform(
-                        box.GetTransform(), movementValue);
+                    _transformController.UpdateLocalTransform(box, movementValue);
 
                 if (positionStatus == BoxPositionState.Nothing)
                     continue;
