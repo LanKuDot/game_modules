@@ -1,5 +1,11 @@
 # Change Log
 
+### [CircularList_v6.2] - 2023.05.17
+
+**Added**
+
+- Add `OnBoxMoved` to `ListBox`
+
 ### [CircularList_v6.1] - 2023.04.06
 
 **Added**

@@ -27,11 +27,14 @@ The quick overview of version 6 - [Demo video](https://youtu.be/6y-_MaeWIAg)
     - [Custom `ListBox`](#custom-listbox)
     - [Use Them in the List](#use-them-in-the-list)
     - [Pass Data of Primitive Type](#pass-data-of-primitive-type)
-  - [Events](#events)
+  - [List Events](#list-events-1)
     - [`OnBoxSelected` Event](#onboxselected-event)
     - [`OnFocusingBoxChanged` Event](#onfocusingboxchanged-event)
     - [Manually Get the Focusing Box](#manually-get-the-focusing-box)
     - [`OnMovementEnd` event](#onmovementend-event)
+  - [Box Events](#box-events)
+    - [`OnInitialized` event](#oninitialized-event)
+    - [`OnBoxMoved` event](#onboxmoved-event)
   - [Script Operations](#script-operations)
     - [Late Initialization](#late-initialization)
     - [Toggle List Interaction](#toggle-list-interaction)
@@ -435,7 +438,7 @@ public class StringListBox : ListBox
 }
 ```
 
-## Events
+## List Events
 
 *Related demo scene: 06-ListEvents*
 
@@ -572,6 +575,45 @@ If the "Focusing Position" is set to **Bottom**, then it will be like (ReadmeDat
 ### `OnMovementEnd` event
 
 `OnMovementEnd` event will be invoked when the list stops moving.
+
+## Box Events
+
+The `ListBox.cs` provides some event callbacks. You could define custom behaviour by overriding these event callbacks.
+
+### `OnInitialized` event
+
+`OnInitialized` event is invoked when the list is initialized (`CircularScrollingList.Initialize()`).
+
+```csharp
+public class MyListBox : ListBox
+{
+    protected override void OnInitialized()
+    {
+        ...
+    }
+}
+```
+
+### `OnBoxMoved` event
+
+`OnBoxMoved` event is invoked when the box is moving. In addition, when the box is initialized.
+
+The event has 1 parameter `positionRatio` which is from -1 to 1.
+
+```csharp
+public class MyListBox : ListBox
+{
+    [SerializedField]
+    private Image _image;
+
+    public override void OnBoxMoved(float positionRatio)
+    {
+        var color = _image.color;
+        color.a = 1 - Mathf.Abs(positionRatio);
+        _image.color = color;
+    }
+}
+```
 
 ## Script Operations
 
