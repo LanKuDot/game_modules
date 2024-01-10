@@ -227,7 +227,8 @@ namespace AirFishLab.ScrollingList.ListStateProcessing.Linear
         /// <returns>The position ratio from -1 to 1</returns>
         private float GetPositionRatio(float majorPosition)
         {
-            return Mathf.InverseLerp(_minPos, _maxPos, majorPosition) * 2 - 1;
+            return Mathf.InverseLerp(
+                _sideChangingMinPos, _sideChangingMaxPos, majorPosition) * 2 - 1;
         }
 
         /// <summary>
